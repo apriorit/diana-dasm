@@ -1,0 +1,6 @@
+
+[0.0.2-diana-win32-src] 
++ added lock/rep/repn prefixes support
++ added xadd and cmpxchg support
++ added patchers.c - module for function patching, very raw for now
++ improved tests - added integration.c

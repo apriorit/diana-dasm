@@ -1,0 +1,26 @@
+#include "test_common.h"
+extern "C"
+{
+#include "diana_streams.h"
+}
+
+int Diana_ParseCmdOnBuffer_test(int iMode,
+                           void * pBuffer,
+                           size_t size,
+                           DianaCmdKeyLine * pInitialLine,  // IN
+                           DianaParserResult * pResult,  //OUT
+                           size_t * sizeRead)    // OUT
+{
+    int iRes = Diana_ParseCmdOnBuffer(iMode,
+                                           pBuffer,
+                                           size,
+                                           pInitialLine,  // IN
+                                           pResult,  //OUT
+                                           sizeRead);    // OUT
+    if (iRes)
+        return iRes;
+
+    if (*sizeRead!=size)
+        __asm int 3;
+    return iRes;
+}
