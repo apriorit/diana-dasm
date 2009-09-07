@@ -1120,6 +1120,17 @@ void test_suxx()
 
         TEST_ASSERT(result.linkedOperands[0].type == diana_imm);
         TEST_ASSERT(result.linkedOperands[0].value.imm == 0xC);
-
     }
-}
+
+    static unsigned char suxx76[] = {0x0f, 0x92, 0xc0};//         setb    al
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,suxx76, sizeof(suxx76), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "setb")==0);
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1)
+
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_AL);
+    }}
