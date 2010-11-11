@@ -1,9 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diana_core", "diana_core\diana_core\diana_core_8_0.vcproj", "{DDEE4514-39A8-4303-B80C-74D83D71D91A}"
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diana_core", "diana_core\diana_core\diana_core_9_0.vcproj", "{DDEE4514-39A8-4303-B80C-74D83D71D91A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diana_core_tests", "diana_core\diana_core_tests\diana_core_tests_8_0.vcproj", "{7B85969C-8760-44C7-B11D-2A2FDC6FFCDE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diana_core_tests", "diana_core\diana_core_tests\diana_core_tests_9_0.vcproj", "{7B85969C-8760-44C7-B11D-2A2FDC6FFCDE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DDEE4514-39A8-4303-B80C-74D83D71D91A} = {DDEE4514-39A8-4303-B80C-74D83D71D91A}
 	EndProjectSection

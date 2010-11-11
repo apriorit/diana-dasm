@@ -4,7 +4,12 @@
 typedef enum {diana_orNone, diana_orRegMem, diana_orRegistry, 
               diana_orMemory, diana_orSreg, diana_orImmediate, 
               diana_orOffset, diana_orEAX, diana_orRel, diana_orRel16x32, diana_orMemory16x32,
-              diana_orPtr, diana_orDX, diana_orCL, diana_orAnyCR, diana_orDR6or7, diana_orTR6or7, diana_orECX, diana_orEsDi, diana_orESI_ptr} DianaOperands_type;
+              diana_orPtr, diana_orDX, diana_orCL, diana_orAnyCR, diana_orDR6or7, diana_orTR6or7, 
+              diana_orECX, diana_orEsDi, diana_orESI_ptr,
+              
+              diana_orRegMMX, diana_orRegXMM, diana_orMemoryXMM, diana_orMemoryMMX, diana_orRegistry32,
+              diana_orReg32mem16, diana_orFPU_ST, diana_orFPU_ST0, diana_orFPU_STi
+} DianaOperands_type;
 
 typedef enum {diana_reg_none, diana_reg_ES, diana_reg_CS, diana_reg_SS, diana_reg_DS, diana_reg_FS, diana_reg_GS} DianaSreg_type;
 

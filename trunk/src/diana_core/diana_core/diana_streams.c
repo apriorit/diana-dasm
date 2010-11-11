@@ -3,7 +3,7 @@
 static int MemoryStream_Read(void * pThis, void * pBuffer, int iBufferSize, int * readed)
 {
     DianaMemoryStream * pStream = pThis;
-    size_t sizeToGive = pStream->bufferSize - pStream->curSize;
+    int sizeToGive = (int)(pStream->bufferSize - pStream->curSize);
     if (sizeToGive > iBufferSize)
         sizeToGive = iBufferSize;
 
@@ -38,6 +38,6 @@ int Diana_ParseCmdOnBuffer(int iMode,
     Diana_InitContext(&context, iMode);
     Diana_InitMemoryStream(&stream, pBuffer, size);
     iRes = Diana_ParseCmd(&context, pInitialLine, &stream.parent,  pResult);
-    *sizeRead = stream.curSize - context.iReadedSize;
+    *sizeRead = stream.curSize - context.cacheSize;
     return iRes;
 }

@@ -3,7 +3,9 @@
 
 #include "diana_core.h"
 
-int Diana_ReadIndexStructure32(DI_CHAR iOpSize,
+int Diana_ReadIndexStructure32(DianaContext * pContext,
+                               DianaLinkedOperand * pInfo,
+                               DI_CHAR iOpSize,
                                unsigned char postByte,
                                DianaReadStream * pStream, 
                                DianaOperandValue * pValue,

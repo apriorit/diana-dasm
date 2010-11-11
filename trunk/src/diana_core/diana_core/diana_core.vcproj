@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)..\lib\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)..\lib\$(ConfigurationName)\i386"
+			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)\i386"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -55,8 +55,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)..\lib\$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)"
+			OutputDirectory="$(SolutionDir)..\lib\$(ConfigurationName)\i386"
+			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)\i386"
 			ConfigurationType="4"
 			CharacterSet="2">
 			<Tool
@@ -105,6 +105,12 @@
 				RelativePath=".\diana_core.c">
 			</File>
 			<File
+				RelativePath=".\diana_core_parsers.c">
+			</File>
+			<File
+				RelativePath=".\diana_core_utils.c">
+			</File>
+			<File
 				RelativePath=".\diana_gen.c">
 			</File>
 			<File
@@ -135,6 +141,12 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath=".\diana_core.h">
+			</File>
+			<File
+				RelativePath=".\diana_core_parsers.h">
+			</File>
+			<File
+				RelativePath=".\diana_core_utils.h">
 			</File>
 			<File
 				RelativePath=".\diana_gen.h">

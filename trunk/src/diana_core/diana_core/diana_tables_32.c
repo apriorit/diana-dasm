@@ -1,5 +1,6 @@
 #include "diana_tables_32.h"
 #include "diana_tables_common.h"
+#include "diana_operands.h"
 
 // 32 bit
 //[EAX]                000   00    08    10    18    20    28    30    38
@@ -78,22 +79,112 @@ static DianaEntry32 g_table1[3][8] =
     }
 };
 
+static DianaEntry32 g_table2[3][16] =
+{
+    {
+        {0, {reg_none, reg_RAX, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_RCX, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_RDX, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_RBX, reg_none, 0, 0, 0}},
+        {1, {reg_none, reg_none, reg_none, 0, 0, 0}}, // SIB
+        {0, {reg_none, reg_none, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_RSI, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_RDI, reg_none, 0, 0, 0}},
+    
+        {0, {reg_none, reg_R8, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R9, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R10, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R11, reg_none, 0, 0, 0}},
+        {1, {reg_none, reg_R12, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R13, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R14, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R15, reg_none, 0, 0, 0}}
+    },
+    {
+        {0, {reg_none, reg_RAX, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_RCX, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_RDX, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_RBX, reg_none, 0, 1, 0}},
+        {1, {reg_none, reg_none, reg_none, 0, 1, 0}}, // SIB
+        {0, {reg_none, reg_RBP, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_RSI, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_RDI, reg_none, 0, 1, 0}},
+
+        {0, {reg_none, reg_R8, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_R9, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_R10, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_R11, reg_none, 0, 1, 0}},
+        {1, {reg_none, reg_R12, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_R13, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_R14, reg_none, 0, 1, 0}},
+        {0, {reg_none, reg_R15, reg_none, 0, 1, 0}}
+    },
+    {
+        {0, {reg_none, reg_RAX, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_RCX, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_RDX, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_RBX, reg_none, 0, 4, 0}},
+        {1, {reg_none, reg_none, reg_none, 0, 4, 0}}, // SIB
+        {0, {reg_none, reg_RBP, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_RSI, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_RDI, reg_none, 0, 4, 0}},
+
+        {0, {reg_none, reg_R8, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_R9, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_R10, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_R11, reg_none, 0, 4, 0}},
+        {1, {reg_none, reg_R12, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_R13, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_R14, reg_none, 0, 4, 0}},
+        {0, {reg_none, reg_R15, reg_none, 0, 4, 0}}
+    }
+};
 
 static DI_CHAR disp_ss[4] = {1,2,4,8};
 
-int Diana_ReadIndexStructure32(DI_CHAR iOpSize,
+void Diana_DispatchSIB2(DianaContext * pContext,
+                        unsigned char sib, 
+                        int * pSS, 
+                        int *pIndex, 
+                        int *pBase)
+{
+    Diana_DispatchSIB(sib, pSS, pIndex, pBase);
+
+    // TODO: MMX ignores REX
+    if (pContext->iAMD64Mode && pContext->iRexPrefix)
+    {
+        if (DI_REX_HAS_FLAG_X(pContext->iRexPrefix))
+        {
+            *pIndex |= 0x8;
+        }
+        if (DI_REX_HAS_FLAG_B(pContext->iRexPrefix))
+        {
+            *pBase |= 0x8;
+        }
+    }
+}
+
+
+int Diana_ReadIndexStructure32(DianaContext * pContext,
+                               DianaLinkedOperand * pInfo,
+                               DI_CHAR iOpSize,
                                unsigned char postByte,
                                DianaReadStream * pStream, 
                                DianaOperandValue * pValue,
                                DianaValueType * pType)
 {
     DI_CHAR mod = Diana_GetMod(postByte);
-    DI_CHAR rm = Diana_GetRm(postByte);
+    DI_CHAR rm = Diana_GetRm2(pContext, postByte);
+    DI_CHAR old_true_rm = Diana_GetRm(postByte);
 
     if (mod == 3)
     {
         *pType = diana_register;
-        return Diana_DispatchMod3(rm, iOpSize, &pValue->recognizedRegister);
+        return Diana_DispatchMod3(pInfo, 
+                                  rm, 
+                                  old_true_rm, 
+                                  iOpSize, 
+                                  &pValue->recognizedRegister);
     }
     if (mod>3)
         return DI_ERROR;
@@ -101,12 +192,31 @@ int Diana_ReadIndexStructure32(DI_CHAR iOpSize,
     *pType = diana_index;
     {
         DianaRmIndex  * pIndex = &pValue->rmIndex;
-        DianaEntry32 * pOp = &g_table1[mod][rm];
+        DianaEntry32 * pOp = 0; 
+
+        if (pContext->iCurrentCmd_addressSize == 8)
+        {
+            pOp = &g_table2[mod][rm];
+        }
+        else
+        {
+            pOp = &g_table1[mod][rm];
+        }
+
         
         *pIndex = pOp->index;
 
         if (!pOp->iHasSIB)
+        {
+            if (pContext->iAMD64Mode && mod == 0)
+            {
+                if (old_true_rm == 5)
+                {
+                    pIndex->reg = reg_RIP;
+                }
+            }
             return DI_SUCCESS;
+        }
 
         // check all
         {
@@ -119,9 +229,8 @@ int Diana_ReadIndexStructure32(DI_CHAR iOpSize,
             if(readed !=1)
                 return DI_ERROR;
 
-            Diana_DispatchSIB(sibByte, &ss, &index, &base);
+            Diana_DispatchSIB2(pContext, sibByte, &ss, &index, &base);
 
-            // todo test index==4
             if (base == 5)
             {
                if (mod == 0)
@@ -130,13 +239,20 @@ int Diana_ReadIndexStructure32(DI_CHAR iOpSize,
                }
                else
                {
-                   pIndex->reg = reg_EBP;
+                   if (pContext->iCurrentCmd_addressSize == 8)
+                   {
+                       pIndex->reg = reg_RBP;
+                   }
+                   else
+                   {
+                       pIndex->reg = reg_EBP;
+                   }
                }
             
             } 
             else
             {
-                iRes = DianaRecognizeCommonReg(4,
+                iRes = DianaRecognizeCommonReg(pContext->iCurrentCmd_addressSize,
                                                base, 
                                                &pIndex->reg);
                 if (iRes)
@@ -145,19 +261,25 @@ int Diana_ReadIndexStructure32(DI_CHAR iOpSize,
             }
 
             // recognize indexes
-            iRes = DianaRecognizeCommonReg(4,
-                                            index, 
-                                            &pIndex->indexed_reg);
-            if (iRes)
-                return DI_ERROR;
-
-            if (index == 5)
+            if (index == 4)
             {
                 pIndex->indexed_reg = reg_none; 
                 pIndex->index = 0;
-            } else
+            }
+            else
             {
+                iRes = DianaRecognizeCommonReg(pContext->iCurrentCmd_addressSize,
+                                                index, 
+                                                &pIndex->indexed_reg);
+                if (iRes)
+                    return DI_ERROR;
+
                 pIndex->index = disp_ss[ss];
+               /* if (index == 5)
+                {
+                    pIndex->indexed_reg = reg_none; 
+                    pIndex->index = 0;
+                } */
             }
         }
     }

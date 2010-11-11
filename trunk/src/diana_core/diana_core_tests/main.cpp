@@ -17,10 +17,20 @@ extern "C"
 #include "test_or.h"
 #include "test_suxx.h"
 #include "test_integrated.h"
+#include "test_x64.h"
+#include "test_x64_integrated.h"
+#include "test_fpu_mmx32.h"
 
 int main()
 {
     Diana_Init();
+
+    test_integrated2();
+
+    test_fpu_mmx32();
+    test_x64();
+    test_x64_integrated();
+   
     test_push();
     test_mov();
     test_add();

@@ -3,7 +3,9 @@
 
 #include "diana_core.h"
 
-int Diana_DispatchMod3(int rm,
+int Diana_DispatchMod3(DianaLinkedOperand * pInfo,
+                       int rm,
+                       DI_CHAR old_true_rm,
                        int iRegSizeInBytes,
                        DianaUnifiedRegister *pOut);
 

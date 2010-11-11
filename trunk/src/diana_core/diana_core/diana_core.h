@@ -16,18 +16,52 @@ typedef enum
  reg_ES,    reg_CS,    reg_SS,    reg_DS,    reg_FS,    reg_GS,
  reg_CR0,   reg_CR1,   reg_CR2,   reg_CR3,   reg_CR4,   reg_CR5,   reg_CR6,   reg_CR7,
  reg_DR0,   reg_DR1,   reg_DR2,   reg_DR3,   reg_DR4,   reg_DR5,   reg_DR6,   reg_DR7,
- reg_TR0,   reg_TR1,   reg_TR2,   reg_TR3,   reg_TR4,   reg_TR5,   reg_TR6,   reg_TR7
+ reg_TR0,   reg_TR1,   reg_TR2,   reg_TR3,   reg_TR4,   reg_TR5,   reg_TR6,   reg_TR7,
+
+
+ // x64 part
+ reg_RAX,   reg_RCX,   reg_RDX,   reg_RBX,   reg_RSP,   reg_RBP,   reg_RSI,   reg_RDI,
+ reg_SIL,   reg_DIL,   reg_BPL,   reg_SPL,
+ reg_R8,    reg_R9,    reg_R10,   reg_R11,   reg_R12,   reg_R13,   reg_R14,   reg_R15,
+ reg_R8D,   reg_R9D,   reg_R10D,  reg_R11D,  reg_R12D,  reg_R13D,  reg_R14D,  reg_R15D,
+ reg_R8W,   reg_R9W,   reg_R10W,  reg_R11W,  reg_R12W,  reg_R13W,  reg_R14W,  reg_R15W,
+ reg_R8B,   reg_R9B,   reg_R10B,  reg_R11B,  reg_R12B,  reg_R13B,  reg_R14B,  reg_R15B,
+ reg_RIP,
+
+ reg_MM0, reg_MM1, reg_MM2, reg_MM3, reg_MM4, reg_MM5, reg_MM6, reg_MM7,
+ reg_MM8, reg_MM9, reg_MM10, reg_MM11, reg_MM12, reg_MM13, reg_MM14, reg_MM15,
+
+ reg_XMM0, reg_XMM1, reg_XMM2, reg_XMM3, reg_XMM4, reg_XMM5, reg_XMM6, reg_XMM7,
+ reg_XMM8, reg_XMM9, reg_XMM10, reg_XMM11, reg_XMM12, reg_XMM13, reg_XMM14, reg_XMM15,
+
+ reg_fpu_ST0, reg_fpu_ST1, reg_fpu_ST2, reg_fpu_ST3, reg_fpu_ST4, reg_fpu_ST5, reg_fpu_ST6, reg_fpu_ST7
+
 }DianaUnifiedRegister;
 
+// flags
+#define DI_FLAG_CMD_SUPPORTS_IMM64          1
+#define DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64   2
+#define DI_FLAG_CMD_AMD_INVALID             4
+#define DI_FLAG_CMD_FPU_I                   8
+#define DI_FLAG_CMD_IGNORE_REX_PREFIX      16 
+
+
 // index fields
+#define DI_INT32          int
+#define DI_INT64          long long
+#define DI_UINT64         unsigned long long
 #define DI_CHAR           unsigned char
 #define DI_CHAR_NULL      ((unsigned char)(-1))
 
 #define DI_FULL_CHAR           unsigned int
 #define DI_FULL_CHAR_NULL           ((unsigned int)(-1))
-#define DI_MAX_OPERANDS_COUNT   (3)
+#define DI_MAX_OPERANDS_COUNT   (4)
 #define DI_MAX_OPCODE_COUNT   (4)
-#define DI_CACHE_SIZE (DI_MAX_OPCODE_COUNT+1) //+extension byte
+
+#define DI_CACHE_RESERVED      2
+#define DI_CACHE_SIZE (DI_MAX_OPCODE_COUNT + 1+ DI_CACHE_RESERVED)
+
+#define DI_MAX_PREFIXES_COUNT  16
 
 
 // common
@@ -85,9 +119,14 @@ typedef struct _dianaGroupInfo
 
 typedef void (*Diana_PrefixFnc)(struct _dianaContext * pContext);
 
+typedef void (*Diana_CallFnc)(struct _dianaContext * pDianaContext,
+                              void * pCallContext);
+
+// WARNING! This structure SHOULD EXACT MATCH DianaCmdInfo1 from diana_gen.c 
 typedef struct _dianaCmdInfo
 {
-    long m_lGroupId;
+    DI_INT32 m_lGroupId;
+    DI_CHAR m_flags;
     DI_CHAR m_bFullPostbyteUsed;
     DI_CHAR m_iCSIPExtensionSizeInBytes;
     DI_CHAR m_iImmediateOperandSizeInBytes;
@@ -95,7 +134,6 @@ typedef struct _dianaCmdInfo
     DI_CHAR m_iRegisterCodeAsOpcodePart;
     DI_CHAR m_bHas32BitAnalog;
     DI_CHAR m_extension;
-
     DI_CHAR m_operandCount;
     DI_CHAR m_bIsTruePrefix;
     Diana_PrefixFnc m_linkedPrefixFnc;
@@ -109,21 +147,21 @@ typedef struct _dianaRmIndex
     DianaUnifiedRegister indexed_reg;
     DI_CHAR index;
     DI_CHAR dispSize;
-    long dispValue;
+    DI_INT64 dispValue;
 }DianaRmIndex;
 
 typedef struct _dianaCallPtr
 {
-    unsigned long m_segment;
-    unsigned long m_address;
+    DI_UINT64 m_segment;
+    DI_UINT64 m_address;
     unsigned long m_segment_size;
     unsigned long m_address_size;
 }DianaCallPtr;
 
 typedef struct _dianaRel
 {
-    unsigned long m_size;
-    long m_value;
+    int       m_size;
+    DI_UINT64 m_value;
 }DianaRel;
 
 typedef struct _dianaMemory
@@ -140,7 +178,7 @@ typedef union _dianaOperandValue
     // r/m
     DianaRmIndex rmIndex;
     // immediate
-    unsigned long imm;
+    DI_UINT64 imm;
     // call ptr
     DianaCallPtr ptr;
     // rel
@@ -170,6 +208,8 @@ typedef struct _dianaParserResult
     DianaLinkedOperand linkedOperands[DI_MAX_OPERANDS_COUNT];
     int iLinkedOpCount;
     int iPrefix;
+    DI_CHAR iRexPrefix;
+    int iFullCmdSize;
 }DianaParserResult;
 
 // Callback
@@ -185,14 +225,32 @@ typedef struct _dianaReadStream
     DianaRead_fnc pReadFnc;
 }DianaReadStream;
 
+#define DI_REX_PREFIX_START    0x40
+#define DI_REX_PREFIX_END      0x4F
+#define DI_REX_HAS_FLAG_W(X)          (X&0x8)
+#define DI_REX_HAS_FLAG_R(X)          (X&0x4)
+#define DI_REX_HAS_FLAG_X(X)          (X&0x2)
+#define DI_REX_HAS_FLAG_B(X)          (X&0x1)
 
 #define DI_NO_PREFIX     0
 #define DI_PREFIX_LOCK   1
 #define DI_PREFIX_REP    2
 #define DI_PREFIX_REPN   3
 
+#define DIANA_MODE64    8
 #define DIANA_MODE32    4
 #define DIANA_MODE16    2
+
+#define DIANA_HAS_ADDRESS_SIZE_PREFIX   1
+#define DIANA_HAS_OPERAND_SIZE_PREFIX   2
+#define DIANA_INVALID_STATE             4
+
+typedef struct _dianaPrefixInfo
+{
+    Diana_PrefixFnc linkedPrefixFnc;
+    DI_CHAR prefix;
+}DianaPrefixInfo;
+
 typedef struct _dianaContext
 {
     int iMainMode_opsize;    // 4 or 2
@@ -205,9 +263,22 @@ typedef struct _dianaContext
     DianaUnifiedRegister currentCmd_sreg;  
 
     int iPrefix;
-    unsigned char readed[DI_CACHE_SIZE];
-    int iReadedSize;
+    int iSizePrefixes;
+
+    int iAMD64Mode;
+    DI_CHAR iRexPrefix;
+    DI_CHAR iRexPrefixValue;
+
+    unsigned char cache[DI_CACHE_SIZE];
+    int cacheSize;
+    int cacheIt;
+    
+    DI_FULL_CHAR lastPrefixBeforeRex;
+    DianaPrefixInfo prefixes[DI_MAX_PREFIXES_COUNT];
+    DI_FULL_CHAR prefixesCount;
 }DianaContext;
+
+void Diana_FatalBreak();
 
 void Diana_InitContext(DianaContext * pThis, int Mode);
 
@@ -219,16 +290,23 @@ int Diana_ParseCmd(DianaContext * pContext, // IN
 int DianaRecognizeCommonReg(DI_CHAR iOpSize,
                             DI_CHAR regId, 
                             DianaUnifiedRegister * pOut);
+int DianaRecognizeMMX(DI_CHAR regId, 
+                         DianaUnifiedRegister * pOut);
+int DianaRecognizeXMM(DI_CHAR regId, 
+                     DianaUnifiedRegister * pOut);
 
-typedef int (*Diana_ReadIndexStructure_type)(DI_CHAR iOpSize,
-                               unsigned char postbyte,
-                               DianaReadStream * pStream, 
-                               DianaOperandValue * pValue,
-                               DianaValueType * pType);
+typedef int (*Diana_ReadIndexStructure_type)(DianaContext * pContext,
+                                             DianaLinkedOperand * pInfo,
+                                             DI_CHAR iOpSize,
+                                             unsigned char postbyte,
+                                             DianaReadStream * pStream, 
+                                             DianaOperandValue * pValue,
+                                             DianaValueType * pType);
 
 DianaGroupInfo * Diana_GetGroupInfo(long lId);
 
 void Diana_Init();
+void Diana_ResetPrefixes(DianaContext * pContext);
 
 typedef void * (*Diana_Alloc_type)(void * pThis, size_t size);
 typedef void (*Diana_Free_type)(void * pThis, void * memory);

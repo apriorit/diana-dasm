@@ -79,7 +79,9 @@ static DianaRM16 g_table1[3][8]=
     }
 };
 
-int Diana_ReadIndexStructure16(DI_CHAR iOpSize,
+int Diana_ReadIndexStructure16(DianaContext * pContext,
+                               DianaLinkedOperand * pInfo,
+                               DI_CHAR iOpSize,
                                unsigned char postByte,
                                DianaReadStream * pStream, 
                                DianaOperandValue * pValue,
@@ -90,7 +92,7 @@ int Diana_ReadIndexStructure16(DI_CHAR iOpSize,
     if (mod == 3)
     {
         *pType = diana_register;
-        return Diana_DispatchMod3(rm, iOpSize, &pValue->recognizedRegister);
+        return Diana_DispatchMod3(pInfo, rm, rm, iOpSize, &pValue->recognizedRegister);
     }
 
     if (mod>3)

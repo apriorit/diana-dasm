@@ -1,6 +1,9 @@
 #include "diana_patchers.h"
 #include "diana_streams.h"
 
+#ifndef _M_X64
+#pragma warning(disable:4311)
+#pragma warning(disable:4267)
 
 int Diana_GetCmdSizeToMove(const DianaParserResult * pResult, size_t cmdSize, size_t * pNewSize)
 {
@@ -258,3 +261,5 @@ int Diana_PatchSomething32(void * pPlaceToHook,
     }
     return iRes;
 }
+
+#endif

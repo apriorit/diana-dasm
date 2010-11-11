@@ -21,6 +21,6 @@ int Diana_ParseCmdOnBuffer_test(int iMode,
         return iRes;
 
     if (*sizeRead!=size)
-        __asm int 3;
+        Diana_FatalBreak();;
     return iRes;
 }
