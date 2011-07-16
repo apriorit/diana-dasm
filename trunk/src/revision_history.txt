@@ -1,6 +1,6 @@
 [0.2.0-diana-win32-src] 
 + fixed minor bugs
-+ added emulator
++ added emulator (diana_9_0.sln)
 + added commands:
 
 CMPXCHG16B mem128 | 0F C7 /1
