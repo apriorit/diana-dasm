@@ -395,6 +395,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                     else
                         return DI_ERROR;
                 }
+                pLinkedOp->usedSize = 2;
                 iRes = Diana_RecognizeSreg(RegCode, &pLinkedOp->value.recognizedRegister);
                 if (iRes)
                     return iRes;
@@ -459,11 +460,13 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 
         case diana_orRel:
         case diana_orRel16x32:
-                if (pResult->pInfo->m_operandCount!=1)
-                {
-                    Diana_FatalBreak();;
-                    return DI_ERROR;
-                }
+                // commented out because of
+                // E3  cb         JCXZ CX,rel8      9+m,5    Jump short if ECX(CX) register is 0
+                //if (pResult->pInfo->m_operandCount!=1)
+                //{
+                //    Diana_FatalBreak();;
+                //    return DI_ERROR;
+                //}
                 if (iCSIPSize!= DI_CHAR_NULL)
                 {
                         if (pResult->pInfo->m_bHas32BitAnalog && iCSIPSize!=1)
@@ -573,7 +576,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         case diana_orRegXMM:
                 pLinkedOp->type = diana_register;
                 pLinkedOp->value.recognizedRegister = reg_XMM0 + Diana_GetReg2(pContext, PostByte);
-                pLinkedOp->usedSize = 8;
+                pLinkedOp->usedSize = 16;
                 break;
 
         case diana_orRegMMX:

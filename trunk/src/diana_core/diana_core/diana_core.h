@@ -17,6 +17,7 @@ typedef enum
  reg_CR0,   reg_CR1,   reg_CR2,   reg_CR3,   reg_CR4,   reg_CR5,   reg_CR6,   reg_CR7,
  reg_DR0,   reg_DR1,   reg_DR2,   reg_DR3,   reg_DR4,   reg_DR5,   reg_DR6,   reg_DR7,
  reg_TR0,   reg_TR1,   reg_TR2,   reg_TR3,   reg_TR4,   reg_TR5,   reg_TR6,   reg_TR7,
+ reg_IP,
 
 
  // x64 part
@@ -34,7 +35,9 @@ typedef enum
  reg_XMM0, reg_XMM1, reg_XMM2, reg_XMM3, reg_XMM4, reg_XMM5, reg_XMM6, reg_XMM7,
  reg_XMM8, reg_XMM9, reg_XMM10, reg_XMM11, reg_XMM12, reg_XMM13, reg_XMM14, reg_XMM15,
 
- reg_fpu_ST0, reg_fpu_ST1, reg_fpu_ST2, reg_fpu_ST3, reg_fpu_ST4, reg_fpu_ST5, reg_fpu_ST6, reg_fpu_ST7
+ reg_fpu_ST0, reg_fpu_ST1, reg_fpu_ST2, reg_fpu_ST3, reg_fpu_ST4, reg_fpu_ST5, reg_fpu_ST6, reg_fpu_ST7,
+
+ count_of_DianaUnifiedRegister
 
 }DianaUnifiedRegister;
 
@@ -47,11 +50,18 @@ typedef enum
 
 
 // index fields
+#define DI_UINT16         unsigned short
+#define DI_INT16          short
 #define DI_INT32          int
 #define DI_INT64          long long
+#define DI_UINT32         unsigned int
 #define DI_UINT64         unsigned long long
 #define DI_CHAR           unsigned char
+#define DI_SIGNED_CHAR    char
 #define DI_CHAR_NULL      ((unsigned char)(-1))
+
+#define OPERAND_SIZE  unsigned long long
+#define OPERAND_SIZE_SIGNED  long long
 
 #define DI_FULL_CHAR           unsigned int
 #define DI_FULL_CHAR_NULL           ((unsigned int)(-1))
@@ -115,6 +125,7 @@ typedef struct _dianaGroupInfo
     long m_lGroupId;
     const char * m_pName;
     Diana_LinkedAdditionalGroupInfo * m_pLinkedInfo;
+    void * m_pTag;
 }DianaGroupInfo;
 
 typedef void (*Diana_PrefixFnc)(struct _dianaContext * pContext);
@@ -137,6 +148,7 @@ typedef struct _dianaCmdInfo
     DI_CHAR m_operandCount;
     DI_CHAR m_bIsTruePrefix;
     Diana_PrefixFnc m_linkedPrefixFnc;
+    DianaGroupInfo * m_pGroupInfo;
     DianaOperandInfo m_operands[1];
 }DianaCmdInfo;
 
@@ -213,17 +225,46 @@ typedef struct _dianaParserResult
 }DianaParserResult;
 
 // Callback
-#define DI_END ((int)1)
-#define DI_ERROR ((int)-1)
-#define DI_NOT_SUPPORTED ((int)-2)
+#define DI_END                      ((int)1)
+#define DI_ERROR                    ((int)-1)
+#define DI_OUT_OF_MEMORY            ((int)-2)
+#define DI_DIVISION_BY_ZERO         ((int)-3)
+#define DI_UNSUPPORTED_COMMAND      ((int)-4)
+#define DI_DIVISION_OVERFLOW        ((int)-5)
+#define DI_INVALID_CONFIGURATION    ((int)-6)
+#define DI_WIN32_ERROR              ((int)-7)
+#define DI_ERROR_NOT_USED_BY_CORE   ((int)-8)
+
 #define DI_SUCCESS ((int)0)
 
-typedef int (* DianaRead_fnc)(void * pThis, void * pBuffer, int iBufferSize, int * readed);
+#define DI_CHECK_ALLOC(x) { if(!(x)) return DI_OUT_OF_MEMORY; }
+#define DI_CHECK(x) { int di____code = (x); if (di____code != DI_SUCCESS) { return di____code; } }
+
+typedef int (* DianaRead_fnc)(void * pThis, 
+                              void * pBuffer, 
+                              int iBufferSize, 
+                              int * readed);
+typedef int (* DianaWrite_fnc)(void * pThis, 
+                               void * pBuffer, 
+                               int iBufferSize, 
+                               int * wrote);
 
 typedef struct _dianaReadStream
 {
     DianaRead_fnc pReadFnc;
 }DianaReadStream;
+
+
+// Allocators
+typedef void * (* DianaAlloc_fnc)(void * pThis, int iBufferSize);
+typedef void (* DianaDealloc_fnc)(void * pThis, void * pBuffer);
+
+typedef struct _dianaAllocator
+{
+    DianaAlloc_fnc   m_alloc;
+    DianaDealloc_fnc m_dealloc;
+}DianaAllocator;
+
 
 #define DI_REX_PREFIX_START    0x40
 #define DI_REX_PREFIX_END      0x4F
@@ -279,8 +320,11 @@ typedef struct _dianaContext
 }DianaContext;
 
 void Diana_FatalBreak();
+void Diana_DebugFatalBreak();
 
 void Diana_InitContext(DianaContext * pThis, int Mode);
+
+void Diana_ClearCache(DianaContext * pThis);
 
 int Diana_ParseCmd(DianaContext * pContext, // IN
                    DianaCmdKeyLine * pInitialLine,  // IN
@@ -318,5 +362,7 @@ typedef struct _Diana_Allocator
     Diana_Free_type m_free;
     Diana_Patcher_type m_patch;
 }Diana_Allocator;
+
+
 
 #endif

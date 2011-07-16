@@ -80,6 +80,15 @@ void Diana_FatalBreak()
     __debugbreak();
 #endif
 }
+
+void Diana_DebugFatalBreak()
+{
+#ifdef _DEBUG
+    Diana_FatalBreak();
+#endif
+}
+
+
 void Diana_InitContext(DianaContext * pThis, int Mode)
 {
     memset(pThis, 0, sizeof(*pThis));
@@ -105,6 +114,12 @@ void Diana_InitContext(DianaContext * pThis, int Mode)
 
     pThis->mainMode_sreg = reg_DS;
     pThis->currentCmd_sreg = reg_DS;
+}
+
+void Diana_ClearCache(DianaContext * pThis)
+{
+    pThis->cacheIt = DI_CACHE_RESERVED;
+    pThis->cacheSize = 0;
 }
 
 // debug
@@ -329,3 +344,5 @@ void Diana_Init()
 
     Diana_InitUtils();
 }
+
+

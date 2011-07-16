@@ -10,7 +10,7 @@ extern "C"
 
 unsigned char cmp[] = {0x3B, 0xF4};       //          cmp         esi,esp 
 
-int test_cmp()
+static int test_cmp1()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -30,5 +30,44 @@ int test_cmp()
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_ESP);
     }
 
+    return 0;
+}
+
+
+void test_cmpxchg8b()
+{
+    // f00fc74d00       lock    cmpxchg8b qword ptr [ebp]
+    unsigned char code[] = {0xf0, 0x0f, 0xc7, 0x4d, 0x00};       
+   
+    DianaGroupInfo * pGroupInfo=0;
+    DianaParserResult result;
+    size_t read;
+    
+    int iRes = 0;
+
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, code, sizeof(code), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "cmpxchg16b")==0);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].usedAddressSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_EBP);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 1);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
+    }
+
+}
+
+int test_cmp()
+{
+    test_cmp1();
+    test_cmpxchg8b();
     return 0;
 }

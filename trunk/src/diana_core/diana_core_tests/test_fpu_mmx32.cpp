@@ -55,7 +55,7 @@ void test_fpu_mmx32()
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "pcmpgtd")==0);
 
-        TEST_ASSERT(result.linkedOperands[0].usedSize == 8);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 16);
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_XMM0);
 
@@ -77,11 +77,11 @@ void test_fpu_mmx32()
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movdqu")==0);
 
-        TEST_ASSERT(result.linkedOperands[0].usedSize == 8);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 16);
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_XMM6);
 
-        TEST_ASSERT(result.linkedOperands[1].usedSize == 8);
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 16);
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_XMM1);
     }

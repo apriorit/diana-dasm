@@ -43,7 +43,7 @@ int Diana_DispatchMod3(DianaLinkedOperand * pInfo,
     }
     if (pInfo->pInfo->m_type == diana_orMemoryXMM)
     {
-        pInfo->usedSize = 8;
+        pInfo->usedSize = 16;
         return DianaRecognizeXMM(rm, pOut);
     }
         
