@@ -12,8 +12,7 @@ void test_processor2();
 extern void __cdecl test_function();
 int main()
 {
-    //std::cout<<"hello, world!";
-    std::cout<<" ";//hello, world!";
+    std::cout<<" ";
     test_function();
     Diana_Init();
     DianaProcessor_GlobalInit();

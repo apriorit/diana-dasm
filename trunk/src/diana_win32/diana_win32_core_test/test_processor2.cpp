@@ -3,11 +3,6 @@
 void __cdecl test_function_impl()
 {
      std::cout<<"hello, world!";
-
-
-    /*wchar_t buf[] = L"hello, world!";
-    DWORD written  = 0;
-    WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), buf, sizeof(buf)/sizeof(buf[0])-1, &written, 0);*/
 }
 
 static char g_stack[1024*1024];
@@ -65,22 +60,12 @@ void test_processor2()
 
         states.push_back(State(pCallContext));
 
-        if (states.size() == 21332 +1)
-        {
-            __asm int 3;
-        }
-
         int res = DianaProcessor_ExecOnce(pCallContext);
-
-
-
         TEST_ASSERT(res == DI_SUCCESS);
         if (res != DI_SUCCESS)
         {
             OPERAND_SIZE failedRip  = GET_REG_RIP;
             break;
         }
-
-        //PrintContext(pCallContext);
     }
 }
