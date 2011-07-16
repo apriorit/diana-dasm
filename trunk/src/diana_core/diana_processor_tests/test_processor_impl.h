@@ -22,8 +22,8 @@ class CTestProcessor
     CTestProcessor & operator =(const CTestProcessor&);
 public:
     CTestProcessor(unsigned char * pBuffer,
-                   int size,
-                   int segmentSize = 0)
+                   size_t size,
+                   size_t segmentSize = 0)
     {
         Diana_InitRandomMemoryStream(&m_memoryStream,
                                      pBuffer,
