@@ -1,6 +1,8 @@
 #ifndef TEST_WIN32_COMMON_H
 #define TEST_WIN32_COMMON_H
 
+#pragma warning(disable:4996)
+
 extern "C"
 {
 #include "diana_win32_processor.h"
