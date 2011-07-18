@@ -380,9 +380,10 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
                                                                 &pInstruction,
                                                                 0)); // flags for new instruction
 
-    // clear DI_INSTRUCTION_IS_LOADING 
+    // clear DI_INSTRUCTION_IS_LOADING flag
     pInstruction->m_flags = 0;
 
+    // analyze command
     pLinkedInfo = pSession->result.pInfo->m_pGroupInfo->m_pLinkedInfo;
     if (!pLinkedInfo)
     {
@@ -431,13 +432,7 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
 
     DI_CHECK(iRes);
     
-
-    // check bounds
-    if (newOffset > pSession->maxOffset)
-    {
-        return DI_SUCCESS;
-    }
-
+    // save new route
     DI_CHECK(SaveNewRoute(pSession,
                           pInstruction,
                           newOffset,
