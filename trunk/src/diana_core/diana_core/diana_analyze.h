@@ -7,6 +7,10 @@
 #define DI_INSTRUCTION_CAN_CHANGE_CSIP    0x1
 #define DI_INSTRUCTION_IS_RET             0x2
 #define DI_INSTRUCTION_IS_LOADING         0x4
+#define DI_INSTRUCTION_USES_RIP           0x8
+#define DI_INSTRUCTION_USES_UNKNOWN_RIP   0x10
+
+#define DI_ROUTE_QUESTIONABLE             0x1
 
 typedef struct _Diana_Instruction
 {
@@ -23,16 +27,25 @@ typedef struct _Diana_XRef
 }Diana_XRef;
 
 typedef int (* DianaAnalyzeMoveTo_fnc)(void * pThis, OPERAND_SIZE offset);
-
-typedef struct _dianaAnalyzeReadStream
+typedef int (* ConvertAddressToRelative_fnc)(void * pThis, 
+                                            OPERAND_SIZE address,
+                                            OPERAND_SIZE * pRelativeOffset,
+                                            int * pbInvalidPointer);
+typedef int (* AddSuspectedDataAddress_fnc)(void * pThis, 
+                                            OPERAND_SIZE address);
+typedef struct _dianaAnalyzeObserver
 {
-    DianaReadStream m_parent;
+    DianaReadStream m_stream;
     DianaAnalyzeMoveTo_fnc m_pMoveTo;
-}DianaAnalyzeReadStream;
+    ConvertAddressToRelative_fnc m_pConvertAddress;
+    AddSuspectedDataAddress_fnc m_pSuspectedDataAddress;
+}DianaAnalyzeObserver;
 
-void DianaAnalyzeReadStream_Init(DianaAnalyzeReadStream * pThis,
+void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
                                  DianaRead_fnc pReadFnc,
-                                 DianaAnalyzeMoveTo_fnc pMoveFnc);
+                                 DianaAnalyzeMoveTo_fnc pMoveFnc,
+                                 ConvertAddressToRelative_fnc pConvertAddress,
+                                 AddSuspectedDataAddress_fnc pSuspectedDataAddress);
 
 void Diana_Instruction_Init(Diana_Instruction * pInstruction,
                             OPERAND_SIZE m_offset,
@@ -48,13 +61,19 @@ typedef struct _Diana_InstructionsOwner
     int m_stackInited;
 }Diana_InstructionsOwner;
 
+typedef struct _Diana_RouteInfo
+{
+    OPERAND_SIZE  startOffset;
+    long flags;
+}Diana_RouteInfo;
+
 int Diana_InstructionsOwner_Init(Diana_InstructionsOwner * pOwner,
                                  OPERAND_SIZE maxOffsetSize);
 void Diana_InstructionsOwner_Free(Diana_InstructionsOwner * pOwner);
 Diana_Instruction * Diana_InstructionsOwner_AllocateInstruction(Diana_InstructionsOwner * pOwner);
 
 int Diana_AnalyzeCode(Diana_InstructionsOwner * pOwner,
-                      DianaAnalyzeReadStream * pStream,
+                      DianaAnalyzeObserver * pObserver,
                       int mode,
                       OPERAND_SIZE initialOffset,
                       OPERAND_SIZE maxOffset);
