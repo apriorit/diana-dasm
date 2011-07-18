@@ -113,11 +113,16 @@ typedef struct _dianaOperandInfo
 
 }DianaOperandInfo;
 
+#define DIANA_GT_CAN_CHANGE_RIP                      0x1
+#define DIANA_GT_IS_CALL                             0x2
+#define DIANA_GT_IS_JUMP                             0x4
+#define DIANA_GT_CAN_GO_TO_THE_NEXT_INSTRUCTION      0x8
+#define DIANA_GT_RET                                 0x10
+
 typedef struct _Diana_LinkedAdditionalGroupInfo
 {
-    int isCall;
-    int isJump;
-    int canChangeCSIP;
+    int flags;
+    int relArgrumentNumber;
 }Diana_LinkedAdditionalGroupInfo;
 
 typedef struct _dianaGroupInfo
@@ -363,6 +368,7 @@ typedef struct _Diana_Allocator
     Diana_Patcher_type m_patch;
 }Diana_Allocator;
 
+void Diana_CacheEatOneSafe(DianaContext * pContext);
 
 
 #endif

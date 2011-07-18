@@ -58,7 +58,7 @@ void test_processor2()
         if (rip == exitOp)
             break;
 
-        states.push_back(State(pCallContext));
+     //   states.push_back(State(pCallContext));
 
         int res = DianaProcessor_ExecOnce(pCallContext);
         TEST_ASSERT(res == DI_SUCCESS);

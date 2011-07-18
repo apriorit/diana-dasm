@@ -102,7 +102,16 @@
 			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
+				RelativePath=".\diana_allocators.c">
+			</File>
+			<File
+				RelativePath=".\diana_analyze.c">
+			</File>
+			<File
 				RelativePath=".\diana_core.c">
+			</File>
+			<File
+				RelativePath=".\diana_core_gen_tags.c">
 			</File>
 			<File
 				RelativePath=".\diana_core_parsers.c">
@@ -114,10 +123,16 @@
 				RelativePath=".\diana_gen.c">
 			</File>
 			<File
+				RelativePath=".\diana_list.c">
+			</File>
+			<File
 				RelativePath=".\diana_operands.c">
 			</File>
 			<File
 				RelativePath=".\diana_patchers.c">
+			</File>
+			<File
+				RelativePath=".\diana_stack.c">
 			</File>
 			<File
 				RelativePath=".\diana_stream_proxy.c">
@@ -134,13 +149,25 @@
 			<File
 				RelativePath=".\diana_tables_common.c">
 			</File>
+			<File
+				RelativePath=".\diana_uids.c">
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
+				RelativePath=".\diana_allocators.h">
+			</File>
+			<File
+				RelativePath=".\diana_analyze.h">
+			</File>
+			<File
 				RelativePath=".\diana_core.h">
+			</File>
+			<File
+				RelativePath=".\diana_core_gen_tags.h">
 			</File>
 			<File
 				RelativePath=".\diana_core_parsers.h">
@@ -152,10 +179,16 @@
 				RelativePath=".\diana_gen.h">
 			</File>
 			<File
+				RelativePath=".\diana_list.h">
+			</File>
+			<File
 				RelativePath=".\diana_operands.h">
 			</File>
 			<File
 				RelativePath=".\diana_patchers.h">
+			</File>
+			<File
+				RelativePath=".\diana_stack.h">
 			</File>
 			<File
 				RelativePath=".\diana_stream_proxy.h">
@@ -171,6 +204,9 @@
 			</File>
 			<File
 				RelativePath=".\diana_tables_common.h">
+			</File>
+			<File
+				RelativePath=".\diana_uids.h">
 			</File>
 		</Filter>
 		<Filter

@@ -289,6 +289,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_analyze.c"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_core.c"
 				>
 			</File>
@@ -309,11 +313,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_list.c"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_operands.c"
 				>
 			</File>
 			<File
 				RelativePath=".\diana_patchers.c"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_stack.c"
 				>
 			</File>
 			<File
@@ -351,6 +363,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_analyze.h"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_core.h"
 				>
 			</File>
@@ -371,11 +387,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_list.h"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_operands.h"
 				>
 			</File>
 			<File
 				RelativePath=".\diana_patchers.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_stack.h"
 				>
 			</File>
 			<File

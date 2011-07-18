@@ -102,17 +102,9 @@ void CDianaDebugger::DebugLoop()
                     m_remoteStream.Validate();
                 }
 
-                if (m_cmdCount == 55214)
-                {
-                    __asm int 3;
-                }
                 ++m_tempCount;
                 ++m_cmdCount;
                 
-                //if (m_cmdCount == 0x000000000002d9c9)
-                //{
-                //    _asm int 3;
-                //}
                 if (m_tempCount >= g_step)
                 {
                     std::cout<<"Commands: "<<m_cmdCount<<"\n";

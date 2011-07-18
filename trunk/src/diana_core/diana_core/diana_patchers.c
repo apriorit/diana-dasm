@@ -15,7 +15,7 @@ int Diana_GetCmdSizeToMove(const DianaParserResult * pResult, size_t cmdSize, si
         *pNewSize = cmdSize;
         return DI_SUCCESS;
     }
-    if (!pGroupInfo->m_pLinkedInfo->canChangeCSIP)
+    if (!(pGroupInfo->m_pLinkedInfo->flags & DIANA_GT_CAN_CHANGE_RIP))
     {
         *pNewSize = cmdSize;
         return DI_SUCCESS;
@@ -27,7 +27,7 @@ int Diana_GetCmdSizeToMove(const DianaParserResult * pResult, size_t cmdSize, si
         if (pOp->type == diana_rel)
         {
             *pNewSize = 5;
-            if (pGroupInfo->m_pLinkedInfo->isJump)
+            if (pGroupInfo->m_pLinkedInfo->flags & DIANA_GT_IS_JUMP)
             {
                 //todo: if CONDITIONAL
                 *pNewSize = 6;
@@ -108,7 +108,7 @@ Diana_MoveSequence(void * pDestination,
 
         // analyze 
         pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId);
-        if (pGroupInfo->m_pLinkedInfo &&  pGroupInfo->m_pLinkedInfo->canChangeCSIP)
+        if (pGroupInfo->m_pLinkedInfo &&  (pGroupInfo->m_pLinkedInfo->flags & DIANA_GT_CAN_CHANGE_RIP))
         {
             if (result.iLinkedOpCount ==1 && result.linkedOperands[0].type == diana_rel)
             {

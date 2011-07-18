@@ -125,6 +125,9 @@
 				RelativePath=".\test_add.cpp">
 			</File>
 			<File
+				RelativePath=".\test_analyze.cpp">
+			</File>
+			<File
 				RelativePath=".\test_call.cpp">
 			</File>
 			<File
@@ -182,6 +185,9 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath=".\test_add.h">
+			</File>
+			<File
+				RelativePath=".\test_analyze.h">
 			</File>
 			<File
 				RelativePath=".\test_call.h">

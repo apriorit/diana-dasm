@@ -7,8 +7,12 @@
 #include "diana_core_parsers.h"
 
 
-static Diana_LinkedAdditionalGroupInfo g_infoForCalls = {1, 0, 1};
-static Diana_LinkedAdditionalGroupInfo g_infoForJmps = {0, 1, 1};
+static Diana_LinkedAdditionalGroupInfo g_infoForRets =  {DIANA_GT_CAN_CHANGE_RIP|DIANA_GT_RET, 0};
+static Diana_LinkedAdditionalGroupInfo g_infoForCalls = {DIANA_GT_CAN_CHANGE_RIP|DIANA_GT_IS_CALL|DIANA_GT_CAN_GO_TO_THE_NEXT_INSTRUCTION, 0};
+static Diana_LinkedAdditionalGroupInfo g_infoForJmps =  {DIANA_GT_CAN_CHANGE_RIP|DIANA_GT_IS_JUMP, 0};
+static Diana_LinkedAdditionalGroupInfo g_infoForLoops = {DIANA_GT_CAN_CHANGE_RIP|DIANA_GT_IS_JUMP|DIANA_GT_CAN_GO_TO_THE_NEXT_INSTRUCTION, 0};
+static Diana_LinkedAdditionalGroupInfo g_infoForJecxz = {DIANA_GT_CAN_CHANGE_RIP|DIANA_GT_IS_JUMP|DIANA_GT_CAN_GO_TO_THE_NEXT_INSTRUCTION, 1};
+static Diana_LinkedAdditionalGroupInfo g_infoForJcc =   {DIANA_GT_CAN_CHANGE_RIP|DIANA_GT_IS_JUMP|DIANA_GT_CAN_GO_TO_THE_NEXT_INSTRUCTION, 0};
 
 
 typedef struct _dianaProxyReadStream
@@ -143,6 +147,23 @@ static void Diana_Normal(struct _dianaContext * pContext)
 
 static int InitJmps(DianaGroupInfo * pGroupInfo)
 {
+    // RETS
+    if (!strcmp(pGroupInfo->m_pName,"ret"))
+    {
+        pGroupInfo->m_pLinkedInfo = &g_infoForRets;
+        return 1;
+    } else
+    if (!strcmp(pGroupInfo->m_pName,"iret"))
+    {
+        pGroupInfo->m_pLinkedInfo = &g_infoForRets;
+        return 1;
+    } else
+    if (!strcmp(pGroupInfo->m_pName,"leave"))
+    {
+        pGroupInfo->m_pLinkedInfo = &g_infoForRets;
+        return 1;
+    } else
+
     // CALLS
     if (!strcmp(pGroupInfo->m_pName,"call"))
     {
@@ -153,17 +174,17 @@ static int InitJmps(DianaGroupInfo * pGroupInfo)
     // LOOPS
     if (!strcmp(pGroupInfo->m_pName,"loop"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForLoops;
         return 1;
     } else
     if (!strcmp(pGroupInfo->m_pName,"loope"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForLoops;
         return 1;
     } else
     if (!strcmp(pGroupInfo->m_pName,"loopn"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForLoops;
         return 1;
     } else
 
@@ -175,85 +196,85 @@ static int InitJmps(DianaGroupInfo * pGroupInfo)
     } else
     if (!strcmp(pGroupInfo->m_pName,"ja"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jae"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jb"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"je"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jecxz"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJecxz;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jg"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jge"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jl"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jle"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jne"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jno"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jnp"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
     if (!strcmp(pGroupInfo->m_pName,"jns"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }
     else
     if (!strcmp(pGroupInfo->m_pName,"jo"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }
     else
     if (!strcmp(pGroupInfo->m_pName,"jp"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }
     else
     if (!strcmp(pGroupInfo->m_pName,"js"))
     {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }
     return 0;
@@ -301,7 +322,7 @@ void Diana_InitLine(DianaCmdKeyLine * pRoot)
             // a) all who can change CS/IP should have def operand size 64
             if (pGroupInfo->m_pLinkedInfo)
             {
-                if (pGroupInfo->m_pLinkedInfo->canChangeCSIP)
+                if (pGroupInfo->m_pLinkedInfo->flags & DIANA_GT_CAN_CHANGE_RIP)
                 {
                     pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
                 }
@@ -345,4 +366,15 @@ void Diana_Init()
     Diana_InitUtils();
 }
 
+void Diana_CacheEatOneSafe(DianaContext * pContext)
+{
+    DI_CHAR data = pContext->cache[pContext->cacheIt];
+    if (!pContext->cacheSize || pContext->cacheIt>=DI_CACHE_SIZE)
+    {
+        return;
+    }
+    ++pContext->cacheIt;
+    --pContext->cacheSize;
+    return;
+}
 

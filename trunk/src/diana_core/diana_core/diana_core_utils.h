@@ -25,6 +25,7 @@ void Di_ProcessCustomPrefix(unsigned char value,
 void Diana_InitUtils();
 
 DI_CHAR Diana_CacheEatOne(DianaContext * pContext);
+
 int Diana_ReadCache(DianaContext * pContext,
                     DianaReadStream * readStream,
                     int bOptimize);
