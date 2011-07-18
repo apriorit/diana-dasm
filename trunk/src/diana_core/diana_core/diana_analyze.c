@@ -178,6 +178,10 @@ int SaveNewRoute(DianaAnalyzeSession * pSession,
     Diana_XRef * pXref = 0;
 
     Diana_RouteInfo curRouteInfo;
+
+    if (newOffset > pSession->maxOffset)
+        return DI_SUCCESS;
+
     curRouteInfo.startOffset = newOffset;
     curRouteInfo.flags = newRouteFlags;
 

@@ -107,15 +107,7 @@ int DianaConvertAddressToRelative(void * pThis,
                              int * pbInvalidPointer)
 {
     TestStream * pStream = (TestStream * )pThis;
-    *pRelativeOffset = 0;
-    if (address < pStream->m_base)
-    {
-        *pbInvalidPointer = 1;
-    }
-    else
-    {
-        *pRelativeOffset = address - pStream->m_base;
-    }
+    *pRelativeOffset = address;
     return DI_SUCCESS;
 }
  
