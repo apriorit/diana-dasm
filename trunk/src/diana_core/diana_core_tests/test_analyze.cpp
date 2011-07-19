@@ -191,27 +191,29 @@ void test_analyzer1()
 
 void test_analyzer2()
 {
-    unsigned char code[] = {  0xbe, 21, 0x00, 0x00, 0x00 //    mov     esi,14 :0
-                            , 0xbe, 22, 0x00, 0x00, 0x00 //    mov     esi,15 :5
-                            , 0xbe, 23, 0x00, 0x00, 0x00 //    mov     esi,16 :10
-                            , 0xbe, 24, 0x00, 0x00, 0x00 //    mov     esi,17 :15
-                            , 0xC3                       //    ret            :20
-                            , 0xbe, 55, 0x00, 0x00, 0x00 //    mov     esi,55 :21
-                            , 0xc5                       //    db c5          :26
-                            , 0xc5                       //    db c5          :27
+    unsigned char code[] = {  0xbe, 23, 0x00, 0x00, 0x00 //    mov     esi,14 :0
+                            , 0xbe, 24, 0x00, 0x00, 0x00 //    mov     esi,15 :5
+                            , 0xbe, 25, 0x00, 0x00, 0x00 //    mov     esi,16 :10
+                            , 0x75, 0x5                  //    jne            :15
+                            , 0xbe, 26, 0x00, 0x00, 0x00 //    mov     esi,17 :17
+                            , 0xC3                       //    ret            :22
+                            , 0xbe, 55, 0x00, 0x00, 0x00 //    mov     esi,55 :23
                             , 0xc5                       //    db c5          :28
                             , 0xc5                       //    db c5          :29
                             , 0xc5                       //    db c5          :30
                             , 0xc5                       //    db c5          :31
                             , 0xc5                       //    db c5          :32
+                            , 0xc5                       //    db c5          :33
+                            , 0xc5                       //    db c5          :34
                             };
 
     IntructionInfo instructions[] =   
                         {{0,               0,                           0},
                          {5,               0,                           0},
                          {10,               0,                        0},
-                         {15,              0,                        0},
-                         {20,              0,                        0},
+                         {15,              "22",                        0},
+                         {17,              0,                        0},
+                         {22,              0,                        "15"},
     };
 
     const int instructionsCount = sizeof(instructions)/sizeof(instructions[0]);

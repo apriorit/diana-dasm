@@ -596,17 +596,17 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
                     bNeedReset = 1;
                     continue;
                 }
-                //if (pInstruction->m_flags & DI_INSTRUCTION_IS_LOADING)
-                //{
-                //    if (pInstruction->m_flags & DI_INSTRUCTION_ROOT ||
-                //        !(pSession->curRouteInfo.flags & DI_ROUTE_QUESTIONABLE))
-                //    {
-                //        bNeedReset = 1;
-                //        continue;
-                //    }
+                if (!(pInstruction->m_flags & DI_INSTRUCTION_IS_LOADING))
+                {
+                    if (pInstruction->m_flags & DI_INSTRUCTION_ROOT ||
+                        !(pSession->curRouteInfo.flags & DI_ROUTE_QUESTIONABLE))
+                    {
+                        bNeedReset = 1;
+                        continue;
+                    }
 
-                //    // process it now
-                //}
+                    // process it now
+                }
             }
         }
         // analyze instruction
