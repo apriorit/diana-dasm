@@ -9,21 +9,34 @@
 #define DI_INSTRUCTION_IS_LOADING         0x4
 #define DI_INSTRUCTION_USES_RIP           0x8
 #define DI_INSTRUCTION_USES_UNKNOWN_RIP   0x10
+#define DI_INSTRUCTION_INVALID            0x20
+#define DI_INSTRUCTION_ROOT               0x40
 
 #define DI_ROUTE_QUESTIONABLE             0x1
 
+#define DI_XREF_INVALID                   0x1
 typedef struct _Diana_Instruction
 {
+    // used only in contructror time
+    Diana_ListNode m_routeEntry;
+
     OPERAND_SIZE m_offset;
     Diana_List m_refsTo;
     Diana_List m_refsFrom;
     int m_flags;
 }Diana_Instruction;
 
+typedef struct _Diana_SubXRef
+{
+    Diana_ListNode m_instructionEntry; // must be first
+    Diana_Instruction * m_pInstruction;
+}Diana_SubXRef;
+
+
 typedef struct _Diana_XRef
 {
-    Diana_ListNode m_instructionEntry;
-    Diana_Instruction * m_pInstruction;
+    Diana_SubXRef m_subrefs[2];  // from -> to
+    int m_flags;
 }Diana_XRef;
 
 typedef int (* DianaAnalyzeMoveTo_fnc)(void * pThis, OPERAND_SIZE offset);
@@ -58,11 +71,13 @@ typedef struct _Diana_InstructionsOwner
     Diana_Instruction * m_pInstructionsVec;
     OPERAND_SIZE m_maxSize;
     OPERAND_SIZE m_usedSize;
+    OPERAND_SIZE m_actualSize;
     int m_stackInited;
 }Diana_InstructionsOwner;
 
-typedef struct _Diana_RouteInfo
+typedef struct _diana_RouteInfo
 {
+    Diana_List instructions;
     OPERAND_SIZE  startOffset;
     long flags;
 }Diana_RouteInfo;
@@ -77,5 +92,8 @@ int Diana_AnalyzeCode(Diana_InstructionsOwner * pOwner,
                       int mode,
                       OPERAND_SIZE initialOffset,
                       OPERAND_SIZE maxOffset);
+
+Diana_XRef * Diana_CastXREF(Diana_ListNode * pNode,
+                           int index);
 
 #endif

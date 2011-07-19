@@ -12,6 +12,7 @@ typedef struct _DianaAnalyzeSession
     DianaContext context;
     DianaParserResult result;
     OPERAND_SIZE maxOffset;
+    Diana_RouteInfo curRouteInfo;
 }DianaAnalyzeSession;
 
 void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
@@ -36,7 +37,6 @@ void Diana_Instruction_Init(Diana_Instruction * pInstruction,
     pInstruction->m_flags = flags;
     Diana_InitList(&pInstruction->m_refsTo);
     Diana_InitList(&pInstruction->m_refsFrom);
-
 }
 int Diana_InstructionsOwner_Init(Diana_InstructionsOwner * pOwner,
                                  OPERAND_SIZE maxOffsetSize)
@@ -89,6 +89,7 @@ Diana_Instruction * Diana_InstructionsOwner_AllocateInstruction(Diana_Instructio
         return 0;
 
     ++pOwner->m_usedSize;
+    ++pOwner->m_actualSize;
     return pEntry;
 }
 
@@ -106,21 +107,27 @@ int Diana_InstructionsOwner_QueryOrAllocateInstruction(Diana_InstructionsOwner *
 
         Diana_Instruction_Init(*ppInstruction, 
                                address,
-                               flags);
+                               flags
+                               );
         pOwner->m_ppPresenceVec[address] = *ppInstruction;
     }
     return DI_SUCCESS;
 }
 
 static int Diana_CreateXRef(Diana_InstructionsOwner * pOwner,
-                            Diana_Instruction * pInstruction,
+                            Diana_Instruction * pFromInstruction,
+                            Diana_Instruction * pToInstruction,
                             Diana_XRef ** ppXref)
 {
     Diana_XRef xref;
     memset(&xref, 0, sizeof(xref));
-    xref.m_pInstruction = pInstruction;
+    xref.m_subrefs[0].m_pInstruction = pFromInstruction;
+    xref.m_subrefs[1].m_pInstruction = pToInstruction;
     DI_CHECK(Diana_Stack_Push(&pOwner->m_xrefs, &xref));
+
     *ppXref = (Diana_XRef *)Diana_Stack_GetTopPtr(&pOwner->m_xrefs);
+    Diana_PushBack(&pToInstruction->m_refsFrom, &(*ppXref)->m_subrefs[0].m_instructionEntry);
+    Diana_PushBack(&pFromInstruction->m_refsTo, &(*ppXref)->m_subrefs[1].m_instructionEntry);
     return DI_SUCCESS;
 }
 
@@ -177,13 +184,15 @@ int SaveNewRoute(DianaAnalyzeSession * pSession,
     Diana_Instruction * pOldTargetInstruction = 0;
     Diana_XRef * pXref = 0;
 
-    Diana_RouteInfo curRouteInfo;
+    Diana_RouteInfo newRouteInfo;
+ //   Diana_RouteInfo * pNewRouteInfo = 0; 
 
-    if (newOffset > pSession->maxOffset)
+    if (newOffset >= pSession->maxOffset)
         return DI_SUCCESS;
 
-    curRouteInfo.startOffset = newOffset;
-    curRouteInfo.flags = newRouteFlags;
+    memset(&newRouteInfo, 0, sizeof(newRouteInfo));
+    newRouteInfo.startOffset = newOffset;
+    newRouteInfo.flags = newRouteFlags;
 
     // create new instruction
     pOldTargetInstruction = pSession->pOwner->m_ppPresenceVec[newOffset];
@@ -193,20 +202,21 @@ int SaveNewRoute(DianaAnalyzeSession * pSession,
                                                                 &pTargetInstruction,
                                                                 DI_INSTRUCTION_IS_LOADING)); 
 
-    // register xref-from Instruction to Target
-    DI_CHECK(Diana_CreateXRef(pSession->pOwner, pTargetInstruction, &pXref));
-    Diana_PushBack(&pInstruction->m_refsFrom, &pXref->m_instructionEntry);
+    if (!newRouteFlags & DI_ROUTE_QUESTIONABLE)
+    {
+        pTargetInstruction->m_flags |= DI_INSTRUCTION_ROOT;
+    }
 
-    // register xref: to Target from Instruction
-    DI_CHECK(Diana_CreateXRef(pSession->pOwner, pInstruction, &pXref));
-    Diana_PushBack(&pTargetInstruction->m_refsTo, &pXref->m_instructionEntry);
+    // register xref-from Instruction to Target
+    DI_CHECK(Diana_CreateXRef(pSession->pOwner, pInstruction, pTargetInstruction, &pXref));
 
     // do not push new route to stack twice
     if (pOldTargetInstruction)
         return DI_SUCCESS;
 
     // push to stack
-    DI_CHECK(Diana_Stack_Push(&pSession->stack, &newOffset));
+    DI_CHECK(Diana_Stack_Push(&pSession->stack, &newRouteInfo));
+
     return DI_SUCCESS;
 }
 
@@ -368,20 +378,26 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
     int iRes = 0;
     Diana_Instruction * pInstruction = 0;
     Diana_LinkedAdditionalGroupInfo * pLinkedInfo = 0;
-    int newRouteFlags =0;
     int bIsNormalInstruction = 0;
     OPERAND_SIZE newOffset = 0;
 
     *pbNeedReset = 0;
 
-    // check if instruction is always registered
     DI_CHECK(Diana_InstructionsOwner_QueryOrAllocateInstruction(pSession->pOwner, 
                                                                 instructionOffset, 
                                                                 &pInstruction,
                                                                 0)); // flags for new instruction
 
     // clear DI_INSTRUCTION_IS_LOADING flag
+    Diana_PushBack(&pSession->curRouteInfo.instructions, 
+                    &pInstruction->m_routeEntry);
+
     pInstruction->m_flags = 0;
+
+    if (!pSession->curRouteInfo.flags & DI_ROUTE_QUESTIONABLE)
+    {
+        pInstruction->m_flags |= DI_INSTRUCTION_ROOT;
+    }
 
     // analyze command
     pLinkedInfo = pSession->result.pInfo->m_pGroupInfo->m_pLinkedInfo;
@@ -395,7 +411,7 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
         bIsNormalInstruction = 1;
     }
 
-    // acquire newOffset
+    // analyze normal command
     if (bIsNormalInstruction)
     {
         return AnalyzeAndConstructNormalInstruction(pSession, 
@@ -436,8 +452,67 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
     DI_CHECK(SaveNewRoute(pSession,
                           pInstruction,
                           newOffset,
-                          newRouteFlags));
+                          pSession->curRouteInfo.flags));
     return DI_SUCCESS;
+}
+
+static
+int SwitchToLastState(DianaAnalyzeSession * pSession,
+                      Diana_RouteInfo * pCurRouteInfo,
+                      OPERAND_SIZE * pOffset)
+{
+    DI_CHECK(Diana_Stack_Pop(&pSession->stack, pCurRouteInfo));
+    *pOffset = pCurRouteInfo->startOffset;
+    DI_CHECK(pSession->pObserver->m_pMoveTo(pSession->pObserver, pCurRouteInfo->startOffset));
+    Diana_ClearCache(&pSession->context);
+    return DI_SUCCESS;
+}
+
+Diana_XRef * Diana_CastXREF(Diana_ListNode * pNode,
+                           int index)
+{
+    Diana_SubXRef * pSubXREF = (Diana_SubXRef * )pNode;
+    return DIANA_CONTAINING_RECORD(pSubXREF, Diana_XRef, m_subrefs[index]);
+}
+
+static
+int XrefRouteMarker(Diana_ListNode * pNode,
+                      void * pContext,
+                      int * pbDone)
+{
+    Diana_XRef * pXRef = Diana_CastXREF(pNode, (int)(size_t)pContext);
+    pXRef->m_flags |= DI_XREF_INVALID;
+    return DI_SUCCESS;
+}
+
+static
+int RouteMarker(Diana_ListNode * pNode,
+                      void * pContext,
+                      int * pbDone)
+{
+    Diana_Instruction * pInstruction = (Diana_Instruction * )pNode;
+    DianaAnalyzeSession * pSession  = pContext;
+
+    pInstruction->m_flags |= DI_INSTRUCTION_INVALID;
+
+    Diana_ListForEach(&pInstruction->m_refsFrom, 
+                      XrefRouteMarker, 
+                      (void*)0);
+
+    Diana_ListForEach(&pInstruction->m_refsTo, 
+                      XrefRouteMarker, 
+                      (void*)1);
+
+    --pSession->pOwner->m_actualSize;
+    return DI_SUCCESS;
+}
+
+static
+void RollbackCurrentRoute(DianaAnalyzeSession * pSession)
+{
+    Diana_ListForEach(&pSession->curRouteInfo.instructions,
+                      RouteMarker,
+                      pSession);
 }
 
 static
@@ -449,16 +524,26 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
     OPERAND_SIZE offset = initialOffset;
     OPERAND_SIZE prevOffset = 0;
     
-    Diana_RouteInfo curRouteInfo;
-    
     int bNeedReset = 0;
     Diana_InitContext(&pSession->context, pSession->mode);
 
     // init cur route
-    curRouteInfo.startOffset = offset;
-    curRouteInfo.flags = 0;
+    pSession->curRouteInfo.startOffset = offset;
+    pSession->curRouteInfo.flags = 0;
     while(1)
     {
+        if (offset >= pSession->maxOffset || bNeedReset)
+        {
+            // just go out
+            if (!pSession->stack.m_count)
+                break;
+
+            DI_CHECK(SwitchToLastState(pSession, 
+                                       &pSession->curRouteInfo, 
+                                       &offset));
+        }
+        bNeedReset = 0;
+
         prevOffset = offset;
         iRes = Diana_ParseCmd(&pSession->context,
                                Diana_GetRootLine(),
@@ -472,6 +557,13 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
         if (iRes)
         {
             // instruction not recognized properly
+            if (pSession->curRouteInfo.flags & DI_ROUTE_QUESTIONABLE)
+            {
+                RollbackCurrentRoute(pSession);
+                bNeedReset = 1;
+                continue;
+            }
+
             if (!pSession->result.iFullCmdSize)
             {
                 Diana_CacheEatOneSafe(&pSession->context);
@@ -480,23 +572,48 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
             continue;
         }
 
+        if (offset >= pSession->maxOffset)
+        {
+            bNeedReset = 1;
+            continue;
+        }
 
+        // check if instruction is always registered
+        {
+            Diana_Instruction * pInstruction = pSession->pOwner->m_ppPresenceVec[prevOffset];
+            if (pInstruction)
+            {
+                if (pInstruction->m_flags & DI_INSTRUCTION_INVALID)
+                {
+                    if (pSession->curRouteInfo.flags & DI_ROUTE_QUESTIONABLE)
+                    {
+                        RollbackCurrentRoute(pSession);
+                    }
+                    else
+                    {
+                        Diana_DebugFatalBreak();
+                    }
+                    bNeedReset = 1;
+                    continue;
+                }
+                //if (pInstruction->m_flags & DI_INSTRUCTION_IS_LOADING)
+                //{
+                //    if (pInstruction->m_flags & DI_INSTRUCTION_ROOT ||
+                //        !(pSession->curRouteInfo.flags & DI_ROUTE_QUESTIONABLE))
+                //    {
+                //        bNeedReset = 1;
+                //        continue;
+                //    }
+
+                //    // process it now
+                //}
+            }
+        }
         // analyze instruction
-        bNeedReset = 0;
         DI_CHECK(AnalyzeAndConstructInstruction(pSession,
                                                 prevOffset,
                                                 offset,
                                                 &bNeedReset));
-
-        if (offset > pSession->maxOffset || bNeedReset)
-        {
-            if (!pSession->stack.m_count)
-                break;
-            DI_CHECK(Diana_Stack_Pop(&pSession->stack, &curRouteInfo));
-            offset = curRouteInfo.startOffset;
-            DI_CHECK(pSession->pObserver->m_pMoveTo(pSession->pObserver, offset));
-            Diana_ClearCache(&pSession->context);
-        }
     }
     return DI_SUCCESS;
 }

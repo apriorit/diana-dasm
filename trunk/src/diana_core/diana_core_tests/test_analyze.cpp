@@ -4,66 +4,6 @@ extern "C"
 #include "diana_analyze.h"
 }
 
-void test_stack()
-{
-    int temp = 0, temp2 = 0;
-    Diana_Stack stack;
-
-    // init
-    TEST_ASSERT(!Diana_Stack_Init(&stack, sizeof(int)*2, sizeof(int)));
-
-    for(int i =0; i<2; ++i)
-    {
-        TEST_ASSERT(stack.m_count == 0);
-
-        // push
-        temp = 1;
-        TEST_ASSERT(!Diana_Stack_Push(&stack,
-                                     &temp));
-        TEST_ASSERT(stack.m_count == 1);
-
-        // push
-        temp = 2;
-        TEST_ASSERT(!Diana_Stack_Push(&stack,
-                                     &temp));
-        TEST_ASSERT(stack.m_count == 2);
-
-        // push
-        temp = 3;
-        TEST_ASSERT(!Diana_Stack_Push(&stack,
-                                     &temp));
-        TEST_ASSERT(stack.m_count == 3);
-
-        // pop
-        TEST_ASSERT(!Diana_Stack_Pop(&stack,
-                        &temp2
-                        ));
-        TEST_ASSERT(temp2 == 3);
-        TEST_ASSERT(stack.m_count == 2);
-
-        // pop
-        TEST_ASSERT(!Diana_Stack_Pop(&stack,
-                        &temp2
-                        ));
-        TEST_ASSERT(temp2 == 2);
-        TEST_ASSERT(stack.m_count == 1);
-
-        // pop
-        TEST_ASSERT(!Diana_Stack_Pop(&stack,
-                        &temp2
-                        ));
-        TEST_ASSERT(temp2 == 1);
-        TEST_ASSERT(stack.m_count == 0);
-
-        // empty pop
-        TEST_ASSERT(Diana_Stack_Pop(&stack,
-                        &temp2
-                        ));
-
-    }
-    Diana_Stack_Free(&stack);
-}
-
 
 struct TestStream:public DianaAnalyzeObserver
 {
@@ -122,24 +62,25 @@ int DianaAddSuspectedDataAddress(void * pThis,
 struct IntructionInfo
 {
     int offset;
-    char * pXrefsFrom;
     char * pXrefsTo;
+    char * pXrefsFrom;
 };
 
-void VerifyREF(const char * pTestRefs, const Diana_List * pRefs)
+void VerifyREF(const char * pTestRefs, 
+               const Diana_List * pRefs,
+               int index)
 {
-    if (!pTestRefs)
+    bool bEnd = false;
+    const char * pLast = pTestRefs;
+    Diana_XRef * pCurXRef = 0;
+    Diana_SubXRef * pSubRef = (Diana_SubXRef * )pRefs->m_pFirst;
+    
+    if (pTestRefs)
     {
-        TEST_ASSERT(pRefs->m_size == 0);
-    }
-    else
-    {
-        bool bEnd = false;
-        const char * pLast = pTestRefs;
-        Diana_XRef * pCurXRef = (Diana_XRef *)pRefs->m_pFirst;
-        int pos = 0;
         for(int u = 0; !bEnd; ++u)
         {
+            pCurXRef = Diana_CastXREF(&pSubRef->m_instructionEntry, index);
+
             char ch = pTestRefs[u];
             switch(ch)
             {
@@ -154,14 +95,28 @@ void VerifyREF(const char * pTestRefs, const Diana_List * pRefs)
             TEST_ASSERT(pCurXRef);
             if (!pCurXRef)
                 return;
-            TEST_ASSERT(pCurXRef->m_pInstruction->m_offset == value);
-            pCurXRef = (Diana_XRef *)pCurXRef->m_instructionEntry.m_pNext;
+            
+            TEST_ASSERT(pCurXRef->m_subrefs[index].m_pInstruction->m_offset == value);
+
+            pSubRef = (Diana_SubXRef *)pSubRef->m_instructionEntry.m_pNext;
             pLast = pTestRefs + u + 1;
         }
     }
+    else
+    {
+        while(pSubRef)
+        {
+            pCurXRef = Diana_CastXREF(&pSubRef->m_instructionEntry, index);
+
+            TEST_ASSERT(pCurXRef->m_flags & DI_XREF_INVALID);
+
+            pSubRef = (Diana_SubXRef *)pSubRef->m_instructionEntry.m_pNext;
+        }
+    }
+    
 }
 
-void test_analyzer()
+void test_analyzer1()
 {
     unsigned char code[] = { 0x48, 0x8b, 0xc4 //mov     rax,rsp :0
                             , 0x45, 0x33, 0xf6//    xor     r14d,r14d   :3
@@ -174,8 +129,10 @@ void test_analyzer()
                             , 0x48, 0x89, 0x71, 0x20 //    mov     [rcx+0x20],rsi :29
                             , 0xe9, 0x01, 0x00, 0x00, 0x00 // jmp to next :33
                             , 0x00                   //    db 0  :38 // should never have come here
-                            , 0xc3                   //    ret   :39
-                            , 0x00                   //    db 0  :40 // should never have come here
+                            , 0x48, 0xb8, 50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00                   //    mov rax, 1  :39
+                            , 0xC3       // :49
+                            , 0x33, 0xd2 // xor :50
+                            , 0xc5                   //    db c5  :52 
                             };
 
     IntructionInfo instructions[] =   
@@ -189,7 +146,8 @@ void test_analyzer()
                          {28,              0,                           0},
                          {29,              0,                           "6"},
                          {33,              "39",                        0},
-                         {39,              0,                           "16;33"}
+                         {39,              0,                           "16;33"},
+                         {49,              0,                           0}
     };
 
     const int instructionsCount = sizeof(instructions)/sizeof(instructions[0]);
@@ -214,7 +172,7 @@ void test_analyzer()
                       start,
                       maxOffset));
 
-    TEST_ASSERT(owner.m_usedSize == instructionsCount);
+    TEST_ASSERT(owner.m_actualSize == instructionsCount);
     // verify found instructions
     for(int i = 0; i < instructionsCount; ++i)
     {
@@ -223,8 +181,72 @@ void test_analyzer()
         TEST_ASSERT(pInstruction);
         TEST_ASSERT(pInstruction->m_offset == pInfo->offset);
 
-        VerifyREF(pInfo->pXrefsFrom, &pInstruction->m_refsFrom);
-        VerifyREF(pInfo->pXrefsTo, &pInstruction->m_refsTo);
+        VerifyREF(pInfo->pXrefsFrom, &pInstruction->m_refsFrom, 0);
+        VerifyREF(pInfo->pXrefsTo, &pInstruction->m_refsTo, 1);
+    }
+
+    Diana_InstructionsOwner_Free(&owner);
+}
+
+
+void test_analyzer2()
+{
+    unsigned char code[] = {  0xbe, 21, 0x00, 0x00, 0x00 //    mov     esi,14 :0
+                            , 0xbe, 22, 0x00, 0x00, 0x00 //    mov     esi,15 :5
+                            , 0xbe, 23, 0x00, 0x00, 0x00 //    mov     esi,16 :10
+                            , 0xbe, 24, 0x00, 0x00, 0x00 //    mov     esi,17 :15
+                            , 0xC3                       //    ret            :20
+                            , 0xbe, 55, 0x00, 0x00, 0x00 //    mov     esi,55 :21
+                            , 0xc5                       //    db c5          :26
+                            , 0xc5                       //    db c5          :27
+                            , 0xc5                       //    db c5          :28
+                            , 0xc5                       //    db c5          :29
+                            , 0xc5                       //    db c5          :30
+                            , 0xc5                       //    db c5          :31
+                            , 0xc5                       //    db c5          :32
+                            };
+
+    IntructionInfo instructions[] =   
+                        {{0,               0,                           0},
+                         {5,               0,                           0},
+                         {10,               0,                        0},
+                         {15,              0,                        0},
+                         {20,              0,                        0},
+    };
+
+    const int instructionsCount = sizeof(instructions)/sizeof(instructions[0]);
+
+    size_t minOffset = 0;
+    size_t maxOffset = sizeof(code);
+    size_t start = 0;
+
+    TestStream stream((OPERAND_SIZE)code, start);
+    DianaAnalyzeObserver_Init(&stream, 
+                                DianaRead, 
+                                DianaAnalyzeMoveTo,
+                                DianaConvertAddressToRelative,
+                                DianaAddSuspectedDataAddress);
+    Diana_InstructionsOwner owner;
+
+    TEST_ASSERT(DI_SUCCESS ==Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
+
+    TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
+                      &stream,
+                      DIANA_MODE64,
+                      start,
+                      maxOffset));
+
+    TEST_ASSERT(owner.m_actualSize == instructionsCount);
+    // verify found instructions
+    for(int i = 0; i < instructionsCount; ++i)
+    {
+        const IntructionInfo * pInfo = instructions + i;
+        Diana_Instruction * pInstruction = owner.m_ppPresenceVec[pInfo->offset];
+        TEST_ASSERT(pInstruction);
+        TEST_ASSERT(pInstruction->m_offset == pInfo->offset);
+
+        VerifyREF(pInfo->pXrefsFrom, &pInstruction->m_refsFrom, 0);
+        VerifyREF(pInfo->pXrefsTo, &pInstruction->m_refsTo, 1);
     }
 
     Diana_InstructionsOwner_Free(&owner);
@@ -232,6 +254,6 @@ void test_analyzer()
 
 void test_analyze()
 {
-    test_stack();
-    test_analyzer();
+    test_analyzer1();
+    test_analyzer2();
 }

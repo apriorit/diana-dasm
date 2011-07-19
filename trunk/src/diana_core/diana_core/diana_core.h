@@ -371,4 +371,7 @@ typedef struct _Diana_Allocator
 void Diana_CacheEatOneSafe(DianaContext * pContext);
 
 
+#define DIANA_CONTAINING_RECORD(address, type, field) ((type *)( \
+                                                  (char*)(address) - \
+                                                  (size_t)(&((type *)0)->field)))
 #endif
