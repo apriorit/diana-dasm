@@ -564,10 +564,11 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
                 continue;
             }
 
-            if (!pSession->result.iFullCmdSize)
-            {
-                Diana_CacheEatOneSafe(&pSession->context);
-            }
+            offset = prevOffset + 1;
+            DI_CHECK(pSession->pObserver->m_pMoveTo(pSession->pObserver, 
+                                                    offset));
+            Diana_ClearCache(&pSession->context);
+
             Diana_DebugFatalBreak();
             continue;
         }
@@ -598,14 +599,8 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
                 }
                 if (!(pInstruction->m_flags & DI_INSTRUCTION_IS_LOADING))
                 {
-                    if (pInstruction->m_flags & DI_INSTRUCTION_ROOT ||
-                        !(pSession->curRouteInfo.flags & DI_ROUTE_QUESTIONABLE))
-                    {
-                        bNeedReset = 1;
-                        continue;
-                    }
-
-                    // process it now
+                    bNeedReset = 1;                 
+                    continue;
                 }
             }
         }
