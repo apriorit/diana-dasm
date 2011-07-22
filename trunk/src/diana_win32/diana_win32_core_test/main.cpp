@@ -11,7 +11,7 @@ void test_processor2();
 
 int main()
 {
-   // std::cout<<" ";
+    std::cout<<" ";
     Diana_Init();
     DianaProcessor_GlobalInit();
     DianaWin32Processor_GlobalInit();
