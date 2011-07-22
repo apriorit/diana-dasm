@@ -36,8 +36,22 @@ static void test_processor_and2()
     TEST_ASSERT(pCallContext->m_flags.l.value == 0x246);
 }
 
+
+static void test_processor_adc()
+{
+    unsigned char buff[] = {0x83, 0xd3, 0xff};           //adc     ebx,0xffffffff
+    
+    CTestProcessor proc(buff, sizeof(buff));
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+
+    TEST_ASSERT(GET_REG_EBX == 0xffffffff);
+}
 void test_processor_a()
 {
     test_processor_and();
     test_processor_and2();
+    test_processor_adc();
 }

@@ -24,7 +24,7 @@ int Diana_Call_imul8(struct _dianaContext * pDianaContext,
     DI_SIGNED_CHAR arg1 = (DI_SIGNED_CHAR)GET_REG_AL;
     DI_SIGNED_CHAR arg2 = (DI_SIGNED_CHAR)*pArgument;
 
-    result.value = arg1 * arg2;
+    result.value = (DI_INT32)arg1 * (DI_INT32)arg2;
     temp = result;
 
     DI_UPDATE_IMUL_FLAGS(1);
@@ -42,7 +42,7 @@ int Diana_Call_imul16(struct _dianaContext * pDianaContext,
     DI_INT16 arg1 = (DI_INT16)GET_REG_AX;
     DI_INT16 arg2 = (DI_INT16)*pArgument;
 
-    result.value = arg1 * arg2;
+    result.value = (DI_INT32)arg1 * (DI_INT32)arg2;
     temp = result;
 
     DI_UPDATE_IMUL_FLAGS(2);
@@ -61,7 +61,7 @@ int Diana_Call_imul32(struct _dianaContext * pDianaContext,
     DI_INT32 arg1 = (DI_INT32)GET_REG_EAX;
     DI_INT32 arg2 = (DI_INT32)*pArgument;
 
-    result.value = arg1 * arg2;
+    result.value = (DI_INT64)arg1 * (DI_INT64)arg2;
     temp = result;
 
     DI_UPDATE_IMUL_FLAGS(4);

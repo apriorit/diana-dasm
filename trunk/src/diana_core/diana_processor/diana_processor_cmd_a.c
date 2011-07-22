@@ -109,6 +109,8 @@ int Diana_Call_adc(struct _dianaContext * pDianaContext,
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
+    DI_SIGN_EXTEND(src, DI_VAR_SIZE(dest));
+
     cfValue = GET_FLAG_CF;
     DI_START_UPDATE_COA_FLAGS(dest);
     dest += src + cfValue;

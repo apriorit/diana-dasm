@@ -77,10 +77,35 @@ static void test_processor_div_fail()
     
 }
 
+
+static void test_processor_dec()
+{
+    unsigned char code[] = {0xf0, 0xff, 0x4a, 0x04, 1,1,1,1, 1,0,0,0};//         lock    dec dword ptr [edx+0x4]
+    unsigned char etalon[] = {0xf0, 0xff, 0x4a, 0x04, 1,1,1,1, 0,0,0,0};
+    unsigned char etalon2[] = {0xf0, 0xff, 0x4a, 0x04, 1,1,1,1, 0xFF,0xFF,0xFF,0xFF};
+
+    CTestProcessor proc(code, sizeof(code));
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    SET_REG_EDX(4);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+    TEST_ASSERT(memcmp(code, etalon, sizeof(code))==0);
+
+    DI_JUMP_TO_RIP(0);
+
+    res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+    TEST_ASSERT(memcmp(code, etalon2, sizeof(code))==0);
+
+}
 void test_processor_d()
 {
     test_processor_div();
     test_processor_div2();
     test_processor_div3();
     test_processor_div_fail();
+
+    test_processor_dec();
 }

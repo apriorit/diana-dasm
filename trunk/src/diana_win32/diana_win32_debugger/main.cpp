@@ -75,6 +75,106 @@ int Diana_Call_pxor(struct _dianaContext * pDianaContext,
     return DI_ERROR_NOT_USED_BY_CORE;
 }
 
+static 
+int Diana_Call_fldcw(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+static 
+int Diana_Call_fild(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+static 
+int Diana_Call_fmul(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+static 
+int Diana_Call_fstp(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+
+static 
+int Diana_Call_fst(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+
+static 
+int Diana_Call_fld(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+
+static 
+int Diana_Call_fcomp(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+
+static 
+int Diana_Call_fnstsw(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+static 
+int Diana_Call_faddp(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+static 
+int Diana_Call_fsqrt(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+static 
+int Diana_Call_fcom(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+static 
+int Diana_Call_fsubr(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+static 
+int Diana_Call_fcompp(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    return DI_ERROR_NOT_USED_BY_CORE;
+}
+
+
+
+
+
+
+
 static
 void DianaWin32Processor_OnGroup(DianaGroupInfo * p)
 {
@@ -88,6 +188,21 @@ void DianaWin32Processor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(movapd)
     DI_PROC_REGISTER_COMMAND(movdqa)
     DI_PROC_REGISTER_COMMAND(pxor)
+    DI_PROC_REGISTER_COMMAND(fldcw)
+    DI_PROC_REGISTER_COMMAND(fild)
+    DI_PROC_REGISTER_COMMAND(fmul)
+    DI_PROC_REGISTER_COMMAND(fstp)
+    DI_PROC_REGISTER_COMMAND(fst)
+    DI_PROC_REGISTER_COMMAND(fld)
+    DI_PROC_REGISTER_COMMAND(fcomp)
+    DI_PROC_REGISTER_COMMAND(fnstsw)
+
+    DI_PROC_REGISTER_COMMAND(faddp)
+    DI_PROC_REGISTER_COMMAND(fsqrt)
+    DI_PROC_REGISTER_COMMAND(fcom)
+    DI_PROC_REGISTER_COMMAND(fsubr)
+    DI_PROC_REGISTER_COMMAND(fcompp)
+
 }
 
 static void DianaWin32Processor_LinkCommands()

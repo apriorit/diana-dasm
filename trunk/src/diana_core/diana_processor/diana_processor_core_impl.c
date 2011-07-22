@@ -76,13 +76,13 @@ void DianaProcessor_UpdatePSZ(DianaProcessor * pCallContext,
     switch(opSize)
     {
     case 1:
-        UPDATE_PSZ(value, 0x80);
+        UPDATE_PSZ((DI_CHAR)value, 0x80);
         break;
     case 2:
-        UPDATE_PSZ(value, 0x8000);
+        UPDATE_PSZ((DI_UINT16)value, 0x8000);
         break;
     case 4:
-        UPDATE_PSZ(value, 0x80000000UL);
+        UPDATE_PSZ((DI_UINT32)value, 0x80000000UL);
         break;
     case 8:
         UPDATE_PSZ(value, 0x8000000000000000ULL);

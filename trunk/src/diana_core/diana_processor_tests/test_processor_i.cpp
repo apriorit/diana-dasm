@@ -139,6 +139,38 @@ static void test_processor_imul7()
     TEST_ASSERT(!GET_FLAG_OF);
 }
 
+static void test_processor_imul8()
+{
+    unsigned char code[] = {0xf7, 0xea}; // imul        edx
+    CTestProcessor proc(code, sizeof(code));
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    SET_REG_EAX(0x40000000);
+    SET_REG_EDX(0x00000130);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+    
+    TEST_ASSERT(GET_REG_RAX == 0x00000000);
+    TEST_ASSERT(GET_REG_RDX == 0x0000004c);
+}
+
+
+
+static void test_processor_inc()
+{
+    unsigned char code[] = {0xF0, 0xFF, 0x42, 0x04, 0xff,0xff,0xff,0xff}; // lock inc    dword ptr [edx+4] 
+    CTestProcessor proc(code, sizeof(code));
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    SET_REG_EDX(0);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+    
+    TEST_ASSERT(GET_FLAG_ZF);
+}
+
 void test_processor_i()
 {
     test_processor_idiv();
@@ -149,4 +181,6 @@ void test_processor_i()
     test_processor_imul5();
     test_processor_imul6();
     test_processor_imul7();
+    test_processor_imul8();
+    test_processor_inc();
 }

@@ -9,11 +9,9 @@ void test_processor2();
 
 #include "iostream"
 
-extern void __cdecl test_function();
 int main()
 {
-    std::cout<<" ";
-    test_function();
+   // std::cout<<" ";
     Diana_Init();
     DianaProcessor_GlobalInit();
     DianaWin32Processor_GlobalInit();
