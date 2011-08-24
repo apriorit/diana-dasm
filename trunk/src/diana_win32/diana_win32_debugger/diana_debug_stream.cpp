@@ -10,7 +10,7 @@ int CDebugRemoteStream::DianaWin32RandomWrite_Remote(void * pThis,
                                         void * pBuffer, 
                                         OPERAND_SIZE iBufferSize, 
                                         OPERAND_SIZE * wrote,
-                                        int flags,
+                                        struct _dianaProcessor * pProcessor,
                                         DianaUnifiedRegister segReg)
 {
     CDebugRemoteStream * p = (CDebugRemoteStream *)pThis;
@@ -37,7 +37,7 @@ int CDebugRemoteStream::DianaWin32RandomRead_Remote(void * pThis,
                                        void * pBuffer, 
                                        OPERAND_SIZE iBufferSize, 
                                        OPERAND_SIZE * readed,
-                                       int flags,
+                                       struct _dianaProcessor * pProcessor,
                                        DianaUnifiedRegister segReg)
 {
     CDebugRemoteStream * p = (CDebugRemoteStream *)pThis;

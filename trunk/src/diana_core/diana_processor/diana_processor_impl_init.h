@@ -278,11 +278,11 @@ int Diana_RegisterRegister(DianaProcessor * pThis,
         pOldRegistersVector = pThis->m_pRegistersVector;
 
         memcpy(pRegistersVector, pThis->m_pRegistersVector, pThis->m_registersVectorSize);
-        pThis->m_pAllocator->m_dealloc(pThis->m_pAllocator, pThis->m_pRegistersVector);
+        pThis->m_pAllocator->m_free(pThis->m_pAllocator, pThis->m_pRegistersVector);
         pThis->m_pRegistersVector = pRegistersVector;
         pThis->m_registersVectorSize = newSize;
 
-        pThis->m_pAllocator->m_dealloc(pThis->m_pAllocator, pOldRegistersVector);
+        pThis->m_pAllocator->m_free(pThis->m_pAllocator, pOldRegistersVector);
     }
 
     pThis->m_registers[reg].m_offset = pThis->m_iLastRegistersOffset;

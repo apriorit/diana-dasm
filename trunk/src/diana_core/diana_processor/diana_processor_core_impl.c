@@ -99,6 +99,16 @@ void DianaProcessor_CmdUsesNormalRep(DianaProcessor * pCallContext)
     pCallContext->m_stateFlags |= DI_PROC_STATE_CMD_USES_NORMAL_REP;
 }
 
+int DianaProcessor_RegisterFirePoint(DianaProcessor * pCallContext,
+                                     const DianaProcessorFirePoint * pPoint)
+{
+    if (pCallContext->m_firePointsCount >= DIANA_PROCESSOR_MAX_FIRE_POINTS)
+        return DI_OUT_OF_MEMORY;
+
+    pCallContext->m_firePoints[pCallContext->m_firePointsCount++] = *pPoint;
+    return DI_SUCCESS;
+}
+
 int DianaProcessor_ReadMemory(DianaProcessor * pThis,
                               OPERAND_SIZE selector,
                               OPERAND_SIZE offset,
@@ -115,7 +125,7 @@ int DianaProcessor_ReadMemory(DianaProcessor * pThis,
                                      pBuffer, 
                                      iBufferSize, 
                                      readed,
-                                     flags,
+                                     pThis,
                                      segReg);
                                      
 }
@@ -136,7 +146,7 @@ int DianaProcessor_WriteMemory(DianaProcessor * pThis,
                                      pBuffer, 
                                      iBufferSize, 
                                      readed,
-                                     flags,
+                                     pThis,
                                      segReg);
                                      
 }

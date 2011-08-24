@@ -44,7 +44,7 @@ static const DIANA_UUID g_ProcessorId =
 
 int DianaProcessor_Init(DianaProcessor * pThis, 
                         DianaRandomReadWriteStream * pMemoryStream,
-                        DianaAllocator * pAllocator,
+                        Diana_Allocator * pAllocator,
                         int mode)
 {
     memset(pThis, 0, sizeof(DianaProcessor)); 
@@ -71,7 +71,7 @@ int DianaProcessor_Init(DianaProcessor * pThis,
 
 void DianaProcessor_Free(DianaProcessor * pThis)
 {
-    pThis->m_pAllocator->m_dealloc( pThis->m_pAllocator, pThis->m_pRegistersVector );
+    pThis->m_pAllocator->m_free( pThis->m_pAllocator, pThis->m_pRegistersVector );
 }
 
 static
@@ -152,8 +152,17 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
     DianaProcessor * pCallContext = pThis;
     OPERAND_SIZE rip = GET_REG_RIP;
     int res = 0;
+    int i =0;
     DianaProcessorCommand_type pCommand = 0;
     
+    for(i = 0 ; i < pCallContext->m_firePointsCount; ++i)
+    {
+        DianaProcessorFirePoint  * pPoint = pCallContext->m_firePoints + i;
+        if (pPoint->address == rip)
+            pPoint->action(pPoint, pThis);
+    }
+
+    rip = GET_REG_RIP;
     if (!(pThis->m_stateFlags & DI_PROC_STATE_TEMP_RIP_IS_VALID))
     {
         // first run
@@ -161,6 +170,8 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
 
         pThis->m_stateFlags |= DI_PROC_STATE_TEMP_RIP_IS_VALID;
     }
+
+    pThis->m_stateFlags &= ~DI_PROC_STATE_RIP_CHANGED;
 
     res = Diana_ParseCmd(&pThis->m_context, 
                              Diana_GetRootLine(),  // IN

@@ -239,6 +239,7 @@ typedef struct _dianaParserResult
 #define DI_INVALID_CONFIGURATION    ((int)-6)
 #define DI_WIN32_ERROR              ((int)-7)
 #define DI_ERROR_NOT_USED_BY_CORE   ((int)-8)
+#define DI_INVALID_INPUT            ((int)-9)
 
 #define DI_SUCCESS ((int)0)
 
@@ -261,16 +262,6 @@ typedef struct _dianaReadStream
 
 
 // Allocators
-typedef void * (* DianaAlloc_fnc)(void * pThis, int iBufferSize);
-typedef void (* DianaDealloc_fnc)(void * pThis, void * pBuffer);
-
-typedef struct _dianaAllocator
-{
-    DianaAlloc_fnc   m_alloc;
-    DianaDealloc_fnc m_dealloc;
-}DianaAllocator;
-
-
 #define DI_REX_PREFIX_START    0x40
 #define DI_REX_PREFIX_END      0x4F
 #define DI_REX_HAS_FLAG_W(X)          (X&0x8)
@@ -357,9 +348,9 @@ DianaGroupInfo * Diana_GetGroupInfo(long lId);
 void Diana_Init();
 void Diana_ResetPrefixes(DianaContext * pContext);
 
-typedef void * (*Diana_Alloc_type)(void * pThis, size_t size);
-typedef void (*Diana_Free_type)(void * pThis, void * memory);
-typedef int (*Diana_Patcher_type)(void * pThis, void * pDest, const void * pSource, size_t size);
+typedef void * ( *Diana_Alloc_type)(void * pThis, size_t size);
+typedef void ( *Diana_Free_type)(void * pThis, void * memory);
+typedef int ( *Diana_Patcher_type)(void * pThis, void * pDest, const void * pSource, size_t size);
 
 typedef struct _Diana_Allocator
 {
@@ -367,6 +358,12 @@ typedef struct _Diana_Allocator
     Diana_Free_type m_free;
     Diana_Patcher_type m_patch;
 }Diana_Allocator;
+
+void Diana_AllocatorInit(Diana_Allocator * pAllocator,
+                         Diana_Alloc_type alloc,    
+                         Diana_Free_type free,
+                         Diana_Patcher_type patch);
+
 
 void Diana_CacheEatOneSafe(DianaContext * pContext);
 

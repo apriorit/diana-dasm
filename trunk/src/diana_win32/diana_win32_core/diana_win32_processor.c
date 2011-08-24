@@ -1,5 +1,5 @@
 #include "diana_win32_processor.h"
-
+#include "diana_win32_exceptions.h"
 
 // {64018619-F561-41b1-90FF-2EA1BB57CF4C}
 static const DIANA_UUID g_win32ProcessorId = 
@@ -23,14 +23,6 @@ int DianaWin32Processor_InitImpl(DianaWin32Processor * pThis,
     // memory allocator
     Diana_InitMAllocator(&pThis->m_memAllocator);
        
-
-    // create heap
-    pThis->m_heap = HeapCreate(HEAP_CREATE_ENABLE_EXECUTE, 
-                               0,
-                               0);
-    if (!pThis->m_heap)
-        return DI_WIN32_ERROR;
-
     // processor
     if (pMemoryStream)
     {
@@ -47,30 +39,37 @@ int DianaWin32Processor_InitImpl(DianaWin32Processor * pThis,
                                     DIANA_MODE32));
     }
 
+    DI_CHECK(DianaWin32Processor_InitProcessorExceptions(pThis));
+
     DianaBase_Init(&pThis->m_processor.m_base, &g_win32ProcessorId);
     return DI_SUCCESS;
 }
 
 int DianaWin32Processor_InitEx(DianaWin32Processor * pThis,
-                               DianaRandomReadWriteStream * pMemoryStream)
+                               DianaRandomReadWriteStream * pMemoryStream,
+                               OPERAND_SIZE stackLimit,
+                               OPERAND_SIZE stackBase)
 {
     int result = DianaWin32Processor_InitImpl(pThis, pMemoryStream);
     if (result != DI_SUCCESS)
     {
-        if (pThis->m_heap)
-        {
-            HeapDestroy(pThis->m_heap);
-        }
+        // clean resources
     }
+    pThis->m_stackLimit = stackLimit;
+    pThis->m_stackBase = stackBase;
     return result;
 }
-int DianaWin32Processor_Init(DianaWin32Processor * pThis)
+int DianaWin32Processor_Init(DianaWin32Processor * pThis,
+                             OPERAND_SIZE stackLimit,
+                             OPERAND_SIZE stackBase)
 {
-    return DianaWin32Processor_InitEx(pThis, 0);
+    return DianaWin32Processor_InitEx(pThis, 
+                                      0,
+                                      stackLimit,
+                                       stackBase);
 }
 
 void DianaWin32Processor_Free(DianaWin32Processor * pThis)
 {
-    HeapDestroy(pThis->m_heap);
     DianaProcessor_Free(&pThis->m_processor);
 }

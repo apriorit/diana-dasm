@@ -140,6 +140,8 @@ inline void PrintContext(DianaProcessor * pCallContext)
                   0);*/
 }
 
+const int g_stackSize = 1024*1024;
+extern char g_stack[g_stackSize];
 
 
 #endif

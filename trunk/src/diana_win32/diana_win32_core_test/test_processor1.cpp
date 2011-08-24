@@ -1,8 +1,9 @@
 #include "test_win32_common.h"
 
+char g_stack[g_stackSize];
+
 namespace {
 
-char g_stack[1024*1024];
 void * g_oldESP = 0;
 
 typedef NTSTATUS (WINAPI * NtClosePtr_type)(
@@ -58,7 +59,9 @@ void test_processor1()
 //    test_function();
     DianaWin32Processor proc;
 
-    TEST_ASSERT(DianaWin32Processor_Init(&proc)==DI_SUCCESS);
+    TEST_ASSERT(DianaWin32Processor_Init(&proc, 
+                                         (OPERAND_SIZE)g_stack, 
+                                         (OPERAND_SIZE)g_stack + sizeof(g_stack))==DI_SUCCESS);
     
     DianaProcessor * pCallContext = &proc.m_processor;
     DianaProcessor_LoadLiveContext32(pCallContext);

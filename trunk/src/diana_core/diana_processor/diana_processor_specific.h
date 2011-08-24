@@ -18,7 +18,7 @@ int DianaProcessor_GetMemValue(DianaProcessor * pThis,
                                               pResult, 
                                               size, 
                                               &readed,
-                                              flags,
+                                              pThis,
                                               segReg);
     DI_CHECK(status);
 
@@ -46,7 +46,7 @@ int DianaProcessor_SetMemValue(DianaProcessor * pThis,
                                pResult, 
                                size, 
                                &wrote,
-                               flags,
+                               pThis,
                                segReg);
     DI_CHECK(status);
 

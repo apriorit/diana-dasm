@@ -5,7 +5,7 @@
 
 typedef struct _DianaMAllocator
 {
-    DianaAllocator m_parent;
+    Diana_Allocator m_parent;
 }DianaMAllocator;
 
 void Diana_InitMAllocator(DianaMAllocator * pThis);

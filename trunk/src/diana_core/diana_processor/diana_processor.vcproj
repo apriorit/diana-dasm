@@ -348,6 +348,10 @@
 				RelativePath=".\diana_processor_core_impl.c"
 				>
 			</File>
+			<File
+				RelativePath=".\diana_processor_streams.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -424,6 +428,10 @@
 			</File>
 			<File
 				RelativePath=".\diana_processor_core_impl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_processor_streams.h"
 				>
 			</File>
 			<Filter

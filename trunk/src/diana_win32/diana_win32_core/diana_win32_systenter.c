@@ -1,3 +1,4 @@
+#include "diana_win32_sysenter.h"
 #include "diana_win32_core_init.h"
 #include "diana_processor_commands.h"
 #include "diana_processor_core_impl.h"
@@ -12,6 +13,8 @@
 #include "diana_win32_core.h"
 #include "diana_processor_cmd_internal.h"
 #include "diana_win32_context.h"
+#include "diana_win32_exceptions.h"
+#include "diana_win32_executable_heap.h"
 
 #define STUB_SIZE 18
 
@@ -45,11 +48,21 @@ void __stdcall sysenter_exit_impl(CallContextInfo * pInfo)
     OPERAND_SIZE rsp = 0;
 
     // i want to return
-    DI_JUMP_TO_RIP(pInfo->m_sysentersRIP);
+    //DI_JUMP_TO_RIP(pInfo->m_sysentersRIP);
+    SET_REG_RIP(pInfo->m_sysentersRIP);
     rsp = GET_REG_RSP;
     SET_REG_RSP(pInfo->m_oldRSP);
 
     Di_SetThreadContext(pInfo->m_retContext);
+}
+
+void DianaProcessorWin32_ReturnAfterSysenter(DianaWin32Processor * pThis)
+{
+    if (pThis->m_sysenterRetContext)
+    {
+        CallContextInfo * pInfo = (CallContextInfo * )pThis->m_sysenterRetContext;
+        Di_SetThreadContext(pInfo->m_retContext);
+    }
 }
 
 //------
@@ -89,9 +102,8 @@ int Diana_Call_sysenter_ex(DianaWin32Processor * pThis)
 
         
     // -- 
-    pCallContextInfo = (CallContextInfo * )HeapAlloc(pThis->m_heap, 
-                                            0,
-                                            sizeof(CallContextInfo));
+    pCallContextInfo = (CallContextInfo * )
+            DianaExecutableHeap_Alloc(sizeof(CallContextInfo));
     if (!pCallContextInfo)
     {
         result = DI_OUT_OF_MEMORY;
@@ -99,6 +111,9 @@ int Diana_Call_sysenter_ex(DianaWin32Processor * pThis)
     }
     memset(pCallContextInfo, 0, sizeof(*pCallContextInfo));
   
+    pThis->m_sysenterRetContext = pCallContextInfo;
+    DianaWin32Processor_SaveCurrentThreadProcessor(pThis);
+
     pCallContextInfo->m_pProcessor = pThis;
     pCallContextInfo->m_oldRSP = GET_REG_RSP;
     pCallContextInfo->m_sysentersRIP = GET_REG_RIP + pCallContextInfo->m_pProcessor->m_processor.m_result.iFullCmdSize;
@@ -131,6 +146,7 @@ int Diana_Call_sysenter_ex(DianaWin32Processor * pThis)
     Di_GetThreadContext(&pCallContextInfo->m_retContext);
 
     pCallContextInfo->m_retContext.m_Eip = exit_offset;
+
     Di_SetThreadContext(pCallContextInfo->m_newContext);
     
 exit_label:
@@ -140,11 +156,11 @@ clean:
 
     if (pCallContextInfo)
     {
-        HeapFree(pThis->m_heap,
-                 0,
-                 pCallContextInfo);
+        DianaExecutableHeap_Free(pCallContextInfo);
     }
 
+    pThis->m_sysenterRetContext = 0;
+    DianaWin32Processor_SaveCurrentThreadProcessor(0);
     DI_CHECK(result);
 
     DI_PROC_END

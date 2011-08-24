@@ -3,7 +3,8 @@
 #include "diana_processor_core_impl.h"
 #include "string.h"
 #include "diana_core_gen_tags.h"
-
+#include "diana_win32_exceptions.h"
+#include "diana_win32_executable_heap.h"
 
 int Diana_Call_sysenter(struct _dianaContext * pDianaContext,
                         DianaProcessor * pCallContext);
@@ -28,7 +29,10 @@ void DianaWin32Processor_LinkCommands()
     }
 }
 
-void DianaWin32Processor_GlobalInit()
+int DianaWin32Processor_GlobalInit()
 {
+    DI_CHECK(Diana_InitExecutableHeap());
+    DI_CHECK(DianaWin32Processor_InitExceptions());
     DianaWin32Processor_LinkCommands();
+    return DI_SUCCESS;
 }

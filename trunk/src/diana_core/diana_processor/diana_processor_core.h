@@ -11,7 +11,7 @@ void DianaProcessor_GlobalInit();
 
 int DianaProcessor_Init(DianaProcessor * pThis, 
                         DianaRandomReadWriteStream * pMemoryStream,
-                        DianaAllocator * pAllocator,
+                        Diana_Allocator * pAllocator,
                         int mode);
 
 void DianaProcessor_Free(DianaProcessor * pThis);

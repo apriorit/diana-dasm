@@ -3,7 +3,7 @@
 
 #include "diana_core.h"
 #include "diana_proc_gen.h"
-#include "diana_streams.h"
+#include "diana_processor_streams.h"
 #include "diana_uids.h"
 
 typedef struct _DianaRegInfo
@@ -109,6 +109,16 @@ typedef union _DianaRegisterValue_signed
 #define DI_PROC_STATE_UPDATE_FLAGS_PSZ        0x4 
 #define DI_PROC_STATE_CMD_USES_NORMAL_REP     0x8 
 
+typedef void (*FireAction_type)(struct _dianaProcessorFirePoint * pPoint,
+                                struct _dianaProcessor * pProcessor);
+typedef struct _dianaProcessorFirePoint
+{
+    void * pContext;
+    OPERAND_SIZE address;
+    FireAction_type action;
+}DianaProcessorFirePoint;
+
+#define DIANA_PROCESSOR_MAX_FIRE_POINTS     10
 typedef struct _dianaProcessor
 {
     DianaBase m_base;
@@ -118,7 +128,7 @@ typedef struct _dianaProcessor
 
     DianaRegInfo m_registers[count_of_DianaUnifiedRegister];
     DianaRandomReadWriteStream * m_pMemoryStream;
-    DianaAllocator * m_pAllocator;
+    Diana_Allocator * m_pAllocator;
     
     DianaRegisterValue_type m_flags;
     
@@ -129,10 +139,16 @@ typedef struct _dianaProcessor
     int m_stateFlags;
     int m_stateFlagsToRemove;
     OPERAND_SIZE m_tempRIP;
+
+    DianaProcessorFirePoint m_firePoints[DIANA_PROCESSOR_MAX_FIRE_POINTS];
+    int m_firePointsCount;
 }DianaProcessor;
 
 
 const char * Diana_GenerateStuff();
+
+int DianaProcessor_RegisterFirePoint(DianaProcessor * pCallContext,
+                                     const DianaProcessorFirePoint * pPoint);
 
 void DianaProcessor_CmdUsesNormalRep(DianaProcessor * pCallContext);
 

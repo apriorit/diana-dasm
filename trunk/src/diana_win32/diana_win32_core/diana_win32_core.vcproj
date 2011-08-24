@@ -163,6 +163,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_win32_exceptions.c"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_win32_executable_heap.c"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_win32_processor.c"
 				>
 			</File>
@@ -193,11 +201,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_win32_exceptions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_win32_executable_heap.h"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_win32_processor.h"
 				>
 			</File>
 			<File
 				RelativePath=".\diana_win32_streams.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_win32_sysenter.h"
 				>
 			</File>
 		</Filter>

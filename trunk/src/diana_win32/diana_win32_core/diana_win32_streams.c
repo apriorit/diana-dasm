@@ -1,4 +1,5 @@
 #include "diana_win32_streams.h"
+#include "diana_win32_processor.h"
 
 static int DianaWin32RandomRead(void * pThis, 
                                     OPERAND_SIZE selector,
@@ -6,7 +7,7 @@ static int DianaWin32RandomRead(void * pThis,
                                     void * pBuffer, 
                                     OPERAND_SIZE iBufferSize, 
                                     OPERAND_SIZE * readed,
-                                    int flags,
+                                    struct _dianaProcessor * pProcessor,
                                     DianaUnifiedRegister segReg)
 {
     DI_INT16 dsValue = 0;
@@ -20,6 +21,32 @@ static int DianaWin32RandomRead(void * pThis,
         return DI_SUCCESS;
     }
         
+    if (segReg == reg_FS)
+    {
+        DianaWin32Processor * pWin32Processor = 0; 
+       
+        if (pProcessor)
+        {
+            pWin32Processor = DianaWin32Processor_Cast(pProcessor);
+            if (pWin32Processor && pWin32Processor->m_stackBase && pWin32Processor->m_stackLimit)
+            {
+                switch (offset)
+                {
+                case 8:
+                    selector = dsValue;
+                    offset = (OPERAND_SIZE)&pWin32Processor->m_stackLimit;
+                    break;
+
+                case 4:
+                    selector = dsValue;
+                    offset = (OPERAND_SIZE)&pWin32Processor->m_stackBase;
+                    break;
+                }
+            }
+        }
+        // check stack values
+    }
+
     {
         DI_UINT32 offset32 = (DI_UINT32)offset;
         DI_UINT32 iBufferSize32 = (DI_UINT32)iBufferSize;
@@ -54,7 +81,7 @@ static int DianaWin32RandomWrite(void * pThis,
                                      void * pBuffer, 
                                      OPERAND_SIZE iBufferSize, 
                                      OPERAND_SIZE * wrote,
-                                     int flags,
+                                     struct _dianaProcessor * pProcessor,
                                      DianaUnifiedRegister segReg)
 {
     DI_INT16 dsValue = 0;
@@ -107,7 +134,7 @@ static int DianaWin32RandomWrite_Remote(void * pThis,
                                         void * pBuffer, 
                                         OPERAND_SIZE iBufferSize, 
                                         OPERAND_SIZE * wrote,
-                                        int flags,
+                                        struct _dianaProcessor * pProcessor,
                                         DianaUnifiedRegister segReg)
 {
     DianaWin32RemoteStream * p = pThis;
@@ -137,7 +164,7 @@ static int DianaWin32RandomRead_Remote(void * pThis,
                                        void * pBuffer, 
                                        OPERAND_SIZE iBufferSize, 
                                        OPERAND_SIZE * readed,
-                                       int flags,
+                                       struct _dianaProcessor * pProcessor,
                                        DianaUnifiedRegister segReg)
 {
     DianaWin32RemoteStream * p = pThis;

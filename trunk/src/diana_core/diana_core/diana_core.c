@@ -378,3 +378,13 @@ void Diana_CacheEatOneSafe(DianaContext * pContext)
     return;
 }
 
+
+void Diana_AllocatorInit(Diana_Allocator * pAllocator,
+                         Diana_Alloc_type alloc,    
+                         Diana_Free_type free,
+                         Diana_Patcher_type patch)
+{
+    pAllocator->m_alloc = alloc;
+    pAllocator->m_free = free;
+    pAllocator->m_patch = patch;
+}

@@ -6,12 +6,13 @@ extern "C"
 void test_streams();
 void test_processor1();
 void test_processor2();
+void test_processor3();
 
 #include "iostream"
 
 int main()
 {
-    std::cout<<" ";
+    //std::cout<<" ";
     Diana_Init();
     DianaProcessor_GlobalInit();
     DianaWin32Processor_GlobalInit();
@@ -19,5 +20,6 @@ int main()
     test_streams();
     test_processor1();
     test_processor2();
+    test_processor3();
     return 0;
 }

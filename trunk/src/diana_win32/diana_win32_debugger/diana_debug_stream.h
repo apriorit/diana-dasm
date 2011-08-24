@@ -8,6 +8,7 @@ extern "C"
 #include "map"
 #include "vector"
 
+struct _dianaProcessor;
 namespace diana
 {
 
@@ -26,7 +27,7 @@ class CDebugRemoteStream:public DianaRandomReadWriteStream
                                         void * pBuffer, 
                                         OPERAND_SIZE iBufferSize, 
                                         OPERAND_SIZE * wrote,
-                                        int flags,
+                                         struct _dianaProcessor * pProcessor,
                                         DianaUnifiedRegister segReg);
 
     static int DianaWin32RandomRead_Remote(void * pThis, 
@@ -35,7 +36,7 @@ class CDebugRemoteStream:public DianaRandomReadWriteStream
                                         void * pBuffer, 
                                         OPERAND_SIZE iBufferSize, 
                                         OPERAND_SIZE * readed,
-                                        int flags,
+                                        struct _dianaProcessor * pProcessor,
                                         DianaUnifiedRegister segReg);
 public:
     CDebugRemoteStream(HANDLE hProcess=0);

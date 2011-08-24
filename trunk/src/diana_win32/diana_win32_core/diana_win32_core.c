@@ -46,6 +46,7 @@ void  __stdcall DianaProcessor_LoadLiveContext32_Impl(DianaProcessor * pCallCont
 
     SET_REG_RBP(pParams[paramNum++]);
     DI_JUMP_TO_RIP(pParams[paramNum++]);
+    pCallContext->m_stateFlags |= DI_PROC_STATE_RIP_CHANGED;
 }
 
 __declspec(naked) void  __stdcall DianaProcessor_LoadLiveContext32(DianaProcessor * pThis)

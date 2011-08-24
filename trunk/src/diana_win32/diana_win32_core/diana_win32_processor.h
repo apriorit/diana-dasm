@@ -12,12 +12,22 @@ typedef struct _dianaWin32Processor
     DianaProcessor m_processor; // MUST BE FIRST!
     DianaWin32Stream m_memoryStream;
     DianaMAllocator m_memAllocator;
-    HANDLE m_heap;
+    void * m_sysenterRetContext;
+    OPERAND_SIZE m_stackLimit;
+    OPERAND_SIZE m_stackBase;
+    OPERAND_SIZE m_lastContextRIP;
 }
 DianaWin32Processor;
 
-int DianaWin32Processor_InitEx(DianaWin32Processor * pThis, DianaRandomReadWriteStream * pMemoryStream);
-int DianaWin32Processor_Init(DianaWin32Processor * pThis);
+int DianaWin32Processor_InitEx(DianaWin32Processor * pThis,
+                               DianaRandomReadWriteStream * pMemoryStream,
+                               OPERAND_SIZE stackLimit,
+                               OPERAND_SIZE stackBase);
+
+int DianaWin32Processor_Init(DianaWin32Processor * pThis,
+                             OPERAND_SIZE stackLimit,
+                             OPERAND_SIZE stackBase);
+
 void DianaWin32Processor_Free(DianaWin32Processor * pThis);
 
 DianaWin32Processor * DianaWin32Processor_Cast(DianaProcessor* pThis);

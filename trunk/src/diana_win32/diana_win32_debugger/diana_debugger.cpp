@@ -33,7 +33,7 @@ CDianaDebugger::CDianaDebugger(const std::wstring & exeName)
         m_tempCount(0),
         m_bValidPrevInfo(false)
 {
-    int code = DianaWin32Processor_InitEx(&m_processor, &m_remoteStream);
+    int code = DianaWin32Processor_InitEx(&m_processor, &m_remoteStream, 0, 0);
     if (code != DI_SUCCESS)
     {
         throw DianaException(code);
