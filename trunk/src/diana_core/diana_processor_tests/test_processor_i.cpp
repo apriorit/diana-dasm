@@ -155,7 +155,21 @@ static void test_processor_imul8()
     TEST_ASSERT(GET_REG_RDX == 0x0000004c);
 }
 
+static void test_processor_imul9()
+{
+    unsigned char code[] = {0x66, 0x6B, 0xC2, 0xFF}; // imul        ax,dx,-1
+    CTestProcessor proc(code, sizeof(code));
+    DianaProcessor * pCallContext = proc.GetSelf();
 
+    SET_REG_EDX(0x2);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+    
+    TEST_ASSERT(GET_REG_RAX == 65534);
+    TEST_ASSERT(!GET_FLAG_CF);
+    TEST_ASSERT(!GET_FLAG_OF);
+}
 
 static void test_processor_inc()
 {
@@ -182,5 +196,6 @@ void test_processor_i()
     test_processor_imul6();
     test_processor_imul7();
     test_processor_imul8();
+    test_processor_imul9();
     test_processor_inc();
 }

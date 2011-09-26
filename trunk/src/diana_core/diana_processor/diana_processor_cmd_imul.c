@@ -134,16 +134,17 @@ int Diana_Call_imul_impl(struct _dianaContext * pDianaContext,
                          OPERAND_SIZE * op1,
                          OPERAND_SIZE * op2,
                          OPERAND_SIZE * op3,
-                         int size)
+                         int op1Size,
+                         int op2Size)
 {
     DianaRegisterValue_signed_type result, temp;
     OPERAND_SIZE_SIGNED arg1 = 0, arg2 =0;
 
     DI_CHECK(DianaProcessor_SignExtend(op1, 
-                                       size,
+                                       op1Size,
                                        8));
     DI_CHECK(DianaProcessor_SignExtend(op2, 
-                                       size,
+                                       op2Size,
                                        8));
 
     arg1 = (OPERAND_SIZE_SIGNED)*op1;
@@ -208,6 +209,7 @@ int Diana_Call_imul_2(struct _dianaContext * pDianaContext,
                                   &src, 
                                   &dest, 
                                   &dest,
+                                  src_size,
                                   dest_size));
     DI_MEM_SET_DEST(dest);
     DI_PROC_END
@@ -217,6 +219,7 @@ int Diana_Call_imul_3(struct _dianaContext * pDianaContext,
                       DianaProcessor * pCallContext)
 {
     DI_DEF_LOCALS2(dest, src1, src2);
+    
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src1);
     DI_MEM_GET_SRC2(src2);
@@ -226,7 +229,8 @@ int Diana_Call_imul_3(struct _dianaContext * pDianaContext,
                                   &src1, 
                                   &src2, 
                                   &dest,
-                                  dest_size));
+                                  src1_size,
+                                  src2_size));
     DI_MEM_SET_DEST(dest);
     DI_PROC_END
 }
