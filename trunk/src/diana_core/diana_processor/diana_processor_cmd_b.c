@@ -27,7 +27,7 @@ int Diana_Call_bsf(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
 
     CLEAR_FLAG_ZF;
-    if (!dest)
+    if (!src)
     {
         SET_FLAG_ZF;
     }
@@ -39,8 +39,8 @@ int Diana_Call_bsf(struct _dianaContext * pDianaContext,
         for(i = 0; i<64 && !(mask & dest); ++i, mask<<=1)
         {
         }
-        src = i;
-        DI_MEM_SET_SRC(src);
+        dest = i;
+        DI_MEM_SET_DEST(dest);
     }
     DI_PROC_END;
 }
@@ -67,7 +67,7 @@ int Diana_Call_bsr(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
 
     CLEAR_FLAG_ZF;
-    if (!dest)
+    if (!src)
     {
         SET_FLAG_ZF;
     }
@@ -79,8 +79,8 @@ int Diana_Call_bsr(struct _dianaContext * pDianaContext,
         for(i = 63; i>=0 && !(mask & dest); --i, mask>>=1)
         {
         }
-        src = i;
-        DI_MEM_SET_SRC(src);
+        dest = i;
+        DI_MEM_SET_DEST(dest);
     }
     DI_PROC_END;
 }
