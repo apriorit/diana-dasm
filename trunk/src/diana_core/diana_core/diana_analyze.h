@@ -64,8 +64,15 @@ void Diana_Instruction_Init(Diana_Instruction * pInstruction,
                             OPERAND_SIZE m_offset,
                             int flags);
 
+typedef struct _Diana_InstructionsOwnerBase
+{
+    int c;
+}Diana_InstructionsOwnerBase;
+
+
 typedef struct _Diana_InstructionsOwner
 {
+    Diana_InstructionsOwnerBase m_base;
     Diana_Stack m_xrefs;
     Diana_Instruction ** m_ppPresenceVec;
     Diana_Instruction * m_pInstructionsVec;

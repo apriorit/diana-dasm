@@ -36,7 +36,7 @@ int Diana_Call_bsf(struct _dianaContext * pDianaContext,
         int i = 0;
         OPERAND_SIZE mask = 1;
         
-        for(i = 0; i<64 && !(mask & dest); ++i, mask<<=1)
+        for(i = 0; i<64 && !(mask & src); ++i, mask<<=1)
         {
         }
         dest = i;
@@ -76,7 +76,7 @@ int Diana_Call_bsr(struct _dianaContext * pDianaContext,
         int i = 0;
         OPERAND_SIZE mask = 0x8000000000000000ULL;
         
-        for(i = 63; i>=0 && !(mask & dest); --i, mask>>=1)
+        for(i = 63; i>=0 && !(mask & src); --i, mask>>=1)
         {
         }
         dest = i;
