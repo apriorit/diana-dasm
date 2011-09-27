@@ -130,9 +130,28 @@ int Diana_Call_idiv(struct _dianaContext * pDianaContext,
     //byte    AX           r/m8       AL          AH
     //word    DX:AX        r/m16      AX          DX
     //dword   EDX:EAX      r/m32      EAX         EDX 
-    //qword   RDX:RAX      r/m64      RAX         RDX     
+    //qword   RDX:RAX      r/m64      RAX         RDX   
+
     DI_DEF_LOCAL(divisor);
-    DI_MEM_GET_SRC(divisor);
+
+    // the code below is based on intel's spec:
+    //F6 /7       IDIV r/m8          19       Signed divide AX by r/m byte
+    //                                        (AL=Quo, AH=Rem)
+    //F7 /7       IDIV AX,r/m16      27       Signed divide DX:AX by EA word
+    //                                        (AX=Quo, DX=Rem)
+    //F7 /7       IDIV EAX,r/m32     43       Signed divide EDX:EAX by DWORD
+    //                                        byte (EAX=Quo, EDX=Rem)
+    // VS dissasembles that in the same way
+
+    if (pCallContext->m_result.iLinkedOpCount == 1)
+    {
+        DI_MEM_GET_DEST(divisor);
+    }
+    else
+    {
+        DI_MEM_GET_SRC(divisor);
+    }
+
 
     switch(pCallContext->m_result.linkedOperands->usedSize)
     {

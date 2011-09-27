@@ -1133,4 +1133,21 @@ void test_suxx()
 
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_AL);
-    }}
+    }
+
+    static unsigned char suxx77[] = {0xF6, 0xFA};//         idiv dl
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,suxx77, sizeof(suxx77), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "idiv")==0);
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1)
+
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_DL);
+    }
+
+
+
+}

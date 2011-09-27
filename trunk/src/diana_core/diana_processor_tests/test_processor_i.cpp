@@ -22,6 +22,23 @@ static void test_processor_idiv()
 }
 
 
+static void test_processor_idiv2()
+{
+    unsigned char code[] = {0xF6, 0xFA}; // idiv dl
+    CTestProcessor proc(code, sizeof(code));
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    SET_REG_EDX(0x127E);
+    SET_REG_EAX(0x12341678);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+    
+    OPERAND_SIZE rax = GET_REG_RAX;
+    TEST_ASSERT(rax == 0x1234522D);
+}
+
+
 static void test_processor_imul()
 {
     unsigned char code[] = {0xF6, 0xEB}; //imul        bl      
@@ -204,6 +221,7 @@ static void test_processor_inc()
 void test_processor_i()
 {
     test_processor_idiv();
+    test_processor_idiv2();
     test_processor_imul();
     test_processor_imul2();
     test_processor_imul3();
