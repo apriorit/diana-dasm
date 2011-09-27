@@ -51,40 +51,32 @@ int Diana_Call_daa(struct _dianaContext * pDianaContext,
 int Diana_Call_das(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
-    //IF (AL AND 0FH) > 9 OR AF = 1
-    //THEN
-    //   AL := AL - 6;
-    //   AF := 1;
-    //ELSE
-    //   AF := 0;
-    //FI;
-    //IF (AL > 9FH) OR (CF = 1)
-    //THEN
-    //   AL := AL - 60H;
-    //   CF := 1;
-    //ELSE CF := 0;
-    //FI; 
     unsigned char al = 0;
+    unsigned char oldal = 0;
+    int oldcf = 0;
     al = (unsigned char)GET_REG_AL;
+    oldal = al;
+    oldcf = GET_FLAG_CF;
 
-    if ( (al & 0x0F) > 9 || GET_FLAG_AF )
+    CLEAR_FLAG_CF;
+    if ( (al & 0x0F) > 9 || GET_FLAG_AF ) 
     {
         al = al - 6;
+        if( oldcf || al >= 0x80 )
+        {
+            SET_FLAG_CF;
+        }
         SET_FLAG_AF;
-    }
-    else
+    } 
+    else 
     {
         CLEAR_FLAG_AF;
     }
 
-    if ( (al > 0x9F) || GET_FLAG_CF )
+    if ( (oldal > 0x99) || oldcf ) 
     {
         al = al - 0x60;
         SET_FLAG_CF;
-    }
-    else
-    {
-        CLEAR_FLAG_CF;
     }
     DI_UPDATE_FLAGS_PSZ(SET_REG_AL(al));
     DI_PROC_END;

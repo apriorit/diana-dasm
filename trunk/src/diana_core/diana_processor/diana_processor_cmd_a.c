@@ -7,30 +7,19 @@
 int Diana_Call_aaa(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
-  
-    //IF ((AL AND 0FH) > 9) OR (AF = 1)
-    //THEN
-    //AL := (AL + 6) AND 0FH;
-    //AH := AH + 1;
-    //AF := 1;
-    //CF := 1;
-    //ELSE
-    //CF := 0;
-    //AF := 0;
-    //FI; 
-
-    if (((GET_REG_AL & 0x0F) > 9) || (GET_FLAG_AF == 1))
+    if (((GET_REG_AL & 0x0F) > 9) || GET_FLAG_AF) 
     {
-        SET_REG_AL((GET_REG_AL + 6) & 0x0F);
+        SET_REG_AX(GET_REG_AX + 6);
         SET_REG_AH(GET_REG_AH + 1);
         SET_FLAG_AF;
         SET_FLAG_CF;
-    }
-    else
+    } 
+    else 
     {
         CLEAR_FLAG_AF;
         CLEAR_FLAG_CF;
     }
+    SET_REG_AL(GET_REG_AL & 0x0F);
     DI_PROC_END;
 }
 
@@ -69,33 +58,21 @@ int Diana_Call_aam(struct _dianaContext * pDianaContext,
 int Diana_Call_aas(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
-    //IF (AL AND 0FH) > 9 OR AF = 1
-    //THEN
-    //    AL := AL - 6;
-    //    AL := AL AND 0FH;
-    //    AH := AH - 1;
-    //    AF := 1;
-    //    CF := 1;
-    //ELSE
-    //    CF := 0;
-    //    AF := 0;
-    //FI;
-
-    if ((GET_REG_AL & 0xF) > 9 || GET_FLAG_AF)
-    {
-        SET_REG_AL(GET_REG_AL - 6);
-        SET_REG_AL(GET_REG_AL & 0xF);
+   if ((GET_REG_AL & 0xF) > 9 || GET_FLAG_AF) 
+   {
+        SET_REG_AX(GET_REG_AX - 6);
         SET_REG_AH(GET_REG_AH - 1);
-
+  
         SET_FLAG_AF;
         SET_FLAG_CF;
-    }
-    else
-    {
+   } 
+   else 
+   {
         CLEAR_FLAG_AF;
         CLEAR_FLAG_CF;
-    }
-    DI_PROC_END;
+   }
+   SET_REG_AL(GET_REG_AL & 0x0F);
+   DI_PROC_END;
 }
 
     
