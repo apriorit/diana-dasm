@@ -75,21 +75,21 @@ int Diana_Call_lods(struct _dianaContext * pDianaContext,
     DI_CHECK(DianaProcessor_GetMemValue(pCallContext,
                                         selector,
                                         rsi,
-                                        pCallContext->m_context.iCurrentCmd_opsize,
+                                        pCallContext->m_result.linkedOperands->usedSize,
                                         &value,
                                         0,
                                         pDianaContext->currentCmd_sreg));
 
-    SET_REG_RAX2(value, pCallContext->m_context.iCurrentCmd_opsize);
+    SET_REG_RAX2(value, pCallContext->m_result.linkedOperands->usedSize);
 
     if (GET_FLAG_DF)
     {
-        rsi -= pCallContext->m_context.iCurrentCmd_opsize;
+        rsi -= pCallContext->m_result.linkedOperands->usedSize;
     }
     else
     {
         // increment
-        rsi += pCallContext->m_context.iCurrentCmd_opsize;
+        rsi += pCallContext->m_result.linkedOperands->usedSize;
     }
 
     SET_REG_RSI2(rsi, pCallContext->m_context.iCurrentCmd_addressSize);

@@ -21,7 +21,43 @@ void test_processor_lea()
     TEST_ASSERT(GET_REG_EBX == 13);
 }
 
+
+void test_processor_lods()
+{
+    // rep stos 
+    unsigned char code[] = {0xAC}; //            lods    byte ptr [esi] 
+
+    CTestProcessor proc(code, sizeof(code));
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+    
+    TEST_ASSERT(GET_REG_ESI == 1);
+    TEST_ASSERT(GET_REG_EAX == 0xAC);
+
+}
+
+void test_processor_lods2()
+{
+    // rep stos 
+    unsigned char code[] = {0x66, 0xAD};//            lods        word ptr [esi] 
+
+    CTestProcessor proc(code, sizeof(code));
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+    
+    TEST_ASSERT(GET_REG_ESI == 2);
+
+    TEST_ASSERT(GET_REG_EAX == 0xAD66);
+
+}
+
 void test_processor_l()
 {
     test_processor_lea();
+    test_processor_lods();
+    test_processor_lods2();
 }
