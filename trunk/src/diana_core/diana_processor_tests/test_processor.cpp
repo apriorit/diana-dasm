@@ -410,28 +410,29 @@ static void test_processor_sub2()
 
 static void test_processor_enter()
 {
-    // __asm enter 0x10, 1
+    // __asm enter 0x4, 1
     unsigned char buff[] = {0xC8, 0x4, 0x00, 0x01,
                             0,0,0,0,
                             0,0,0,0}; 
 
     const static unsigned char target[] = 
                             {0xC8, 0x4, 0x00, 0x01,
-                            4,0,1,0,
-                            1,0,0,0};
+                            8,0,0,0,
+                            4,0,0,0};
 
     CTestProcessor proc(buff, sizeof(buff));
     DianaProcessor * pCallContext = proc.GetSelf();
 
     SET_REG_RSP(0xC);
-    SET_REG_RBP(0x1);
+    SET_REG_RBP(0x4);
 
     int res = proc.ExecOnce();
     TEST_ASSERT(res == DI_SUCCESS);
 
     TEST_ASSERT(memcmp(target, buff, sizeof(buff))==0);
+    OPERAND_SIZE rsp = GET_REG_RSP;
     TEST_ASSERT(GET_REG_RSP == 0);
-    TEST_ASSERT(GET_REG_RBP == 4)
+    TEST_ASSERT(GET_REG_RBP == 8)
 }
 
 static void test_processor_xlat()

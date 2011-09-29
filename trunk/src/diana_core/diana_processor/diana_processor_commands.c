@@ -244,7 +244,7 @@ int Diana_Call_enter(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
     // DEST 
-    OPERAND_SIZE rbp = 0, rsp = 0;
+    OPERAND_SIZE rbp = 0, rsp = 0, tempRBP = 0;
 
     DI_DEF_LOCALS(op1, op2);
     DI_MEM_GET_DEST(op1);
@@ -254,13 +254,17 @@ int Diana_Call_enter(struct _dianaContext * pDianaContext,
     rbp = GET_REG_RBP2(pCallContext->m_context.iCurrentCmd_opsize);
     DI_CHECK(diana_internal_push(pCallContext, &rbp));
 
+    // tempRBP <- esp
+    tempRBP = GET_REG_RSP2(pCallContext->m_context.iCurrentCmd_opsize);
+
     // push frames
+    if (op2 > 0)
     {
         int i = 0;
         OPERAND_SIZE selector = GET_REG_SS;
         OPERAND_SIZE tmp = 0;
         tmp = rbp;
-        for(; i < op2; ++i)
+        for(i =1; i < op2; ++i)
         {
             OPERAND_SIZE value = 0;
             DI_CHECK(DianaProcessor_GetMemValue(pCallContext,
@@ -272,12 +276,15 @@ int Diana_Call_enter(struct _dianaContext * pDianaContext,
                                                 reg_SS));
             DI_CHECK(diana_internal_push(pCallContext, &value));
         }
+
+        // push tempRBP
+        DI_CHECK(diana_internal_push(pCallContext, &tempRBP));
     }
     // mov ebp, esp        
-    rsp = GET_REG_RSP2(pCallContext->m_context.iCurrentCmd_opsize);
-    SET_REG_RBP2(rsp, pCallContext->m_context.iCurrentCmd_opsize);
+    SET_REG_RBP2(tempRBP, pCallContext->m_context.iCurrentCmd_opsize);
 
     // sub esp, N
+    rsp = GET_REG_RSP2(pCallContext->m_context.iCurrentCmd_opsize);
     SET_REG_RSP2(rsp - op1,
                  pCallContext->m_context.iCurrentCmd_opsize);
     
