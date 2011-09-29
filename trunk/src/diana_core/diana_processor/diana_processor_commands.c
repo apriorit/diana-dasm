@@ -258,6 +258,7 @@ int Diana_Call_enter(struct _dianaContext * pDianaContext,
     tempRBP = GET_REG_RSP2(pCallContext->m_context.iCurrentCmd_opsize);
 
     // push frames
+    op2 &= 0x1FULL;
     if (op2 > 0)
     {
         int i = 0;
