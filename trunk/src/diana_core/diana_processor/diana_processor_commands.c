@@ -264,7 +264,7 @@ int Diana_Call_enter(struct _dianaContext * pDianaContext,
         int i = 0;
         OPERAND_SIZE selector = GET_REG_SS;
         OPERAND_SIZE tmp = 0;
-        tmp = rbp;
+        tmp = rbp - pCallContext->m_context.iCurrentCmd_opsize;
         for(i =1; i < op2; ++i)
         {
             OPERAND_SIZE value = 0;
@@ -276,6 +276,7 @@ int Diana_Call_enter(struct _dianaContext * pDianaContext,
                                                 0,
                                                 reg_SS));
             DI_CHECK(diana_internal_push(pCallContext, &value));
+            tmp -= pCallContext->m_context.iCurrentCmd_opsize;
         }
 
         // push tempRBP

@@ -2,6 +2,7 @@
 #include "test_common.h"
 #include "test_processor_impl.h"
 
+#include "vector"
 static void test_processor1()
 {
     // test empty buffer
@@ -435,6 +436,43 @@ static void test_processor_enter()
     TEST_ASSERT(GET_REG_RBP == 8)
 }
 
+static void test_processor_enter2()
+{
+    std::vector<DI_UINT32> memory(4097);
+
+    unsigned char buff[] = {0xC8, 0x08, 0x00, 0x02}; 
+
+    memory[0] = *(DI_UINT32*)buff;
+
+    DI_UINT32 * pBegin = &memory.front();
+    size_t sizeInBytes = memory.size()*4;
+
+    CTestProcessor proc((unsigned char*)pBegin, sizeInBytes);
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RBP(sizeInBytes);
+	
+    DI_UINT32 * pStackPtr = pBegin + memory.size();
+    for(int i = 1; i <= 32; i++)
+    {
+        *--pStackPtr = i;
+    }
+	SET_REG_RSP( (DI_UINT32)pStackPtr  - (DI_UINT32)pBegin);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+
+    TEST_ASSERT(GET_REG_RSP == 16240);
+    TEST_ASSERT(GET_REG_RBP == 16256);
+
+    TEST_ASSERT(memory[4061] == 0);
+	TEST_ASSERT(memory[4062] == 16256);
+	TEST_ASSERT(memory[4063] == 1);
+	TEST_ASSERT(memory[4064] == 16388);
+	TEST_ASSERT(memory[4065] == 32);
+}
+
+
 static void test_processor_xlat()
 {
     // rep stos 
@@ -504,6 +542,7 @@ void test_processor()
     test_processor_sub();
     test_processor_sub2();
     test_processor_enter();
+    test_processor_enter2();
     test_processor_xlat();
     test_processor_test();
     test_processor_or();
