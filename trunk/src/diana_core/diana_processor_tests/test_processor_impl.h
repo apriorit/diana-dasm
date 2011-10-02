@@ -23,7 +23,8 @@ class CTestProcessor
 public:
     CTestProcessor(unsigned char * pBuffer,
                    size_t size,
-                   size_t segmentSize = 0)
+                   size_t segmentSize = 0,
+                   int iMode = DIANA_MODE32)
     {
         Diana_InitRandomMemoryStream(&m_memoryStream,
                                      pBuffer,
@@ -40,7 +41,7 @@ public:
         int res = DianaProcessor_Init(&m_proc, 
                                         &m_memoryStream.parent,
                                         &m_memAllocator.m_parent,
-                                        DIANA_MODE32);
+                                        iMode);
         TEST_ASSERT(res == DI_SUCCESS);
     }
 

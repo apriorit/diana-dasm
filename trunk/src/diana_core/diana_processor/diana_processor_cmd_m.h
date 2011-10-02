@@ -12,6 +12,9 @@ int Diana_Call_movs(struct _dianaContext * pDianaContext,
 int Diana_Call_movsx(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext);
 
+int Diana_Call_movsxd(struct _dianaContext * pDianaContext,
+                      DianaProcessor * pCallContext);
+
 int Diana_Call_movzx(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext);
 

@@ -237,3 +237,28 @@ int Diana_Call_mul(struct _dianaContext * pDianaContext,
 
     DI_PROC_END
 }
+
+int Diana_Call_movsxd(struct _dianaContext * pDianaContext,
+                     DianaProcessor * pCallContext)
+{
+    //DEST := SRC
+    DI_DEF_LOCALS(src, dest);
+    
+    DI_MEM_GET_DEST(dest)
+    DI_MEM_GET_SRC(src);
+
+    DI_SIGN_EXTEND(src, dest_size);
+
+    if (pCallContext->m_context.iCurrentCmd_opsize == DIANA_MODE16)
+    {
+        dest &= ~0xFFFFULL;
+        dest |= src & 0xFFFFULL;
+    }
+    else
+    {
+        dest = src;
+    }
+
+    DI_MEM_SET_DEST(dest);
+    DI_PROC_END
+}

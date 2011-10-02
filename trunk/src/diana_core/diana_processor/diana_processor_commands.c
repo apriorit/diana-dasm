@@ -250,6 +250,13 @@ int Diana_Call_enter(struct _dianaContext * pDianaContext,
     DI_MEM_GET_DEST(op1);
     DI_MEM_GET_SRC(op2);
 
+    if (pCallContext->m_context.iAMD64Mode)
+    {
+        // In 64-bit mode, the operand size of ENTER defaults to 64 bits, 
+        // and there is no prefix available for
+        // encoding a 32-bit operand size. (c)
+        pCallContext->m_context.iCurrentCmd_opsize = 8;
+    }
     // push rbp
     rbp = GET_REG_RBP2(pCallContext->m_context.iCurrentCmd_opsize);
     DI_CHECK(diana_internal_push(pCallContext, &rbp));
@@ -407,6 +414,7 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(mov)
     DI_PROC_REGISTER_COMMAND(movs)
     DI_PROC_REGISTER_COMMAND(movsx)
+    DI_PROC_REGISTER_COMMAND(movsxd)
     DI_PROC_REGISTER_COMMAND(movzx)
     DI_PROC_REGISTER_COMMAND(mul)
 

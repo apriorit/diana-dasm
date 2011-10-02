@@ -472,6 +472,32 @@ static void test_processor_enter2()
 	TEST_ASSERT(memory[4065] == 32);
 }
 
+static void test_processor_enter3()
+{
+    std::vector<DI_UINT16> memory(1024);
+
+    unsigned char buff[] = {0x66, 0xC8, 0x08, 0x00, 0x02}; 
+
+    memcpy(&memory.front(), buff, sizeof(buff));
+
+    DI_UINT16 * pBegin = &memory.front();
+    size_t sizeInBytes = memory.size()*4;
+
+    CTestProcessor proc((unsigned char*)pBegin, sizeInBytes);
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RBP(sizeInBytes);	
+    
+    DI_UINT16 * pStackPtr = pBegin + memory.size();
+    for(int i = 1; i <= 32; i++)
+    {
+        *--pStackPtr = i;
+    }
+	SET_REG_RSP( (DI_UINT32)pStackPtr  - (DI_UINT32)pBegin);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+}
 
 static void test_processor_xlat()
 {
@@ -543,6 +569,7 @@ void test_processor()
     test_processor_sub2();
     test_processor_enter();
     test_processor_enter2();
+    test_processor_enter3();
     test_processor_xlat();
     test_processor_test();
     test_processor_or();

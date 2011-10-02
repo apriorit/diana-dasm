@@ -16,6 +16,10 @@ static unsigned char mov2[] = {0x0F, 0x22, 0xFF&~7|1};  // mov     cr7, ecx
 static unsigned char mov3[] = {0x0F, 0x21, 0xFF&~7|1};  // mov     dr7, ecx
 static unsigned char mov4[] = {0x0F, 0x24, 0xFF&~7|1};  // mov     ecx, tr7
 
+static unsigned char mov5[] = {0x48, 0x63, 0x4C, 0x24, 0x04};  // movsxd  rcx, [rsp+4]
+static unsigned char mov6[] = {0x66, 0x63, 0x68, 0x4c};  // movsxd  rbp,[rax+0x4c]
+
+
 
 void test_mov_spec()
 {
@@ -93,4 +97,69 @@ void test_mov_spec()
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_TR7);
     }
 
+    //static unsigned char mov5[] = {0x48, 0x63, 0x4C, 0x24, 0x04};  // movsxd  rcx, [rsp+428h+var_424]
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE64,mov5, sizeof(mov5), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movsxd")==0);
+        TEST_ASSERT(result.iFullCmdSize == sizeof(mov5));
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_RCX);
+
+        TEST_ASSERT(result.linkedOperands[1].type == diana_index);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.seg_reg == reg_DS);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_RSP);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.indexed_reg == reg_none);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0x00);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispSize == 0x01);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0x0000000000000004);
+    }
+
+    // check arpl below, it has the same opcode, ooooo how I love you guys from intel :)
+    // just skip prefix
+    // 63 4C 24 04      arpl        word ptr [esp+4],cx 
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE32, mov5+1, sizeof(mov5)-1, Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "arpl")==0);
+        TEST_ASSERT(result.iFullCmdSize == sizeof(mov5)-1);
+
+        TEST_ASSERT(result.linkedOperands[0].type == diana_index);
+		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
+		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_ESP);
+		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_none);
+		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0x00);
+		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0x01);
+		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0x0000000000000004);
+
+        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_CX);
+    }
+
+    // very nice command, back to 64
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE64, mov6, sizeof(mov6), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movsxd")==0);
+        TEST_ASSERT(result.iFullCmdSize == sizeof(mov6));
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_RBP);
+
+        TEST_ASSERT(result.linkedOperands[1].type == diana_index);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.seg_reg == reg_DS);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_RAX);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.indexed_reg == reg_none);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0x00);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispSize == 0x01);
+		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0x04C);
+    }
 }

@@ -169,6 +169,60 @@ int Diana_InsertPrefix(DianaContext * pContext,
 }
 
 
+static int TryMatchKey(DianaCmdKey * pFoundKey, DianaParseParams * pParseParams)
+{
+    DI_CHAR flagMask = 0;
+    DianaCmdInfo * pInfo = (DianaCmdInfo * )pFoundKey->keyLineOrCmdInfo;
+    
+    flagMask = pInfo->m_flags & (DI_FLAG_CMD_AMD64 | DI_FLAG_CMD_I386);
+    if (!flagMask)
+        return 1;
+
+    if (flagMask & DI_FLAG_CMD_AMD64 &&
+        pParseParams->pContext->iMainMode_addressSize == DIANA_MODE64)
+    {
+        return 1;
+    }
+
+    if (flagMask & DI_FLAG_CMD_I386 &&
+        pParseParams->pContext->iMainMode_addressSize == DIANA_MODE32)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+static DianaCmdKey * ScanLeft(DianaCmdKeyLine * pLine, 
+                              DianaCmdKey * pFoundKey, 
+                              DianaParseParams * pParseParams)
+{
+    --pFoundKey;
+    while(pFoundKey > pLine->key)
+    {
+        if (TryMatchKey(pFoundKey, pParseParams))
+            return pFoundKey;
+        --pFoundKey;
+    }
+    return 0;
+}
+
+static DianaCmdKey * ScanRight(DianaCmdKeyLine * pLine, 
+                              DianaCmdKey * pFoundKey, 
+                              DianaParseParams * pParseParams)
+{
+    size_t number = pFoundKey - pLine->key;
+    
+    ++pFoundKey;
+    ++number;
+    
+    for( ; number < (size_t)pLine->iKeysCount; ++number)
+    {
+        if (TryMatchKey(pFoundKey, pParseParams))
+            return pFoundKey;
+    }
+    return 0;
+}
+
 static
 int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
                        DianaStreamProxy * pOutProxy, // OUT
@@ -218,7 +272,21 @@ int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
                     continue;
                 }
 
-                // found data 
+                // found data, check processor mode
+                if (!TryMatchKey(pFoundKey, pParseParams))
+                {
+                    // not matched totally, scan left or right
+                    pFoundKey = ScanLeft(pLine, pFoundKey, pParseParams);
+                    if (!pFoundKey)
+                    {
+                        pFoundKey = ScanRight(pLine, pFoundKey, pParseParams);
+                    }
+                    if (!pFoundKey)
+                    {
+                        return DI_ERROR;
+                    }
+                }
+
                 Diana_InitStreamProxy(pOutProxy, 
                                       pParseParams->readStream,
                                       pParseParams->pContext->cache+it, 
