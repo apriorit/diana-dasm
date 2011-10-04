@@ -29,7 +29,6 @@
 #include "diana_processor_impl_init.h"
 #include "diana_processor_specific.h"
 
-
 DianaRegInfo * DianaProcessor_QueryReg(DianaProcessor * pThis, 
                               DianaUnifiedRegister reg)
 {
@@ -538,6 +537,14 @@ int DianaProcessor_SignExtend(OPERAND_SIZE * pVariable,
 }
 
 
+int DianaProcessor_Query64RegisterFor32(DianaUnifiedRegister registerIn,
+                                        DianaUnifiedRegister * pUsedReg)
+{
+    if (registerIn < reg_EAX || registerIn > reg_EDI)
+        return DI_ERROR;
+    *pUsedReg = reg_RAX - reg_EAX + registerIn;
+    return DI_SUCCESS;
+}
 int DianaProcessor_QueryRaxRegister(int size, 
                                     DianaUnifiedRegister * pUsedReg)
 {

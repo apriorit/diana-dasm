@@ -59,9 +59,57 @@ void test_processor_movsxd64_2()
     TEST_ASSERT(GET_REG_RCX == 0xFFFFFFFF80030201ULL);
 }
 
+
+void test_processor_mov64()
+{
+    unsigned char code[] = {0x48, 0xb8, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}; 
+    // 48b8ffffffffffffffff mov rax,0FFFFFFFFFFFFFFFFh
+
+    CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+
+    TEST_ASSERT(GET_REG_RAX == 0xFFFFFFFFFFFFFFFFULL);
+}
+
+
+void test_processor_mov64_2()
+{
+    unsigned char code[] = {0x48, 0xc7, 0xc0, 0xff, 0xff, 0xff, 0xff}; 
+    // 48c7c0ffffffff      rax,0FFFFFFFFFFFFFFFFh
+
+    CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+
+    TEST_ASSERT(GET_REG_RAX == 0xFFFFFFFFFFFFFFFFULL);
+}
+
+void test_processor_mov64_3()
+{
+    unsigned char code[] = {0xc7, 0xc0, 0xff, 0xff, 0xff, 0xff}; 
+    // 8c7c0ffffffff      eax,0ffffffffh
+
+    CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    SET_REG_RAX(0xFFFFFFFFFFFFFFFFULL);
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+
+    TEST_ASSERT(GET_REG_RAX == 0x00000000FFFFFFFFULL);
+}
+
 void test_processor_m()
 {
     test_processor_movs();
     test_processor_movsxd64();
     test_processor_movsxd64_2();
+    test_processor_mov64();
+    test_processor_mov64_2();
+    test_processor_mov64_3();
 }

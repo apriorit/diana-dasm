@@ -4,6 +4,45 @@
 #include "diana_core_gen_tags.h"
 #include "diana_processor_cmd_internal.h"
 
+int Di_CheckZeroExtends(DianaProcessor * pCallContext,
+                        OPERAND_SIZE * pDest,
+                        int src_size,
+                        int * dest_size)
+{
+    if (!pCallContext->m_context.iAMD64Mode)
+    {
+        return DI_SUCCESS;
+    }
+
+    if (src_size == 8)
+    {
+        return DI_SUCCESS;
+    }
+
+    if (pCallContext->m_context.iCurrentCmd_opsize == 8)
+    {
+        if (pCallContext->m_result.pInfo->m_flags & DI_FLAG_CMD_AMD64_SIGN_EXTENDS)
+        {
+            DI_CHECK(DianaProcessor_SignExtend(pDest, 
+                                            src_size,
+                                            8));
+        }
+    }
+    else
+    if (pCallContext->m_context.iCurrentCmd_opsize == 4)
+    {
+        if (pCallContext->m_result.linkedOperands->type == diana_register)
+        {
+            DianaUnifiedRegister reg64;
+            DI_CHECK(DianaProcessor_Query64RegisterFor32( pCallContext->m_result.linkedOperands->value.recognizedRegister,
+                                                          &reg64));
+
+            DianaProcessor_SetValue(pCallContext, reg64, DianaProcessor_QueryReg(pCallContext, reg64), 0);
+        }
+    }
+    return DI_SUCCESS;
+}
+
 int Diana_Call_mov(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
@@ -14,6 +53,8 @@ int Diana_Call_mov(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
 
     dest = src;
+
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
     DI_MEM_SET_DEST(dest);
     DI_PROC_END

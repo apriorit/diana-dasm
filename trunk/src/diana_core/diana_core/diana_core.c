@@ -308,13 +308,21 @@ void Diana_InitLine(DianaCmdKeyLine * pRoot)
             // 1) DI_FLAG_CMD_SUPPORTS_IMM64
             // push 0x68
             // mov  0xB8
+            // 2) DI_FLAG_CMD_AMD64_SIGN_EXTENDS 
+            // mov  0xc7 
             if (pRoot == Diana_GetRootLine())
             {
                 switch (pRoot->key[i].chOpcode)
                 {
+                case 0xC7:
+                    pInfo->m_flags |= DI_FLAG_CMD_AMD64_SIGN_EXTENDS;
+                    break;
+
                 case 0x68:
                 case 0xB8:
                     pInfo->m_flags |= DI_FLAG_CMD_SUPPORTS_IMM64;
+
+
                 }
             }
 

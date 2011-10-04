@@ -292,6 +292,9 @@ int Diana_ProcessorGetOperand_index_ex(struct _dianaContext * pDianaContext,
 
 void DianaProcessor_SetResetDefaultFlags(DianaProcessor * pThis);
 
+int DianaProcessor_Query64RegisterFor32(DianaUnifiedRegister registerIn,
+                                        DianaUnifiedRegister * pUsedReg);
+
 int DianaProcessor_QueryRaxRegister(int size, 
                                     DianaUnifiedRegister * pUsedReg);
 int DianaProcessor_QueryRdxRegister(int size, 

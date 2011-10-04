@@ -49,6 +49,7 @@ typedef enum
 #define DI_FLAG_CMD_IGNORE_REX_PREFIX      16
 #define DI_FLAG_CMD_I386                   32
 #define DI_FLAG_CMD_AMD64                  64
+#define DI_FLAG_CMD_AMD64_SIGN_EXTENDS    128
 
 
 // index fields
