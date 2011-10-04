@@ -151,6 +151,23 @@ void test_processor_ror2()
     TEST_ASSERT(GET_FLAG_OF);
 }
 
+void test_processor_ret64()
+{
+    // ror eax, 1
+    unsigned char code[] = {0xC3, 0x01, 0x01, 0x01, 
+                            0x01, 0x01, 0x01, 0xFF};
+    CTestProcessor proc(code, sizeof(code), 0, 8);
+    DianaProcessor * pCallContext = proc.GetSelf();
+    
+    SET_REG_RSP(0);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+
+    TEST_ASSERT(GET_REG_RIP == 0xff010101010101c3);
+    TEST_ASSERT(GET_REG_RSP == 8);
+}
+
 void test_processor_r()
 {
     test_processor_rcl();
@@ -162,5 +179,7 @@ void test_processor_r()
 
     test_processor_ror();
     test_processor_ror2();
+
+    test_processor_ret64();
     
 }

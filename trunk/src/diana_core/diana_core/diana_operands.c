@@ -255,6 +255,11 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         ++iCurOffset;
     }
 
+    if (pContext->iAMD64Mode && pResult->pInfo->m_flags & DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64)
+    {
+        if (pContext->iCurrentCmd_opsize == 4)
+            pContext->iCurrentCmd_opsize = 8;
+    }
 
     // read structure
     for (i =0;i < pResult->pInfo->m_operandCount; ++i, ++pResult->iLinkedOpCount)
@@ -471,6 +476,9 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 {
                         if (pResult->pInfo->m_bHas32BitAnalog && iCSIPSize!=1)
                             iCSIPSize = pContext->iCurrentCmd_opsize;
+
+                        if (iCSIPSize == 8)
+                            iCSIPSize = 4;
                 } else
                 {
                     Diana_FatalBreak();;
