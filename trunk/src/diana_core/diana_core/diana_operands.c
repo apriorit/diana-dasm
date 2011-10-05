@@ -354,6 +354,9 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 pLinkedOp->type = diana_register;
                 switch(pLinkedOp->usedSize)
                 {
+                    case 8:
+                        pLinkedOp->value.recognizedRegister = reg_RAX;
+                        break;
                     case 4:
                         pLinkedOp->value.recognizedRegister = reg_EAX;
                         break;
