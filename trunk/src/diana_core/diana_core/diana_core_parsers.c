@@ -529,7 +529,8 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
 
     if (iResult && !dataValid)
     {
-        Diana_CacheEatOne(pParseParams->pContext);
+        if (pParseParams->pContext->cacheSize)
+            Diana_CacheEatOne(pParseParams->pContext);
     }
     return iResult;
 }
