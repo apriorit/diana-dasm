@@ -49,9 +49,45 @@ static void test_processor_adc()
 
     TEST_ASSERT(GET_REG_EBX == 0xffffffff);
 }
+
+
+static void test_processor_and64()
+{
+	unsigned char buff[] = {0x25, 0xf0, 0xf0, 0xf0, 0xf0};
+	//and eax,0f0f0f0f0h
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RAX(0xFFFFFFFFFFFFFFFFULL);
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT(GET_REG_RAX == 0x00000000F0F0F0F0);
+}
+
+
+static void test_processor_and64_2()
+{
+	unsigned char buff[] = {0x66, 0x25, 0xf0, 0xf0, 0xf0, 0xf0};
+	//and ax,0f0f0h
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RAX(0xFFFFFFFFFFFFFFFFULL);
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT(GET_REG_RIP == 0x0004);
+
+	TEST_ASSERT(GET_REG_RAX == 0xFFFFFFFFFFFFF0F0);
+}
+
 void test_processor_a()
 {
     test_processor_and();
     test_processor_and2();
     test_processor_adc();
+	test_processor_and64();
+	test_processor_and64_2();
 }

@@ -1,6 +1,11 @@
 #ifndef DIANA_PROCESSOR_CMD_INTERNAL_H
 #define DIANA_PROCESSOR_CMD_INTERNAL_H
 
+int Di_CheckZeroExtends(DianaProcessor * pCallContext,
+                        OPERAND_SIZE * pDest,
+                        int src_size,
+                        int * dest_size);
+
 int diana_internal_pop(DianaProcessor * pCallContext,
                        OPERAND_SIZE * pValue);
 int diana_internal_push(DianaProcessor * pCallContext,

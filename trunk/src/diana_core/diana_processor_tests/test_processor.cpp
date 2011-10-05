@@ -515,23 +515,6 @@ void test_processor_test()
     TEST_ASSERT(pCallContext->m_flags.l.value == 0x212);
 }
 
-void test_processor_or()
-{
-// or          dword ptr [ebp-4],0FFFFFFFFh
-    unsigned char code[] = {0x83, 0x4D, 0xFC, 0xFF,
-                            0,0,0,0};
-
-    CTestProcessor proc(code, sizeof(code));
-    DianaProcessor * pCallContext = proc.GetSelf();
-
-    SET_REG_EBP(8);
-
-    pCallContext->m_flags.l.value = 0x202;
-    int res = proc.ExecOnce();
-    TEST_ASSERT(res == DI_SUCCESS);
-    
-    TEST_ASSERT(pCallContext->m_flags.l.value == 0x286);
-}
 void test_processor()
 {
     test_processor1();
@@ -553,5 +536,4 @@ void test_processor()
     test_processor_enter3();
     test_processor_xlat();
     test_processor_test();
-    test_processor_or();
 }

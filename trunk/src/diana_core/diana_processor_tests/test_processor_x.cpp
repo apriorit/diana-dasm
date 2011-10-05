@@ -1,7 +1,6 @@
 #include "test_processor_x.h"
 #include "test_common.h"
 #include "test_processor_impl.h"
-#include "vector"
 
 static void test_processor_xor()
 {

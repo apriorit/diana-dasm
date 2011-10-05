@@ -2,6 +2,7 @@
 #include "diana_proc_gen.h"
 #include "diana_gen.h"
 #include "diana_core_gen_tags.h"
+#include "diana_processor_cmd_internal.h"
 
 
 int Diana_Call_aaa(struct _dianaContext * pDianaContext,
@@ -133,6 +134,8 @@ int Diana_Call_and(struct _dianaContext * pDianaContext,
     DI_SIGN_EXTEND(src, DI_VAR_SIZE(dest));
 
     dest = dest & src;
+	DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+
     CLEAR_FLAG_CF;
     CLEAR_FLAG_OF;
 

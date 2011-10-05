@@ -53,7 +53,6 @@ int Diana_Call_mov(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
 
     dest = src;
-
     DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
     DI_MEM_SET_DEST(dest);
