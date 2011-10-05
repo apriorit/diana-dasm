@@ -39,6 +39,8 @@ int Diana_Call_xor(struct _dianaContext * pDianaContext,
 
     dest = dest ^ src;
 
+	DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
     DI_PROC_END
 }

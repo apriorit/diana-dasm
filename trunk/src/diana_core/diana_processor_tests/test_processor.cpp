@@ -348,24 +348,6 @@ static void test_processor_pushf()
 }
 
 
-static void test_processor_xor()
-{
-    unsigned char buff[2] = {0x33, 0xc0}; // xor eax, eax
-
-    CTestProcessor proc(buff, 2);
-    DianaProcessor * pCallContext = proc.GetSelf();
-
-    SET_REG_EAX(0x1234);
-
-    int res = proc.ExecOnce();
-    TEST_ASSERT(res == DI_SUCCESS);
-
-    OPERAND_SIZE rip = GET_REG_RIP;
-    TEST_ASSERT(rip == 2);
-
-    TEST_ASSERT(GET_REG_EAX == 0);
-}
-
 static void test_processor_sub()
 {
     // test normal sub 
@@ -564,7 +546,6 @@ void test_processor()
     test_processor_push_1();
     test_processor_push_2();
     test_processor_pushf();
-    test_processor_xor();
     test_processor_sub();
     test_processor_sub2();
     test_processor_enter();

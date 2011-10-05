@@ -91,8 +91,8 @@ void test_processor_mov64_2()
 
 void test_processor_mov64_3()
 {
-    unsigned char code[] = {0xc7, 0xc0, 0xff, 0xff, 0xff, 0xff}; 
-    // 8c7c0ffffffff      eax,0ffffffffh
+    unsigned char code[] = {0xc7, 0xc0, 0x55, 0x55, 0x55, 0x55}; 
+    // mov eax,-1
 
     CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
     DianaProcessor * pCallContext = proc.GetSelf();
@@ -101,7 +101,23 @@ void test_processor_mov64_3()
     int res = proc.ExecOnce();
     TEST_ASSERT(res == DI_SUCCESS);
 
-    TEST_ASSERT(GET_REG_RAX == 0x00000000FFFFFFFFULL);
+    TEST_ASSERT(GET_REG_RAX == 0x0000000055555555ULL);
+}
+
+
+void test_processor_mov64_4()
+{
+	unsigned char code[] = {0xb8, 0x55, 0x55, 0x55, 0x55}; 
+	// mov eax,-1
+
+	CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RAX(0xFFFFFFFFFFFFFFFFULL);
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT(GET_REG_RAX == 0x0000000055555555ULL);
 }
 
 void test_processor_m()
@@ -112,4 +128,5 @@ void test_processor_m()
     test_processor_mov64();
     test_processor_mov64_2();
     test_processor_mov64_3();
+	test_processor_mov64_4();
 }
