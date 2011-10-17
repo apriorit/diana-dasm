@@ -114,20 +114,26 @@ int Diana_InstructionsOwner_QueryOrAllocateInstruction(Diana_InstructionsOwner *
     return DI_SUCCESS;
 }
 
+Diana_Instruction * Diana_InstructionsOwner_GetInstruction(Diana_InstructionsOwner * pOwner, 
+                                                           OPERAND_SIZE address)
+{
+    return pOwner->m_ppPresenceVec[address];
+}
+
 static int Diana_CreateXRef(Diana_InstructionsOwner * pOwner,
                             Diana_Instruction * pFromInstruction,
-                            Diana_Instruction * pToInstruction,
-                            Diana_XRef ** ppXref)
+                            Diana_Instruction * pToInstruction)
 {
+    Diana_XRef * pXref = 0;
     Diana_XRef xref;
     memset(&xref, 0, sizeof(xref));
     xref.m_subrefs[0].m_pInstruction = pFromInstruction;
     xref.m_subrefs[1].m_pInstruction = pToInstruction;
     DI_CHECK(Diana_Stack_Push(&pOwner->m_xrefs, &xref));
 
-    *ppXref = (Diana_XRef *)Diana_Stack_GetTopPtr(&pOwner->m_xrefs);
-    Diana_PushBack(&pToInstruction->m_refsFrom, &(*ppXref)->m_subrefs[0].m_instructionEntry);
-    Diana_PushBack(&pFromInstruction->m_refsTo, &(*ppXref)->m_subrefs[1].m_instructionEntry);
+    pXref = (Diana_XRef *)Diana_Stack_GetTopPtr(&pOwner->m_xrefs);
+    Diana_PushBack(&pToInstruction->m_refsFrom, &(pXref)->m_subrefs[0].m_instructionEntry);
+    Diana_PushBack(&pFromInstruction->m_refsTo, &(pXref)->m_subrefs[1].m_instructionEntry);
     return DI_SUCCESS;
 }
 
@@ -182,10 +188,8 @@ int SaveNewRoute(DianaAnalyzeSession * pSession,
 {
     Diana_Instruction * pTargetInstruction = 0;
     Diana_Instruction * pOldTargetInstruction = 0;
-    Diana_XRef * pXref = 0;
 
     Diana_RouteInfo newRouteInfo;
- //   Diana_RouteInfo * pNewRouteInfo = 0; 
 
     if (newOffset >= pSession->maxOffset)
         return DI_SUCCESS;
@@ -195,7 +199,7 @@ int SaveNewRoute(DianaAnalyzeSession * pSession,
     newRouteInfo.flags = newRouteFlags;
 
     // create new instruction
-    pOldTargetInstruction = pSession->pOwner->m_ppPresenceVec[newOffset];
+    pOldTargetInstruction = Diana_InstructionsOwner_GetInstruction(pSession->pOwner, newOffset);
 
     DI_CHECK(Diana_InstructionsOwner_QueryOrAllocateInstruction(pSession->pOwner, 
                                                                 newOffset, 
@@ -208,7 +212,7 @@ int SaveNewRoute(DianaAnalyzeSession * pSession,
     }
 
     // register xref-from Instruction to Target
-    DI_CHECK(Diana_CreateXRef(pSession->pOwner, pInstruction, pTargetInstruction, &pXref));
+    DI_CHECK(Diana_CreateXRef(pSession->pOwner, pInstruction, pTargetInstruction));
 
     // do not push new route to stack twice
     if (pOldTargetInstruction)
@@ -551,9 +555,6 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
                                &pSession->result);
 
         offset += pSession->result.iFullCmdSize;
-        if (iRes == DI_END)
-            break;
-
         if (iRes)
         {
             // instruction not recognized properly
@@ -581,7 +582,7 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
 
         // check if instruction is always registered
         {
-            Diana_Instruction * pInstruction = pSession->pOwner->m_ppPresenceVec[prevOffset];
+            Diana_Instruction * pInstruction = Diana_InstructionsOwner_GetInstruction(pSession->pOwner, prevOffset);
             if (pInstruction)
             {
                 if (pInstruction->m_flags & DI_INSTRUCTION_INVALID)
