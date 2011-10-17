@@ -66,11 +66,11 @@ static DianaCmdKey * FindCmdKeyImpl(DianaCmdKeyLine * pLine,
             }
             ++pBegin;
             
-
             p = pBegin;
+            i = (int)(p - pLine->key);
             pResult = 0;
             
-            for(i = 0; (i < pLine->iKeysCount) && (p->chOpcode == usedKey.chOpcode); ++i, ++p)
+            for(; (i < pLine->iKeysCount) && (p->chOpcode == usedKey.chOpcode); ++i, ++p)
             {
                 if (bCleanOpcode)
                 {
