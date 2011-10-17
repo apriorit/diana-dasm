@@ -353,10 +353,13 @@ int Diana_ReadCache(DianaContext * pContext,
                                        pContext->cache + pContext->cacheIt + pContext->cacheSize, 
                                        DI_CACHE_SIZE - pContext->cacheSize - pContext->cacheIt, 
                                        &bytesRead);
-        if (iResult != DI_SUCCESS)
-            return iResult;
-    
-        pContext->cacheSize += bytesRead;
+        if (iResult != DI_END)
+        {
+            if (iResult != DI_SUCCESS)
+                return iResult;
+            pContext->cacheSize += bytesRead;
+        }
+        
     }
 
     if (pContext->cacheSize == 0)
