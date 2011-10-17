@@ -9,11 +9,15 @@ struct TestStream:public DianaAnalyzeObserver
 {
     OPERAND_SIZE m_base;
     OPERAND_SIZE m_current;
+    OPERAND_SIZE m_size;
 
     TestStream(OPERAND_SIZE base,
-               OPERAND_SIZE current)
+               OPERAND_SIZE current,
+               OPERAND_SIZE size)
          : 
-            m_base(base), m_current(current)
+            m_base(base), 
+            m_current(current),
+            m_size(size)
     {
     }
 };
@@ -26,6 +30,13 @@ int DianaRead(void * pThis,
 {
     TestStream * pStream = (TestStream * )pThis;
     size_t data = (size_t)(pStream->m_base + pStream->m_current);
+
+    if (pStream->m_current+iBufferSize > pStream->m_size)
+    {
+        iBufferSize = (int)(pStream->m_size - pStream->m_current);
+        if (iBufferSize <=0)
+            return DI_END;
+    }
     memcpy(pBuffer, (void*)data, iBufferSize);
     *readed = iBufferSize;
     pStream->m_current += iBufferSize;
@@ -156,7 +167,7 @@ void test_analyzer1()
     size_t maxOffset = sizeof(code);
     size_t start = 0;
 
-    TestStream stream((OPERAND_SIZE)code, start);
+    TestStream stream((OPERAND_SIZE)code, start, sizeof(code));
     DianaAnalyzeObserver_Init(&stream, 
                                 DianaRead, 
                                 DianaAnalyzeMoveTo,
@@ -222,7 +233,7 @@ void test_analyzer2()
     size_t maxOffset = sizeof(code);
     size_t start = 0;
 
-    TestStream stream((OPERAND_SIZE)code, start);
+    TestStream stream((OPERAND_SIZE)code, start, sizeof(code));
     DianaAnalyzeObserver_Init(&stream, 
                                 DianaRead, 
                                 DianaAnalyzeMoveTo,
