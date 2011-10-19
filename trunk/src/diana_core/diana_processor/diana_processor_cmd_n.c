@@ -11,14 +11,15 @@ int Diana_Call_neg(struct _dianaContext * pDianaContext,
     DI_DEF_LOCALS(src, dest);
         
     DI_MEM_GET_DEST(src);
+    dest_size = src_size;
 
     dest = 0;
 
-    DI_START_UPDATE_O_FLAGS(dest);
+    DI_START_UPDATE_OA_FLAGS(dest);
 
     dest = dest - src;
 
-    DI_END_UPDATE_O_FLAGS_SUB(dest, src);
+    DI_END_UPDATE_OA_FLAGS_SUB(dest, src);
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
 
