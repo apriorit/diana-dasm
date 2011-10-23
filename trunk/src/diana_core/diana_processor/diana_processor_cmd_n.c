@@ -7,7 +7,7 @@
 int Diana_Call_neg(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
-    //DEST := DEST + SRC;
+    //DEST := 0 - SRC;
     DI_DEF_LOCALS(src, dest);
         
     DI_MEM_GET_DEST(src);

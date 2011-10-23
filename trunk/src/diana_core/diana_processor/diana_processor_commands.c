@@ -19,6 +19,7 @@
 #include "diana_gen.h"
 #include "string.h"
 #include "diana_core_gen_tags.h"
+#include "diana_processor_cmd_internal.h"
 
 
 int Diana_Call_xor(struct _dianaContext * pDianaContext,
@@ -38,7 +39,7 @@ int Diana_Call_xor(struct _dianaContext * pDianaContext,
     CLEAR_FLAG_OF;
 
     dest = dest ^ src;
-	DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
     DI_PROC_END
@@ -58,11 +59,14 @@ int Diana_Call_xadd(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
 
     temp = dest;
+    DI_START_UPDATE_COA_FLAGS(dest);
     dest = dest + src;
     src = temp;
-
-    DI_MEM_SET_DEST(dest);
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));//first operand
+    DI_CHECK(Di_CheckZeroExtends2(pCallContext, &src, dest_size, &src_size));//second operand
+    DI_END_UPDATE_COA_FLAGS_ADD(dest, temp);
     DI_MEM_SET_SRC(src);
+    DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));//DI_MEM_SET_DEST(dest);
     DI_PROC_END
 }
 
@@ -74,15 +78,19 @@ int Diana_Call_xchg(struct _dianaContext * pDianaContext,
     //SRC := temp 
 
     OPERAND_SIZE temp = 0;
+    int temp_size = 0;
     DI_DEF_LOCALS(src, dest);
     
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
+    temp_size = dest_size;
     temp = dest;
     dest = src;
     src = temp;
 
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));//first operand
+    DI_CHECK(Di_CheckZeroExtends2(pCallContext, &src, dest_size, &src_size));//second operand
     DI_MEM_SET_DEST(dest);
     DI_MEM_SET_SRC(src);
     DI_PROC_END
@@ -192,57 +200,15 @@ int Diana_Call_or(struct _dianaContext * pDianaContext,
 
     DI_SIGN_EXTEND(src, DI_VAR_SIZE(dest));
     dest = dest | src;
-	DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
-	CLEAR_FLAG_CF;
+    CLEAR_FLAG_CF;
     CLEAR_FLAG_OF;
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
     DI_PROC_END
 }
 
-int diana_internal_push(DianaProcessor * pCallContext,
-                        OPERAND_SIZE * pValue)
-{
-    OPERAND_SIZE rsp = 0;
-
-    rsp = GET_REG_RSP2(pCallContext->m_context.iCurrentCmd_addressSize);
-
-    if (rsp < pCallContext->m_context.iCurrentCmd_opsize)
-        return DI_ERROR;
-
-    rsp -= pCallContext->m_context.iCurrentCmd_opsize;
-    DI_CHECK(DianaProcessor_SetMemValue(pCallContext, 
-                                        GET_REG_SS,
-                                        rsp, 
-                                        pCallContext->m_context.iCurrentCmd_opsize,
-                                        pValue,
-                                        0,
-                                        reg_SS));
-    SET_REG_RSP2(rsp, pCallContext->m_context.iCurrentCmd_addressSize);
-    return DI_SUCCESS;
-}
-
-int diana_internal_pop(DianaProcessor * pCallContext,
-                       OPERAND_SIZE * pValue)
-{
-    OPERAND_SIZE rsp = 0;
-
-    rsp = GET_REG_RSP2(pCallContext->m_context.iCurrentCmd_addressSize);
-
-    DI_CHECK(DianaProcessor_GetMemValue(pCallContext, 
-                                        GET_REG_SS,
-                                        rsp, 
-                                        pCallContext->m_context.iCurrentCmd_opsize,
-                                        pValue,
-                                        0,
-                                        reg_SS));
-
-    rsp += pCallContext->m_context.iCurrentCmd_opsize;
-
-    SET_REG_RSP2(rsp, pCallContext->m_context.iCurrentCmd_addressSize);
-    return DI_SUCCESS;
-}
 int Diana_Call_enter(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {

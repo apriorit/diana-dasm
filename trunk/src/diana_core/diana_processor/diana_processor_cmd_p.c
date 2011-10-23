@@ -22,25 +22,15 @@ int Diana_Call_push(struct _dianaContext * pDianaContext,
         // 6A F5            push        0FFFFFFF5h
         DI_CHECK(DianaProcessor_SignExtend(&src, 1, usedSize));
     }
+    if (pCallContext->m_context.iCurrentCmd_opsize == 8)
+    {
+        if (pCallContext->m_result.pInfo->m_flags & DI_FLAG_CMD_AMD64_SIGN_EXTENDS)
+        {
+            DI_CHECK(DianaProcessor_SignExtend( &src, src_size, 8 ));
+        }
+    }
 
-    rsp = GET_REG_RSP;
-    if (rsp < usedSize)
-        return DI_ERROR;
-
-    //if (pCallContext->m_result.linkedOperands->usedSize != 
-    //    pCallContext->m_context.iMainMode_addressSize)
-    //{
-    //    return DI_ERROR;
-    //}
-    DI_CHECK(DianaProcessor_SetMemValue(pCallContext, 
-                                        GET_REG_SS,
-                                        rsp-usedSize, 
-                                        usedSize,
-                                        &src,
-                                        0,
-                                        reg_SS));
-
-    SET_REG_RSP(rsp-usedSize);
+    DI_CHECK(diana_internal_push( pCallContext, &src ));
     DI_PROC_END
 }
 

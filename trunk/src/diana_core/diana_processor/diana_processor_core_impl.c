@@ -1,25 +1,3 @@
-//----
-#define UPDATE_PSZ(X, highMask) \
-    if (pCallContext->m_stateFlags & DI_PROC_STATE_UPDATE_FLAGS_PSZ)\
-    {\
-        CLEAR_FLAG_PF;\
-        CLEAR_FLAG_SF;\
-        CLEAR_FLAG_ZF;\
-        if ((X))\
-        {\
-            if ((X)&highMask)\
-                SET_FLAG_SF;\
-            if (IsParity((unsigned char)((X))))\
-                SET_FLAG_PF;\
-        }\
-        else\
-        {\
-            SET_FLAG_ZF;\
-            SET_FLAG_PF;\
-        }\
-    }
-//--
-
 
 #include "diana_processor_core_impl.h"
 
@@ -51,7 +29,6 @@ void DianaProcessor_ClearFlag(DianaProcessor * pThis,
                      OPERAND_SIZE flag)
 {
     pThis->m_flags.value &=  ~flag;
-
 }
 
 void DianaProcessor_SetValue(DianaProcessor * pCallContext,
@@ -202,6 +179,10 @@ int DianaProcessor_CalcIndex(struct _dianaContext * pDianaContext,
 
     dispValue = (OPERAND_SIZE)pIndex->dispValue;
     index = (OPERAND_SIZE)pIndex->index;
+    // Artem N, 2011-10-17
+    if( pDianaContext->iAMD64Mode && pIndex->reg == reg_RIP ) {
+        reg += pCallContext->m_result.iFullCmdSize;
+    }
     address = reg + indexedReg*index + dispValue;
 
     selector = DianaProcessor_GetValue(pCallContext, 
@@ -540,9 +521,34 @@ int DianaProcessor_SignExtend(OPERAND_SIZE * pVariable,
 int DianaProcessor_Query64RegisterFor32(DianaUnifiedRegister registerIn,
                                         DianaUnifiedRegister * pUsedReg)
 {
-    if (registerIn < reg_EAX || registerIn > reg_EDI)
-        return DI_ERROR;
-    *pUsedReg = reg_RAX - reg_EAX + registerIn;
+    //if (registerIn < reg_EAX || registerIn > reg_EDI)
+    //    return DI_ERROR;
+    //*pUsedReg = reg_RAX - reg_EAX + registerIn;
+    *pUsedReg = reg_none;
+    switch( registerIn ) {
+        case reg_EAX:
+        case reg_ECX:
+        case reg_EDX:
+        case reg_EBX:
+        case reg_ESP:
+        case reg_EBP:
+        case reg_ESI:
+        case reg_EDI:
+            *pUsedReg = reg_RAX - reg_EAX + registerIn;
+            break;
+        case reg_R8D:
+        case reg_R9D:
+        case reg_R10D:
+        case reg_R11D:
+        case reg_R12D:
+        case reg_R13D:
+        case reg_R14D:
+        case reg_R15D:
+            *pUsedReg = reg_R8 - reg_R8D + registerIn;
+            break;
+        default:
+            return DI_ERROR;
+    }
     return DI_SUCCESS;
 }
 int DianaProcessor_QueryRaxRegister(int size, 

@@ -20,10 +20,12 @@ int Diana_Call_sub(struct _dianaContext * pDianaContext,
     DI_START_UPDATE_COA_FLAGS(dest);
 
     dest -= src;
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
     DI_END_UPDATE_COA_FLAGS_SUB(dest, src);
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
+
     DI_PROC_END
 }
 
@@ -53,11 +55,18 @@ int Diana_Call_sal(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
-    signMask = DianaProcessor_GetSignMask(dest_size);
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+        src &= 0x3FULL;
+    } else {
+        src &= 0x1FULL;
+    }
     if (!src)
     {
+        DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+        DI_MEM_SET_DEST(dest);
         DI_PROC_END;
     }
+    signMask = DianaProcessor_GetSignMask(dest_size);
     CLEAR_FLAG_OF;
     for(i = 0; i < src; ++i)
     {
@@ -81,7 +90,9 @@ int Diana_Call_sal(struct _dianaContext * pDianaContext,
             SET_FLAG_OF;
         }
     }
-        
+
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
     DI_PROC_END
 }
@@ -110,8 +121,15 @@ int Diana_Call_sar(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+        src &= 0x3FULL;
+    } else {
+        src &= 0x1FULL;
+    }
     if (!src)
     {
+        DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+        DI_MEM_SET_DEST(dest);
         DI_PROC_END;
     }
 
@@ -129,6 +147,7 @@ int Diana_Call_sar(struct _dianaContext * pDianaContext,
         dest = (dest>>1) | prevSign;
     }
 
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
     DI_PROC_END
 }
@@ -150,6 +169,7 @@ int Diana_Call_sbb(struct _dianaContext * pDianaContext,
     DI_START_UPDATE_COA_FLAGS(dest);
 
     dest -= src;
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
     DI_END_UPDATE_COA_FLAGS_SUB(dest, src);
 
@@ -189,17 +209,30 @@ int Diana_Call_shld(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC2(src2);
     DI_MEM_GET_SRC(src1);
     DI_MEM_GET_DEST(dest);
-
-    signMask = DianaProcessor_GetSignMask(dest_size);
-
-    prevSign = signMask & dest;
+    
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+        src2 &= 0x3FULL;
+    } else {
+        src2 &= 0x1FULL;
+    }
     if (!src2)
     {
+        DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src1_size, &dest_size));
+        DI_MEM_SET_DEST(dest);
         DI_PROC_END;
     }
+    signMask = DianaProcessor_GetSignMask(dest_size);
+    prevSign = signMask & dest;
+
     CLEAR_FLAG_OF;
     for(i = 0; i < src2; ++i)
     {
+        // hack to act like x86 SHLD when count > 16
+        if( dest_size == 2 && i > 0 && i % 16 == 0 ) {
+            // when count > 16 actually shifting op1:op2:op2 << count,
+            // it is the same as shifting op2:op2 by count-16
+            DI_MEM_GET_DEST(src1);
+        }
         lastBit = 0;
         CLEAR_FLAG_CF;
         if (dest & signMask)
@@ -213,7 +246,7 @@ int Diana_Call_shld(struct _dianaContext * pDianaContext,
         dest = (dest<<1) + lastBit;
         src1 = (src1<<1);
     }
-    
+
     if (src2 == 1)
     {
         if ((signMask & dest) != prevSign)
@@ -221,7 +254,8 @@ int Diana_Call_shld(struct _dianaContext * pDianaContext,
             SET_FLAG_OF;
         }
     }
-        
+
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src1_size, &dest_size));
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
     DI_PROC_END
 }
@@ -251,8 +285,15 @@ int Diana_Call_shr(struct _dianaContext * pDianaContext,
     DI_MEM_GET_DEST(dest);
 
     original = dest;
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+        src &= 0x3FULL;
+    } else {
+        src &= 0x1FULL;
+    }
     if (!src)
     {
+        DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+        DI_MEM_SET_DEST(dest);
         DI_PROC_END;
     }
 
@@ -275,6 +316,8 @@ int Diana_Call_shr(struct _dianaContext * pDianaContext,
             SET_FLAG_OF;
         }
     }
+
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
     DI_PROC_END
@@ -308,12 +351,19 @@ int Diana_Call_shrd(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src1);
     DI_MEM_GET_DEST(dest);
 
-    original = dest;
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+        src2 &= 0x3FULL;
+    } else {
+        src2 &= 0x1FULL;
+    }
     if (!src2)
     {
+        DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src1_size, &dest_size));
+        DI_MEM_SET_DEST(dest);
         DI_PROC_END;
     }
-      
+
+    original = dest;
     signMask = DianaProcessor_GetSignMask(dest_size);
     CLEAR_FLAG_OF;
     CLEAR_FLAG_CF;
@@ -347,6 +397,7 @@ int Diana_Call_shrd(struct _dianaContext * pDianaContext,
         }
     }
 
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src1_size, &dest_size));
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
     DI_PROC_END
 }

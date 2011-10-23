@@ -336,6 +336,30 @@ void test_processor_stos2()
     TEST_ASSERT(memcmp(code, etalon, sizeof(etalon)) == 0);
 }
 
+static void test_processor_seq64()
+{
+	const int buff_size = 4;
+	unsigned char buff[] = {
+		0xeb, 0x00,				// jmp 0x2
+		0x83, 0xe2, 0xe0,		// and edx, 0xe0
+		0x4d, 0x8d, 0x0c, 0x17,	// lea r9, [r15+rdx*1]
+		0x41, 0xff, 0xe1		// jmp r9
+	};
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_R15( 1 );
+	SET_REG_RDX( 0xF0000000FFFFFFFFULL );
+	int res = proc.Exec( buff_size );
+	TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT( 0x00000000FFFFFFE0ULL == GET_REG_RDX );
+	TEST_ASSERT( GET_REG_R9 == GET_REG_RIP );
+	TEST_ASSERT( 1 == GET_REG_R15 );
+	TEST_ASSERT( GET_REG_R15 + GET_REG_RDX == GET_REG_RIP );
+}
+
 
 void test_processor_s()
 {
@@ -353,4 +377,5 @@ void test_processor_s()
     test_processor_scas2();
     test_processor_stos();
     test_processor_stos2();
+	test_processor_seq64();
 }

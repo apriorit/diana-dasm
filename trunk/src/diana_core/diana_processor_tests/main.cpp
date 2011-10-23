@@ -18,12 +18,9 @@ extern "C"
 #include "test_processor_a.h"
 #include "test_processor_x.h"
 #include "test_processor_o.h"
+#include "test_processor_n.h"
 
 void di_gen();
-
-
-unsigned char buf[] = {0x0F, 0xAC, 0xd0, 0x18};
-unsigned char buf2[] = {0x0F, 0xAC, 0xd0, 0x2};
 
 int main()
 {
@@ -41,6 +38,7 @@ int main()
     test_processor_c();
     test_processor_x();
     test_processor_o();
+	test_processor_n();
     test_processor_call();
     test_processor();
     test_processor_flags();

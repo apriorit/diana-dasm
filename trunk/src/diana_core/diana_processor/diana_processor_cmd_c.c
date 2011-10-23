@@ -2,7 +2,7 @@
 #include "diana_proc_gen.h"
 #include "diana_gen.h"
 #include "diana_core_gen_tags.h"
-
+#include "diana_processor_cmd_internal.h"
 
 int Diana_Call_call(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
@@ -134,7 +134,8 @@ int Diana_Call_cbw(struct _dianaContext * pDianaContext,
         DI_CHECK(DianaProcessor_SignExtend(&reg, 
                                            2, 
                                            4));
-        SET_REG_EAX(reg);
+        // zero-extended!
+        SET_REG_RAX(reg);
         break;
 
     case DIANA_MODE16:
@@ -436,88 +437,6 @@ int Diana_Call_cmp(struct _dianaContext * pDianaContext,
     DI_PROC_END
 }
 
-int Di_PrepareSIDI_regs(DianaProcessor * pCallContext,
-                        DianaRmIndex * pSrcIndex, 
-                        DianaRmIndex * pDestIndex)
-{
-    if (pSrcIndex)
-    {
-        if (pCallContext->m_result.iLinkedOpCount != 2)
-        {
-            Diana_DebugFatalBreak();
-            return DI_ERROR;
-        }
-
-        memset(pSrcIndex, 0, sizeof(*pSrcIndex));
-        pSrcIndex->seg_reg = reg_DS;
-    }
-    else
-    {
-        if (pCallContext->m_result.iLinkedOpCount != 1)
-        {
-            Diana_DebugFatalBreak();
-            return DI_ERROR;
-        }
-    }
-    memset(pDestIndex, 0, sizeof(*pDestIndex));
-    pDestIndex->seg_reg = reg_ES;
-
-    switch(pCallContext->m_context.iCurrentCmd_addressSize)
-    {
-    case DIANA_MODE64:
-        if (pSrcIndex)
-        {
-            pSrcIndex->reg = reg_RSI;
-        }
-        pDestIndex->reg = reg_RDI;
-        break;
-
-    case DIANA_MODE32:
-        if (pSrcIndex)
-        {
-            pSrcIndex->reg = reg_ESI;
-        }
-        pDestIndex->reg = reg_EDI;
-        break;
-
-    case DIANA_MODE16:
-        if (pSrcIndex)
-        {
-            pSrcIndex->reg = reg_SI;
-        }
-        pDestIndex->reg = reg_DI;
-        break;
-
-    default:
-        Diana_DebugFatalBreak();
-        return DI_ERROR;
-    }
-
-    return DI_SUCCESS;
-}
-
-void Di_UpdateSIDI(DianaProcessor * pCallContext,
-                   OPERAND_SIZE * pSrcRegAddress, 
-                   OPERAND_SIZE * pDestRegAddress)
-{
-     if (GET_FLAG_DF)
-    {
-        *pDestRegAddress -= pCallContext->m_result.linkedOperands->usedSize;
-        if (pSrcRegAddress)
-        {
-            *pSrcRegAddress -= pCallContext->m_result.linkedOperands->usedSize;
-        }
-    }
-    else
-    {
-        // increment
-        *pDestRegAddress += pCallContext->m_result.linkedOperands->usedSize;
-        if (pSrcRegAddress)
-        {
-            *pSrcRegAddress += pCallContext->m_result.linkedOperands->usedSize;
-        }
-    }
-}
 int Diana_Call_cmps(struct _dianaContext * pDianaContext,
                       DianaProcessor * pCallContext)
 {
@@ -595,6 +514,7 @@ int Diana_Call_cmpxchg(struct _dianaContext * pDianaContext,
     if (usedRegValue == dest)
     {
         dest = src;
+        DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
         DI_MEM_SET_DEST(dest);
         SET_FLAG_ZF;
     }
@@ -631,10 +551,18 @@ int Diana_Call_cwd(struct _dianaContext * pDianaContext,
     
     if (usedRegValue & DianaProcessor_GetSignMask(pCallContext->m_context.iCurrentCmd_opsize))
     {
+        // dirty hack
+        if( pDianaContext->iAMD64Mode && pCallContext->m_context.iCurrentCmd_opsize == 4 ) {
+            SET_REG_RDX( 0x00000000FFFFFFFFULL );
+     } 
+     else 
+     {
         DianaProcessor_SetValue(pCallContext,
                                 usedDestReg,
                                 DianaProcessor_QueryReg(pCallContext, usedDestReg),
                                 0xFFFFFFFFFFFFFFFFULL);
+    }
+
     }
     else
     {

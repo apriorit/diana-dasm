@@ -4,45 +4,6 @@
 #include "diana_core_gen_tags.h"
 #include "diana_processor_cmd_internal.h"
 
-int Di_CheckZeroExtends(DianaProcessor * pCallContext,
-                        OPERAND_SIZE * pDest,
-                        int src_size,
-                        int * dest_size)
-{
-    if (!pCallContext->m_context.iAMD64Mode)
-    {
-        return DI_SUCCESS;
-    }
-
-    if (src_size == 8)
-    {
-        return DI_SUCCESS;
-    }
-
-    if (pCallContext->m_context.iCurrentCmd_opsize == 8)
-    {
-        if (pCallContext->m_result.pInfo->m_flags & DI_FLAG_CMD_AMD64_SIGN_EXTENDS)
-        {
-            DI_CHECK(DianaProcessor_SignExtend(pDest, 
-                                            src_size,
-                                            8));
-        }
-    }
-    else
-    if (pCallContext->m_context.iCurrentCmd_opsize == 4)
-    {
-        if (pCallContext->m_result.linkedOperands->type == diana_register)
-        {
-            DianaUnifiedRegister reg64;
-            DI_CHECK(DianaProcessor_Query64RegisterFor32( pCallContext->m_result.linkedOperands->value.recognizedRegister,
-                                                          &reg64));
-
-            DianaProcessor_SetValue(pCallContext, reg64, DianaProcessor_QueryReg(pCallContext, reg64), 0);
-        }
-    }
-    return DI_SUCCESS;
-}
-
 int Diana_Call_mov(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
@@ -155,12 +116,11 @@ int Diana_Call_mul8(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext,
                     OPERAND_SIZE * pArgument)
 {
-    DianaRegisterValue16_type result, temp;
+    DianaRegisterValue16_type result;
     DI_UINT16 arg1 = (DI_UINT16)GET_REG_AL;
     DI_UINT16 arg2 = (DI_UINT16)*pArgument;
 
     result.value = arg1 * arg2;
-    temp = result;
 
     if (result.h)
     {
@@ -177,12 +137,11 @@ int Diana_Call_mul16(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext,
                     OPERAND_SIZE * pArgument)
 {
-    DianaRegisterValue32_type result, temp;
+    DianaRegisterValue32_type result;
     DI_UINT32 arg1 = (DI_UINT32)GET_REG_AX;
     DI_UINT32 arg2 = (DI_UINT32)*pArgument;
 
     result.value = arg1 * arg2;
-    temp = result;
 
     if (result.h)
     {
@@ -200,14 +159,13 @@ int Diana_Call_mul32(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext,
                     OPERAND_SIZE * pArgument)
 {
-    DianaRegisterValue_type result, temp;
+    DianaRegisterValue_type result;
     DI_UINT64 arg1 = (DI_UINT64)GET_REG_EAX;
     DI_UINT64 arg2 = (DI_UINT64)*pArgument;
 
     result.value = arg1 * arg2;
-    temp = result;
 
-    if (result.h)
+    if (result.h) 
     {
        SET_FLAG_CF;
        SET_FLAG_OF;
@@ -223,23 +181,19 @@ int Diana_Call_mul64(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext,
                     OPERAND_SIZE * pArgument)
 {
-    DianaRegisterValue_type result;
+    DI_UINT64 r0, r1;
     DI_UINT64 argument = *pArgument;
     DI_UINT64 rax = GET_REG_RAX;
 
-    result.value = rax * argument;
+    mul64( &r0, &r1, rax, argument );
 
-    if (rax && argument)
-    {
-        //check overflow
-        if (rax != result.value / argument)
-        {
-            return DI_UNSUPPORTED_COMMAND;
-        }
+    if( r1 ) {
+        SET_FLAG_CF;
+        SET_FLAG_OF;
     }
 
-    SET_REG_RAX(result.value);
-    SET_REG_RDX(0);
+    SET_REG_RAX( r0 );
+    SET_REG_RDX( r1 );
     return DI_SUCCESS;
 }
 

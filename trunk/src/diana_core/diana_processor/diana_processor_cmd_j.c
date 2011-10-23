@@ -2,35 +2,8 @@
 #include "diana_proc_gen.h"
 #include "diana_gen.h"
 #include "diana_core_gen_tags.h"
+#include "diana_processor_cmd_internal.h"
 
-
-int Diana_Call_jcc(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    int opCount,
-                    int relOp)
-{
-    OPERAND_SIZE newRIP = 0; 
-
-    if (pCallContext->m_result.iLinkedOpCount != opCount)
-    {
-        Diana_DebugFatalBreak();
-        return DI_ERROR;
-    }
-
-    // calculate absolute address
-    if (pCallContext->m_result.linkedOperands[relOp].type != diana_rel)
-    {
-        Diana_DebugFatalBreak();
-        return DI_ERROR;
-    }
-
-    newRIP = GET_REG_RIP + 
-             pCallContext->m_result.linkedOperands[relOp].value.rel.m_value + 
-             pCallContext->m_result.iFullCmdSize;
-
-    SET_REG_RIP2(newRIP, pCallContext->m_context.iMainMode_addressSize);
-    DI_PROC_END
-}
 
 int Diana_Call_ja(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)

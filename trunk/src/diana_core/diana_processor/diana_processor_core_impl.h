@@ -15,11 +15,11 @@ typedef struct _DianaRegInfo
 
 // FLAGS
 #define flag_CF         0x000001
-#define flag_1 	        0x000002 // 1
+#define flag_1             0x000002 // 1
 #define flag_PF         0x000004
-#define flag_3 	        0x000008 // 0
+#define flag_3             0x000008 // 0
 #define flag_AF         0x000010
-#define flag_5 	        0x000020 // 0
+#define flag_5             0x000020 // 0
 #define flag_ZF         0x000040
 #define flag_SF         0x000080
 #define flag_TF         0x000100
@@ -27,7 +27,7 @@ typedef struct _DianaRegInfo
 #define flag_DF         0x000400
 #define flag_OF         0x000800
 #define flag_IOPL_0     0x001000
-#define flag_IOPL_1     0x002000	
+#define flag_IOPL_1     0x002000    
 #define flag_NT         0x004000
 #define flag_15         0x008000 // 0
 //EFLAGS
@@ -143,6 +143,26 @@ typedef struct _dianaProcessor
     DianaProcessorFirePoint m_firePoints[DIANA_PROCESSOR_MAX_FIRE_POINTS];
     int m_firePointsCount;
 }DianaProcessor;
+
+#define UPDATE_PSZ(X, highMask) \
+    if (pCallContext->m_stateFlags & DI_PROC_STATE_UPDATE_FLAGS_PSZ)\
+    {\
+        CLEAR_FLAG_PF;\
+        CLEAR_FLAG_SF;\
+        CLEAR_FLAG_ZF;\
+        if ((X))\
+        {\
+            if ((X)&highMask)\
+                SET_FLAG_SF;\
+            if (IsParity((unsigned char)((X))))\
+                SET_FLAG_PF;\
+        }\
+        else\
+        {\
+            SET_FLAG_ZF;\
+            SET_FLAG_PF;\
+        }\
+    }
 
 
 const char * Diana_GenerateStuff();

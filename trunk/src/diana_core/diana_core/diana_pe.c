@@ -16,7 +16,7 @@ int DI_Init386(Diana_PeFile * pPeFile,
     Diana_PeFile32_impl * pImpl = 0;
     DIANA_IMAGE_OPTIONAL_HEADER32 * pOpt =  (DIANA_IMAGE_OPTIONAL_HEADER32 * )(pPeImpl->pNtHeaders+1);
 
-    if ((char *)pOpt + sizeof(DIANA_IMAGE_OPTIONAL_HEADER32) - (char*)pPeImpl->pFileStart > pPeImpl->sizeOfFile)
+    if (( unsigned int )((char *)pOpt + sizeof(DIANA_IMAGE_OPTIONAL_HEADER32) - (char*)pPeImpl->pFileStart) > pPeImpl->sizeOfFile)
         return DI_INVALID_INPUT; 
 
     pImpl = malloc(sizeof(Diana_PeFile32_impl));
@@ -36,7 +36,7 @@ int DI_InitAmd64(Diana_PeFile * pPeFile,
     Diana_PeFile64_impl * pImpl = 0;
     DIANA_IMAGE_OPTIONAL_HEADER64 * pOpt =  (DIANA_IMAGE_OPTIONAL_HEADER64 * )(pPeImpl->pNtHeaders+1);
 
-    if ((char *)pOpt + sizeof(DIANA_IMAGE_OPTIONAL_HEADER64) - (char*)pPeImpl->pFileStart > pPeImpl->sizeOfFile)
+    if (( unsigned int )((char *)pOpt + sizeof(DIANA_IMAGE_OPTIONAL_HEADER64) - (char*)pPeImpl->pFileStart) > pPeImpl->sizeOfFile)
         return DI_INVALID_INPUT; 
 
     pImpl = malloc(sizeof(Diana_PeFile64_impl));

@@ -3,10 +3,9 @@
 #include "test_processor_impl.h"
 #include "vector"
 
-
 void test_processor_lea()
 {
-    // lea         ebx,[esp+ebx*2] 
+	// lea         ebx,[esp+ebx*2] 
     unsigned char code[] = {0x8D, 0x1C, 0x5C};
 
     CTestProcessor proc(code, sizeof(code));
@@ -24,8 +23,8 @@ void test_processor_lea()
 
 void test_processor_lods()
 {
-    // rep stos 
-    unsigned char code[] = {0xAC}; //            lods    byte ptr [esi] 
+	// lods    byte ptr [esi] 
+    unsigned char code[] = {0xAC};
 
     CTestProcessor proc(code, sizeof(code));
     DianaProcessor * pCallContext = proc.GetSelf();
@@ -35,24 +34,21 @@ void test_processor_lods()
     
     TEST_ASSERT(GET_REG_ESI == 1);
     TEST_ASSERT(GET_REG_EAX == 0xAC);
-
 }
 
 void test_processor_lods2()
 {
-    // rep stos 
-    unsigned char code[] = {0x66, 0xAD};//            lods        word ptr [esi] 
+	// lods        word ptr [esi] 
+    unsigned char code[] = {0x66, 0xAD};
 
     CTestProcessor proc(code, sizeof(code));
     DianaProcessor * pCallContext = proc.GetSelf();
 
     int res = proc.ExecOnce();
     TEST_ASSERT(res == DI_SUCCESS);
-    
+
     TEST_ASSERT(GET_REG_ESI == 2);
-
-    TEST_ASSERT(GET_REG_EAX == 0xAD66);
-
+	TEST_ASSERT(GET_REG_EAX == 0xAD66);
 }
 
 void test_processor_l()

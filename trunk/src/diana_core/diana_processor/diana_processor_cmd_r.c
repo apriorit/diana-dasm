@@ -31,11 +31,31 @@ int Diana_Call_rcl(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
-    signMask = DianaProcessor_GetSignMask(dest_size);
+    switch( pDianaContext->iCurrentCmd_opsize ) {
+    case 1:
+        src =  ( src & 0x1FULL) % 9;
+        break;
+    case 2:
+        src =  ( src & 0x1FULL) % 17;
+        break;
+    case 4:
+        src &= 0x1FULL;
+        break;
+    case 8:
+        src &= 0x3FULL;
+        break;
+    default:
+        Diana_DebugFatalBreak();
+        return DI_ERROR;
+    }
     if (!src)
     {
+        DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+        DI_MEM_SET_DEST(dest);
         DI_PROC_END;
     }
+    signMask = DianaProcessor_GetSignMask(dest_size);
+
     CLEAR_FLAG_OF;
     for(i = 0; i < src; ++i)
     {
@@ -69,6 +89,7 @@ int Diana_Call_rcl(struct _dianaContext * pDianaContext,
         }
     }
         
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
     DI_MEM_SET_DEST(dest);
     DI_PROC_END
 }
@@ -99,11 +120,31 @@ int Diana_Call_rcr(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
-    signMask = DianaProcessor_GetSignMask(dest_size);
+    switch( pDianaContext->iCurrentCmd_opsize ) {
+    case 1:
+        src =  ( src & 0x1FULL) % 9;
+        break;
+    case 2:
+        src =  ( src & 0x1FULL) % 17;
+        break;
+    case 4:
+        src &= 0x1FULL;
+        break;
+    case 8:
+        src &= 0x3FULL;
+        break;
+    default:
+        Diana_DebugFatalBreak();
+        return DI_ERROR;
+    }
     if (!src)
     {
+        DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+        DI_MEM_SET_DEST(dest);
         DI_PROC_END;
     }
+    signMask = DianaProcessor_GetSignMask(dest_size);
+
     CLEAR_FLAG_OF;
     if (src == 1)
     {
@@ -136,6 +177,7 @@ int Diana_Call_rcr(struct _dianaContext * pDianaContext,
         dest = (dest>>1) | lastBit;
     }
         
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
     DI_MEM_SET_DEST(dest);
     DI_PROC_END
 }
@@ -167,11 +209,19 @@ int Diana_Call_rol(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
-    signMask = DianaProcessor_GetSignMask(dest_size);
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+        src &= 0x3FULL;
+    } else {
+        src &= 0x1FULL;
+    }
     if (!src)
     {
+        DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+        DI_MEM_SET_DEST(dest);
         DI_PROC_END;
     }
+    signMask = DianaProcessor_GetSignMask(dest_size);
+
     CLEAR_FLAG_OF;
     for(i = 0; i < src; ++i)
     {
@@ -203,6 +253,8 @@ int Diana_Call_rol(struct _dianaContext * pDianaContext,
         }
     }
         
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+
     DI_MEM_SET_DEST(dest);
     DI_PROC_END
 }
@@ -233,8 +285,15 @@ int Diana_Call_ror(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+        src &= 0x3FULL;
+    } else {
+        src &= 0x1FULL;
+    }
     if (!src)
     {
+        DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+        DI_MEM_SET_DEST(dest);
         DI_PROC_END;
     }
     signMask = DianaProcessor_GetSignMask(dest_size);
@@ -273,6 +332,8 @@ int Diana_Call_ror(struct _dianaContext * pDianaContext,
             SET_FLAG_OF;
         }
     }       
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
     DI_MEM_SET_DEST(dest);
+
     DI_PROC_END
 }

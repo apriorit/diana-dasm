@@ -2,6 +2,7 @@
 #include "diana_proc_gen.h"
 #include "diana_gen.h"
 #include "diana_core_gen_tags.h"
+#include "diana_processor_cmd_internal.h"
 
 
 int Diana_Call_bsf(struct _dianaContext * pDianaContext,
@@ -97,6 +98,22 @@ int Diana_Call_bt(struct _dianaContext * pDianaContext,
 
     CLEAR_FLAG_CF;
 
+    switch( pDianaContext->iCurrentCmd_opsize ) {
+    case 2:
+        src %= 16;
+        break;
+    case 4:
+        src %= 32;
+        break;
+    case 8:
+        src %= 64;
+        break;
+    case 1:
+    default:
+        Diana_DebugFatalBreak();
+        return DI_ERROR;
+    }
+
     temp = DianaProcessor_GetSignMaskSpecifyBit(src);
 
     if (dest & temp)
@@ -120,6 +137,23 @@ int Diana_Call_btc(struct _dianaContext * pDianaContext,
 
     CLEAR_FLAG_CF;
 
+    switch( pDianaContext->iCurrentCmd_opsize ) 
+    {
+    case 2:
+        src %= 16;
+        break;
+    case 4:
+        src %= 32;
+        break;
+    case 8:
+        src %= 64;
+        break;
+    case 1:
+    default:
+        Diana_DebugFatalBreak();
+        return DI_ERROR;
+    }
+
     temp = DianaProcessor_GetSignMaskSpecifyBit(src);
 
     if (dest & temp)
@@ -131,6 +165,7 @@ int Diana_Call_btc(struct _dianaContext * pDianaContext,
     {
         dest |= temp;
     }
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
     DI_MEM_SET_DEST(dest);
     DI_PROC_END;
 }
@@ -149,6 +184,22 @@ int Diana_Call_btr(struct _dianaContext * pDianaContext,
 
     CLEAR_FLAG_CF;
 
+    switch( pDianaContext->iCurrentCmd_opsize ) {
+    case 2:
+        src %= 16;
+        break;
+    case 4:
+        src %= 32;
+        break;
+    case 8:
+        src %= 64;
+        break;
+    case 1:
+    default:
+        Diana_DebugFatalBreak();
+        return DI_ERROR;
+    }
+
     temp = DianaProcessor_GetSignMaskSpecifyBit(src);
 
     if (dest & temp)
@@ -156,6 +207,7 @@ int Diana_Call_btr(struct _dianaContext * pDianaContext,
         SET_FLAG_CF;
         dest = dest & ~temp;
     }
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
     DI_MEM_SET_DEST(dest);
     DI_PROC_END;
 }
@@ -174,6 +226,22 @@ int Diana_Call_bts(struct _dianaContext * pDianaContext,
 
     CLEAR_FLAG_CF;
 
+    switch( pDianaContext->iCurrentCmd_opsize ) {
+    case 2:
+        src %= 16;
+        break;
+    case 4:
+        src %= 32;
+        break;
+    case 8:
+        src %= 64;
+        break;
+    case 1:
+    default:
+        Diana_DebugFatalBreak();
+        return DI_ERROR;
+    }
+
     temp = DianaProcessor_GetSignMaskSpecifyBit(src);
 
     if (dest & temp)
@@ -184,6 +252,7 @@ int Diana_Call_bts(struct _dianaContext * pDianaContext,
     {
         dest |= temp;
     }
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
     DI_MEM_SET_DEST(dest);
     DI_PROC_END;
 }

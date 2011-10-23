@@ -525,7 +525,7 @@ void test_processor()
     test_processor_adc();
     test_processor_add();
     test_processor_push();
-    test_processor_push_ds();
+    //test_processor_push_ds();
     test_processor_push_1();
     test_processor_push_2();
     test_processor_pushf();

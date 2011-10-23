@@ -2,7 +2,7 @@
 #include "diana_proc_gen.h"
 #include "diana_gen.h"
 #include "diana_core_gen_tags.h"
-
+#include "diana_processor_cmd_internal.h"
 
 int Diana_Call_daa(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
@@ -191,24 +191,19 @@ int Diana_Call_div64(struct _dianaContext * pDianaContext,
                     OPERAND_SIZE * pDivisor)
 {
     //qword   RDX:RAX      r/m64      RAX         RDX  
-    OPERAND_SIZE rax = GET_REG_RAX;
+    DI_UINT64 r0 = GET_REG_RAX;
+    DI_UINT64 r1 = GET_REG_RDX;
     DI_UINT64  quotient = 0,
                remainder = 0,
                divisor = *pDivisor;
 
-    if (GET_REG_RDX)
-    {
-        // this is so sad, but C doesnt have appropriate 
-        // intrumentary to do this
-        // __int128 is available only on amd64 platforms
-        return DI_UNSUPPORTED_COMMAND;
-    }
-
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;
 
-    quotient = rax / divisor;
-    remainder = rax % divisor;
+    if( div64( &r0, &r1, divisor ) )
+        return DI_DIVISION_BY_ZERO;
+    quotient = r0;
+    remainder = r1;
 
     SET_REG_RAX(quotient);
     SET_REG_RDX(remainder);

@@ -21,8 +21,5 @@ int Diana_Call_movzx(struct _dianaContext * pDianaContext,
 int Diana_Call_mul(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext);
 
-int Di_CheckZeroExtends(DianaProcessor * pCallContext,
-                        OPERAND_SIZE * pDest,
-                        int src_size,
-                        int * dest_size);
+
 #endif

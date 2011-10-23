@@ -91,6 +91,42 @@ static void test_processor_jmp4()
     TEST_ASSERT(rip == newIP);
 }
 
+static void test_processor_je()
+{
+	// je 5
+	unsigned char code[] = {0x66, 0x0F, 0x84, 0x00, 0x00};
+
+	const int segSize = 0x1000;
+	std::vector<unsigned char> memory(0x2000);
+	memcpy(&memory.front(), code, sizeof(code));
+	CTestProcessor proc(&memory.front(), memory.size(),segSize);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_FLAG_ZF;
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT( 0x0005 == GET_REG_RIP );
+}
+
+static void test_processor_jmp_middle()
+{
+	// jumping to the middle of an instruction.
+	unsigned char buff[] = {
+		0xeb, 0xff,			// JMP 1
+		0xc0, 0xc0, 0x01	// INC EAX, not ROL AL,1
+	};
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE32);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_EAX( 0x0011 );
+	int res = proc.Exec( 2 );
+	TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT( 0x0012 == GET_REG_EAX );
+	TEST_ASSERT( 0x0003 == GET_REG_RIP );
+}
 
 void test_processor_j()
 {
@@ -98,4 +134,6 @@ void test_processor_j()
     test_processor_jmp2();
     test_processor_jmp3();
     test_processor_jmp4();
+	test_processor_je();
+	test_processor_jmp_middle();
 }

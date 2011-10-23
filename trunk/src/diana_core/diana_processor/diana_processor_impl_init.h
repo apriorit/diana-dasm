@@ -1,5 +1,5 @@
+#include "diana_processor_cmd_internal.h"
 
-static char g_parityBuffer[256];
 static OPERAND_SIZE g_maskBuffer[8];
 
 static int GetSetBitsCount(int value)
@@ -17,10 +17,6 @@ static int GetSetBitsCount(int value)
         mask<<=1;
     }
     return count;
-}
-static int IsParity(unsigned char value)
-{
-    return g_parityBuffer[value];
 }
 OPERAND_SIZE DianaProcessor_GetSignMask(int sizeInBytes)
 {
@@ -52,7 +48,6 @@ OPERAND_SIZE DianaProcessor_CutValue(OPERAND_SIZE value,
 
 void DianaProcessor_ProcImplInit()
 {
-    OPERAND_SIZE mask = 1;
     int i =1;
     g_parityBuffer[0] = 1; // WTF?
     for(; i<256; ++i)
@@ -60,7 +55,6 @@ void DianaProcessor_ProcImplInit()
         g_parityBuffer[i] = (GetSetBitsCount(i)%2)?0:1;
     }
     // init masks
-
     g_maskBuffer[0] = 0x80ULL;
     g_maskBuffer[1] = 0x8000ULL;
     g_maskBuffer[2] = 0x800000ULL;

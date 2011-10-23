@@ -699,6 +699,6 @@ void test_x64()
         TEST_ASSERT(result.linkedOperands[1].type == diana_imm);
         TEST_ASSERT(result.linkedOperands[1].value.imm == 0x111111111);
     } 
-  
 
-}
+
+} 

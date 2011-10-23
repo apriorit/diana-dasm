@@ -2,6 +2,7 @@
 #include "diana_proc_gen.h"
 #include "diana_gen.h"
 #include "diana_core_gen_tags.h"
+#include "diana_processor_cmd_internal.h"
 
 #define DI_UPDATE_IMUL_FLAGS(X) \
     if ((arg1 ^ arg2) < 0) \
@@ -76,23 +77,19 @@ int Diana_Call_imul64(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext,
                     OPERAND_SIZE * pArgument)
 {
-    DianaRegisterValue_signed_type result;
-    DI_INT64 argument = (DI_INT64)*pArgument;
-    DI_INT64 rax = (DI_INT64)GET_REG_RAX;
+    DI_INT64 arg1 = (DI_INT64)GET_REG_RAX;
+    DI_INT64 arg2 = (DI_INT64)*pArgument;
+    DI_UINT64 r0, r1;
 
-    result.value = rax * argument;
+    imul64( &r0, &r1, arg1, arg2 );
 
-    if (rax && argument)
-    {
-        //check overflow
-        if (rax != result.value / argument)
-        {
-            return DI_UNSUPPORTED_COMMAND;
-        }
+    if( ( ( DI_INT64 )r1 != ( ( DI_INT64 )r0 >> 63) ) ) {
+        SET_FLAG_CF;
+        SET_FLAG_OF;
     }
 
-    SET_REG_RAX(result.value);
-    SET_REG_RDX(0);
+    SET_REG_RAX( r0 );
+    SET_REG_RDX( r1 );
     return DI_SUCCESS;
 }
 
@@ -137,8 +134,9 @@ int Diana_Call_imul_impl(struct _dianaContext * pDianaContext,
                          int op1Size,
                          int op2Size)
 {
-    DianaRegisterValue_signed_type result, temp;
+    DianaRegisterValue_signed_type result;
     OPERAND_SIZE_SIGNED arg1 = 0, arg2 =0;
+    DI_UINT64 r0, r1;
 
     DI_CHECK(DianaProcessor_SignExtend(op1, 
                                        op1Size,
@@ -151,19 +149,17 @@ int Diana_Call_imul_impl(struct _dianaContext * pDianaContext,
     arg2 = (OPERAND_SIZE_SIGNED)*op2;
 
     result.value = arg1 * arg2;
-    temp = result;
 
     switch(pCallContext->m_result.linkedOperands->usedSize)
     {
     case DIANA_MODE64:
-        if (arg1 && arg2)
-        {
-            //check overflow
-            if (arg1 != result.value / arg2)
-            {
-                return DI_UNSUPPORTED_COMMAND;
-            }
+        imul64( &r0, &r1, arg1, arg2 );
+
+        if( ( ( DI_INT64 )r1 != ( ( DI_INT64 )r0 >> 63) ) ) {
+            SET_FLAG_CF;
+            SET_FLAG_OF;
         }
+        result.value = r0;
         break;
 
     case DIANA_MODE32:
@@ -197,6 +193,7 @@ int Diana_Call_imul_impl(struct _dianaContext * pDianaContext,
     *op3 = result.value;
     return DI_SUCCESS;
 }
+
 int Diana_Call_imul_2(struct _dianaContext * pDianaContext,
                       DianaProcessor * pCallContext)
 {

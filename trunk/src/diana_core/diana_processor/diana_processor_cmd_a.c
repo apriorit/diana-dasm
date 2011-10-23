@@ -3,7 +3,7 @@
 #include "diana_gen.h"
 #include "diana_core_gen_tags.h"
 #include "diana_processor_cmd_internal.h"
-
+#include "diana_processor_core_impl.h"
 
 int Diana_Call_aaa(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
@@ -21,6 +21,11 @@ int Diana_Call_aaa(struct _dianaContext * pDianaContext,
         CLEAR_FLAG_CF;
     }
     SET_REG_AL(GET_REG_AL & 0x0F);
+    // UNDOCUMENTED ***************
+    DianaProcessor_UpdatePSZ( pCallContext, GET_REG_AX, 2 );
+    CLEAR_FLAG_OF;
+    CLEAR_FLAG_SF;
+    // ****************************
     DI_PROC_END;
 }
 
@@ -91,7 +96,10 @@ int Diana_Call_adc(struct _dianaContext * pDianaContext,
 
     cfValue = GET_FLAG_CF;
     DI_START_UPDATE_COA_FLAGS(dest);
+
     dest += src + cfValue;
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+
     DI_END_UPDATE_COA_FLAGS_ADD(dest, src);
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
@@ -112,6 +120,7 @@ int Diana_Call_add(struct _dianaContext * pDianaContext,
     DI_START_UPDATE_COA_FLAGS(dest);
 
     dest += src;
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
     DI_END_UPDATE_COA_FLAGS_ADD(dest, src);
 
@@ -134,7 +143,7 @@ int Diana_Call_and(struct _dianaContext * pDianaContext,
     DI_SIGN_EXTEND(src, DI_VAR_SIZE(dest));
 
     dest = dest & src;
-	DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
     CLEAR_FLAG_CF;
     CLEAR_FLAG_OF;
