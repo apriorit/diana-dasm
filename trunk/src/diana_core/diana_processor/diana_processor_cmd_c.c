@@ -523,9 +523,7 @@ int Diana_Call_cmpxchg(struct _dianaContext * pDianaContext,
                              dest_size);
 
     // update end
-    usedRegValue = usedRegValue_saved;
-
-    if (usedRegValue == dest)
+    if (usedRegValue_saved == dest)
     {
         dest = src;
         DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
