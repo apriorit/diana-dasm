@@ -495,22 +495,36 @@ int Diana_Call_cmps(struct _dianaContext * pDianaContext,
     DI_PROC_END
 }
 
+
 int Diana_Call_cmpxchg(struct _dianaContext * pDianaContext,
                        DianaProcessor * pCallContext)
 {
-    //DEST - SRC;
     DianaUnifiedRegister usedReg = 0;
-    OPERAND_SIZE usedRegValue = 0;
+    int usedRegValue_size = 0;
+
+    OPERAND_SIZE usedRegValue = 0, usedRegValue_saved = 0;
     DI_DEF_LOCALS(src, dest);
-  
+
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
     DI_CHECK(DianaProcessor_QueryRaxRegister(src_size, &usedReg));
+    usedRegValue = DianaProcessor_GetValue(pCallContext,
+                                           DianaProcessor_QueryReg(pCallContext, usedReg));
+    usedRegValue_saved = usedRegValue;
+    usedRegValue_size = dest_size;
 
-    usedRegValue = 
-        DianaProcessor_GetValue(pCallContext, 
-                                DianaProcessor_QueryReg(pCallContext, usedReg));
+    // update flags
+    DI_START_UPDATE_COA_FLAGS(usedRegValue);
+    usedRegValue -= dest;
+    DI_END_UPDATE_COA_FLAGS_SUB(usedRegValue,dest);
+    DianaProcessor_UpdatePSZ(pCallContext,
+                             usedRegValue,
+                             dest_size);
+
+    // update end
+    usedRegValue = usedRegValue_saved;
+
     if (usedRegValue == dest)
     {
         dest = src;
@@ -520,13 +534,12 @@ int Diana_Call_cmpxchg(struct _dianaContext * pDianaContext,
     }
     else
     {
-        CLEAR_FLAG_ZF;
-        DianaProcessor_SetValue(pCallContext, 
+        DianaProcessor_SetValue(pCallContext,
                                 usedReg,
                                 DianaProcessor_QueryReg(pCallContext, usedReg),
                                 dest);
+        CLEAR_FLAG_ZF;
     }
-
     DI_PROC_END
 }
 
