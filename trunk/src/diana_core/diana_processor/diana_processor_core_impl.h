@@ -244,6 +244,16 @@ int DianaProcessor_SetCOA_Add(struct _dianaContext * pDianaContext,
                               int opSize,
                               int bSetCF
                               );
+
+int DianaProcessor_SetCOA_AddCF(struct _dianaContext * pDianaContext,
+								DianaProcessor * pCallContext,
+								const OPERAND_SIZE * pOldValue,
+								const OPERAND_SIZE * pNewValue,
+								const OPERAND_SIZE * pOperand,
+								int opSize,
+								int bSetCF
+								);
+
 int DianaProcessor_SetCOA_Sub(struct _dianaContext * pDianaContext,
                               DianaProcessor * pCallContext,
                               const OPERAND_SIZE * pOldValue,
@@ -252,6 +262,15 @@ int DianaProcessor_SetCOA_Sub(struct _dianaContext * pDianaContext,
                               int opSize,
                               int bSetCF
                               );
+
+int DianaProcessor_SetCOA_SubCF(struct _dianaContext * pDianaContext,
+								DianaProcessor * pCallContext,
+								const OPERAND_SIZE * pOldValue,
+								const OPERAND_SIZE * pNewValue,
+								const OPERAND_SIZE * pOperand,
+								int opSize,
+								int bSetCF
+								);
 
 int DianaProcessor_SignExtend(OPERAND_SIZE * pVariable, 
                               int size, 
@@ -383,21 +402,39 @@ int DianaProcessor_QueryRcxRegister(int size,
 //-
 #define DI_END_UPDATE_COA_FLAGS_ADD(dest, src) \
     DI_CHECK(DianaProcessor_SetCOA_Add(pDianaContext, \
-                                   pCallContext,\
-                                   &oldDestValue,\
-                                   &(dest),\
-                                   &(src),\
-                                   DI_VAR_SIZE(dest), \
-                                   flag_CF|flag_OF|flag_AF));
+                                       pCallContext,\
+                                       &oldDestValue,\
+                                       &(dest),\
+                                       &(src),\
+                                       DI_VAR_SIZE(dest), \
+                                       flag_CF|flag_OF|flag_AF));
+
+#define DI_END_UPDATE_COA_FLAGS_ADDCF(dest, src) \
+	DI_CHECK(DianaProcessor_SetCOA_AddCF(pDianaContext, \
+                                         pCallContext,\
+                                         &oldDestValue,\
+                                         &(dest),\
+                                         &(src),\
+                                         DI_VAR_SIZE(dest), \
+                                         flag_CF|flag_OF|flag_AF));
 //-
 #define DI_END_UPDATE_COA_FLAGS_SUB(dest, src) \
     DI_CHECK(DianaProcessor_SetCOA_Sub(pDianaContext, \
-                                   pCallContext,\
-                                   &oldDestValue,\
-                                   &(dest),\
-                                   &(src),\
-                                   DI_VAR_SIZE(dest), \
-                                   flag_CF|flag_OF|flag_AF));
+                                       pCallContext,\
+                                       &oldDestValue,\
+                                       &(dest),\
+                                       &(src),\
+                                       DI_VAR_SIZE(dest), \
+                                       flag_CF|flag_OF|flag_AF));
+
+#define DI_END_UPDATE_COA_FLAGS_SUBCF(dest, src) \
+    DI_CHECK(DianaProcessor_SetCOA_SubCF(pDianaContext, \
+                                         pCallContext,\
+                                         &oldDestValue,\
+                                         &(dest),\
+                                         &(src),\
+                                         DI_VAR_SIZE(dest), \
+                                         flag_CF|flag_OF|flag_AF));
 
 // OA
 #define DI_START_UPDATE_OA_FLAGS(dest) \

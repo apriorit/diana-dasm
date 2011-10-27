@@ -512,7 +512,7 @@ void test_processor_test()
     int res = proc.ExecOnce();
     TEST_ASSERT(res == DI_SUCCESS);
     
-    TEST_ASSERT(pCallContext->m_flags.l.value == 0x212);
+    TEST_ASSERT(pCallContext->m_flags.l.value == 0x202);
 }
 
 void test_processor()

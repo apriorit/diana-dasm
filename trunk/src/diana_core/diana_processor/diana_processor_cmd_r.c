@@ -31,7 +31,8 @@ int Diana_Call_rcl(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
-    switch( pDianaContext->iCurrentCmd_opsize ) {
+    switch( dest_size )
+	{
     case 1:
         src =  ( src & 0x1FULL) % 9;
         break;
@@ -120,7 +121,8 @@ int Diana_Call_rcr(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
-    switch( pDianaContext->iCurrentCmd_opsize ) {
+    switch( dest_size )
+	{
     case 1:
         src =  ( src & 0x1FULL) % 9;
         break;

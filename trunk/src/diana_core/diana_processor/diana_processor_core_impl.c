@@ -449,6 +449,44 @@ int DianaProcessor_SetCOA_Add(struct _dianaContext * pDianaContext,
     return DI_SUCCESS;
 }
 
+int DianaProcessor_SetCOA_AddCF(struct _dianaContext * pDianaContext,
+								DianaProcessor * pCallContext,
+								const OPERAND_SIZE * pOldValue,
+								const OPERAND_SIZE * pNewValue,
+								const OPERAND_SIZE * pOperand,
+								int opSize,
+								int flags
+								)
+{
+	if (flags & flag_OF)
+	{
+		if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) ==
+			(*pOperand & DianaProcessor_GetSignMask(opSize)))
+		{
+			if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=
+				(*pNewValue & DianaProcessor_GetSignMask(opSize)))
+			{
+				SET_FLAG_OF;
+			}
+		}
+	}
+	if (flags & flag_AF)
+	{
+		if (((unsigned int)*pNewValue & 0xF) <= ((unsigned int)*pOldValue & 0xF))
+		{
+			SET_FLAG_AF;
+		}
+	}
+	if (flags & flag_CF)
+	{
+		if (DianaProcessor_CutValue( *pNewValue, opSize ) <= *pOldValue )
+		{
+			SET_FLAG_CF;
+		}
+	}
+	return DI_SUCCESS;
+}
+
 int DianaProcessor_SetCOA_Sub(struct _dianaContext * pDianaContext,
                               DianaProcessor * pCallContext,
                               const OPERAND_SIZE * pOldValue,
@@ -487,6 +525,46 @@ int DianaProcessor_SetCOA_Sub(struct _dianaContext * pDianaContext,
     }
    
     return DI_SUCCESS;
+}
+
+int DianaProcessor_SetCOA_SubCF(struct _dianaContext * pDianaContext,
+								DianaProcessor * pCallContext,
+								const OPERAND_SIZE * pOldValue,
+								const OPERAND_SIZE * pNewValue,
+								const OPERAND_SIZE * pOperand,
+								int opSize,
+								int flags
+								)
+{
+	if (flags & flag_OF)
+	{
+		if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=
+			(*pOperand & DianaProcessor_GetSignMask(opSize)))
+		{
+			if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=
+				(*pNewValue & DianaProcessor_GetSignMask(opSize)))
+			{
+				SET_FLAG_OF;
+			}
+		}
+	}
+	if (flags & flag_AF)
+	{
+		if (((unsigned  int)*pNewValue & 0xF) >= ((unsigned int)*pOldValue & 0xF))
+		{
+			SET_FLAG_AF;
+		}
+	}
+	if (flags & flag_CF)
+	{
+		if (DianaProcessor_CutValue(*pNewValue, opSize) >= *pOldValue)
+		{
+			// was overflow
+			SET_FLAG_CF;
+		}
+	}
+
+	return DI_SUCCESS;
 }
 
 int DianaProcessor_SignExtend(OPERAND_SIZE * pVariable, 

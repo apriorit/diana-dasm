@@ -156,25 +156,34 @@ int Diana_Call_sar(struct _dianaContext * pDianaContext,
 int Diana_Call_sbb(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
-    //DEST := DEST - SRC;
-    DI_DEF_LOCALS(src, dest);
-        
-    DI_MEM_GET_DEST(dest);
-    DI_MEM_GET_SRC(src);
+	//DEST := DEST - SRC - CF;
+	int cfValue = 0;
+	DI_DEF_LOCALS(src, dest);
 
-    DI_SIGN_EXTEND(src, DI_VAR_SIZE(dest));
-    src += GET_FLAG_CF;
+	DI_MEM_GET_DEST(dest);
+	DI_MEM_GET_SRC(src);
 
-    // update AF, OF, CF
-    DI_START_UPDATE_COA_FLAGS(dest);
+	DI_SIGN_EXTEND(src, DI_VAR_SIZE(dest));
+	cfValue = GET_FLAG_CF;
 
-    dest -= src;
-    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+	// update AF, OF, CF
+	DI_START_UPDATE_COA_FLAGS(dest);
 
-    DI_END_UPDATE_COA_FLAGS_SUB(dest, src);
+	dest -= src + cfValue;
+	DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
-    DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
-    DI_PROC_END
+	// UNDOCUMENTED ***************
+	if( !cfValue )
+	{
+		DI_END_UPDATE_COA_FLAGS_SUB(dest, src);
+	}
+	else
+	{
+		DI_END_UPDATE_COA_FLAGS_SUBCF(dest, src);
+	}
+	// UNDOCUMENTED ***************
+	DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
+	DI_PROC_END
 }
 
 int Diana_Call_stc(struct _dianaContext * pDianaContext,

@@ -115,6 +115,10 @@ int Diana_Call_test(struct _dianaContext * pDianaContext,
     DianaProcessor_UpdatePSZ(pCallContext, 
                              dest, 
                              pCallContext->m_result.linkedOperands->usedSize);
+	// UNDOCUMENTED ***************
+	CLEAR_FLAG_AF;
+	// ****************************
+
     DI_PROC_END
 }
 
@@ -206,6 +210,11 @@ int Diana_Call_or(struct _dianaContext * pDianaContext,
     CLEAR_FLAG_OF;
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
+
+	// UNDOCUMENTED ***************
+	CLEAR_FLAG_AF;
+	// ****************************
+
     DI_PROC_END
 }
 

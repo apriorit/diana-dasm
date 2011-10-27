@@ -7,79 +7,96 @@
 int Diana_Call_daa(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
-    //IF ((AL AND 0FH) > 9) OR (AF = 1)
-    //THEN
-    //   AL := AL + 6;
-    //   AF := 1;
-    //ELSE
-    //   AF := 0;
-    //FI;
-    //IF (AL > 9FH) OR (CF = 1)
-    //THEN
-    //   AL := AL + 60H;
-    //   CF := 1;
-    //ELSE CF := 0;
-    //FI; 
+	//IF ((AL AND 0FH) > 9) OR (AF = 1)
+	//THEN
+	//   AL := AL + 6;
+	//   AF := 1;
+	//ELSE
+	//   AF := 0;
+	//FI;
+	//IF (AL > 9FH) OR (CF = 1)
+	//THEN
+	//   AL := AL + 60H;
+	//   CF := 1;
+	//ELSE CF := 0;
+	//FI; 
 
-    unsigned char al = 0;
+	int tmpCF = 0;
+	DI_CHAR al = 0;
+	DI_CHAR tmpAL = 0;
 
-    al = (unsigned char)GET_REG_AL;
+	al = ( DI_CHAR )GET_REG_AL;
+	tmpAL = al;
 
-    if ( ((al & 0x0F) > 9) || GET_FLAG_AF )
-    {
-       al = al + 6;
-       SET_FLAG_AF;
-    }
-    else
-    {
-       CLEAR_FLAG_AF;
-    }
-    
-    if ( (al > 0x9F) || GET_FLAG_CF )
-    {
-       al = al + 0x60;
-       SET_FLAG_CF;
-    }
-    else
-    {
-        CLEAR_FLAG_CF;
-    }
-    DI_UPDATE_FLAGS_PSZ(SET_REG_AL(al));
-    DI_PROC_END;
+	if ( ( ( tmpAL & 0x0F ) > 0x09 ) || GET_FLAG_AF )
+	{
+		tmpCF = ( ( al > 0xF9 ) || GET_FLAG_CF );
+		al += 0x06;
+		SET_FLAG_AF;
+	}
+	else
+	{
+		CLEAR_FLAG_AF;
+	}
+
+	if ( ( tmpAL > 0x99 ) || GET_FLAG_CF )
+	{
+		al += 0x60;
+		tmpCF = 1;
+	}
+	else
+	{
+		tmpCF = 0;
+	}
+	DI_UPDATE_FLAGS_PSZ( SET_REG_AL( al ) );
+	// UNDOCUMENTED ***************
+	CLEAR_FLAG_OF;
+	if( tmpCF )
+		SET_FLAG_CF;
+	else
+		CLEAR_FLAG_CF;
+	// ****************************
+	DI_PROC_END;
 }
 
 int Diana_Call_das(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
-    unsigned char al = 0;
-    unsigned char oldal = 0;
-    int oldcf = 0;
-    al = (unsigned char)GET_REG_AL;
-    oldal = al;
-    oldcf = GET_FLAG_CF;
+	int tmpCF = 0;
+	unsigned char al = 0;
+	unsigned char oldal = 0;
+	al = (unsigned char)GET_REG_AL;
+	oldal = al;
 
-    CLEAR_FLAG_CF;
-    if ( (al & 0x0F) > 9 || GET_FLAG_AF ) 
-    {
-        al = al - 6;
-        if( oldcf || al >= 0x80 )
-        {
-            SET_FLAG_CF;
-        }
-        SET_FLAG_AF;
-    } 
-    else 
-    {
-        CLEAR_FLAG_AF;
-    }
+	if ( ( al & 0x0F ) > 0x09 || GET_FLAG_AF )
+	{
+		tmpCF = ( al < 0x06 ) || GET_FLAG_CF;
+		al -= 6;
+		SET_FLAG_AF;
+	}
+	else
+	{
+		CLEAR_FLAG_AF;
+	}
 
-    if ( (oldal > 0x99) || oldcf ) 
-    {
-        al = al - 0x60;
-        SET_FLAG_CF;
-    }
-    DI_UPDATE_FLAGS_PSZ(SET_REG_AL(al));
-    DI_PROC_END;
+	if ( ( oldal > 0x99 ) || GET_FLAG_CF )
+	{
+		al -= 0x60;
+		tmpCF = 1;
+	}
+	DI_UPDATE_FLAGS_PSZ( SET_REG_AL( al ) );
+	// UNDOCUMENTED ***************
+	CLEAR_FLAG_OF;
+	if( tmpCF )
+	{
+		SET_FLAG_CF;
+	}
+	else
+	{
+		CLEAR_FLAG_CF;
+	}
+	// ****************************
+	DI_PROC_END;
 }
 
 int Diana_Call_dec(struct _dianaContext * pDianaContext,

@@ -86,8 +86,8 @@ static void test_processor_imul3()
     TEST_ASSERT(res == DI_SUCCESS);
     
     TEST_ASSERT(GET_REG_RAX == 0xFF80);
-    TEST_ASSERT(GET_FLAG_CF);
-    TEST_ASSERT(GET_FLAG_OF);
+    TEST_ASSERT(!GET_FLAG_CF);
+    TEST_ASSERT(!GET_FLAG_OF);
 }
 
 static void test_processor_imul4()

@@ -4,31 +4,23 @@
 #include "diana_core_gen_tags.h"
 #include "diana_processor_cmd_internal.h"
 
-#define DI_UPDATE_IMUL_FLAGS(X) \
-    if ((arg1 ^ arg2) < 0) \
-    {\
-        temp.value = 0 - result.value;\
-    }\
-    if (temp.h || (temp.value & DianaProcessor_GetSignMask(X)))\
-    {\
-        SET_FLAG_CF;\
-        SET_FLAG_OF;\
-    }
-
 // IMUL 1
 static
 int Diana_Call_imul8(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext,
                     OPERAND_SIZE * pArgument)
 {
-    DianaRegisterValue16_signed_type result, temp;
+    DianaRegisterValue16_signed_type result;
     DI_SIGNED_CHAR arg1 = (DI_SIGNED_CHAR)GET_REG_AL;
     DI_SIGNED_CHAR arg2 = (DI_SIGNED_CHAR)*pArgument;
 
     result.value = (DI_INT32)arg1 * (DI_INT32)arg2;
-    temp = result;
 
-    DI_UPDATE_IMUL_FLAGS(1);
+	if( ( OPERAND_SIZE_SIGNED )( DI_SIGNED_CHAR )result.value != result.value )
+	{
+		SET_FLAG_CF;
+		SET_FLAG_OF;
+	}
 
     SET_REG_AX(result.value);
     return DI_SUCCESS;
@@ -39,14 +31,18 @@ int Diana_Call_imul16(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext,
                     OPERAND_SIZE * pArgument)
 {
-    DianaRegisterValue32_signed_type result, temp;
+    DianaRegisterValue32_signed_type result;
     DI_INT16 arg1 = (DI_INT16)GET_REG_AX;
     DI_INT16 arg2 = (DI_INT16)*pArgument;
 
     result.value = (DI_INT32)arg1 * (DI_INT32)arg2;
-    temp = result;
 
-    DI_UPDATE_IMUL_FLAGS(2);
+	if( ( OPERAND_SIZE_SIGNED )( DI_INT16 )result.value != result.value )
+	{
+		SET_FLAG_CF;
+		SET_FLAG_OF;
+	}
+
 
     SET_REG_AX(result.l.value);
     SET_REG_DX(result.h);
@@ -58,14 +54,17 @@ int Diana_Call_imul32(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext,
                     OPERAND_SIZE * pArgument)
 {
-    DianaRegisterValue_signed_type result, temp;
+    DianaRegisterValue_signed_type result;
     DI_INT32 arg1 = (DI_INT32)GET_REG_EAX;
     DI_INT32 arg2 = (DI_INT32)*pArgument;
 
     result.value = (DI_INT64)arg1 * (DI_INT64)arg2;
-    temp = result;
 
-    DI_UPDATE_IMUL_FLAGS(4);
+	if( ( OPERAND_SIZE_SIGNED )( DI_INT32 )result.value != result.value )
+	{
+		SET_FLAG_CF;
+		SET_FLAG_OF;
+	}
 
     SET_REG_EAX(result.l.value);
     SET_REG_EDX(result.h);
