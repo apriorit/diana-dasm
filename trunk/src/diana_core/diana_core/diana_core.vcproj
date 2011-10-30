@@ -132,6 +132,9 @@
 				RelativePath=".\diana_patchers.c">
 			</File>
 			<File
+				RelativePath=".\diana_pe.c">
+			</File>
+			<File
 				RelativePath=".\diana_stack.c">
 			</File>
 			<File
@@ -186,6 +189,12 @@
 			</File>
 			<File
 				RelativePath=".\diana_patchers.h">
+			</File>
+			<File
+				RelativePath=".\diana_pe.h">
+			</File>
+			<File
+				RelativePath=".\diana_pe_defs.h">
 			</File>
 			<File
 				RelativePath=".\diana_stack.h">

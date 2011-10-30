@@ -164,6 +164,9 @@
 				RelativePath=".\test_mov_spec.cpp">
 			</File>
 			<File
+				RelativePath=".\test_new.cpp">
+			</File>
+			<File
 				RelativePath=".\test_or.cpp">
 			</File>
 			<File
@@ -227,6 +230,9 @@
 			</File>
 			<File
 				RelativePath=".\test_mov_spec.h">
+			</File>
+			<File
+				RelativePath=".\test_new.h">
 			</File>
 			<File
 				RelativePath=".\test_or.h">
