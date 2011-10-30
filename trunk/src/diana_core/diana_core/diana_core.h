@@ -321,6 +321,8 @@ typedef struct _dianaContext
 void Diana_FatalBreak();
 void Diana_DebugFatalBreak();
 
+DianaCmdInfo * Diana_GetNopInfo();
+
 void Diana_InitContext(DianaContext * pThis, int Mode);
 
 void Diana_ClearCache(DianaContext * pThis);
@@ -374,4 +376,6 @@ void Diana_CacheEatOneSafe(DianaContext * pContext);
 #define DIANA_CONTAINING_RECORD(address, type, field) ((type *)( \
                                                   (char*)(address) - \
                                                   (size_t)(&((type *)0)->field)))
+
+
 #endif

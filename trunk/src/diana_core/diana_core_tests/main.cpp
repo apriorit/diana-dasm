@@ -22,11 +22,13 @@ extern "C"
 #include "test_fpu_mmx32.h"
 #include "test_analyze.h"
 #include "test_stack.h"
+#include "test_new.h"
 
 int main()
 {
     Diana_Init();
 
+    test_new();
     test_stack();
     test_analyze();
     test_integrated2();

@@ -9,4 +9,6 @@ int Diana_Call_neg(struct _dianaContext * pDianaContext,
 int Diana_Call_not(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext);
 
+int Diana_Call_nop(struct _dianaContext * pDianaContext,
+                    DianaProcessor * pCallContext);
 #endif

@@ -44,3 +44,9 @@ int Diana_Call_not(struct _dianaContext * pDianaContext,
     DI_MEM_SET_DEST(dest);
     DI_PROC_END
 }
+
+int Diana_Call_nop(struct _dianaContext * pDianaContext,
+                    DianaProcessor * pCallContext)
+{
+    DI_PROC_END
+}

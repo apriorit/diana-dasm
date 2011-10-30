@@ -423,6 +423,7 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
     DI_FULL_CHAR i = 0;
     DI_CHAR data = 0;
     int dataValid = 1;
+    int iBytesCounter = 0;
     int iOriginalCacheSize = 0;
     pParseParams->pContext->prefixesCount = 0;
     
@@ -430,7 +431,7 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
     memset(pParseParams->pResult, 0, sizeof(DianaParserResult));
 
     // check prefixes
-    while(1)
+    for(;;++iBytesCounter)
     {
         iResult = Diana_ReadCache(pParseParams->pContext, 
                                   pParseParams->readStream, 
@@ -439,6 +440,19 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
             return iResult;
 
         data = Diana_CacheEatOne(pParseParams->pContext);
+
+        if (!iBytesCounter)
+        {
+            // first byte, check nop
+            switch(data)
+            {
+            case 0x90:
+                pParseParams->pResult->iFullCmdSize = 1;
+                pParseParams->pResult->iLinkedOpCount = 0;
+                pParseParams->pResult->pInfo = Diana_GetNopInfo();
+                return DI_SUCCESS;
+            };
+        }
 
         // parse prefixes
         Di_ProcessCustomPrefix(data, 
