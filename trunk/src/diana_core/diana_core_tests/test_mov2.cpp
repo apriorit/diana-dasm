@@ -8,7 +8,6 @@ extern "C"
 #include "test_common.h"
 #include "string.h"
 
-
 static unsigned char mov[] = {0x66, 0x8C, 0xCC};          // mov         sp,cs 
 static unsigned char mov1[] = {0x66, 0x8C, 0xD3};         // mov         bx,ss 
 static unsigned char mov2[] = {0x3E, 0xA2, 0x34, 0x12, 0x00, 0x00}; // mov         byte ptr ds:[00001234h],al 
@@ -17,6 +16,7 @@ static unsigned char mov4[] = {0x3E, 0xA0, 0x34, 0x12, 0x00, 0x00}; // mov      
 static unsigned char mov5[] = {0x36, 0xA1, 0x34, 0x12, 0x00, 0x00}; // mov         eax,dword ptr ss:[00001234h] 
 static unsigned char mov6[] = {0x2E, 0xC6, 0x02, 0x34};         // mov         byte ptr cs:[edx],34h 
 static unsigned char mov7[] = {0x3E, 0xC6, 0x44, 0xBE, 0x01, 0x34}; // mov         byte ptr ds:[esi+edi*4+1],34h 
+static unsigned char mov8[] = {0x8C, 0xC8};                // mov         eax,cs 
 
 void test_mov2()
 {
@@ -161,6 +161,20 @@ void test_mov2()
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 4);
         TEST_ASSERT(result.linkedOperands[1].type == diana_imm);
         TEST_ASSERT(result.linkedOperands[1].value.imm == 0x34);
+    }
+
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,mov8, sizeof(mov8), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_EAX);    
+        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_CS);
+
     }
 
 }

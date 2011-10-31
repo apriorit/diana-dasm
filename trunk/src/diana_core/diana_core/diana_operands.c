@@ -306,7 +306,8 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                     return DI_ERROR;
                 break;
 
-                
+             
+        case diana_orReg16_32_64_mem16:
         case diana_orMemoryMMX:
         case diana_orMemoryXMM:
         case diana_orRegMem:
@@ -315,13 +316,18 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                                                      opSizeUsed,  
                                                      PostByte, 
                                                      readStream,
-                                                    &pLinkedOp->value,
-                                                    &pLinkedOp->type
+                                                     &pLinkedOp->value,
+                                                     &pLinkedOp->type
                                         ))
                     return DI_ERROR;
                 
                 if (pLinkedOp->type == diana_index)
                 {
+                    if (diana_orReg16_32_64_mem16 == pOperInfo->m_type)
+                    {
+                        // special for glorious reg16/32/64/mem16 8C opcode 
+                        pLinkedOp->usedSize = 2;
+                    }
                     pLinkedOp->value.rmIndex.seg_reg = pContext->currentCmd_sreg;
                     if  (pLinkedOp->value.rmIndex.dispSize)
                     {

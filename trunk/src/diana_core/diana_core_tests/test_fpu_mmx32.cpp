@@ -120,5 +120,20 @@ void test_fpu_mmx32()
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue== 0);
     }
+
+    static unsigned char data[] = {0xdf, 0xe0};  //    fstsw ax
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, data, sizeof(data), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "fnstsw")==0);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 2);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister = reg_AX);
+    }
+
   
 }
