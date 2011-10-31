@@ -456,7 +456,7 @@ static void test_processor_enter2()
 
 static void test_processor_enter3()
 {
-    std::vector<DI_UINT16> memory(1024);
+    std::vector<DI_UINT16> memory(2048);
 
     unsigned char buff[] = {0x66, 0xC8, 0x08, 0x00, 0x02}; 
 
