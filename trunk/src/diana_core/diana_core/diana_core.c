@@ -62,9 +62,9 @@ int Diana_ParseCmd(DianaContext * pContext, //IN
     pResult->iRexPrefix = pContext->iRexPrefix;
 
     pResult->iFullCmdSize = iPreviousCacheSize + proxy.m_iReadSize - pContext->cacheSize;
-    return iRes;
-}
 
+	return iRes;
+}
 
 DianaGroupInfo * Diana_GetGroupInfo(long lId)
 {

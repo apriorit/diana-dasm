@@ -63,7 +63,7 @@ static void test_processor_and64()
 	int res = proc.ExecOnce();
 	TEST_ASSERT(res == DI_SUCCESS);
 
-	TEST_ASSERT(GET_REG_RAX == 0x00000000F0F0F0F0);
+	TEST_ASSERT(GET_REG_RAX == 0x00000000F0F0F0F0ULL);
 }
 
 
@@ -80,7 +80,7 @@ static void test_processor_and64_2()
 	TEST_ASSERT(res == DI_SUCCESS);
 	TEST_ASSERT(GET_REG_RIP == 0x0004);
 
-	TEST_ASSERT(GET_REG_RAX == 0xFFFFFFFFFFFFF0F0);
+	TEST_ASSERT(GET_REG_RAX == 0xFFFFFFFFFFFFF0F0ULL);
 }
 
 void test_processor_a()

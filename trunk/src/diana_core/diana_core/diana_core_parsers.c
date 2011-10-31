@@ -406,7 +406,7 @@ int TryMatch(DianaParseParams * pParseParams,
 
         if (pParseParams->pContext->cacheIt < DI_CACHE_RESERVED)
         {
-            Diana_FatalBreak();;
+            Diana_FatalBreak();
         }
         return iResult;
     }

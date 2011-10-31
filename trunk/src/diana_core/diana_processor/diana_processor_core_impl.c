@@ -179,10 +179,13 @@ int DianaProcessor_CalcIndex(struct _dianaContext * pDianaContext,
 
     dispValue = (OPERAND_SIZE)pIndex->dispValue;
     index = (OPERAND_SIZE)pIndex->index;
-    // Artem N, 2011-10-17
-    if( pDianaContext->iAMD64Mode && pIndex->reg == reg_RIP ) {
-        reg += pCallContext->m_result.iFullCmdSize;
-    }
+
+	// RIP-relative addressing
+	if( pDianaContext->iAMD64Mode && pIndex->reg == reg_RIP )
+	{
+		reg += pCallContext->m_result.iFullCmdSize;
+	}
+
     address = reg + indexedReg*index + dispValue;
 
     selector = DianaProcessor_GetValue(pCallContext, 

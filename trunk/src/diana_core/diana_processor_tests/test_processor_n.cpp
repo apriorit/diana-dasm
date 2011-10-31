@@ -35,9 +35,56 @@ static void test_processor_neg2()
     TEST_ASSERT(pCallContext->m_flags.l.l.value == 0x00000A87);
 }
 
+static void test_processor_nop()
+{
+    unsigned char code[] = {0x90}; // nop
+
+    CTestProcessor proc(code, sizeof(code));
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    SET_REG_RAX(0x12345678);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT(0x12345678 == GET_REG_RAX);
+}
+
+static void test_processor_nop64()
+{
+    unsigned char code[] = {0x90}; // nop
+
+    CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    SET_REG_RAX(0x1234567812345678ULL);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT(0x1234567812345678ULL == GET_REG_RAX);
+}
+
+static void test_processor_nop64_2()
+{
+	unsigned char code[] = {0x40, 0x90}; // "nop"
+
+	CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RAX(0x1111222233334444ULL);
+
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT(0x1111222233334444ULL == GET_REG_RAX);
+}
 
 void test_processor_n()
 {
     test_processor_neg();
     test_processor_neg2();
+	test_processor_nop();
+	test_processor_nop64();
+	//test_processor_nop64_2();
 }

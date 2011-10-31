@@ -7,16 +7,16 @@ extern "C"
 int Diana_ParseCmdOnBuffer_test(int iMode,
                            void * pBuffer,
                            size_t size,
-                           DianaCmdKeyLine * pInitialLine,  // IN
-                           DianaParserResult * pResult,  //OUT
-                           size_t * sizeRead)    // OUT
+                           DianaCmdKeyLine * pInitialLine, // IN
+                           DianaParserResult * pResult,    //OUT
+                           size_t * sizeRead)              // OUT
 {
     int iRes = Diana_ParseCmdOnBuffer(iMode,
-                                           pBuffer,
-                                           size,
-                                           pInitialLine,  // IN
-                                           pResult,  //OUT
-                                           sizeRead);    // OUT
+                                      pBuffer,
+                                      size,
+                                      pInitialLine,  // IN
+                                      pResult,       //OUT
+                                      sizeRead);     // OUT
     if (iRes)
         return iRes;
 
@@ -24,6 +24,6 @@ int Diana_ParseCmdOnBuffer_test(int iMode,
         Diana_FatalBreak();
 
     if (*sizeRead!=size)
-        Diana_FatalBreak();;
+        Diana_FatalBreak();
     return iRes;
 }

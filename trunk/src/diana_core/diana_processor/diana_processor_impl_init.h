@@ -48,7 +48,7 @@ OPERAND_SIZE DianaProcessor_CutValue(OPERAND_SIZE value,
 
 void DianaProcessor_ProcImplInit()
 {
-    int i =1;
+    int i = 1;
     g_parityBuffer[0] = 1; // WTF?
     for(; i<256; ++i)
     {

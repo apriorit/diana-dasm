@@ -262,7 +262,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
     }
 
     // read structure
-    for (i =0;i < pResult->pInfo->m_operandCount; ++i, ++pResult->iLinkedOpCount)
+    for (i = 0;i < pResult->pInfo->m_operandCount; ++i, ++pResult->iLinkedOpCount)
     {
         DianaLinkedOperand * pLinkedOp = pResult->linkedOperands + pResult->iLinkedOpCount;
         DianaOperandInfo * pOperInfo = pResult->pInfo->m_operands+i;
@@ -332,11 +332,11 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 break;
 
         case diana_orImmediate:
-                if  (pOperInfo->m_value == DI_CHAR_NULL)
+                if (pOperInfo->m_value == DI_CHAR_NULL)
                 {
                     if (iCurImm>=MAX_IMM)
                     {
-                        Diana_FatalBreak();;
+                        Diana_FatalBreak();
                         return DI_ERROR;
                     }
                     pLinkedOp->type = diana_imm;
@@ -606,7 +606,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
 
         default:
             
-            Diana_FatalBreak();;
+            Diana_FatalBreak();
             return DI_ERROR;
         }
     }

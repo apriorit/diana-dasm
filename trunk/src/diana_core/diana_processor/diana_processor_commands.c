@@ -80,7 +80,7 @@ int Diana_Call_xchg(struct _dianaContext * pDianaContext,
     OPERAND_SIZE temp = 0;
     int temp_size = 0;
     DI_DEF_LOCALS(src, dest);
-    
+
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
@@ -454,6 +454,8 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(test)
     DI_PROC_REGISTER_COMMAND(sub)
     DI_PROC_REGISTER_COMMAND(ret)
+
+    DI_PROC_REGISTER_COMMAND(bswap)
 }
 
 void DianaProcessor_LinkCommands()

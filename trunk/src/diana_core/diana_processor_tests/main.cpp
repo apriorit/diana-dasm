@@ -19,6 +19,7 @@ extern "C"
 #include "test_processor_x.h"
 #include "test_processor_o.h"
 #include "test_processor_n.h"
+#include "test_processor_b.h"
 
 void di_gen();
 
@@ -42,5 +43,6 @@ int main()
     test_processor_call();
     test_processor();
     test_processor_flags();
+	test_processor_b();
     return 0;
 }

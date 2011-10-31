@@ -216,99 +216,145 @@ static void test_processor_mul64_4()
 	TEST_ASSERT(GET_REG_RDX == 0x0000000000000001ULL);
 }
 
-/*static void test_processor_mul_byte( int m = DIANA_MODE32 )
+void test_processor_mov64_5()
 {
-	int i;
-	unsigned char code[] = {0xf6, 0x00};
-	unsigned char second[] = {0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7};
-	DianaUnifiedRegister regs[] = { reg_AL, reg_CL, reg_DL, reg_BL, reg_AH, reg_CH, reg_DH, reg_BH };
+	// mov b,[10],-1
+	// mov rbx,[10]
+	unsigned char code[] = {0xc6, 0x05, 0x09, 0x00, 0x00, 0x00, 0xff, 0x48, 0x8b, 0x1d, 0x02, 0x00, 0x00, 0x00, 0xaa, 0xaa, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0xaa, 0xaa };
 
-	for( i = 0; i < sizeof( second ); i++) {
-		DI_CHAR n1 = rand();
-		DI_CHAR n2;
-		if( i == 0 )
-			n2 = n1;
-		else
-			n2 = rand();
-		DI_UINT16 n1n2 = n1 * n2;
-		code[ 1 ] = second[ i ];
-		CTestProcessor proc( code, sizeof( code ), 0, m );
-		DianaProcessor * pCallContext = proc.GetSelf();
-		SET_REG_RAX( 0 );
-		DianaProcessor_SetValue(pCallContext, reg_AL, DianaProcessor_QueryReg(pCallContext, reg_AL ), n1 );
-		DianaProcessor_SetValue(pCallContext, regs[ i ], DianaProcessor_QueryReg(pCallContext, regs[ i ] ), n2 );
+	CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
 
-		int res = proc.ExecOnce();
-		TEST_ASSERT(res == DI_SUCCESS);
+	int res = proc.Exec( 2 );
+	TEST_ASSERT(res == DI_SUCCESS);
 
-		TEST_ASSERT( n1n2 == ( DI_UINT16 )GET_REG_RAX );
-	}
+	TEST_ASSERT( 0xFF == GET_REG_BL );
+	TEST_ASSERT( 0x55FF == GET_REG_BX );
+	TEST_ASSERT( 0x555555FF == GET_REG_EBX );
+	TEST_ASSERT( 0x55555555555555FFULL == GET_REG_RBX );
 }
 
-static void test_processor_mul_word( int m = DIANA_MODE32 )
+void test_processor_mov64_6()
 {
-	int i;
-	unsigned char code[] = {0x66, 0xf7, 0x00};
-	unsigned char second[] = {0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7};
-	DianaUnifiedRegister regs[] = { reg_AX, reg_CX, reg_DX, reg_BX, reg_SP, reg_BP, reg_SI, reg_DI };
+	// mov d,[rsi],12345678h
+	unsigned char code[] = {0xc7, 0x06, 0x78, 0x56, 0x34, 0x12, 0xaa, 0xaa, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaa, 0xaa};
 
-	for( i = 0; i < sizeof( second ); i++) {
-		DI_UINT16 n1 = rand();
-		DI_UINT16 n2;
-		if( i == 0 )
-			n2 = n1;
-		else
-			n2 = rand();
-		DI_UINT32 n1n2 = n1 * n2;
-		code[ 2 ] = second[ i ];
-		CTestProcessor proc( code, sizeof( code ), 0, m );
-		DianaProcessor * pCallContext = proc.GetSelf();
-		SET_REG_RAX( 0 );
-		SET_REG_RDX( 0 );
-		DianaProcessor_SetValue(pCallContext, reg_AX, DianaProcessor_QueryReg(pCallContext, reg_AX ), n1 );
-		DianaProcessor_SetValue(pCallContext, regs[ i ], DianaProcessor_QueryReg(pCallContext, regs[ i ] ), n2 );
+	CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
 
-		int res = proc.ExecOnce();
-		TEST_ASSERT(res == DI_SUCCESS);
+	SET_REG_RSI( 8 );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
 
-		TEST_ASSERT( ( n1n2 & 0xFFFF ) == ( DI_UINT16 )GET_REG_RAX );
-		TEST_ASSERT( ( n1n2 & 0xFFFF0000 ) >> 16 == ( DI_UINT16 )GET_REG_RDX );
-	}
+	TEST_ASSERT( 0xaa == code[ 0x07 ] );
+	TEST_ASSERT( 0x78 == code[ 0x08 ] );
+	TEST_ASSERT( 0x56 == code[ 0x09 ] );
+	TEST_ASSERT( 0x34 == code[ 0x0a ] );
+	TEST_ASSERT( 0x12 == code[ 0x0b ] );
+	TEST_ASSERT( 0x00 == code[ 0x0c ] );
+	TEST_ASSERT( 0x00 == code[ 0x0d ] );
+	TEST_ASSERT( 0x00 == code[ 0x0e ] );
+	TEST_ASSERT( 0x00 == code[ 0x0f ] );
+	TEST_ASSERT( 0xaa == code[ 0x10 ] );
 }
 
-static void test_processor_mul_dword( int m = DIANA_MODE32 )
+void test_processor_mov64_7()
 {
-	int i;
-	unsigned char code[] = {0xf7, 0x00};
-	unsigned char second[] = {0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7};
-	DianaUnifiedRegister regs[] = { reg_EAX, reg_ECX, reg_EDX, reg_EBX, reg_ESP, reg_EBP, reg_ESI, reg_EDI };
+	// mov q,[rsi],12345678h
+	unsigned char code[] = {0x48, 0xc7, 0x06, 0x78, 0x56, 0x34, 0x12, 0xaa, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaa};
 
-	for( i = 0; i < sizeof( second ); i++) {
-		DI_UINT32 n1 = rand();
-		DI_UINT32 n2;
-		n1 = ( n1 << 16 ) | n1;
-		if( i == 0 )
-			n2 = n1;
-		else {
-			n2 = rand();
-			n2 = ( n2 << 16 ) | n2;
-		}
-		DI_UINT64 n1n2 = ( DI_UINT64 )n1 * ( DI_UINT64 )n2;
-		code[ 1 ] = second[ i ];
-		CTestProcessor proc( code, sizeof( code ), 0, m );
-		DianaProcessor * pCallContext = proc.GetSelf();
-		SET_REG_RAX( 0 );
-		SET_REG_RDX( 0 );
-		DianaProcessor_SetValue(pCallContext, reg_EAX, DianaProcessor_QueryReg(pCallContext, reg_EAX ), n1 );
-		DianaProcessor_SetValue(pCallContext, regs[ i ], DianaProcessor_QueryReg(pCallContext, regs[ i ] ), n2 );
+	CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
 
-		int res = proc.ExecOnce();
-		TEST_ASSERT(res == DI_SUCCESS);
+	SET_REG_RSI( 8 );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
 
-		TEST_ASSERT( ( n1n2 & 0xFFFFFFFF ) == ( DI_UINT32 )GET_REG_RAX );
-		TEST_ASSERT( ( n1n2 & 0xFFFFFFFF00000000 ) >> 32 == ( DI_UINT32 )GET_REG_RDX );
-	}
-}*/
+	TEST_ASSERT( 0xaa == code[ 0x07 ] );
+	TEST_ASSERT( 0x78 == code[ 0x08 ] );
+	TEST_ASSERT( 0x56 == code[ 0x09 ] );
+	TEST_ASSERT( 0x34 == code[ 0x0a ] );
+	TEST_ASSERT( 0x12 == code[ 0x0b ] );
+	TEST_ASSERT( 0x00 == code[ 0x0c ] );
+	TEST_ASSERT( 0x00 == code[ 0x0d ] );
+	TEST_ASSERT( 0x00 == code[ 0x0e ] );
+	TEST_ASSERT( 0x00 == code[ 0x0f ] );
+	TEST_ASSERT( 0xaa == code[ 0x10 ] );
+}
+
+void test_processor_mov64_8()
+{
+	// mov d,[rsi],12345678h
+	unsigned char code[] = {0xc7, 0x06, 0x78, 0x56, 0x34, 0x82, 0xaa, 0xaa, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaa, 0xaa};
+
+	CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RSI( 8 );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT( 0xaa == code[ 0x07 ] );
+	TEST_ASSERT( 0x78 == code[ 0x08 ] );
+	TEST_ASSERT( 0x56 == code[ 0x09 ] );
+	TEST_ASSERT( 0x34 == code[ 0x0a ] );
+	TEST_ASSERT( 0x82 == code[ 0x0b ] );
+	TEST_ASSERT( 0x00 == code[ 0x0c ] );
+	TEST_ASSERT( 0x00 == code[ 0x0d ] );
+	TEST_ASSERT( 0x00 == code[ 0x0e ] );
+	TEST_ASSERT( 0x00 == code[ 0x0f ] );
+	TEST_ASSERT( 0xaa == code[ 0x10 ] );
+}
+
+void test_processor_mov64_9()
+{
+	// mov q,[rsi],82345678h
+	unsigned char code[] = {0x48, 0xc7, 0x06, 0x78, 0x56, 0x34, 0x82, 0xaa, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaa};
+
+	CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RSI( 8 );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT( 0xaa == code[ 0x07 ] );
+	TEST_ASSERT( 0x78 == code[ 0x08 ] );
+	TEST_ASSERT( 0x56 == code[ 0x09 ] );
+	TEST_ASSERT( 0x34 == code[ 0x0a ] );
+	TEST_ASSERT( 0x82 == code[ 0x0b ] );
+	TEST_ASSERT( 0xff == code[ 0x0c ] );
+	TEST_ASSERT( 0xff == code[ 0x0d ] );
+	TEST_ASSERT( 0xff == code[ 0x0e ] );
+	TEST_ASSERT( 0xff == code[ 0x0f ] );
+	TEST_ASSERT( 0xaa == code[ 0x10 ] );
+}
+
+void test_processor_mov64_10()
+{
+	// mov b,[4],-1
+	// mov rax,[4]
+	unsigned char code[] = {
+		0xaa, 0xaa, 0xaa, 0xaa,
+		0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0x55,
+		0xaa, 0xaa, 0xaa, 0xaa,
+		0xc6, 0x05, 0xed, 0xff, 0xff, 0xff, 0xff,
+		0x48, 0x8b, 0x05, 0xe6, 0xff, 0xff, 0xff
+	};
+
+	CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RIP( 0x10 );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT( 0xaa == code[ 0x03 ] );
+	TEST_ASSERT( 0xff == code[ 0x04 ] );
+	TEST_ASSERT( 0x55 == code[ 0x05 ] );
+	int res2 = proc.ExecOnce();
+	TEST_ASSERT(res2 == DI_SUCCESS);
+	TEST_ASSERT( 0x55555555555555FFULL == GET_REG_RAX );
+}
 
 void test_processor_m()
 {
@@ -326,10 +372,11 @@ void test_processor_m()
 	test_processor_mul64_3();
 	test_processor_mul64_4();
 
-	/*test_processor_mul_byte();
-	test_processor_mul_byte( DIANA_MODE64 );
-	test_processor_mul_word();
-	test_processor_mul_word( DIANA_MODE64 );
-	test_processor_mul_dword();
-	test_processor_mul_dword( DIANA_MODE64 );*/
+	// "RIP-relative" addressing
+	test_processor_mov64_5();
+	test_processor_mov64_6();
+	test_processor_mov64_7();
+	test_processor_mov64_8();
+	test_processor_mov64_9();
+	test_processor_mov64_10();
 }

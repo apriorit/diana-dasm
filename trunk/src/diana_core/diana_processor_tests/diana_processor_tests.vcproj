@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="diana_processor_tests"
 	ProjectGUID="{ECF4A43D-2158-46E8-9B04-525BFB6DFCF5}"
 	RootNamespace="diana_processor_tests"
@@ -341,6 +341,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\test_processor_b.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\test_processor_c.cpp"
 				>
 			</File>
@@ -404,6 +408,10 @@
 			</File>
 			<File
 				RelativePath=".\test_processor_a.h"
+				>
+			</File>
+			<File
+				RelativePath=".\test_processor_b.h"
 				>
 			</File>
 			<File

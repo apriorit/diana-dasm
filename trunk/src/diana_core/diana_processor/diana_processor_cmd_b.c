@@ -256,3 +256,43 @@ int Diana_Call_bts(struct _dianaContext * pDianaContext,
     DI_MEM_SET_DEST(dest);
     DI_PROC_END;
 }
+
+int Diana_Call_bswap(struct _dianaContext * pDianaContext,
+                     DianaProcessor * pCallContext)
+{
+	OPERAND_SIZE b0, b1, b2, b3, b4, b5, b6, b7;
+	DI_DEF_LOCAL(dest);
+	DI_MEM_GET_DEST(dest);
+
+	switch( dest_size )
+	{
+	// UNDOCUMENTED ***************
+	case 2:
+		dest = 0;
+		break;
+	// ****************************
+	case 4:
+		b0 = dest & 0xFF; dest>>= 8;
+		b1 = dest & 0xFF; dest>>= 8;
+		b2 = dest & 0xFF; dest>>= 8;
+		dest |= (b0<<24) | (b1<<16) | (b2<<8);
+		break;
+	case 8:
+		b0 = dest & 0xFF; dest>>= 8;
+		b1 = dest & 0xFF; dest>>= 8;
+		b2 = dest & 0xFF; dest>>= 8;
+		b3 = dest & 0xFF; dest>>= 8;
+		b4 = dest & 0xFF; dest>>= 8;
+		b5 = dest & 0xFF; dest>>= 8;
+		b6 = dest & 0xFF; dest>>= 8;
+		b7 = dest;
+		dest |= (b0<<56) | (b1<<48) | (b2<<40) | (b3<<32) | (b4<<24) | (b5<<16) | (b6<<8);
+		break;
+	default:
+		Diana_DebugFatalBreak();
+		return DI_ERROR;
+	}
+	DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, dest_size, &dest_size));
+	DI_MEM_SET_DEST(dest);
+	DI_PROC_END
+}
