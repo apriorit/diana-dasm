@@ -257,9 +257,9 @@ static void Diana_AddrSize(struct _dianaContext * pContext)
         return;
 
     pContext->iSizePrefixes |= DIANA_HAS_ADDRESS_SIZE_PREFIX;
-    if (pContext->iCurrentCmd_opsize == 8)
+    if (pContext->iCurrentCmd_addressSize == 8)
     {
-        pContext->iCurrentCmd_opsize = 4;
+        pContext->iCurrentCmd_addressSize = 4;
         return;
     }
     pContext->iCurrentCmd_addressSize = 6 - pContext->iMainMode_addressSize;

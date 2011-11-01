@@ -390,6 +390,12 @@ int TryMatch(DianaParseParams * pParseParams,
         ApplyPrefixes(pParseParams->pContext, 
                       iCurrentPrefix); // exclude iCurrentPrefix
 
+        if (pParseParams->pContext->iSizePrefixes & DIANA_INVALID_STATE)
+        {
+            Diana_DebugFatalBreak();
+            return DI_ERROR;
+        }
+
         if (oldPrefixFound)
         {
             pParseParams->pContext->iRexPrefix = 0;
