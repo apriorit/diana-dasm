@@ -42,4 +42,9 @@ int Di_PrepareSIDI_regs(DianaProcessor * pCallContext,
 void Di_UpdateSIDI(DianaProcessor * pCallContext,
                    OPERAND_SIZE * pSrcRegAddress, 
                    OPERAND_SIZE * pDestRegAddress);
+
+int Diana_Call_internal_ret(struct _dianaContext * pDianaContext,
+                            DianaProcessor * pCallContext,
+                            int bPopCS);
+
 #endif

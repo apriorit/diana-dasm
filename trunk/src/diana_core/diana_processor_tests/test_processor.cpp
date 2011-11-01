@@ -244,13 +244,13 @@ static void test_processor_push()
 
 static void test_processor_push_ds()
 {
-    unsigned char buff[]= {0x1E, 0x00, 0x00}; // push  ds
-    unsigned char etalon[]= {0x1E, 0xFF, 0x7F}; 
+    unsigned char buff[]= {0x1E, 0x00, 0x00, 0x02, 0x01}; // push  ds
+    unsigned char etalon[]= {0x1E, 0xFF, 0x7F, 0x02, 0x01}; 
     
     CTestProcessor proc(buff, sizeof(buff));
     DianaProcessor * pCallContext = proc.GetSelf();
 
-    SET_REG_ESP(0x3);
+    SET_REG_ESP(0x5);
     SET_REG_DS(0x7FFF);
 
     int res = proc.ExecOnce();
@@ -265,6 +265,29 @@ static void test_processor_push_ds()
     TEST_ASSERT(memcmp(buff, etalon, sizeof(etalon)) == 0)
 }
 
+
+static void test_processor_push_gs()
+{
+    unsigned char buff[]= {0x0F, 0xA8}; // push  ds
+    unsigned char etalon[]= {0xFF, 0x7F}; 
+    
+    CTestProcessor proc(buff, sizeof(buff), 0, 8);
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    SET_REG_ESP(8);
+    SET_REG_GS(0x7FFF);
+
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+
+    OPERAND_SIZE rip = GET_REG_RIP;
+    TEST_ASSERT(rip == 2);
+
+    // check rsp
+    TEST_ASSERT(GET_REG_ESP == 0);
+
+    TEST_ASSERT(memcmp(buff, etalon, sizeof(etalon)) == 0)
+}
 
 static void test_processor_push_1()
 {
@@ -456,14 +479,14 @@ static void test_processor_enter2()
 
 static void test_processor_enter3()
 {
-    std::vector<DI_UINT16> memory(2048);
+    std::vector<DI_UINT16> memory(1024);
 
     unsigned char buff[] = {0x66, 0xC8, 0x08, 0x00, 0x02}; 
 
     memcpy(&memory.front(), buff, sizeof(buff));
 
     DI_UINT16 * pBegin = &memory.front();
-    size_t sizeInBytes = memory.size()*4;
+    size_t sizeInBytes = memory.size()*sizeof(DI_UINT16);
 
     CTestProcessor proc((unsigned char*)pBegin, sizeInBytes);
     DianaProcessor * pCallContext = proc.GetSelf();
@@ -525,7 +548,7 @@ void test_processor()
     test_processor_adc();
     test_processor_add();
     test_processor_push();
-    //test_processor_push_ds();
+    test_processor_push_ds();
     test_processor_push_1();
     test_processor_push_2();
     test_processor_pushf();
@@ -536,4 +559,5 @@ void test_processor()
     test_processor_enter3();
     test_processor_xlat();
     test_processor_test();
+    test_processor_push_gs();
 }

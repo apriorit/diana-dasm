@@ -153,6 +153,11 @@ static int InitJmps(DianaGroupInfo * pGroupInfo)
         pGroupInfo->m_pLinkedInfo = &g_infoForRets;
         return 1;
     } else
+    if (!strcmp(pGroupInfo->m_pName,"retf"))
+    {
+        pGroupInfo->m_pLinkedInfo = &g_infoForRets;
+        return 1;
+    } else
     if (!strcmp(pGroupInfo->m_pName,"iret"))
     {
         pGroupInfo->m_pLinkedInfo = &g_infoForRets;

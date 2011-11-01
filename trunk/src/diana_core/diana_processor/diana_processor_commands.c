@@ -147,46 +147,16 @@ int Diana_Call_inc(struct _dianaContext * pDianaContext,
 int Diana_Call_ret(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
-    // DEST 
-    OPERAND_SIZE rsp = 0, dropBytes = 0;
-    OPERAND_SIZE newRIP = 0;
-    DI_DEF_LOCAL(src);
-    
-    if (pCallContext->m_result.iLinkedOpCount == 1)
-    {
-        DI_MEM_GET_DEST(src);
-
-        if (pCallContext->m_result.linkedOperands[0].type != diana_imm)
-        {
-            Diana_DebugFatalBreak();
-            return DI_ERROR;
-        }
-        dropBytes = pCallContext->m_result.linkedOperands[0].value.imm;;
-    }
-    else
-    if (pCallContext->m_result.iLinkedOpCount)
-    {
-        Diana_DebugFatalBreak();
-        return DI_ERROR;
-    }
-
-
-    rsp = GET_REG_RSP;
-
-    DI_CHECK(DianaProcessor_GetMemValue(pCallContext, 
-                                        GET_REG_SS,
-                                        rsp, 
-                                        pCallContext->m_context.iCurrentCmd_opsize,
-                                        &newRIP,
-                                        0,
-                                        reg_SS));
-
-    rsp += pCallContext->m_context.iCurrentCmd_opsize;
-    rsp += dropBytes;
-
-    SET_REG_RSP(rsp);
-    SET_REG_RIP(newRIP);
-    DI_PROC_END
+    return Diana_Call_internal_ret(pDianaContext,
+                                   pCallContext,
+                                   0);
+}
+int Diana_Call_retf(struct _dianaContext * pDianaContext,
+                    DianaProcessor * pCallContext)
+{
+    return Diana_Call_internal_ret(pDianaContext,
+                                   pCallContext,
+                                   1);
 }
 
 
@@ -454,6 +424,7 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(test)
     DI_PROC_REGISTER_COMMAND(sub)
     DI_PROC_REGISTER_COMMAND(ret)
+    DI_PROC_REGISTER_COMMAND(retf)
 
     DI_PROC_REGISTER_COMMAND(bswap)
 }

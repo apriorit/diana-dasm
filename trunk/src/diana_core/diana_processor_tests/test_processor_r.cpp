@@ -171,8 +171,8 @@ void test_processor_ret64()
 
 void test_processor_retf()
 {
-    // ror eax, 1
-    unsigned char code[] = {0xca, 0x22, 0x00, 0};
+    // retf 
+    unsigned char code[] = {0xca, 0x22, 0x00, 0, 0x23, 0,0,1};
     CTestProcessor proc(code, sizeof(code));
     DianaProcessor * pCallContext = proc.GetSelf();
     
@@ -182,7 +182,8 @@ void test_processor_retf()
     TEST_ASSERT(res == DI_SUCCESS);
 
     TEST_ASSERT(GET_REG_RIP == 0x22ca);
-    TEST_ASSERT(GET_REG_RSP == 0x26);
+    TEST_ASSERT(GET_REG_CS == 0x23);
+    TEST_ASSERT(GET_REG_RSP == 0x2a);
 }
 
 void test_processor_r()

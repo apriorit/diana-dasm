@@ -20,6 +20,8 @@ unsigned char mov8[] = {0x66, 0x66, 0x8B, 0xD1}; // mov dx, cx
 unsigned char mov9[] = {0xB9, 0x78, 0x56, 0x34, 0x12}; // mov ecx, 0x12345678
 unsigned char mov10[] = {0xBD, 0x78, 0x56, 0x34, 0x12}; // mov ebp, 0x12345678
 unsigned char mov11[] = {0x66, 0x0f, 0xb7, 0x00}; //movzx ax,[word eax]
+unsigned char mov12[] = {0x66, 0x0f, 0xbf, 0x00}; //movsx ax,[word eax]
+
 void test_mov()
 {
     DianaGroupInfo * pGroupInfo=0;
@@ -225,7 +227,22 @@ void test_mov()
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
     }
 
-
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,mov12, sizeof(mov12), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movsx")==0);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_AX);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_EAX);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0x0);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispSize == 0x0);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
+    }
 
 
 }

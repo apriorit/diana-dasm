@@ -345,3 +345,76 @@ void Di_UpdateSIDI(DianaProcessor * pCallContext,
         }
     }
 }
+
+
+//__asm
+//{
+//    mov eax, 0
+//    mov ax, cs
+//    push eax
+//    push offset function
+//    retf
+//}
+int Diana_Call_internal_ret(struct _dianaContext * pDianaContext,
+                            DianaProcessor * pCallContext,
+                            int bPopCS)
+{
+    // DEST 
+    OPERAND_SIZE newCs = 0;
+    OPERAND_SIZE rsp = 0, dropBytes = 0;
+    OPERAND_SIZE newRIP = 0;
+    DI_DEF_LOCAL(src);
+    
+    if (pCallContext->m_result.iLinkedOpCount == 1)
+    {
+        DI_MEM_GET_DEST(src);
+
+        if (pCallContext->m_result.linkedOperands[0].type != diana_imm)
+        {
+            Diana_DebugFatalBreak();
+            return DI_ERROR;
+        }
+        dropBytes = pCallContext->m_result.linkedOperands[0].value.imm;;
+    }
+    else
+    if (pCallContext->m_result.iLinkedOpCount)
+    {
+        Diana_DebugFatalBreak();
+        return DI_ERROR;
+    }
+
+    rsp = GET_REG_RSP;
+
+    DI_CHECK(DianaProcessor_GetMemValue(pCallContext, 
+                                        GET_REG_SS,
+                                        rsp, 
+                                        pCallContext->m_context.iCurrentCmd_opsize,
+                                        &newRIP,
+                                        0,
+                                        reg_SS));
+
+    rsp += pCallContext->m_context.iCurrentCmd_opsize;
+    if (bPopCS)
+    {
+        DI_CHECK(DianaProcessor_GetMemValue(pCallContext, 
+                                        GET_REG_SS,
+                                        rsp, 
+                                        pCallContext->m_context.iCurrentCmd_opsize,
+                                        &newCs,
+                                        0,
+                                        reg_SS));
+
+        rsp += pCallContext->m_context.iCurrentCmd_opsize;
+    }
+
+    rsp += dropBytes;
+
+    SET_REG_RSP(rsp);
+    SET_REG_RIP(newRIP);
+
+    if (bPopCS)
+    {
+        SET_REG_CS(newCs);
+    }
+    DI_PROC_END
+}

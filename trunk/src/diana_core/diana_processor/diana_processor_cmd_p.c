@@ -4,6 +4,14 @@
 #include "diana_core_gen_tags.h"
 #include "diana_processor_cmd_internal.h"
 
+/* DI_FLAG_CMD_PUSH_SEG commands:
+PUSH CS 0E
+PUSH SS 16 
+PUSH DS 1E 
+PUSH ES 06 
+PUSH FS 0F A0 
+PUSH GS 0F A8 */
+
 int Diana_Call_push(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
@@ -12,6 +20,28 @@ int Diana_Call_push(struct _dianaContext * pDianaContext,
     OPERAND_SIZE rsp = 0;
     DI_DEF_LOCAL(src);
     DI_MEM_GET_DEST(src);
+
+    if (pCallContext->m_result.pInfo->m_flags & DI_FLAG_CMD_PUSH_SEG)
+    {
+        OPERAND_SIZE rsp = 0;
+
+        rsp = GET_REG_RSP2(pCallContext->m_context.iCurrentCmd_addressSize);
+
+        if (rsp < pCallContext->m_context.iCurrentCmd_opsize)
+            return DI_ERROR;
+
+        rsp -= pCallContext->m_context.iCurrentCmd_opsize;
+        DI_CHECK(DianaProcessor_SetMemValue(pCallContext, 
+                                            GET_REG_SS,
+                                            rsp, 
+                                            2,
+                                            &src,
+                                            0,
+                                            reg_SS));
+        SET_REG_RSP2(rsp, pCallContext->m_context.iCurrentCmd_addressSize);
+        
+        DI_PROC_END
+    }
 
     usedSize = pCallContext->m_result.linkedOperands->usedSize;
     if (usedSize == 1)

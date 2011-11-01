@@ -945,7 +945,7 @@ void test_suxx()
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispSize == 0);
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0);
-        TEST_ASSERT(result.linkedOperands[1].usedSize == 2);
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 4);
     }
         
     static unsigned char suxx66[] = {0x0F, 0xB6, 0x00};//  0F  B6 /r   MOVZX r16,r/m8     3/6      Move byte to word with sign-extend

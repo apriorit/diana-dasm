@@ -41,15 +41,16 @@ typedef enum
 
 }DianaUnifiedRegister;
 
-// flags
-#define DI_FLAG_CMD_SUPPORTS_IMM64          1
-#define DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64   2
-#define DI_FLAG_CMD_AMD_INVALID             4
-#define DI_FLAG_CMD_FPU_I                   8
-#define DI_FLAG_CMD_IGNORE_REX_PREFIX      16
-#define DI_FLAG_CMD_I386                   32
-#define DI_FLAG_CMD_AMD64                  64
-#define DI_FLAG_CMD_AMD64_SIGN_EXTENDS    128
+// flags -> DI_UINT32 m_flags
+#define DI_FLAG_CMD_SUPPORTS_IMM64          0x0001
+#define DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64   0x0002
+#define DI_FLAG_CMD_AMD_INVALID             0x0004
+#define DI_FLAG_CMD_FPU_I                   0x0008
+#define DI_FLAG_CMD_IGNORE_REX_PREFIX       0x0010
+#define DI_FLAG_CMD_I386                    0x0020
+#define DI_FLAG_CMD_AMD64                   0x0040
+#define DI_FLAG_CMD_AMD64_SIGN_EXTENDS      0x0080
+#define DI_FLAG_CMD_PUSH_SEG                0x0100
 
 
 // index fields
@@ -145,7 +146,7 @@ typedef void (*Diana_CallFnc)(struct _dianaContext * pDianaContext,
 typedef struct _dianaCmdInfo
 {
     DI_INT32 m_lGroupId;
-    DI_CHAR m_flags;
+    DI_UINT32 m_flags;
     DI_CHAR m_bFullPostbyteUsed;
     DI_CHAR m_iCSIPExtensionSizeInBytes;
     DI_CHAR m_iImmediateOperandSizeInBytes;
