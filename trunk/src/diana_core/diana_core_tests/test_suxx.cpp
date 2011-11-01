@@ -987,7 +987,7 @@ void test_suxx()
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispSize == 0);
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0);
-        TEST_ASSERT(result.linkedOperands[1].usedSize == 2);
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 4);
     }
 
     
