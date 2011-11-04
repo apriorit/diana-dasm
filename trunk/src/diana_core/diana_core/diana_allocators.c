@@ -3,11 +3,11 @@
 
 static void * MAllocator_Alloc(void * pThis, size_t size)
 {
-    return malloc(size);
+	return malloc(size);
 }
 static void MAllocator_Dealloc(void * pThis, void * pBuffer)
 {
-   free(pBuffer);
+	free(pBuffer);
 }
 static int MAllocator_Patch(void * pThis, void * pDest, const void * pSource, size_t size)
 {

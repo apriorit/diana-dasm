@@ -591,7 +591,6 @@ int Diana_Call_cmpxchg8b_impl(struct _dianaContext * pDianaContext,
 {
     DianaRegisterValue_type mem;
     OPERAND_SIZE selector = 0, address = 0;
-    OPERAND_SIZE wasRead = 0;
  
     mem.value = 0;
     if (pCallContext->m_result.iLinkedOpCount != 1 ||
@@ -644,8 +643,6 @@ int Diana_Call_cmpxchg16b_impl(struct _dianaContext * pDianaContext,
 {
     OPERAND_SIZE low = 0, high= 0;
     OPERAND_SIZE selector = 0, address = 0;
-    OPERAND_SIZE wasRead = 0;
- 
 
     if (pCallContext->m_result.iLinkedOpCount != 1 ||
         pCallContext->m_result.linkedOperands[0].type != diana_index)

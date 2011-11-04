@@ -36,7 +36,7 @@ int Diana_Call_aad(struct _dianaContext * pDianaContext,
     //AH := 0;
     DianaRegisterValue16_type ax;
 
-    ax.value = (unsigned int)GET_REG_AX;
+    ax.value = ( DI_UINT16 )GET_REG_AX;
 
     ax.l = ax.h*10 + ax.l;
     ax.h = 0;
@@ -52,7 +52,7 @@ int Diana_Call_aam(struct _dianaContext * pDianaContext,
     //AL := AL MOD 10;
     DianaRegisterValue16_type ax;
 
-    ax.value = (unsigned int)GET_REG_AX;
+    ax.value = ( DI_UINT16 )GET_REG_AX;
 
     ax.h = ax.l / 10;
     ax.l = ax.l % 10;

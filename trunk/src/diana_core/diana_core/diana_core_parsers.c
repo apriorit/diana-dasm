@@ -230,8 +230,8 @@ int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
 {
     DianaCmdKeyLine * pLine = pParseParams->pInitialLine;
 
-    int readed = 0;
-    int iResult = 0;
+    //int readed = 0;
+    //int iResult = 0;
     int it = pParseParams->pContext->cacheIt;
     DianaCmdKey * pFoundKeyWithResult = 0;
     int resultIt = 0;
@@ -260,7 +260,7 @@ int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
 
             if (pFoundKey->options & DIANA_OPT_HAS_RESULT)
             {
-                int iResult = 0;
+                //int iResult = 0;
 
                 if (pNextLine && it+1 <= pParseParams->pContext->cacheSize)
                 {
@@ -313,10 +313,10 @@ int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
 }
 
 static void ApplyPrefixes(DianaContext * pContext,
-                          int iToExclude)
+                          unsigned int iToExclude)
 {
     DI_FULL_CHAR i = 0;
-    for(; i<  pContext->prefixesCount; ++i)
+    for(; i < pContext->prefixesCount; ++i)
     {
         if (i != iToExclude)
         {
@@ -426,7 +426,6 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
 {
     int iResult = 0;
     int prefixFound = 0;
-    DI_FULL_CHAR i = 0;
     DI_CHAR data = 0;
     int dataValid = 1;
     int iBytesCounter = 0;

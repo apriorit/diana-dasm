@@ -129,7 +129,7 @@ void Diana_ClearCache(DianaContext * pThis)
 // debug
 static void Diana_Nope(struct _dianaContext * pContext) 
 {  
-    Diana_FatalBreak();;
+    Diana_FatalBreak();
 }
 // normal
 static void Diana_Normal(struct _dianaContext * pContext) 
@@ -381,7 +381,6 @@ void Diana_Init()
 
 void Diana_CacheEatOneSafe(DianaContext * pContext)
 {
-    DI_CHAR data = pContext->cache[pContext->cacheIt];
     if (!pContext->cacheSize || pContext->cacheIt>=DI_CACHE_SIZE)
     {
         return;

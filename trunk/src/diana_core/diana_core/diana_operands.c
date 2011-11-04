@@ -215,7 +215,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
     if(iExtensionUsed || iFullPostbyteUsed) 
     {
         // check postbyte and sib
-        char buffer[2];
+        unsigned char buffer[2];
         int read = 0;
         int err  = 0;
         err = readStream->pReadFnc(readStream, buffer, 2, &read);

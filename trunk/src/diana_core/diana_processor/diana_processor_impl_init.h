@@ -238,7 +238,6 @@ int Diana_RegisterSubRegister(DianaProcessor * pThis,
                               int offset)
 {
     int parentOffset  = pThis->m_registers[parentReg].m_offset;
-    char * pParentReg = pThis->m_pRegistersVector + parentOffset;
 
     if (offset + size > pThis->m_iLastRegistersOffset)
     {

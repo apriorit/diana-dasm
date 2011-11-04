@@ -48,7 +48,6 @@ int Diana_Call_sal(struct _dianaContext * pDianaContext,
     //ELSE OF := undefined;
     //FI; 
 
-    int lastBit = 0;
     OPERAND_SIZE i = 0;
     OPERAND_SIZE signMask = 0;
     DI_DEF_LOCALS(src, dest);
@@ -350,9 +349,8 @@ int Diana_Call_shrd(struct _dianaContext * pDianaContext,
     //   ELSE OF := 0;
     //   FI;
     //ELSE OF := undefined; 
-    OPERAND_SIZE lastBit = 0, lastBitSrc = 0;
+    OPERAND_SIZE lastBit = 0;
     OPERAND_SIZE original = 0;
-    OPERAND_SIZE prevSign = 0;
     OPERAND_SIZE i = 0;
     OPERAND_SIZE signMask = 0;
     DI_DEF_LOCALS2(src1, src2, dest);
