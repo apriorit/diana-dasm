@@ -307,6 +307,9 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 break;
 
              
+        case diana_orRegMem_exact:
+            pLinkedOp->usedSize = pOperInfo->m_size;
+
         case diana_orReg16_32_64_mem16:
         case diana_orMemoryMMX:
         case diana_orMemoryXMM:
