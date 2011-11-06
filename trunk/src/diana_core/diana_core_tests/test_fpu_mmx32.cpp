@@ -170,5 +170,23 @@ void test_fpu_mmx32()
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister = reg_EAX);
     }
-  
+ 
+    static unsigned char data4[] = {0x0f,0x6e, 0xc3};  // movd mm0,ebx
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64, data4, sizeof(data4), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movd")==0);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 8);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister = reg_MM0);
+
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister = reg_EBX);
+    }
+
 }
