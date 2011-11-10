@@ -19,6 +19,7 @@ static unsigned char lea5[] = {0x66, 0x8D, 0xBD, 0x40, 0xFF, 0xFF, 0xFF}; // lea
 
 static unsigned char lea6[] = {0x67, 0x66, 0x8D, 0x01};             // lea     ax,[bx+di] 
 static unsigned char lea7[] = {0x67, 0x66, 0x8D, 0xBD, 0x40, 0xFF}; // lea         di,[di+0000h] 
+static unsigned char lea8[] = {0x67, 0x45, 0x8d, 0x31};             // lea     r14d,[r9d]
 
 void test_lea()
 {
@@ -168,4 +169,23 @@ void test_lea()
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 1);
     }
 
+    //static unsigned char lea8[] = {0x67, 0x45, 0x8d, 0x31};             // lea     r14d,[r9d]
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,lea8, sizeof(lea8), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "lea")==0);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_R14D);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_R9D);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispSize == 0);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 4);
+    }
 }

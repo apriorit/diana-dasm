@@ -1148,6 +1148,72 @@ void test_suxx()
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_DL);
     }
 
+    static unsigned char suxx78[] = {0x67, 0x66, 0x45, 0xf, 0x2, 0x38};//         lar r15w word ptr ds:[r8d]
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,suxx78, sizeof(suxx78), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "lar")==0);
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2)
+
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_R15W);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 2);
+
+        TEST_ASSERT(result.linkedOperands[1].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_R8D);
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 2);
+    }    
 
 
+    static unsigned char suxx79[] = {0x67, 0x41, 0xf, 0x0, 0x10};//         lldt word ptr ds:[r8d]
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,suxx79, sizeof(suxx79), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "lldt")==0);
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1)
+
+        TEST_ASSERT(result.linkedOperands[0].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_R8D);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 2);
+    }    
+
+
+    static unsigned char suxx80[] = {0x0f, 0xae, 0x3b };//         clflush [rbx]
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,suxx80, sizeof(suxx80), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "clflush")==0);
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1)
+
+        TEST_ASSERT(result.linkedOperands[0].type == diana_memory);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_RBX);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 1);
+    }    
+
+    
+    static unsigned char suxx81[] = {0x0F, 0x01, 0xDF};//         INVLPGA RAX, ECX | 0F 01 DF
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,suxx81, sizeof(suxx81), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "invlpga")==0);
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount = 2)
+
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_RAX);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 8);
+
+        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_ECX);
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 4);
+
+    }    
+    
 }

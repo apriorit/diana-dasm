@@ -18,7 +18,7 @@ static unsigned char mov6[] = {0x2E, 0xC6, 0x02, 0x34};         // mov         b
 static unsigned char mov7[] = {0x3E, 0xC6, 0x44, 0xBE, 0x01, 0x34}; // mov         byte ptr ds:[esi+edi*4+1],34h 
 static unsigned char mov8[] = {0x8C, 0xC8};                // mov         eax,cs 
 static unsigned char mov9[] = {0x0f, 0xb7, 0x00};// movzx eax, [word eax]
-
+static unsigned char mov10[] = {0x67, 0x45, 0xf, 0x43, 0x18}; // cmovnb r11d dword ptr ds:[r8d]
 void test_mov2()
 {
     DianaGroupInfo * pGroupInfo=0;
@@ -178,7 +178,6 @@ void test_mov2()
 
     }
 
-
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,mov9, sizeof(mov9), Diana_GetRootLine(), &result, &read);
     TEST_ASSERT_IF(!iRes)
     {
@@ -196,6 +195,24 @@ void test_mov2()
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.indexed_reg == reg_none);
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
         TEST_ASSERT(result.linkedOperands[1].usedSize == 2);
-
+    }
+    //static unsigned char mov10[] = {0x67, 0x45, 0xf, 0x43, 0x18}; // cmovnb r11d dword ptr ds:[r8d]
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,mov10, sizeof(mov10), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "cmovae")==0);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_R11D);    
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.seg_reg == reg_DS)
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_R8D);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispSize == 0);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 4);
     }
 }

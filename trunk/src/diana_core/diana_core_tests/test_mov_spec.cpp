@@ -18,7 +18,7 @@ static unsigned char mov4[] = {0x0F, 0x24, 0xFF&~7|1};  // mov     ecx, tr7
 
 static unsigned char mov5[] = {0x48, 0x63, 0x4C, 0x24, 0x04};  // movsxd  rcx, [rsp+4]
 static unsigned char mov6[] = {0x66, 0x63, 0x68, 0x4c};  // movsxd  rbp,[rax+0x4c]
-
+static unsigned char mov7[] = {0xf, 0x22, 0xf9};         // mov cr7, rcx
 
 
 void test_mov_spec()
@@ -161,5 +161,20 @@ void test_mov_spec()
 		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0x00);
 		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispSize == 0x01);
 		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0x04C);
+    }
+
+    //static unsigned char mov7[] = {0xf, 0x22, 0xf9};         // mov cr7, rcx
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,mov7, sizeof(mov7), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_CR7);
+
+        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_RCX);
     }
 }

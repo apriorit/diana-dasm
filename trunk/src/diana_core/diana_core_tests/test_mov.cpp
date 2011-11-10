@@ -8,19 +8,20 @@ extern "C"
 #include "test_common.h"
 #include "string.h"
 
-unsigned char mov[] = {0x8B, 0x85, 0x44, 0xFF, 0xFF, 0xFF}; //mov         eax,dword ptr [pLinkedOp] 
-unsigned char mov1[] = {0x8B, 0xF4};      //         mov         esi,esp  
-unsigned char mov2[] = {0x8B, 0x4D, 0x0C};//         mov         ecx,dword ptr [readStream]
-unsigned char mov3[] = {0x8A, 0x55, 0xD4};//         mov         dl,byte ptr [PostByte] 
-unsigned char mov4[] = {0x8A, 0x85, 0x2F, 0xFF, 0xFF, 0xFF};//  mov         al,byte ptr [opSizeUsed] 
-unsigned char mov5[] = {0x8B, 0x04, 0x85, 0x03, 0x00, 0x00, 0x00};//    mov eax, [4*eax+3]
-unsigned char mov6[] = {0x89, 0x74, 0x85, 0x03}; //      mov         dword ptr [ebp+eax*4+3],esi 
-unsigned char mov7[] = {0x88, 0xB4, 0xD5, 0x09, 0x03, 0x00, 0x00}; //mov         byte ptr [ebp+edx*8+309h],dh 
-unsigned char mov8[] = {0x66, 0x66, 0x8B, 0xD1}; // mov dx, cx
-unsigned char mov9[] = {0xB9, 0x78, 0x56, 0x34, 0x12}; // mov ecx, 0x12345678
-unsigned char mov10[] = {0xBD, 0x78, 0x56, 0x34, 0x12}; // mov ebp, 0x12345678
-unsigned char mov11[] = {0x66, 0x0f, 0xb7, 0x00}; //movzx ax,[word eax]
-unsigned char mov12[] = {0x66, 0x0f, 0xbf, 0x00}; //movsx ax,[word eax]
+static unsigned char mov[] = {0x8B, 0x85, 0x44, 0xFF, 0xFF, 0xFF}; //mov         eax,dword ptr [pLinkedOp] 
+static unsigned char mov1[] = {0x8B, 0xF4};      //         mov         esi,esp  
+static unsigned char mov2[] = {0x8B, 0x4D, 0x0C};//         mov         ecx,dword ptr [readStream]
+static unsigned char mov3[] = {0x8A, 0x55, 0xD4};//         mov         dl,byte ptr [PostByte] 
+static unsigned char mov4[] = {0x8A, 0x85, 0x2F, 0xFF, 0xFF, 0xFF};//  mov         al,byte ptr [opSizeUsed] 
+static unsigned char mov5[] = {0x8B, 0x04, 0x85, 0x03, 0x00, 0x00, 0x00};//    mov eax, [4*eax+3]
+static unsigned char mov6[] = {0x89, 0x74, 0x85, 0x03}; //      mov         dword ptr [ebp+eax*4+3],esi 
+static unsigned char mov7[] = {0x88, 0xB4, 0xD5, 0x09, 0x03, 0x00, 0x00}; //mov         byte ptr [ebp+edx*8+309h],dh 
+static unsigned char mov8[] = {0x66, 0x66, 0x8B, 0xD1}; // mov dx, cx
+static unsigned char mov9[] = {0xB9, 0x78, 0x56, 0x34, 0x12}; // mov ecx, 0x12345678
+static unsigned char mov10[] = {0xBD, 0x78, 0x56, 0x34, 0x12}; // mov ebp, 0x12345678
+static unsigned char mov11[] = {0x66, 0x0f, 0xb7, 0x00}; //movzx ax,[word eax]
+static unsigned char mov12[] = {0x66, 0x0f, 0xbf, 0x00}; //movsx ax,[word eax]
+static unsigned char mov13[] = {0x67, 0x41, 0x63, 0x1b}; // :movsxd rbx dword ptr ds:[r11d]
 
 void test_mov()
 {
@@ -243,6 +244,27 @@ void test_mov()
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.indexed_reg == reg_none);
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
     }
+
+    //static unsigned char mov13[] = {0x67, 0x41, 0x63, 0x1b}; // :movsxd rbx dword ptr ds:[r11d]
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,mov13, sizeof(mov13), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movsxd")==0);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_RBX);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_R11D);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0x0);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispSize == 0x0);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
+    }
+
+        
+
 
 
 }

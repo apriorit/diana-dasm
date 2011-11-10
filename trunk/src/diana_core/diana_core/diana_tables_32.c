@@ -45,7 +45,7 @@ typedef struct _DianaEntry32
     DianaRmIndex index;
 }DianaEntry32;
 
-static DianaEntry32 g_table1[3][8] =
+static DianaEntry32 g_table1[3][16] =
 {
     {
         {0, {reg_none, reg_EAX, reg_none, 0, 0, 0}},
@@ -55,7 +55,16 @@ static DianaEntry32 g_table1[3][8] =
         {1, {reg_none, reg_none, reg_none, 0, 0, 0}}, // SIB
         {0, {reg_none, reg_none, reg_none, 0, 4, 0}},
         {0, {reg_none, reg_ESI, reg_none, 0, 0, 0}},
-        {0, {reg_none, reg_EDI, reg_none, 0, 0, 0}}
+        {0, {reg_none, reg_EDI, reg_none, 0, 0, 0}},
+
+        {0, {reg_none, reg_R8D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R9D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R10D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R11D, reg_none, 0, 0, 0}},
+        {1, {reg_none, reg_R12D, reg_none, 0, 0, 0}}, // SIB
+        {0, {reg_none, reg_R13D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R14D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R15D, reg_none, 0, 0, 0}}
     },
     {
         {0, {reg_none, reg_EAX, reg_none, 0, 1, 0}},
@@ -65,7 +74,16 @@ static DianaEntry32 g_table1[3][8] =
         {1, {reg_none, reg_none, reg_none, 0, 1, 0}}, // SIB
         {0, {reg_none, reg_EBP, reg_none, 0, 1, 0}},
         {0, {reg_none, reg_ESI, reg_none, 0, 1, 0}},
-        {0, {reg_none, reg_EDI, reg_none, 0, 1, 0}}
+        {0, {reg_none, reg_EDI, reg_none, 0, 1, 0}},
+
+        {0, {reg_none, reg_R8D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R9D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R10D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R11D, reg_none, 0, 0, 0}},
+        {1, {reg_none, reg_R12D, reg_none, 0, 0, 0}}, // SIB
+        {0, {reg_none, reg_R13D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R14D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R15D, reg_none, 0, 0, 0}}
     },
     {
         {0, {reg_none, reg_EAX, reg_none, 0, 4, 0}},
@@ -75,7 +93,16 @@ static DianaEntry32 g_table1[3][8] =
         {1, {reg_none, reg_none, reg_none, 0, 4, 0}}, // SIB
         {0, {reg_none, reg_EBP, reg_none, 0, 4, 0}},
         {0, {reg_none, reg_ESI, reg_none, 0, 4, 0}},
-        {0, {reg_none, reg_EDI, reg_none, 0, 4, 0}}
+        {0, {reg_none, reg_EDI, reg_none, 0, 4, 0}},
+
+        {0, {reg_none, reg_R8D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R9D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R10D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R11D, reg_none, 0, 0, 0}},
+        {1, {reg_none, reg_R12D, reg_none, 0, 0, 0}}, // SIB
+        {0, {reg_none, reg_R13D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R14D, reg_none, 0, 0, 0}},
+        {0, {reg_none, reg_R15D, reg_none, 0, 0, 0}}
     }
 };
 
