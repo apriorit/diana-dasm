@@ -22,6 +22,8 @@ static unsigned char mov10[] = {0xBD, 0x78, 0x56, 0x34, 0x12}; // mov ebp, 0x123
 static unsigned char mov11[] = {0x66, 0x0f, 0xb7, 0x00}; //movzx ax,[word eax]
 static unsigned char mov12[] = {0x66, 0x0f, 0xbf, 0x00}; //movsx ax,[word eax]
 static unsigned char mov13[] = {0x67, 0x41, 0x63, 0x1b}; // :movsxd rbx dword ptr ds:[r11d]
+static unsigned char mov14[] = {0x40, 0xb6, 0x01}; // mov sil,1
+static unsigned char mov15[] = {0xb6, 0x01};             // mov     dh,1
 
 void test_mov()
 {
@@ -263,8 +265,33 @@ void test_mov()
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
     }
 
-        
+    //static unsigned char mov14[] = {0x40, 0xb6, 0x01}; // mov sil,1
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,mov14, sizeof(mov14), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_SIL);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_imm);
+        TEST_ASSERT(result.linkedOperands[1].value.imm == 1);
+    }
 
-
+    //static unsigned char mov15[] = {0xb6, 0x01};             // mov     dh,1
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,mov15, sizeof(mov15), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_DH);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_imm);
+        TEST_ASSERT(result.linkedOperands[1].value.imm == 1);
+    }
+    
 
 }

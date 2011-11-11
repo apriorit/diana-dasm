@@ -5,6 +5,8 @@ typedef struct _dianaRM16_4
     DianaUnifiedRegister regs[4];
 }DianaRM16_4;
 
+extern
+DianaUnifiedRegister g_diana_regsAmd8[4];
 
 static DianaRM16_4 table2[16]= 
 {
@@ -32,7 +34,8 @@ int Diana_DispatchMod3(DianaLinkedOperand * pInfo,
                        int rm,
                        DI_CHAR old_true_rm,
                        int iRegSizeInBytes,
-                       DianaUnifiedRegister *pOut)
+                       DianaUnifiedRegister *pOut,
+                       int isRexPrefix)
 {
     int iIndex = 0;
 
@@ -66,5 +69,13 @@ int Diana_DispatchMod3(DianaLinkedOperand * pInfo,
         iIndex = 2;
     };
     *pOut = table2[rm].regs[iIndex];
+    if (iIndex == 2)
+    {
+        if (isRexPrefix && iIndex==2 && rm >= 4 && rm < 8)
+        {
+            // SIL, DIL fix 
+            *pOut = g_diana_regsAmd8[rm-4];
+        }
+    }
     return DI_SUCCESS;
 }

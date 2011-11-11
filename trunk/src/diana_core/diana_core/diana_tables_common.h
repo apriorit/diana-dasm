@@ -7,6 +7,7 @@ int Diana_DispatchMod3(DianaLinkedOperand * pInfo,
                        int rm,
                        DI_CHAR old_true_rm,
                        int iRegSizeInBytes,
-                       DianaUnifiedRegister *pOut);
+                       DianaUnifiedRegister *pOut,
+                       int isRexPrefix);
 
 #endif

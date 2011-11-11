@@ -1,6 +1,8 @@
 #include "diana_core_utils.h"
 #include "string.h"
 
+DianaUnifiedRegister g_diana_regsAmd8[4] = {reg_SPL, reg_BPL, reg_SIL, reg_DIL};
+
 static
 DianaUnifiedRegister g_regs[4][16] = 
 {
@@ -61,7 +63,8 @@ int DianaRecognizeXMM(DI_CHAR regId,
 
 int DianaRecognizeCommonReg(DI_CHAR iOpSize,
                             DI_CHAR regId, 
-                            DianaUnifiedRegister * pOut)
+                            DianaUnifiedRegister * pOut,
+                            int isRexPrefix)
 {
     int iIndex = 0;
     switch (iOpSize)
@@ -85,6 +88,11 @@ int DianaRecognizeCommonReg(DI_CHAR iOpSize,
     if (regId < sizeof(g_regs[0])/sizeof(g_regs[0][0]))
     {
         *pOut = g_regs[iIndex][regId];
+        if (isRexPrefix && iIndex==0 && regId >= 4 && regId < 8)
+        {
+            // SIL, DIL fix 
+            *pOut = g_diana_regsAmd8[regId-4];
+        }
         return DI_SUCCESS;
     }
     return DI_ERROR;

@@ -308,7 +308,8 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 pLinkedOp->type = diana_register;
                 if (DianaRecognizeCommonReg(opSizeUsed, 
                                             RegCode, 
-                                            &pLinkedOp->value.recognizedRegister))
+                                            &pLinkedOp->value.recognizedRegister,
+                                            pContext->iRexPrefix))
                     return DI_ERROR;
                 break;
 
@@ -616,7 +617,8 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 pLinkedOp->type = diana_register;
                 if (DianaRecognizeCommonReg(opSizeUsed, 
                                             Diana_GetReg(PostByte), 
-                                            &pLinkedOp->value.recognizedRegister))
+                                            &pLinkedOp->value.recognizedRegister,
+                                            pContext->iRexPrefix))
                     return DI_ERROR;
                 break;
 

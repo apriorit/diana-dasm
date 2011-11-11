@@ -211,7 +211,8 @@ int Diana_ReadIndexStructure32(DianaContext * pContext,
                                   rm, 
                                   old_true_rm, 
                                   iOpSize, 
-                                  &pValue->recognizedRegister);
+                                  &pValue->recognizedRegister,
+                                  pContext->iRexPrefix);
     }
     if (mod>3)
         return DI_ERROR;
@@ -281,7 +282,8 @@ int Diana_ReadIndexStructure32(DianaContext * pContext,
             {
                 iRes = DianaRecognizeCommonReg(pContext->iCurrentCmd_addressSize,
                                                base, 
-                                               &pIndex->reg);
+                                               &pIndex->reg,
+                                               pContext->iRexPrefix);
                 if (iRes)
                     return DI_ERROR;
 
@@ -297,7 +299,8 @@ int Diana_ReadIndexStructure32(DianaContext * pContext,
             {
                 iRes = DianaRecognizeCommonReg(pContext->iCurrentCmd_addressSize,
                                                 index, 
-                                                &pIndex->indexed_reg);
+                                                &pIndex->indexed_reg,
+                                                pContext->iRexPrefix);
                 if (iRes)
                     return DI_ERROR;
 

@@ -10,9 +10,17 @@ static void GetKeyByAddress(const unsigned char * pAddress, int iLostSize, Diana
     key->options = 0;
 
     if (iLostSize)
+    {
         key->extension = Diana_GetReg(*(pAddress+1));
+        key->rmExtension = Diana_GetRm(*(pAddress+1));
+        key->modExtension = Diana_GetMod(*(pAddress+1));
+    }
     else
+    {
         key->extension = DI_CHAR_NULL;
+        key->rmExtension = DI_CHAR_NULL;
+        key->modExtension = DI_CHAR_NULL;
+    }
 
     key->chOpcode = *pAddress;
 }
@@ -94,7 +102,21 @@ static DianaCmdKey * FindCmdKeyImpl(DianaCmdKeyLine * pLine,
                             {
                                 if (p->extension == usedKey.extension)
                                 {
-                                    pResult = p;
+                                    DianaCmdInfo * pCmdInfo = (DianaCmdInfo * )p->keyLineOrCmdInfo;
+                                    if (pCmdInfo->m_flags & DI_FLAG_CMD_USES_RM_EXTENSION)
+                                    {
+                                        if (p->rmExtension == usedKey.rmExtension)
+                                            pResult = p;
+                                    }
+                                    else
+                                    if (pCmdInfo->m_flags & DI_FLAG_CMD_USES_MOD_EXTENSION)
+                                    {
+                                        if ((p->modExtension & DI_VALUE_FLAG_CMD_REVERSE) ^
+                                            (p->modExtension == usedKey.modExtension))
+                                            pResult = p;
+                                    }
+                                    else
+                                        pResult = p;
                                 }
                             }
                         }
@@ -513,19 +535,6 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
 
     // parse cmd 
     iOriginalCacheSize = pParseParams->pContext->cacheSize;
-
-
-    //    WARNING!
-    //    now parser implemented as in distorm [http://code.google.com/p/distorm/wiki/x86_x64_Machine_Code]
-    //    i.e. by using "mandatory prefix"
-    //    intel documentation say nothing about "mandatory prefix" 
-    //    also windbg can unparse something like this
-    //       fffff800`028c2f53 66f3440f7f8990000000 rep  movdqa oword ptr [rcx+0x90],xmm9
-    //    this instruction windbg interprets as 660f7f8990000000
-    //    but distorm and diana interpreting it as  f30f7f8990000000
-    //    because nobody knows real priority of prefixes
-    //    for(i=0; i <  (DI_FULL_CHAR)pParseParams->pContext->prefixesCount; ++i)
-
 
     if (pParseParams->pContext->lastPrefixBeforeRex != DI_FULL_CHAR_NULL)
     {

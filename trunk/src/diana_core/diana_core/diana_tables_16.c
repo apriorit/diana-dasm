@@ -92,7 +92,12 @@ int Diana_ReadIndexStructure16(DianaContext * pContext,
     if (mod == 3)
     {
         *pType = diana_register;
-        return Diana_DispatchMod3(pInfo, rm, rm, iOpSize, &pValue->recognizedRegister);
+        return Diana_DispatchMod3(pInfo, 
+                                  rm, 
+                                  rm, 
+                                  iOpSize, 
+                                  &pValue->recognizedRegister,
+                                  pContext->iRexPrefix);
     }
 
     if (mod>3)

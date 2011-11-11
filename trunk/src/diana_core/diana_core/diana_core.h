@@ -41,6 +41,8 @@ typedef enum
 
 }DianaUnifiedRegister;
 
+#define DI_VALUE_FLAG_CMD_REVERSE           0x80
+
 // flags -> DI_UINT32 m_flags
 #define DI_FLAG_CMD_SUPPORTS_IMM64          0x0001
 #define DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64   0x0002
@@ -51,6 +53,8 @@ typedef enum
 #define DI_FLAG_CMD_AMD64                   0x0040
 #define DI_FLAG_CMD_AMD64_SIGN_EXTENDS      0x0080
 #define DI_FLAG_CMD_PUSH_SEG                0x0100
+#define DI_FLAG_CMD_USES_RM_EXTENSION       0x0200
+#define DI_FLAG_CMD_USES_MOD_EXTENSION      0x0400
 
 
 // index fields
@@ -91,7 +95,8 @@ typedef struct _dianaCmdKey
     DI_CHAR options;
     DI_CHAR extension;
     DI_CHAR chOpcode;
-
+    DI_CHAR rmExtension;
+    DI_CHAR modExtension;
 }DianaCmdKey;
 
 // extension additional values:
@@ -158,6 +163,7 @@ typedef struct _dianaCmdInfo
     DI_CHAR m_bIsTruePrefix;
     Diana_PrefixFnc m_linkedPrefixFnc;
     DianaGroupInfo * m_pGroupInfo;
+    DI_CHAR m_rmExtension;
     DianaOperandInfo m_operands[1];
 }DianaCmdInfo;
 
@@ -335,7 +341,9 @@ int Diana_ParseCmd(DianaContext * pContext, // IN
 
 int DianaRecognizeCommonReg(DI_CHAR iOpSize,
                             DI_CHAR regId, 
-                            DianaUnifiedRegister * pOut);
+                            DianaUnifiedRegister * pOut,
+                            int isRexPrefix);
+
 int DianaRecognizeMMX(DI_CHAR regId, 
                          DianaUnifiedRegister * pOut);
 int DianaRecognizeXMM(DI_CHAR regId, 
