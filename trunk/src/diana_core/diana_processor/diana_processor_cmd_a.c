@@ -32,13 +32,15 @@ int Diana_Call_aaa(struct _dianaContext * pDianaContext,
 int Diana_Call_aad(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
+    DianaRegisterValue16_type ax;
+    DI_DEF_LOCAL(src);
+    DI_MEM_GET(src, 0);
+
     //AL := AH * 10 + AL;
     //AH := 0;
-    DianaRegisterValue16_type ax;
-
     ax.value = ( DI_UINT16 )GET_REG_AX;
 
-    ax.l = ax.h*10 + ax.l;
+    ax.l = ax.h*(DI_CHAR)src + ax.l;
     ax.h = 0;
 
     DI_UPDATE_FLAGS_PSZ(SET_REG_AX(ax.value));
@@ -48,14 +50,16 @@ int Diana_Call_aad(struct _dianaContext * pDianaContext,
 int Diana_Call_aam(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
+    DianaRegisterValue16_type ax;
+    DI_DEF_LOCAL(src);
+    DI_MEM_GET(src, 0);
+
     //AH := AL / 10;
     //AL := AL MOD 10;
-    DianaRegisterValue16_type ax;
-
     ax.value = ( DI_UINT16 )GET_REG_AX;
 
-    ax.h = ax.l / 10;
-    ax.l = ax.l % 10;
+    ax.h = ax.l / (DI_CHAR)src;
+    ax.l = ax.l % (DI_CHAR)src;
 
     DI_UPDATE_FLAGS_PSZ(SET_REG_AX(ax.value));
     DI_PROC_END;

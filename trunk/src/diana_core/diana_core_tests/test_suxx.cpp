@@ -1277,4 +1277,15 @@ void test_suxx()
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
     }
+
+    static unsigned char suxx87[] = {0xD4, 0x01}; //     AAM            17        ASCII adjust AX after multiply
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,suxx87, sizeof(suxx87), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "aam")==0);
+
+        TEST_ASSERT(result.linkedOperands[0].type == diana_imm);
+        TEST_ASSERT(result.linkedOperands[0].value.imm == 1);
+    }
 }
