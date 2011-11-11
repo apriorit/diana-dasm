@@ -3,7 +3,7 @@
 
 #include "diana_processor_core_impl.h"
 
-int Diana_Call_sal(struct _dianaContext * pDianaContext,
+int Diana_Call_shl(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext);
 
 int Diana_Call_sar(struct _dianaContext * pDianaContext,

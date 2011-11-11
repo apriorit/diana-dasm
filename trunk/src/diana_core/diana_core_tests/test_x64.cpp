@@ -700,5 +700,89 @@ void test_x64()
         TEST_ASSERT(result.linkedOperands[1].value.imm == 0x111111111);
     } 
 
+    static unsigned char mov33[] = {0x6e}; // outsb
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE64, mov33, sizeof(mov33), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "outs")==0);
 
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 2);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_DX);
+
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 1);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_RSI);
+    } 
+
+    static unsigned char mov34[] = {0xf, 0xbf, 0xc0}; // movsx eax, ax
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE32, mov34, sizeof(mov34), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movsx")==0);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_EAX);
+
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 2);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_AX);
+    } 
+
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE64, mov34, sizeof(mov34), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movsx")==0);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_EAX);
+
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 2);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_AX);
+    } 
+
+
+    static unsigned char mov35[] = {0x45, 0x0f, 0xbf, 0xc0}; // movsx   r8d,r8w
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE64, mov35, sizeof(mov35), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movsx")==0);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_R8D);
+
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 2);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_R8W);
+    } 
+
+    static unsigned char mov36[] = {0x0f, 0x00, 0xc2}; // sldt    edx
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE64, mov36, sizeof(mov36), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "sldt")==0);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_EDX);
+    } 
 } 

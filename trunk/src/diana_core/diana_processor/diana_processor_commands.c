@@ -385,7 +385,7 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(ror)
 
     DI_PROC_REGISTER_COMMAND(sahf)
-    DI_PROC_REGISTER_COMMAND(sal)
+    DI_PROC_REGISTER_COMMAND(shl)
     DI_PROC_REGISTER_COMMAND(sar)
     DI_PROC_REGISTER_COMMAND(sbb)
 

@@ -16,14 +16,14 @@ void test_sal1()
     
     int iRes = 0;
 
-    static unsigned char mov0[] = {0xd1, 0xe6}; //    sal esi,1
+    static unsigned char mov0[] = {0xd1, 0xe6}; //    shl esi,1
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, mov0, sizeof(mov0), Diana_GetRootLine(), &result, &read);
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==2);
         TEST_ASSERT(result.pInfo->m_operandCount ==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
-        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "sal")==0);
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "shl")==0);
     }
 
 }

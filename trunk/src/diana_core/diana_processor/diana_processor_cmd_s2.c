@@ -29,7 +29,7 @@ int Diana_Call_sub(struct _dianaContext * pDianaContext,
     DI_PROC_END
 }
 
-int Diana_Call_sal(struct _dianaContext * pDianaContext,
+int Diana_Call_shl(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
     //temp := COUNT;

@@ -373,12 +373,10 @@ void test_suxx()
     {
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "div")==0);
-        TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2)
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1)
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
-        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister== reg_EAX);
-        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
-        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister== reg_ECX);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister== reg_ECX);
     }
 
     static unsigned char suxx29[] = {0xC8, 0x01, 0x00, 0x02};//      enter       1,2  
@@ -406,18 +404,16 @@ void test_suxx()
     }
 
 
-    static unsigned char suxx31[] = {0xF7,0xF9};//            idiv         eax,ecx 
+    static unsigned char suxx31[] = {0xF7,0xF9};//            idiv         ecx 
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,suxx31, sizeof(suxx31), Diana_GetRootLine(), &result, &read);
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "idiv")==0);
-        TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2)
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1)
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
-        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister== reg_EAX);
-        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
-        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister== reg_ECX);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister== reg_ECX);
     }
 
     static unsigned char suxx32[] = {0xED};//            in         eax,dx
@@ -997,19 +993,17 @@ void test_suxx()
     {
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mul")==0);
-        TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2)
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1)
  
-        TEST_ASSERT(result.linkedOperands[0].type = diana_register);
-        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister== reg_EAX);
-        TEST_ASSERT(result.linkedOperands[1].type == diana_index);
-        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.seg_reg == reg_DS);
-        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_EAX);
-        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.indexed_reg == reg_none);
-        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
-        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispSize == 0);
-        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0);
-        TEST_ASSERT(result.linkedOperands[1].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_EAX);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
     }
 
     static unsigned char suxx69[] = {0xF7, 0x18}; // F7  /3  NEG r/m16     2/6       Two's complement negate r/m word

@@ -243,7 +243,7 @@ int Diana_Call_div(struct _dianaContext * pDianaContext,
     //dword   EDX:EAX      r/m32      EAX         EDX 
     //qword   RDX:RAX      r/m64      RAX         RDX     
     DI_DEF_LOCAL(divisor);
-    DI_MEM_GET_SRC(divisor);
+    DI_MEM_GET_DEST(divisor);
 
     switch(pCallContext->m_result.linkedOperands->usedSize)
     {

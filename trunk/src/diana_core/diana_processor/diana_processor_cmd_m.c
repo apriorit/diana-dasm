@@ -201,7 +201,7 @@ int Diana_Call_mul(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext)
 {
     DI_DEF_LOCAL(argument);
-    DI_MEM_GET_SRC(argument);
+    DI_MEM_GET_DEST(argument);
 
     CLEAR_FLAG_CF;
     CLEAR_FLAG_OF;

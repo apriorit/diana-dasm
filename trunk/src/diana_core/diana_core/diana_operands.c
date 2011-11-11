@@ -8,6 +8,9 @@ int Diana_GetDI(DI_CHAR reg, DianaUnifiedRegister * pReg)
 {
     switch(reg)
     {
+        case 8:
+            *pReg = reg_RDI;
+            break;
         case 4:
             *pReg = reg_EDI;
             break;
@@ -23,6 +26,9 @@ int Diana_GetSI(DI_CHAR reg, DianaUnifiedRegister * pReg)
 {
     switch(reg)
     {
+        case 8:
+            *pReg = reg_RSI;
+            break;
         case 4:
             *pReg = reg_ESI;
             break;
@@ -309,6 +315,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
              
         case diana_orRegMem_exact:
             pLinkedOp->usedSize = pOperInfo->m_size;
+            opSizeUsed = pOperInfo->m_size;
 
         case diana_orReg16_32_64_mem16:
         case diana_orMemoryMMX:
