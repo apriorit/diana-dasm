@@ -328,7 +328,7 @@ DI_CHAR Diana_CacheEatOne(DianaContext * pContext)
     DI_CHAR data = pContext->cache[pContext->cacheIt];
     if (!pContext->cacheSize || pContext->cacheIt>=DI_CACHE_SIZE)
     {
-        Diana_FatalBreak();;
+        Diana_FatalBreak();
     }
     ++pContext->cacheIt;
     --pContext->cacheSize;
