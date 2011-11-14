@@ -13,7 +13,7 @@ static unsigned char add1[] = {0x83, 0xC4, 0x10};//          add         esp,10h
 static unsigned char code33[] = {0x2e, 0x67, 0xf0, 0x48, 0x81, 0x84, 0x80, 0x23, 0xdf, 0x06, 0x7e, 0x89, 0xab, 0xcd, 0xef};
 static unsigned char code52[] = {0xf0, 0x2e, 0x66, 0x67, 0x81, 0x84, 0x18, 0x67, 0x45, 0x23, 0x01, 0xef, 0xcd};
 static unsigned char adc[]= {0x67, 0x45, 0x10, 0xe}; // adc byte ptr ds:[r14d] r9b
-
+static unsigned char add2[]= {0x00, 0x04, 0x25, 0x00, 0x00, 0x00, 0x00}; // add     [00000000],al
 int test_add()
 {
     DianaGroupInfo * pGroupInfo=0;
@@ -87,6 +87,27 @@ int test_add()
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].usedSize == 1);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_R9B);
+    }
+    
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,add2, sizeof(add2), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "add")==0);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 1);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue== 0);
+
+        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 1);
+        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_AL);
     }
     return 0;
 

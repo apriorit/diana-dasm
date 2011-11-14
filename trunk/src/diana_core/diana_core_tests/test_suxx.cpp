@@ -1288,4 +1288,52 @@ void test_suxx()
         TEST_ASSERT(result.linkedOperands[0].type == diana_imm);
         TEST_ASSERT(result.linkedOperands[0].value.imm == 1);
     }
+
+    static unsigned char suxx88[] = {0xD6}; //     SALC
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,suxx88, sizeof(suxx88), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "salc")==0);
+        TEST_ASSERT(result.iLinkedOpCount==0);
+        TEST_ASSERT((result.pInfo->m_flags & DI_FLAG_CMD_UNDOCUMENTED) == DI_FLAG_CMD_UNDOCUMENTED);
+    }
+
+
+    static unsigned char suxx89[] = {0x0F, 0x01, 0x20}; // smsw        [eax]
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE32, suxx89, sizeof(suxx89), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "smsw")==0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 1);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 2);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_EAX);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
+    }
+
+    static unsigned char suxx90[] = {0x0F, 0x01, 0x58, 0x00}; // lidt        [eax][0]
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE32, suxx90, sizeof(suxx90), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "lidt")==0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 1);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_memory);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_EAX);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 1);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
+    }
 }
+

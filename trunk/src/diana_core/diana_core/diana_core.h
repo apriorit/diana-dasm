@@ -41,7 +41,8 @@ typedef enum
 
 }DianaUnifiedRegister;
 
-#define DI_VALUE_FLAG_CMD_REVERSE           0x80
+#define DI_VALUE_FLAG_CMD_REVERSE           ((DI_CHAR)0x80)
+#define DI_VALUE_FLAG_CMD_MASK              ((DI_CHAR)0x7F)
 
 // flags -> DI_UINT32 m_flags
 #define DI_FLAG_CMD_SUPPORTS_IMM64          0x0001
@@ -53,9 +54,7 @@ typedef enum
 #define DI_FLAG_CMD_AMD64                   0x0040
 #define DI_FLAG_CMD_AMD64_SIGN_EXTENDS      0x0080
 #define DI_FLAG_CMD_PUSH_SEG                0x0100
-#define DI_FLAG_CMD_USES_RM_EXTENSION       0x0200
-#define DI_FLAG_CMD_USES_MOD_EXTENSION      0x0400
-
+#define DI_FLAG_CMD_UNDOCUMENTED            0x0200
 
 // index fields
 #define DI_UINT16         unsigned short
@@ -100,7 +99,9 @@ typedef struct _dianaCmdKey
 }DianaCmdKey;
 
 // extension additional values:
-#define DIANA_OPT_HAS_RESULT       0x01
+#define DIANA_OPT_HAS_RESULT         0x01
+#define DIANA_OPT_RM_EXTENSION       0x02
+#define DIANA_OPT_USES_MOD_EXTENSION 0x04
 
 
 typedef struct _dianaCmdKeyLine
@@ -163,7 +164,6 @@ typedef struct _dianaCmdInfo
     DI_CHAR m_bIsTruePrefix;
     Diana_PrefixFnc m_linkedPrefixFnc;
     DianaGroupInfo * m_pGroupInfo;
-    DI_CHAR m_rmExtension;
     DianaOperandInfo m_operands[1];
 }DianaCmdInfo;
 

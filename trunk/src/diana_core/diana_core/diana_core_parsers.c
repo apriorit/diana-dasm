@@ -34,6 +34,12 @@ static int Diana_IsLess(const DianaCmdKey * key1, const DianaCmdKey * key2)
     return 0;
 }
 
+static int logical_xor(int bValue1, int bValue2)
+{
+    int val1 = bValue1?1:0;
+    int val2 = bValue2?1:0;
+    return val1 ^ val2;
+}
 
 static DianaCmdKey * FindCmdKeyImpl(DianaCmdKeyLine * pLine, 
                                     const DianaCmdKey * pKey,
@@ -93,31 +99,29 @@ static DianaCmdKey * FindCmdKeyImpl(DianaCmdKeyLine * pLine,
                 {
                     if (p->options & DIANA_OPT_HAS_RESULT)
                     {
+                        if (p->extension == DI_CHAR_NULL)
                         {
-                            if (p->extension == DI_CHAR_NULL)
+                            pSecondaryResult = p;
+                        }
+                        else
+                        {
+                            if (p->extension == usedKey.extension)
                             {
-                                pSecondaryResult = p;
-                            }
-                            else
-                            {
-                                if (p->extension == usedKey.extension)
+                                if (p->options & DIANA_OPT_RM_EXTENSION)
                                 {
-                                    DianaCmdInfo * pCmdInfo = (DianaCmdInfo * )p->keyLineOrCmdInfo;
-                                    if (pCmdInfo->m_flags & DI_FLAG_CMD_USES_RM_EXTENSION)
-                                    {
-                                        if (p->rmExtension == usedKey.rmExtension)
-                                            pResult = p;
-                                    }
-                                    else
-                                    if (pCmdInfo->m_flags & DI_FLAG_CMD_USES_MOD_EXTENSION)
-                                    {
-                                        if ((p->modExtension & DI_VALUE_FLAG_CMD_REVERSE) ^
-                                            (p->modExtension == usedKey.modExtension))
-                                            pResult = p;
-                                    }
-                                    else
+                                    if (logical_xor(p->rmExtension & DI_VALUE_FLAG_CMD_REVERSE,
+                                                   ((DI_VALUE_FLAG_CMD_MASK & p->rmExtension) == usedKey.rmExtension)))
                                         pResult = p;
                                 }
+                                else
+                                if (p->options & DIANA_OPT_USES_MOD_EXTENSION)
+                                {
+                                    if (logical_xor(p->modExtension & DI_VALUE_FLAG_CMD_REVERSE, 
+                                                    ((DI_VALUE_FLAG_CMD_MASK & p->modExtension) == usedKey.modExtension)))
+                                        pResult = p;
+                                }
+                                else
+                                    pResult = p;
                             }
                         }
                     }
