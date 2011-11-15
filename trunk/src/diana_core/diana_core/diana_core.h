@@ -280,6 +280,7 @@ typedef struct _dianaReadStream
 #define DI_REX_HAS_FLAG_B(X)          (X&0x1)
 
 #define DI_NO_PREFIX     0
+#define DI_PREFIX_NONE   0
 #define DI_PREFIX_LOCK   1
 #define DI_PREFIX_REP    2
 #define DI_PREFIX_REPN   3
