@@ -323,11 +323,33 @@ void Diana_InitLine(DianaCmdKeyLine * pRoot)
                 case 0xC7:
                     pInfo->m_flags |= DI_FLAG_CMD_AMD64_SIGN_EXTENDS;
                     break;
-
                 case 0xB8:
                     pInfo->m_flags |= DI_FLAG_CMD_SUPPORTS_IMM64;
-
-
+                    break;
+				case 0x06: // push es
+				case 0x07: // pop es
+				case 0x0E: // push cs
+				case 0x16: // push ss
+				case 0x17: // pop ss
+				case 0x1E: // push ds
+				case 0x1F: // pop ds
+				case 0x27: // daa
+				case 0x2F: // das
+				case 0x37: // aaa
+				case 0x3F: // aas
+				case 0x60: // pushad
+				case 0x61: // popad
+				case 0x62: // bound
+				case 0x82: // add/or/adc/sbb/and/sub/xor/cmp
+				case 0x9A: // callf
+				case 0xC4: // les
+				case 0xC5: // lds
+				case 0xD4: // aam
+				case 0xD5: // aad
+				case 0xD6: // setalc
+				case 0xEA: // jmpf
+					pInfo->m_flags |= DI_FLAG_CMD_AMD_INVALID;
+					break;
                 }
             }
 

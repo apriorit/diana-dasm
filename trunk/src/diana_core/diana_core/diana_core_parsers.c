@@ -564,5 +564,17 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
         if (pParseParams->pContext->cacheSize)
             Diana_CacheEatOne(pParseParams->pContext);
     }
+
+	if( pParseParams->pContext->iAMD64Mode )
+	{
+		if( iResult == DI_SUCCESS )
+		{
+			if( pParseParams->pResult->pInfo->m_flags & DI_FLAG_CMD_AMD_INVALID )
+			{
+				iResult = DI_UNSUPPORTED_COMMAND;
+			}
+		}
+	}
+
     return iResult;
 }
