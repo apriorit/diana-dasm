@@ -348,7 +348,7 @@ void Diana_InitLine(DianaCmdKeyLine * pRoot)
 				case 0xD5: // aad
 				case 0xD6: // setalc
 				case 0xEA: // jmpf
-					pInfo->m_flags |= DI_FLAG_CMD_AMD_INVALID;
+					pInfo->m_flags |= DI_FLAG_CMD_I386;
 					break;
                 }
             }
