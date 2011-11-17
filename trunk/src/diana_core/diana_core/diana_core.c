@@ -78,7 +78,7 @@ DianaGroupInfo * Diana_GetGroupInfo(long lId)
 
 void Diana_FatalBreak()
 {
-#ifndef _M_X64
+#ifdef DIANA_CFG_USE_INLINE_ASSEMBLER
     __asm int 3
 #else
     __debugbreak();

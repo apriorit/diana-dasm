@@ -1,6 +1,7 @@
 #ifndef DIANA_CORE_H
 #define DIANA_CORE_H
 
+#include "diana_config.h"
 #include "memory.h"
 
 // <gen

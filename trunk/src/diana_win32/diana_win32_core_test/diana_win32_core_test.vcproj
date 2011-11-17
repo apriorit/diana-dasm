@@ -178,6 +178,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\test_patchers.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\test_processor1.cpp"
 				>
 			</File>

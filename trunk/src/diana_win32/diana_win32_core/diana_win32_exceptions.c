@@ -43,8 +43,7 @@ static void __stdcall hooked_NtRaiseException(void * pContext, void * pOriginalE
         return;
 }
 
-static
-int EnsureWriteAccess(void * pData)
+int Diana_EnsureWriteAccess(void * pData)
 {
     MEMORY_BASIC_INFORMATION mem;
     ULONG dwOld = 0;
@@ -78,13 +77,14 @@ int  DianaWin32Processor_InitExceptions()
     g_pNtRaiseException = GetProcAddress(hNtDll, "NtRaiseException");
     g_pNtContinue = GetProcAddress(hNtDll, "NtContinue");
 
-    DI_CHECK(EnsureWriteAccess(pKiUserExceptionDispatcher));
+    DI_CHECK(Diana_EnsureWriteAccess(pKiUserExceptionDispatcher));
 
     res = Diana_PatchSomething32(pKiUserExceptionDispatcher,
                                  1024,
                                  hooked_KiUserExceptionDispatcher,
                                  0,
-                                 &allocator.m_parent);
+                                 &allocator.m_parent,
+                                 0);
     DI_CHECK(res);
 
     g_exceptionSupportEnabled = 1;

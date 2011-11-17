@@ -1,7 +1,8 @@
 #include "diana_patchers.h"
 #include "diana_streams.h"
 
-#ifndef _M_X64
+#ifdef DIANA_CFG_I386
+
 #pragma warning(disable:4311)
 #pragma warning(disable:4267)
 
@@ -157,7 +158,8 @@ static int PatchSequence32(void * pPlaceToHook,
                          size_t summSize,
                          Diana_PatchHandlerFunction_type pPatchFnc,
                          void * pPatchContext,
-                         Diana_Allocator * pAllocator)
+                         Diana_Allocator * pAllocator,
+                         void ** ppOriginalFunction)
 {
     // alloc stub: summSize + 5
     void * pStub = 0;
@@ -166,6 +168,7 @@ static int PatchSequence32(void * pPlaceToHook,
     size_t stubSize = 0;
     size_t jumpOffset = 0;
     unsigned long * pFunctionArg = 0;
+    unsigned char * pOriginalFunction = 0;
     
     status = Diana_CalculateSizeToMove(pPlaceToHook, summSize, &codeSizeAfterMove);
     if (status)
@@ -198,7 +201,8 @@ static int PatchSequence32(void * pPlaceToHook,
     pFunctionArg = (unsigned long*)((unsigned char*)pStub+7);
     *pFunctionArg = (unsigned long)pPatchFnc - (unsigned long)pFunctionArg-4;
 
-    status = Diana_MoveSequence((unsigned char*)pStub+stubSize-codeSizeAfterMove-5, pPlaceToHook, summSize, &jumpOffset);
+    pOriginalFunction = (unsigned char*)pStub+stubSize-codeSizeAfterMove-5;
+    status = Diana_MoveSequence(pOriginalFunction, pPlaceToHook, summSize, &jumpOffset);
     if (status)
         goto err;
 
@@ -219,7 +223,13 @@ static int PatchSequence32(void * pPlaceToHook,
         if (status)
             goto err;
     }
+
+    if (ppOriginalFunction)
+    {
+        *ppOriginalFunction = pOriginalFunction;
+    }
     return DI_SUCCESS;
+
 
 err:
     if (pStub)
@@ -231,7 +241,8 @@ int Diana_PatchSomething32(void * pPlaceToHook,
                            size_t size,
                            Diana_PatchHandlerFunction_type pPatchFnc,
                            void * pPatchContext,
-                           Diana_Allocator * pAllocator)
+                           Diana_Allocator * pAllocator,
+                           void ** ppOriginalFunction)
 {
     DianaParserResult result;
     size_t cmdSize = 0;
@@ -254,12 +265,192 @@ int Diana_PatchSomething32(void * pPlaceToHook,
 
         // logic:
         if (summSize >= 5)
-            return PatchSequence32(pPlaceToHook, summSize, pPatchFnc, pPatchContext, pAllocator);
+            return PatchSequence32(pPlaceToHook, 
+                                   summSize, 
+                                   pPatchFnc, 
+                                   pPatchContext, 
+                                   pAllocator,
+                                   ppOriginalFunction);
 
         // next:
         cmdOffset = summSize;
     }
     return iRes;
+}
+
+
+static unsigned char g_retStub[]= {0x68, 0, 0, 0, 0,              // push ret          :0
+                                   0x60,                          // pushad            :5
+                                   0x9C,                          // pushf             :6
+                                   0x54,                          // push esp          :7
+                                   0x68, 0, 0, 0, 0,              // push pContext     :8
+                                   0x68, 0, 0, 0, 0,              // push ret2         :13
+                                   0x68, 0, 0, 0, 0,              // push function     :18
+                                   0xC3,                          // ret               :23
+                                   
+                                   //   deallocate hook
+                                   0x68, 0, 0, 0, 0,  // push hook         :24
+                                   0x68, 0, 0, 0, 0,  // push function2    :29
+                                   0xC3               // ret               :34
+}; 
+
+#define DI_RET_OFFSET_ORIGINAL_RETURN      1
+#define DI_RET_OFFSET_CONTEXT              9
+#define DI_RET_OFFSET_RET2                 14
+#define DI_RET_OFFSET_FUNCTION             19
+#define DI_RET_OFFSET_HOOK                 25
+#define DI_RET_OFFSET_FUNCTION2            30
+
+
+#define DI_RET_RET2                        24
+
+static void _stdcall Diana_FreeRetHookImpl(DianaPatcher_RetHook32 * pHook)
+{
+    pHook->pAllocator->m_free(pHook->pAllocator, pHook);
+}
+
+__declspec(naked) static void _stdcall Diana_FreeRetHook(DianaPatcher_RetHook32 * pHook)
+{
+    __asm
+    {
+    push ebp
+    mov ebp, esp
+
+    mov eax, [ebp + 0x4]
+    push eax
+    call Diana_FreeRetHookImpl
+
+    mov esp, ebp
+    pop ebp
+    
+    add esp, 4
+
+    popfd
+    popad
+    ret 
+    }
+}
+
+static void InitRetStub(DianaPatcher_RetHook32 * pRet, 
+                        void * pOriginalRet)
+{
+    memcpy(pRet->retStub, g_retStub, sizeof(g_retStub));
+
+    *(void ** )(pRet->retStub + DI_RET_OFFSET_ORIGINAL_RETURN) = pOriginalRet;
+    *(void ** )(pRet->retStub + DI_RET_OFFSET_CONTEXT) = pRet;
+    *(void ** )(pRet->retStub + DI_RET_OFFSET_RET2) = pRet->retStub + DI_RET_RET2;
+    *(void ** )(pRet->retStub + DI_RET_OFFSET_FUNCTION) = pRet->pFunction;
+    *(void ** )(pRet->retStub + DI_RET_OFFSET_HOOK) = pRet;
+    *(void ** )(pRet->retStub + DI_RET_OFFSET_FUNCTION2) = Diana_FreeRetHook;
+}
+
+int Diana_SetupRet(Diana_Allocator * pAllocator,
+                   void * pOriginalESP,
+                   Diana_RetHandlerFunction_type pFunction, 
+                   void * pContext,
+                   int paramsCount,
+                   int callContextSizeInBytes,
+                   void ** ppCallContext)
+{
+    DianaPatcher_RetHook32 * pRet = 0;
+    
+    if (callContextSizeInBytes)
+    {
+        if (!ppCallContext)
+        {
+            Diana_DebugFatalBreak();
+            return DI_INVALID_INPUT;
+        }
+    }    
+
+    pRet = pAllocator->m_alloc(pAllocator, 
+                               sizeof(DianaPatcher_RetHook32) + callContextSizeInBytes +
+                               (paramsCount+1)*sizeof(unsigned int));
+
+    DI_CHECK_ALLOC(pRet);
+
+    pRet->pAllocator = pAllocator;
+    pRet->pContext = pContext;
+    pRet->pOriginalESP = pOriginalESP;
+    pRet->pFunction = pFunction;
+    pRet->pCopiedArgs = (unsigned int*)(pRet+1);
+    pRet->pCallContext = pRet->pCopiedArgs + paramsCount + 1;
+    
+    InitRetStub(pRet, DIANA_RET_PTR(pOriginalESP));
+
+    memcpy(pRet->pCopiedArgs, 
+           (unsigned int*)pOriginalESP,
+           (paramsCount+1)*sizeof(unsigned int));
+
+    DIANA_RET_PTR(pOriginalESP) = pRet->retStub;
+
+    if (ppCallContext)
+    {
+        *ppCallContext = pRet->pCallContext;
+    }
+    return DI_SUCCESS;
+}
+
+typedef struct _dianaPatcher_HookInfoEx
+{
+    void * pPatchContext;
+    Diana_PatchHandlerFunction2_type pPatchFnc;
+}DianaPatcher_HookInfoEx;
+
+
+__declspec(naked) static void _stdcall Diana_Hook(DianaPatcher_HookInfoEx * pContext, 
+                                                  void * pOriginalESP)
+{
+    __asm
+    {
+    push ebp
+    mov ebp, esp
+
+    pushad
+    pushfd
+    
+    push esp
+    mov eax, [ebp + 0x8] // pContext
+    push [ebp + 0xc] 
+    push [eax]
+    mov eax, [eax + 4]
+    call eax
+
+    popfd
+    popad
+
+    mov esp, ebp
+    pop ebp
+    ret 8
+    }
+}
+
+int Diana_PatchSomethingEx(void * pPlaceToHook,
+                           size_t size,
+                           Diana_PatchHandlerFunction2_type pPatchFnc,
+                           void * pPatchContext,
+                           Diana_Allocator * pAllocator,
+                           unsigned char ** ppOriginalFunction)
+{
+    int res = 0;
+    DianaPatcher_HookInfoEx * pInfo = pAllocator->m_alloc(pAllocator, 
+                                                          sizeof(DianaPatcher_HookInfoEx));
+    DI_CHECK_ALLOC(pInfo);
+
+    pInfo->pPatchContext = pPatchContext;
+    pInfo->pPatchFnc = pPatchFnc;
+
+    res = Diana_PatchSomething32(pPlaceToHook,
+                                 size,
+                                 Diana_Hook,
+                                 pInfo,
+                                 pAllocator,
+                                 ppOriginalFunction);
+    if (!res)
+        return DI_SUCCESS;
+
+    pAllocator->m_free(pAllocator, pInfo);
+    return res;
 }
 
 #endif

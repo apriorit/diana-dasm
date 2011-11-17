@@ -794,4 +794,21 @@ void test_x64()
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "rsm")==0);
         TEST_ASSERT(result.pInfo->m_operandCount == 0);
     }
+
+    static unsigned char mov38[] = {0x66, 0x0F, 0x6F, 0x00}; // movdqa
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE32, mov38, sizeof(mov38), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movdqa")==0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 2);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 16);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_XMM0);
+
+        TEST_ASSERT(result.linkedOperands[1].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_EAX);
+    }
 } 
