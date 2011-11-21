@@ -83,12 +83,16 @@ int Diana_ReadIndexStructure16(DianaContext * pContext,
                                DianaLinkedOperand * pInfo,
                                DI_CHAR iOpSize,
                                unsigned char postByte,
-                               DianaReadStream * pStream, 
+                               DianaReadStream * pStream,
                                DianaOperandValue * pValue,
                                DianaValueType * pType)
 {
+
     DI_CHAR mod = Diana_GetMod(postByte);
     DI_CHAR rm = Diana_GetRm(postByte);
+
+	pStream;
+
     if (mod == 3)
     {
         *pType = diana_register;

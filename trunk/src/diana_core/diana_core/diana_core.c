@@ -128,9 +128,12 @@ void Diana_ClearCache(DianaContext * pThis)
 
 // debug
 static void Diana_Nope(struct _dianaContext * pContext) 
-{  
+{
+	pContext;
+
     Diana_FatalBreak();
 }
+
 // normal
 static void Diana_Normal(struct _dianaContext * pContext) 
 {  
@@ -310,20 +313,15 @@ void Diana_InitLine(DianaCmdKeyLine * pRoot)
             //--------------------------------------
             // AMD 64 ADDITIONAL INITIALIZATION
             //--------------------------------------
-            // 1) DI_FLAG_CMD_SUPPORTS_IMM64
-            // mov  0xB8
-            // 2) DI_FLAG_CMD_AMD64_SIGN_EXTENDS 
-            // push 0x68
-            // mov  0xc7 
             if (pRoot == Diana_GetRootLine())
             {
                 switch (pRoot->key[i].chOpcode)
                 {
-                case 0x68:
-                case 0xC7:
+                case 0x68: // push
+                case 0xC7: // mov
                     pInfo->m_flags |= DI_FLAG_CMD_AMD64_SIGN_EXTENDS;
                     break;
-                case 0xB8:
+                case 0xB8: // mov
                     pInfo->m_flags |= DI_FLAG_CMD_SUPPORTS_IMM64;
                     break;
 				case 0x06: // push es

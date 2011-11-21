@@ -281,7 +281,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         opSizeUsed = pOperInfo->m_size;
         if ((!opSizeUsed) || (pResult->pInfo->m_bHas32BitAnalog && opSizeUsed != 1))
         {
-            opSizeUsed = pContext->iCurrentCmd_opsize;
+            opSizeUsed = ( unsigned char )pContext->iCurrentCmd_opsize;
         }
 
         // handle DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64

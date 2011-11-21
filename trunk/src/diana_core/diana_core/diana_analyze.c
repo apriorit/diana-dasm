@@ -231,6 +231,9 @@ void DispatchMode32(DianaAnalyzeSession * pSession,
                     int * pbFound,
                     OPERAND_SIZE * pSuspectedOp)
 {
+	pInstruction;
+	pSession;
+
     *pbFound = 0;
 
     switch(pOp->type)
@@ -486,6 +489,9 @@ int XrefRouteMarker(Diana_ListNode * pNode,
 {
     Diana_XRef * pXRef = Diana_CastXREF(pNode, (int)(size_t)pContext);
     pXRef->m_flags |= DI_XREF_INVALID;
+
+	pbDone;
+
     return DI_SUCCESS;
 }
 
@@ -534,6 +540,7 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
     // init cur route
     pSession->curRouteInfo.startOffset = offset;
     pSession->curRouteInfo.flags = 0;
+	#pragma warning( suppress : 4127 ) // conditional expression is constant
     while(1)
     {
         if (offset >= pSession->maxOffset || bNeedReset)

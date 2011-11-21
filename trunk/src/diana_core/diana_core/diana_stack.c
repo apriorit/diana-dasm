@@ -18,6 +18,10 @@ static int deleter(Diana_ListNode * pNode,
 {
     Diana_StackBlock * pBlock = (Diana_StackBlock*)pNode;
     free(pBlock);
+
+	pContext;
+	pbDone;
+
     return DI_SUCCESS;
 }
 
@@ -32,6 +36,7 @@ int Diana_Stack_Push(Diana_Stack * pStack,
     char * pDataPlace = 0;
     if (pStack->m_pCurrentBlock)
     {
+		#pragma warning( suppress : 4127 ) // conditional expression is constant
         while(1)
         {
             if (pStack->m_minBlockSize - 

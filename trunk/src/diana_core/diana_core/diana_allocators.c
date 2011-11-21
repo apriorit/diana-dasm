@@ -3,14 +3,17 @@
 
 static void * MAllocator_Alloc(void * pThis, size_t size)
 {
+	pThis;
 	return malloc(size);
 }
 static void MAllocator_Dealloc(void * pThis, void * pBuffer)
 {
+	pThis;
 	free(pBuffer);
 }
 static int MAllocator_Patch(void * pThis, void * pDest, const void * pSource, size_t size)
 {
+	pThis;
     memcpy(pDest, pSource, size);
     return DI_SUCCESS;
 }

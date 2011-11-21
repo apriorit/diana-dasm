@@ -335,6 +335,7 @@ int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
             return DI_ERROR;
         }
     }
+	#pragma warning( suppress : 4127 ) // conditional expression is constant
     while(1);
 }
 

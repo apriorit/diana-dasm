@@ -120,6 +120,8 @@ void Di_ProcessCustomPrefix(unsigned char value,
                            DianaContext * pContext,
                            DianaParserResult * pResult)
 {
+	pContext;
+
     *pbPrefixFound = 0;
 
     switch(value)

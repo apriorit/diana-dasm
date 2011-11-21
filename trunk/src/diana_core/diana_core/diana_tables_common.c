@@ -39,6 +39,8 @@ int Diana_DispatchMod3(DianaLinkedOperand * pInfo,
 {
     int iIndex = 0;
 
+	old_true_rm;
+
     if (pInfo->pInfo->m_type == diana_orMemoryMMX)
     {
          pInfo->usedSize = 8;
