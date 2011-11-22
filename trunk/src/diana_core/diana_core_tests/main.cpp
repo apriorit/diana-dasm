@@ -24,13 +24,14 @@ extern "C"
 #include "test_stack.h"
 #include "test_new.h"
 
+
 int main()
 {
     Diana_Init();
 
     test_new();
     test_stack();
-    test_analyze();
+//    test_analyze();
     test_integrated2();
     test_fpu_mmx32();
     test_x64();
