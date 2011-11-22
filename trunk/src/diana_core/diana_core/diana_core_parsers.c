@@ -41,6 +41,37 @@ static int logical_xor(int bValue1, int bValue2)
     return val1 ^ val2;
 }
 
+static void CompareKeys(DianaCmdKey * pUsedKey, 
+                        DianaCmdKey * p, 
+                        DianaCmdKey ** ppSecondaryResult,
+                        DianaCmdKey ** ppResult)
+{
+    if (p->extension == DI_CHAR_NULL)
+    {
+        *ppSecondaryResult = p;
+    }
+    else
+    {
+        if (p->extension == pUsedKey->extension)
+        {
+            if (p->options & DIANA_OPT_RM_EXTENSION)
+            {
+                if (logical_xor(p->rmExtension & DI_VALUE_FLAG_CMD_REVERSE,
+                               ((DI_VALUE_FLAG_CMD_MASK & p->rmExtension) == pUsedKey->rmExtension)))
+                    *ppResult = p;
+            }
+            else
+            if (p->options & DIANA_OPT_USES_MOD_EXTENSION)
+            {
+                if (logical_xor(p->modExtension & DI_VALUE_FLAG_CMD_REVERSE, 
+                                ((DI_VALUE_FLAG_CMD_MASK & p->modExtension) == pUsedKey->modExtension)))
+                    *ppResult = p;
+            }
+            else
+                *ppResult = p;
+        }
+    }
+}
 static DianaCmdKey * FindCmdKeyImpl(DianaCmdKeyLine * pLine, 
                                     const DianaCmdKey * pKey,
                                     DianaCmdKeyLine ** pNextLine,
@@ -86,6 +117,13 @@ static DianaCmdKey * FindCmdKeyImpl(DianaCmdKeyLine * pLine,
             
             for(; (i < pLine->iKeysCount) && (p->chOpcode == usedKey.chOpcode); ++i, ++p)
             {
+                // check extension
+                if (!(p->options & DIANA_OPT_HAS_RESULT))
+                {
+                    *pNextLine = (DianaCmdKeyLine * )p->keyLineOrCmdInfo;
+                    pSecondaryResult = p;
+                }
+
                 if (bCleanOpcode)
                 {
                     DianaCmdInfo * pCmdInfo = (DianaCmdInfo * )p->keyLineOrCmdInfo;
@@ -97,43 +135,10 @@ static DianaCmdKey * FindCmdKeyImpl(DianaCmdKeyLine * pLine,
                 }
                 else
                 {
-                    if (p->options & DIANA_OPT_HAS_RESULT)
-                    {
-                        if (p->extension == DI_CHAR_NULL)
-                        {
-                            pSecondaryResult = p;
-                        }
-                        else
-                        {
-                            if (p->extension == usedKey.extension)
-                            {
-                                if (p->options & DIANA_OPT_RM_EXTENSION)
-                                {
-                                    if (logical_xor(p->rmExtension & DI_VALUE_FLAG_CMD_REVERSE,
-                                                   ((DI_VALUE_FLAG_CMD_MASK & p->rmExtension) == usedKey.rmExtension)))
-                                        pResult = p;
-                                }
-                                else
-                                if (p->options & DIANA_OPT_USES_MOD_EXTENSION)
-                                {
-                                    if (logical_xor(p->modExtension & DI_VALUE_FLAG_CMD_REVERSE, 
-                                                    ((DI_VALUE_FLAG_CMD_MASK & p->modExtension) == usedKey.modExtension)))
-                                        pResult = p;
-                                }
-                                else
-                                    pResult = p;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        *pNextLine = (DianaCmdKeyLine * )p->keyLineOrCmdInfo;
-                        pSecondaryResult = p;
-                    }
+                    // not clean opcode
+                    CompareKeys(&usedKey, p, &pSecondaryResult, &pResult);
                 }
-                if (p->chOpcode != usedKey.chOpcode)
-                    break;
-             }
+             }// for
  
              if (!pResult)
                     pResult = pSecondaryResult;
@@ -218,33 +223,64 @@ static int TryMatchKey(DianaCmdKey * pFoundKey, DianaParseParams * pParseParams)
     return 0;
 }
 
+static int KeyIsAcceptable(DianaCmdKey * p, 
+                           DI_CHAR lastData)
+{
+    DianaCmdKey * pRes1 = 0, * pRes2 = 0;
+    DianaCmdKey key;
+   
+    GetKeyByAddress(&lastData, 
+                    0, 
+                    &key);
+    if (key.chOpcode != p->chOpcode)
+        return 0;
+
+    CompareKeys(p, &key, &pRes1, &pRes2);
+    if (pRes1 || pRes2)
+        return 1;
+    return 0;
+}
 static DianaCmdKey * ScanLeft(DianaCmdKeyLine * pLine, 
                               DianaCmdKey * pFoundKey, 
-                              DianaParseParams * pParseParams)
+                              DianaParseParams * pParseParams,
+                              DI_CHAR lastData)
 {
-    --pFoundKey;
-    while(pFoundKey > pLine->key)
+    DianaCmdKey * p = pFoundKey;
+    --p;
+    while(p > pLine->key)
     {
-        if (TryMatchKey(pFoundKey, pParseParams))
-            return pFoundKey;
-        --pFoundKey;
+        if (!KeyIsAcceptable(p, lastData))
+        {
+            break;
+        }
+
+        if (TryMatchKey(p, pParseParams))
+            return p;
+        --p;
     }
     return 0;
 }
 
 static DianaCmdKey * ScanRight(DianaCmdKeyLine * pLine, 
                               DianaCmdKey * pFoundKey, 
-                              DianaParseParams * pParseParams)
+                              DianaParseParams * pParseParams,
+                              DI_CHAR lastData)
 {
     size_t number = pFoundKey - pLine->key;
+    DianaCmdKey * p = pFoundKey;
     
-    ++pFoundKey;
+    ++p;
     ++number;
     
     for( ; number < (size_t)pLine->iKeysCount; ++number)
     {
-        if (TryMatchKey(pFoundKey, pParseParams))
-            return pFoundKey;
+        if (!KeyIsAcceptable(p, lastData))
+        {
+            break;
+        }
+
+        if (TryMatchKey(p, pParseParams))
+            return p;
     }
     return 0;
 }
@@ -302,10 +338,16 @@ int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
                 if (!TryMatchKey(pFoundKey, pParseParams))
                 {
                     // not matched totally, scan left or right
-                    pFoundKey = ScanLeft(pLine, pFoundKey, pParseParams);
+                    pFoundKey = ScanLeft(pLine, 
+                                         pFoundKey, 
+                                         pParseParams,
+                                         pParseParams->pContext->cache[it]);
                     if (!pFoundKey)
                     {
-                        pFoundKey = ScanRight(pLine, pFoundKey, pParseParams);
+                        pFoundKey = ScanRight(pLine, 
+                                              pFoundKey, 
+                                              pParseParams,
+                                              pParseParams->pContext->cache[it]);
                     }
                     if (!pFoundKey)
                     {

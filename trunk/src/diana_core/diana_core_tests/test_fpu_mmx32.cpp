@@ -112,7 +112,7 @@ void test_fpu_mmx32()
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "fsubr")==0);
 
         TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
-        TEST_ASSERT(result.linkedOperands[0].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_memory);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_none);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_BX);
@@ -189,4 +189,17 @@ void test_fpu_mmx32()
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister = reg_EBX);
     }
 
+    static unsigned char data5[] = {0xD8, 0xD1};  // fcom
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, data5, sizeof(data5), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==1);
+        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "fcom")==0);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister = reg_fpu_ST1);
+    }
 }

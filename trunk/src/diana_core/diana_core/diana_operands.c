@@ -517,7 +517,10 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                     return iRes;
                 break;
         
-                
+         case diana_orMemory_exact:
+            pLinkedOp->usedSize = pOperInfo->m_size;
+            opSizeUsed = pOperInfo->m_size;
+               
         case diana_orMemory16x32:
         case diana_orMemory:
                 if (PostByte == DI_FULL_CHAR_NULL)

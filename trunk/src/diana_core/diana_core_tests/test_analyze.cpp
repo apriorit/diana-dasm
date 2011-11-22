@@ -141,7 +141,7 @@ void test_analyzer1()
                             , 0xe9, 0x01, 0x00, 0x00, 0x00 // jmp to next :33
                             , 0x00                   //    db 0  :38 // should never have come here
                             , 0x48, 0xb8, 50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00                   //    mov rax, 1  :39
-                            , 0xC3       // :49
+                            , 0xC3       // ret :49
                             , 0x33, 0xd2 // xor :50
                             , 0xc5                   //    db c5  :52 
                             };
@@ -268,5 +268,5 @@ void test_analyzer2()
 void test_analyze()
 {
     test_analyzer1();
-    test_analyzer2();
+   // test_analyzer2();
 }

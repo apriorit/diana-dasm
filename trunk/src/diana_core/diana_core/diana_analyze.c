@@ -552,10 +552,13 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
             DI_CHECK(SwitchToLastState(pSession, 
                                        &pSession->curRouteInfo, 
                                        &offset));
+
+
         }
         bNeedReset = 0;
 
         prevOffset = offset;
+
         iRes = Diana_ParseCmd(&pSession->context,
                                Diana_GetRootLine(),
                                &pSession->pObserver->m_stream,

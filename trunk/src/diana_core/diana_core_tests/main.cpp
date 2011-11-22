@@ -31,7 +31,7 @@ int main()
 
     test_new();
     test_stack();
-//    test_analyze();
+    test_analyze();
     test_integrated2();
     test_fpu_mmx32();
     test_x64();

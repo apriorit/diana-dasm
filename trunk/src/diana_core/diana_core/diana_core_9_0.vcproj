@@ -356,10 +356,6 @@
 				RelativePath=".\diana_uids.c"
 				>
 			</File>
-			<File
-				RelativePath=".\diana_undocumented.c"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
