@@ -6,8 +6,10 @@
 #include "diana_processor_core_impl.h"
 
 int Diana_Call_aaa(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
+	pDianaContext;
+
     if (((GET_REG_AL & 0x0F) > 9) || GET_FLAG_AF) 
     {
         SET_REG_AX(GET_REG_AX + 6);
@@ -30,7 +32,7 @@ int Diana_Call_aaa(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_aad(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     DianaRegisterValue16_type ax;
     DI_DEF_LOCAL(src);

@@ -503,6 +503,8 @@ int RouteMarker(Diana_ListNode * pNode,
     Diana_Instruction * pInstruction = (Diana_Instruction * )pNode;
     DianaAnalyzeSession * pSession  = pContext;
 
+	pbDone;
+
     pInstruction->m_flags |= DI_INSTRUCTION_INVALID;
 
     Diana_ListForEach(&pInstruction->m_refsFrom, 

@@ -93,7 +93,9 @@ int DianaProcessor_ReadMemory(DianaProcessor * pThis,
                               OPERAND_SIZE * readed,
                               int flags,
                               DianaUnifiedRegister segReg)
-{    
+{
+	flags;
+
     return 
         pThis->m_pMemoryStream->pReadFnc(pThis->m_pMemoryStream,
                                      selector, 
@@ -114,7 +116,8 @@ int DianaProcessor_WriteMemory(DianaProcessor * pThis,
                       OPERAND_SIZE * readed,
                       int flags,
                       DianaUnifiedRegister segReg)
-{    
+{
+	flags;
     return 
         pThis->m_pMemoryStream->pWriteFnc(pThis->m_pMemoryStream,
                                      selector,
@@ -133,17 +136,21 @@ int Diana_ProcessorSetGetOperand_register(struct _dianaContext * pDianaContext,
                                           OPERAND_SIZE * pResult,
                                           int bSet)
 {
+	pDianaContext;
+
     if (bSet)
     {
         DianaProcessor_SetValue(pCallContext, 
-                       pLinkedOp->value.recognizedRegister,
-                       DianaProcessor_QueryReg(pCallContext, pLinkedOp->value.recognizedRegister), 
-                       *pResult);
+                                pLinkedOp->value.recognizedRegister,
+                                DianaProcessor_QueryReg(pCallContext,
+								                        pLinkedOp->value.recognizedRegister), 
+                                *pResult);
     }
     else
     {
         *pResult = DianaProcessor_GetValue(pCallContext, 
-                                           DianaProcessor_QueryReg(pCallContext, pLinkedOp->value.recognizedRegister));
+                                           DianaProcessor_QueryReg(pCallContext,
+										                           pLinkedOp->value.recognizedRegister));
     }
     return DI_SUCCESS;
 }
@@ -189,8 +196,8 @@ int DianaProcessor_CalcIndex(struct _dianaContext * pDianaContext,
     address = reg + indexedReg*index + dispValue;
 
     selector = DianaProcessor_GetValue(pCallContext, 
-                                        DianaProcessor_QueryReg(pCallContext, 
-                                                                pIndex->seg_reg));
+                                       DianaProcessor_QueryReg(pCallContext, 
+                                                               pIndex->seg_reg));
 
     *pSelector = selector;
     *pAddress = address;
@@ -326,6 +333,9 @@ int Diana_ProcessorSetGetOperand_imm(struct _dianaContext * pDianaContext,
                                      OPERAND_SIZE * pResult,
                                      int bSet)
 {
+	pDianaContext;
+	pCallContext;
+
     if (bSet)
     {
         Diana_FatalBreak();
@@ -422,6 +432,8 @@ int DianaProcessor_SetCOA_Add(struct _dianaContext * pDianaContext,
  //OF     Overflow Flag -- Set if result is too large a positive number
  //       or too small a negative number (excluding sign-bit) to fit in
  //       destination operand; cleared otherwise.
+	pDianaContext;
+
     if (flags & flag_OF)
     {
         if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) ==
@@ -461,6 +473,8 @@ int DianaProcessor_SetCOA_AddCF(struct _dianaContext * pDianaContext,
 								int flags
 								)
 {
+	pDianaContext;
+
 	if (flags & flag_OF)
 	{
 		if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) ==
@@ -499,6 +513,8 @@ int DianaProcessor_SetCOA_Sub(struct _dianaContext * pDianaContext,
                               int flags
                              )
 {
+	pDianaContext;
+
     if (flags & flag_OF)
     {
         if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=
@@ -539,6 +555,8 @@ int DianaProcessor_SetCOA_SubCF(struct _dianaContext * pDianaContext,
 								int flags
 								)
 {
+	pDianaContext;
+
 	if (flags & flag_OF)
 	{
 		if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=

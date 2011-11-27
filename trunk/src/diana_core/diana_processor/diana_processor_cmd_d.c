@@ -25,6 +25,8 @@ int Diana_Call_daa(struct _dianaContext * pDianaContext,
 	DI_CHAR al = 0;
 	DI_CHAR tmpAL = 0;
 
+	pDianaContext;
+
 	al = ( DI_CHAR )GET_REG_AL;
 	tmpAL = al;
 
@@ -67,6 +69,8 @@ int Diana_Call_das(struct _dianaContext * pDianaContext,
 	unsigned char oldal = 0;
 	al = (unsigned char)GET_REG_AL;
 	oldal = al;
+
+	pDianaContext;
 
 	if ( ( al & 0x0F ) > 0x09 || GET_FLAG_AF )
 	{
@@ -131,6 +135,8 @@ int Diana_Call_div8(struct _dianaContext * pDianaContext,
     unsigned char remainder = 0,
                   divisor = (unsigned char)*pDivisor;
 
+	pDianaContext;
+
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;
 
@@ -155,6 +161,8 @@ int Diana_Call_div16(struct _dianaContext * pDianaContext,
     DI_UINT32 quotient = 0; 
     DI_UINT16 remainder = 0,
                divisor = (DI_UINT16)*pDivisor;
+
+	pDianaContext;
 
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;
@@ -183,6 +191,8 @@ int Diana_Call_div32(struct _dianaContext * pDianaContext,
     DI_UINT64  quotient = 0;
     DI_UINT32  remainder = 0,
                divisor = (DI_UINT32)*pDivisor;
+
+	pDianaContext;
 
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;
@@ -213,6 +223,8 @@ int Diana_Call_div64(struct _dianaContext * pDianaContext,
     DI_UINT64  quotient = 0,
                remainder = 0,
                divisor = *pDivisor;
+
+	pDianaContext;
 
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;

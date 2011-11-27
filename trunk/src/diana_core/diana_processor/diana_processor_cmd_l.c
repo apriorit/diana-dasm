@@ -9,6 +9,8 @@ int Diana_Call_lahf(struct _dianaContext * pDianaContext,
 {
     unsigned char ah = 0;
 
+	pDianaContext;
+
     ah = pCallContext->m_flags.l.l.l;
 
     SET_REG_AH(ah);
@@ -50,6 +52,8 @@ int Diana_Call_leave(struct _dianaContext * pDianaContext,
 {
     OPERAND_SIZE rbp = 0;
     OPERAND_SIZE value = 0;
+
+	pDianaContext;
 
     rbp = GET_REG_RBP;
     SET_REG_RSP2(rbp, pCallContext->m_context.iCurrentCmd_addressSize);

@@ -155,6 +155,8 @@ int Diana_Call_cbw(struct _dianaContext * pDianaContext,
 int Diana_Call_clc(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
+	pDianaContext;
+
     CLEAR_FLAG_CF;
     DI_PROC_END;
 }
@@ -162,6 +164,8 @@ int Diana_Call_clc(struct _dianaContext * pDianaContext,
 int Diana_Call_cld(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
+	pDianaContext;
+
     CLEAR_FLAG_DF;
     DI_PROC_END;
 }
@@ -169,6 +173,8 @@ int Diana_Call_cld(struct _dianaContext * pDianaContext,
 int Diana_Call_cli(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
+	pDianaContext;
+
     CLEAR_FLAG_IF;
     DI_PROC_END;
 }
@@ -176,6 +182,8 @@ int Diana_Call_cli(struct _dianaContext * pDianaContext,
 int Diana_Call_cmc(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
+	pDianaContext;
+
     if (GET_FLAG_CF)
     {
         CLEAR_FLAG_CF;

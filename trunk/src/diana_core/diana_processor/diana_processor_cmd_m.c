@@ -5,7 +5,7 @@
 #include "diana_processor_cmd_internal.h"
 
 int Diana_Call_mov(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCALS(src, dest);
@@ -23,7 +23,7 @@ int Diana_Call_mov(struct _dianaContext * pDianaContext,
 int Diana_Call_movs(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
-    // SRC = DEST;
+    // SRC := DEST;
     OPERAND_SIZE selector = GET_REG_DS;
     DianaRmIndex srcIndex, destIndex;
     OPERAND_SIZE srcRegAddress = 0, destRegAddress = 0;
@@ -79,7 +79,7 @@ int Diana_Call_movs(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_movsx(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCALS(src, dest);
@@ -96,7 +96,7 @@ int Diana_Call_movsx(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_movzx(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCALS(src, dest);
@@ -120,6 +120,8 @@ int Diana_Call_mul8(struct _dianaContext * pDianaContext,
     DI_UINT16 arg1 = (DI_UINT16)GET_REG_AL;
     DI_UINT16 arg2 = (DI_UINT16)*pArgument;
 
+	pDianaContext;
+
     result.value = arg1 * arg2;
 
     if (result.h)
@@ -134,12 +136,14 @@ int Diana_Call_mul8(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_mul16(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pArgument)
+                     DianaProcessor * pCallContext,
+                     OPERAND_SIZE * pArgument)
 {
     DianaRegisterValue32_type result;
     DI_UINT32 arg1 = (DI_UINT32)GET_REG_AX;
     DI_UINT32 arg2 = (DI_UINT32)*pArgument;
+
+	pDianaContext;
 
     result.value = arg1 * arg2;
 
@@ -156,12 +160,14 @@ int Diana_Call_mul16(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_mul32(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pArgument)
+                     DianaProcessor * pCallContext,
+                     OPERAND_SIZE * pArgument)
 {
     DianaRegisterValue_type result;
     DI_UINT64 arg1 = (DI_UINT64)GET_REG_EAX;
     DI_UINT64 arg2 = (DI_UINT64)*pArgument;
+
+	pDianaContext;
 
     result.value = arg1 * arg2;
 
@@ -178,12 +184,14 @@ int Diana_Call_mul32(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_mul64(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pArgument)
+                     DianaProcessor * pCallContext,
+                     OPERAND_SIZE * pArgument)
 {
     DI_UINT64 r0, r1;
     DI_UINT64 argument = *pArgument;
     DI_UINT64 rax = GET_REG_RAX;
+
+	pDianaContext;
 
     mul64( &r0, &r1, rax, argument );
 

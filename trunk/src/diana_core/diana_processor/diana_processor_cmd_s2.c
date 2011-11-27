@@ -5,7 +5,7 @@
 #include "diana_processor_cmd_internal.h"
   
 int Diana_Call_sub(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST := DEST - SRC;
     DI_DEF_LOCALS(src, dest);
@@ -30,7 +30,7 @@ int Diana_Call_sub(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_shl(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //temp := COUNT;
     //WHILE (temp  0)
@@ -90,7 +90,10 @@ int Diana_Call_shl(struct _dianaContext * pDianaContext,
         }
     }
 
-    DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
+    DI_CHECK(Di_CheckZeroExtends(pCallContext,
+		                         &dest,
+								 src_size,
+								 &dest_size));
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
     DI_PROC_END
@@ -98,7 +101,7 @@ int Diana_Call_shl(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_sar(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //temp := COUNT;
     //WHILE (temp  0 )
@@ -153,7 +156,7 @@ int Diana_Call_sar(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_sbb(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
 	//DEST := DEST - SRC - CF;
 	int cfValue = 0;
@@ -186,22 +189,28 @@ int Diana_Call_sbb(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_stc(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
+	pDianaContext;
+
     SET_FLAG_CF;
     DI_PROC_END
 }
 
 int Diana_Call_std(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
+	pDianaContext;
+
     SET_FLAG_DF;
     DI_PROC_END
 }
 
 int Diana_Call_sti(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
+	pDianaContext;
+
     SET_FLAG_IF;
     DI_PROC_END
 }

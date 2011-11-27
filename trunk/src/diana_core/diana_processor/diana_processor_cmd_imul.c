@@ -14,6 +14,8 @@ int Diana_Call_imul8(struct _dianaContext * pDianaContext,
     DI_SIGNED_CHAR arg1 = (DI_SIGNED_CHAR)GET_REG_AL;
     DI_SIGNED_CHAR arg2 = (DI_SIGNED_CHAR)*pArgument;
 
+	pDianaContext;
+
     result.value = (DI_INT32)arg1 * (DI_INT32)arg2;
 
 	if( ( OPERAND_SIZE_SIGNED )( DI_SIGNED_CHAR )result.value != result.value )
@@ -34,6 +36,8 @@ int Diana_Call_imul16(struct _dianaContext * pDianaContext,
     DianaRegisterValue32_signed_type result;
     DI_INT16 arg1 = (DI_INT16)GET_REG_AX;
     DI_INT16 arg2 = (DI_INT16)*pArgument;
+
+	pDianaContext;
 
     result.value = (DI_INT32)arg1 * (DI_INT32)arg2;
 
@@ -58,6 +62,8 @@ int Diana_Call_imul32(struct _dianaContext * pDianaContext,
     DI_INT32 arg1 = (DI_INT32)GET_REG_EAX;
     DI_INT32 arg2 = (DI_INT32)*pArgument;
 
+	pDianaContext;
+
     result.value = (DI_INT64)arg1 * (DI_INT64)arg2;
 
 	if( ( OPERAND_SIZE_SIGNED )( DI_INT32 )result.value != result.value )
@@ -79,6 +85,8 @@ int Diana_Call_imul64(struct _dianaContext * pDianaContext,
     DI_INT64 arg1 = (DI_INT64)GET_REG_RAX;
     DI_INT64 arg2 = (DI_INT64)*pArgument;
     DI_UINT64 r0, r1;
+
+	pDianaContext;
 
     imul64( &r0, &r1, arg1, arg2 );
 
@@ -143,6 +151,8 @@ int Diana_Call_imul_impl(struct _dianaContext * pDianaContext,
     DI_CHECK(DianaProcessor_SignExtend(op2, 
                                        op2Size,
                                        8));
+
+	pDianaContext;
 
     arg1 = (OPERAND_SIZE_SIGNED)*op1;
     arg2 = (OPERAND_SIZE_SIGNED)*op2;

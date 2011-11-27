@@ -351,7 +351,7 @@ int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
                     }
                     if (!pFoundKey)
                     {
-                        return DI_ERROR;
+                        return DI_UNSUPPORTED_COMMAND;
                     }
                 }
 

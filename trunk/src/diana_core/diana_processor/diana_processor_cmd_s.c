@@ -6,6 +6,8 @@
 int Diana_Call_sahf(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
+	pDianaContext;
+
     pCallContext->m_flags.l.l.l = (DI_CHAR)GET_REG_AH;
     DianaProcessor_SetResetDefaultFlags(pCallContext);
     DI_PROC_END
@@ -37,7 +39,7 @@ int Diana_Call_seta(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setae(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     if (GET_FLAG_CF == 0)
     {
@@ -51,7 +53,7 @@ int Diana_Call_setae(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setb(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                    DianaProcessor * pCallContext)
 {
     if (GET_FLAG_CF)
     {
@@ -65,7 +67,7 @@ int Diana_Call_setb(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setbe(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     if (GET_FLAG_CF || GET_FLAG_ZF)
     {
@@ -80,7 +82,7 @@ int Diana_Call_setbe(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_sete(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                    DianaProcessor * pCallContext)
 {
     if (GET_FLAG_ZF)
     {
@@ -108,7 +110,7 @@ int Diana_Call_setg(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setge(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     if (GET_FLAG_SF == GET_FLAG_OF)
     {
@@ -122,7 +124,7 @@ int Diana_Call_setge(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setl(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                    DianaProcessor * pCallContext)
 {
     if (GET_FLAG_SF != GET_FLAG_OF)
     {
@@ -136,7 +138,7 @@ int Diana_Call_setl(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setle(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     if (GET_FLAG_ZF || (GET_FLAG_SF != GET_FLAG_OF))
     {
@@ -150,7 +152,7 @@ int Diana_Call_setle(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setne(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     if (!GET_FLAG_ZF)
     {
@@ -164,7 +166,7 @@ int Diana_Call_setne(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setno(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     if (!GET_FLAG_OF)
     {
@@ -178,7 +180,7 @@ int Diana_Call_setno(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setnp(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     if (!GET_FLAG_PF)
     {
@@ -192,7 +194,7 @@ int Diana_Call_setnp(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setns(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     if (!GET_FLAG_SF)
     {
@@ -206,7 +208,7 @@ int Diana_Call_setns(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_seto(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                    DianaProcessor * pCallContext)
 {
     if (GET_FLAG_OF)
     {
@@ -220,7 +222,7 @@ int Diana_Call_seto(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_setp(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                    DianaProcessor * pCallContext)
 {
     if (GET_FLAG_PF)
     {
@@ -234,7 +236,7 @@ int Diana_Call_setp(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_sets(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                    DianaProcessor * pCallContext)
 {
     if (GET_FLAG_SF)
     {

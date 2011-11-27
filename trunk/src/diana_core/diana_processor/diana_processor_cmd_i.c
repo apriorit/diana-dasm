@@ -15,6 +15,8 @@ int Diana_Call_idiv8(struct _dianaContext * pDianaContext,
     DI_SIGNED_CHAR remainder = 0,
                    divisor = (DI_SIGNED_CHAR)*pDivisor;
 
+	pDianaContext;
+
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;
 
@@ -39,6 +41,8 @@ int Diana_Call_idiv16(struct _dianaContext * pDianaContext,
     DI_INT32 quotient = 0; 
     DI_INT16 remainder = 0,
                divisor = (DI_INT16)*pDivisor;
+
+	pDianaContext;
 
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;
@@ -67,6 +71,8 @@ int Diana_Call_idiv32(struct _dianaContext * pDianaContext,
     DI_INT64  quotient = 0;
     DI_INT32  remainder = 0,
                divisor = (DI_INT32)*pDivisor;
+
+	pDianaContext;
 
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;
@@ -97,6 +103,8 @@ int Diana_Call_idiv64(struct _dianaContext * pDianaContext,
     DI_INT64  quotient = 0,
                remainder = 0,
                divisor = *pDivisor;
+
+	pDianaContext;
 
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;
