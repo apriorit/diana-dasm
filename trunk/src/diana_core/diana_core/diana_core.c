@@ -346,6 +346,22 @@ void Diana_InitLine(DianaCmdKeyLine * pRoot)
 				case 0xD5: // aad
 				case 0xD6: // setalc
 				case 0xEA: // jmpf
+				case 0x40: // inc eax
+				case 0x41: // inc ecx
+				case 0x42: // inc edx
+				case 0x43: // inc ebx
+				case 0x44: // inc esp
+				case 0x45: // inc ebp
+				case 0x46: // inc esi
+				case 0x47: // inc edi
+				case 0x48: // dec eax
+				case 0x49: // dec ecx
+				case 0x4A: // dec edx
+				case 0x4B: // dec ebx
+				case 0x4C: // dec esp
+				case 0x4D: // dec ebp
+				case 0x4E: // dec esi
+				case 0x4F: // dec edi
 					pInfo->m_flags |= DI_FLAG_CMD_I386;
 					break;
                 }
