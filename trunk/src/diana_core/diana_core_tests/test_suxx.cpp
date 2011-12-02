@@ -1335,5 +1335,23 @@ void test_suxx()
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 1);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
     }
+
+    static unsigned char suxx91[] = {0xDF, 0x10}; // fist word [eax]
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE32, suxx91, sizeof(suxx91), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "fist")==0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 1);
+
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 2);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_memory);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_EAX);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
+    }
 }
 
