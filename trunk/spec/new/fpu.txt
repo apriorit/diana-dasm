@@ -5,7 +5,6 @@ FADD m64fp | DC /0
 FADD ST(0), ST(i) | D8 C0 + fpu_i
 FADD ST(i), ST(0) | DC C0 + fpu_i
 FADDP ST(i), ST(0) | DE C0 + fpu_i
-FADDP | DE C1
 FIADD m32int | DA /0
 FIADD m16int | DE /0
 FBLD m80dec | DF /4
@@ -26,7 +25,6 @@ FCOM ST(i) | D8 D0 + fpu_i
 FCOMP m32fp | D8 /3
 FCOMP m64fp | DC /3
 FCOMP ST(i) | D8 D8 + fpu_i
-FCOMP | D8 D9
 FCOMPP | DE D9
 FCOMI ST, ST(i) | DB F0 + fpu_i
 FCOMIP ST, ST(i) | DF F0 + fpu_i
@@ -39,7 +37,6 @@ FDIV m64fp | DC /6
 FDIV ST(0), ST(i) | D8 F0 + fpu_i
 FDIV ST(i), ST(0) | DC F8 + fpu_i
 FDIVP ST(i), ST(0) | DE F8 + fpu_i
-FDIVP | DE F9
 FIDIV m32int | DA /6
 FIDIV m16int | DE /6
 FDIVR m32fp | D8 /7
@@ -47,10 +44,10 @@ FDIVR m64fp | DC /7
 FDIVR ST(0), ST(i) | D8 F8 + fpu_i
 FDIVR ST(i), ST(0) | DC F0 + fpu_i
 FDIVRP ST(i), ST(0) | DE F0 + fpu_i
-FDIVRP | DE F1
 FIDIVR m32int | DA /7
 FIDIVR m16int | DE /7
 FFREE ST(i) | DD C0 + fpu_i
+FFREEP ST(i) | DF C0 + fpu_i
 FICOM m16int | DE /2
 FICOM m32int | DA /2
 FICOMP m16int | DE /3
@@ -78,7 +75,6 @@ FMUL m64fp | DC /1
 FMUL ST(0), ST(i) | D8 C8 + fpu_i
 FMUL ST(i), ST(0) | DC C8 + fpu_i
 FMULP ST(i), ST(0) | DE C8 + fpu_i
-FMULP | DE C9
 FIMUL m32int | DA /1
 FIMUL m16int | DE /1
 FNOP | D9 D0
@@ -109,7 +105,6 @@ FSUB m64fp | DC /4
 FSUB ST(0), ST(i) | D8 E0 + fpu_i
 FSUB ST(i), ST(0) | DC E8 + fpu_i
 FSUBP ST(i), ST(0) | DE E8 + fpu_i
-FSUBP | DE E9
 FISUB m32int | DA /4
 FISUB m16int | DE /4
 FSUBR m32fp | D8 /5
@@ -117,18 +112,14 @@ FSUBR m64fp | DC /5
 FSUBR ST(0), ST(i) | D8 E8 + fpu_i
 FSUBR ST(i), ST(0) | DC E0 + fpu_i
 FSUBRP ST(i), ST(0) | DE E0 + fpu_i
-FSUBRP | DE E1
 FISUBR m32int | DA /5
 FISUBR m16int | DE /5
 FTST | D9 E4
 FUCOM ST(i) | DD E0 + fpu_i
-FUCOM | DD E1
 FUCOMP ST(i) | DD E8 + fpu_i
-FUCOMP | DD E9
 FUCOMPP | DA E9
 FXAM | D9 E5
 FXCH ST(i) | D9 C8 + fpu_i
-FXCH | D9 C9
 FXRSTOR m512byte | 0F AE /1
 FXSAVE m512byte | 0F AE /0
 FXTRACT | D9 F4
@@ -139,3 +130,6 @@ FISTTP m32int | DB /1
 FISTTP m16int | DF /1
 FIST m16int | DF /2
 FIST m32int | DB /2
+FISTP m16int | DF /3
+FISTP m32int | DB /3
+FISTP m64int | DF /7

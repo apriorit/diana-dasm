@@ -151,7 +151,7 @@ int Diana_Call_add(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_and(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST := DEST AND SRC;
     //CF := 0;

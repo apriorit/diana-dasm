@@ -6,7 +6,7 @@
 
 
 int Diana_Call_ja(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                  DianaProcessor * pCallContext)
 {
     if ((GET_FLAG_CF == 0) && (GET_FLAG_ZF == 0))
     {
@@ -19,7 +19,7 @@ int Diana_Call_ja(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jae(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     if (GET_FLAG_CF == 0)
     {
@@ -32,7 +32,7 @@ int Diana_Call_jae(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jb(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                  DianaProcessor * pCallContext)
 {
     if (GET_FLAG_CF)
     {
@@ -45,7 +45,7 @@ int Diana_Call_jb(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jbe(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     if (GET_FLAG_CF || GET_FLAG_ZF)
     {
@@ -59,7 +59,7 @@ int Diana_Call_jbe(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_je(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                  DianaProcessor * pCallContext)
 {
     if (GET_FLAG_ZF)
     {
@@ -72,7 +72,7 @@ int Diana_Call_je(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jg(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                  DianaProcessor * pCallContext)
 {
     if ((GET_FLAG_SF == GET_FLAG_OF) && (GET_FLAG_ZF == 0))
     {
@@ -85,7 +85,7 @@ int Diana_Call_jg(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jge(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     if (GET_FLAG_SF == GET_FLAG_OF)
     {
@@ -98,7 +98,7 @@ int Diana_Call_jge(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jl(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                  DianaProcessor * pCallContext)
 {
     if (GET_FLAG_SF != GET_FLAG_OF)
     {
@@ -111,7 +111,7 @@ int Diana_Call_jl(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jle(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     if (GET_FLAG_ZF || (GET_FLAG_SF != GET_FLAG_OF))
     {
@@ -124,7 +124,7 @@ int Diana_Call_jle(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jne(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     if (!GET_FLAG_ZF)
     {
@@ -137,7 +137,7 @@ int Diana_Call_jne(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jno(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     if (!GET_FLAG_OF)
     {
@@ -150,7 +150,7 @@ int Diana_Call_jno(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jnp(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     if (!GET_FLAG_PF)
     {
@@ -163,7 +163,7 @@ int Diana_Call_jnp(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jns(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     if (!GET_FLAG_SF)
     {
@@ -176,7 +176,7 @@ int Diana_Call_jns(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jo(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                  DianaProcessor * pCallContext)
 {
     if (GET_FLAG_OF)
     {
@@ -189,7 +189,7 @@ int Diana_Call_jo(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jp(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                  DianaProcessor * pCallContext)
 {
     if (GET_FLAG_PF)
     {
@@ -202,7 +202,7 @@ int Diana_Call_jp(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_js(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                  DianaProcessor * pCallContext)
 {
     if (GET_FLAG_SF)
     {
@@ -231,7 +231,7 @@ int Diana_Call_jecxz(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jmp(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     OPERAND_SIZE newSegment = 0;
     int bNewSegmentIs = 0;
@@ -263,10 +263,10 @@ int Diana_Call_jmp(struct _dianaContext * pDianaContext,
             OPERAND_SIZE memSelector = GET_REG_DS, memAddress=0;
             DianaRmIndex  * pIndex = &pCallContext->m_result.linkedOperands[0].value.memory.m_index;
             DI_CHECK(DianaProcessor_CalcIndex(pDianaContext,
-                                          pCallContext,
-                                          pIndex,
-                                          &memSelector,
-                                          &memAddress));
+                                              pCallContext,
+                                              pIndex,
+                                              &memSelector,
+                                              &memAddress));
 
             // load new IP and CS
             DI_CHECK(DianaProcessor_GetMemValue(pCallContext, 

@@ -360,6 +360,20 @@ static void test_processor_seq64()
 	TEST_ASSERT( GET_REG_R15 + GET_REG_RDX == GET_REG_RIP );
 }
 
+static void test_processor_smsw()
+{
+	// smsw eax
+	unsigned char buff[] = {0x0f, 0x01, 0xe0};
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE32);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RAX(0x1301ULL);
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT(GET_REG_EAX == 0x8001003BULL);
+}
+
 
 void test_processor_s()
 {
@@ -378,4 +392,6 @@ void test_processor_s()
     test_processor_stos();
     test_processor_stos2();
 	test_processor_seq64();
+	// not worked now
+	//test_processor_smsw();
 }

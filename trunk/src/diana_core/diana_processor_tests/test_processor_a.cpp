@@ -83,6 +83,48 @@ static void test_processor_and64_2()
 	TEST_ASSERT(GET_REG_RAX == 0xFFFFFFFFFFFFF0F0ULL);
 }
 
+static void test_processor_and64_3()
+{
+	// and rsp, 0xfffffffffffffff0
+	unsigned char buff[] = {0x48, 0x83, 0xe4, 0xf0};
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RSP(0x000000000006FF58ULL);
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT(GET_REG_RSP == 0x000000000006FF50ULL);
+}
+
+static void test_processor_aad()
+{
+	// aad 7
+	unsigned char buff[] = {0xd5, 0x07};
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE32);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RAX(0x325ULL);
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT(GET_REG_RAX == 0x3AULL);
+}
+
+static void test_processor_aam()
+{
+	// aam 3
+	unsigned char buff[] = {0xd4, 0x03};
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE32);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RAX(0x3AULL);
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT(GET_REG_RAX == 0x1301ULL);
+}
+
 void test_processor_a()
 {
     test_processor_and();
@@ -90,4 +132,7 @@ void test_processor_a()
     test_processor_adc();
 	test_processor_and64();
 	test_processor_and64_2();
+	test_processor_and64_3();
+	test_processor_aad();
+	test_processor_aam();
 }

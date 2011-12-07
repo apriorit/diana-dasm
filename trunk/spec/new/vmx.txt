@@ -1,0 +1,2 @@
+VMREAD r/m32, r32 | 0F 78 /r
+VMWRITE r32, r/m32 | 0F 79 /r
