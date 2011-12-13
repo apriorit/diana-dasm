@@ -31,9 +31,9 @@ int diana_internal_pop(DianaProcessor * pCallContext,
 int diana_internal_push(DianaProcessor * pCallContext,
                         OPERAND_SIZE * pValue);
 int Diana_Call_jcc(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    int opCount,
-                    int relOp);
+                   DianaProcessor * pCallContext,
+                   int opCount,
+                   int relOp);
 
 int Di_PrepareSIDI_regs(DianaProcessor * pCallContext,
                         DianaRmIndex * pSrcIndex, 

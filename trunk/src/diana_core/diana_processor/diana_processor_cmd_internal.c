@@ -209,9 +209,9 @@ int Di_CheckZeroExtends(DianaProcessor * pCallContext,
 }
 
 int Di_CheckZeroExtends2(DianaProcessor * pCallContext,
-                        OPERAND_SIZE * pDest,
-                        int src_size,
-                        int * dest_size)
+                         OPERAND_SIZE * pDest,
+                         int src_size,
+                         int * dest_size)
 {
 	dest_size;
 
@@ -240,9 +240,9 @@ int Di_CheckZeroExtends2(DianaProcessor * pCallContext,
 }
 
 int Diana_Call_jcc(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    int opCount,
-                    int relOp)
+                   DianaProcessor * pCallContext,
+                   int opCount,
+                   int relOp)
 {
     OPERAND_SIZE newRIP = 0; 
 
@@ -380,7 +380,7 @@ int Diana_Call_internal_ret(struct _dianaContext * pDianaContext,
             Diana_DebugFatalBreak();
             return DI_ERROR;
         }
-        dropBytes = pCallContext->m_result.linkedOperands[0].value.imm;;
+        dropBytes = pCallContext->m_result.linkedOperands[0].value.imm;
     }
     else
     if (pCallContext->m_result.iLinkedOpCount)

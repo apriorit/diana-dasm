@@ -215,7 +215,7 @@ int Diana_Call_js(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_jecxz(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     DI_DEF_LOCAL(dest);
     DI_MEM_GET_DEST(dest);

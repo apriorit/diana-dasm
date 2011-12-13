@@ -324,8 +324,8 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         case diana_orRegMem:
                 if (DianaGetHandler(addrSizeUsed!=2)(pContext,
                                                      pLinkedOp,
-                                                     opSizeUsed,  
-                                                     PostByte, 
+                                                     opSizeUsed,
+                                                     PostByte,
                                                      readStream,
                                                      &pLinkedOp->value,
                                                      &pLinkedOp->type
@@ -458,7 +458,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         case diana_orPtr:
                 if (pResult->pInfo->m_operandCount!=1)
                 {
-                    Diana_FatalBreak();;
+                    Diana_FatalBreak();
                     return DI_ERROR;
                 }
                 pLinkedOp->type = diana_call_ptr;
@@ -489,7 +489,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 // E3  cb         JCXZ CX,rel8      9+m,5    Jump short if ECX(CX) register is 0
                 //if (pResult->pInfo->m_operandCount!=1)
                 //{
-                //    Diana_FatalBreak();;
+                //    Diana_FatalBreak();
                 //    return DI_ERROR;
                 //}
                 if (iCSIPSize!= DI_CHAR_NULL)
@@ -501,17 +501,17 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                             iCSIPSize = 4;
                 } else
                 {
-                    Diana_FatalBreak();;
+                    Diana_FatalBreak();
                     return DI_ERROR;
                 }
 
                 pLinkedOp->iOffset = iCurOffset;
                 pLinkedOp->value.rel.m_size = iCSIPSize;
                 pLinkedOp->type = diana_rel;
-                iRes = DianaReadValueAsLong(readStream, 
-                                            pLinkedOp->value.rel.m_size, 
+                iRes = DianaReadValueAsLong(readStream,
+                                            pLinkedOp->value.rel.m_size,
                                             &pLinkedOp->value.rel.m_value,
-                                           1);
+                                            1);
 
                 if (iRes)
                     return iRes;
@@ -599,7 +599,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 pLinkedOp->type = diana_register;
                 if (fpuRegCode == DI_CHAR_NULL)
                 {
-                    Diana_FatalBreak();;
+                    Diana_FatalBreak();
                 }
                 pLinkedOp->value.recognizedRegister = reg_fpu_ST0 + fpuRegCode;
                 break;

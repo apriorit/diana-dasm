@@ -251,7 +251,7 @@ void test_x32_integrated_impl(const unsigned char * pData,
 
         if (iRes)
         {
-            Diana_FatalBreak();;
+            Diana_FatalBreak();
             break;
         }
         
@@ -259,13 +259,13 @@ void test_x32_integrated_impl(const unsigned char * pData,
         
         if (strcmp(pNames[i].pCmdName,  pGroupInfo->m_pName))
         {
-            Diana_FatalBreak();;
+            Diana_FatalBreak();
             break;
         }
 
         if (pNames[i].iCmdSize != result.iFullCmdSize)
         {
-            Diana_FatalBreak();;
+            Diana_FatalBreak();
         }
     }
 

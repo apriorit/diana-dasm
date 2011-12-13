@@ -41,7 +41,7 @@ void test_mov_spec()
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_CR0);
     }
 
-    //static unsigned char mov1[] = {0x0F, 0x20, 0xFF&~7|1};;  // mov     ecx, cr7
+    //static unsigned char mov1[] = {0x0F, 0x20, 0xFF&~7|1};  // mov     ecx, cr7
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,mov1, sizeof(mov1), Diana_GetRootLine(), &result, &read);
     TEST_ASSERT_IF(!iRes)
     {
@@ -55,7 +55,7 @@ void test_mov_spec()
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_CR7);
     }
 
-    //static unsigned char mov2[] = {0x0F, 0x22, 0xFF&~7|1};;  // mov     cr7, ecx
+    //static unsigned char mov2[] = {0x0F, 0x22, 0xFF&~7|1};  // mov     cr7, ecx
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,mov2, sizeof(mov2), Diana_GetRootLine(), &result, &read);
     TEST_ASSERT_IF(!iRes)
     {
@@ -68,7 +68,7 @@ void test_mov_spec()
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_ECX);
     }
-    //static unsigned char mov3[] = {0x0F, 0x21, 0xFF&~7|1};;  // mov     ecx, dr7
+    //static unsigned char mov3[] = {0x0F, 0x21, 0xFF&~7|1};  // mov     ecx, dr7
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,mov3, sizeof(mov3), Diana_GetRootLine(), &result, &read);
     TEST_ASSERT_IF(!iRes)
     {
@@ -82,7 +82,7 @@ void test_mov_spec()
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_DR7);
     }
-    //static unsigned char mov4[] = {0x0F, 0x24, 0xFF&~7|1};;  // mov     ecx, tr7
+    //static unsigned char mov4[] = {0x0F, 0x24, 0xFF&~7|1};  // mov     ecx, tr7
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,mov4, sizeof(mov4), Diana_GetRootLine(), &result, &read);
     TEST_ASSERT_IF(!iRes)
     {
