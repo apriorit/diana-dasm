@@ -6,7 +6,7 @@
 
 
 int Diana_Call_rcl(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //temp := COUNT;
     //WHILE (temp  0)
@@ -34,10 +34,10 @@ int Diana_Call_rcl(struct _dianaContext * pDianaContext,
     switch( dest_size )
 	{
     case 1:
-        src =  ( src & 0x1FULL) % 9;
+        src =  (src & 0x1FULL) % 9;
         break;
     case 2:
-        src =  ( src & 0x1FULL) % 17;
+        src =  (src & 0x1FULL) % 17;
         break;
     case 4:
         src &= 0x1FULL;
@@ -97,7 +97,7 @@ int Diana_Call_rcl(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_rcr(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //temp := COUNT;
     //WHILE (temp  0 )
@@ -124,10 +124,10 @@ int Diana_Call_rcr(struct _dianaContext * pDianaContext,
     switch( dest_size )
 	{
     case 1:
-        src =  ( src & 0x1FULL) % 9;
+        src =  (src & 0x1FULL) % 9;
         break;
     case 2:
-        src =  ( src & 0x1FULL) % 17;
+        src =  (src & 0x1FULL) % 17;
         break;
     case 4:
         src &= 0x1FULL;
@@ -186,7 +186,7 @@ int Diana_Call_rcr(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_rol(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //temp := COUNT;
     //WHILE (temp  0)
@@ -263,7 +263,7 @@ int Diana_Call_rol(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_ror(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //temp := COUNT;
     //WHILE (temp  0 )

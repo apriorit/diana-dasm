@@ -257,7 +257,7 @@ int Diana_Call_popf(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_pusha32(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                       DianaProcessor * pCallContext)
 {
     OPERAND_SIZE esp = GET_REG_ESP;
     OPERAND_SIZE dest = 0;
@@ -267,41 +267,41 @@ int Diana_Call_pusha32(struct _dianaContext * pDianaContext,
     // EAX
     dest = GET_REG_EAX;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // ECX
     dest = GET_REG_ECX;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // EDX
     dest = GET_REG_EDX;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // EBX
     dest = GET_REG_EBX;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // ESP
     DI_CHECK(diana_internal_push(pCallContext,
-                                &esp));
+                                 &esp));
 
     // EBP
     dest = GET_REG_EBP;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // ESI
     dest = GET_REG_ESI;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // EDI
     dest = GET_REG_EDI;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     return DI_SUCCESS;
 }
@@ -317,47 +317,47 @@ int Diana_Call_pusha16(struct _dianaContext * pDianaContext,
     // AX
     dest = GET_REG_AX;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // CX
     dest = GET_REG_CX;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // DX
     dest = GET_REG_DX;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // BX
     dest = GET_REG_BX;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // SP
     DI_CHECK(diana_internal_push(pCallContext,
-                                &sp));
+                                 &sp));
 
     // BP
     dest = GET_REG_BP;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // SI
     dest = GET_REG_SI;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     // DI
     dest = GET_REG_DI;
     DI_CHECK(diana_internal_push(pCallContext,
-                                &dest));
+                                 &dest));
 
     return DI_SUCCESS;
 }
 
 int Diana_Call_pusha(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     switch(pCallContext->m_context.iCurrentCmd_opsize)
     {
@@ -369,9 +369,9 @@ int Diana_Call_pusha(struct _dianaContext * pDianaContext,
 
     case DIANA_MODE32:
         return Diana_Call_pusha32(pDianaContext,
-                                 pCallContext);
+                                  pCallContext);
     case DIANA_MODE16:
         return Diana_Call_pusha16(pDianaContext,
-                                 pCallContext);
+                                  pCallContext);
     }
 }

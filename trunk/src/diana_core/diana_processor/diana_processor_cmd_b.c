@@ -6,7 +6,7 @@
 
 
 int Diana_Call_bsf(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //IF r/m = 0
     //THEN
@@ -47,7 +47,7 @@ int Diana_Call_bsf(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_bsr(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //IF r/m = 0
     //THEN

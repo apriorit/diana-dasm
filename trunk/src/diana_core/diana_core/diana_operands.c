@@ -116,12 +116,13 @@ int DianaReadValueAsLong(DianaReadStream * readStream,
     
     switch(iValueSize)
     {
-    default:
-        return DI_ERROR;
-    case 1: 
-    case 2: 
-    case 4:; 
-    case 8:; 
+    case 1:
+    case 2:
+    case 4:
+    case 8:
+		break;
+	default:
+		return DI_ERROR;
     };
 
     iRes = readStream->pReadFnc(readStream, buffer, iValueSize, &readed);
@@ -129,28 +130,29 @@ int DianaReadValueAsLong(DianaReadStream * readStream,
         return iRes;
     if (readed != iValueSize)
         return DI_ERROR;
-    switch(iValueSize)
+
+	switch(iValueSize)
     {
     case 1: *pRes = *(unsigned char*)buffer;
-             if (iSigned)
-                 if (*pRes & 0x80)
-                     *pRes=  (DI_UINT64)*pRes - 1 - 0xFFUL;
+            if (iSigned)
+                if (*pRes & 0x80)
+                    *pRes = (DI_UINT64)*pRes - 1 - 0xFFUL;
         break;
     case 2: *pRes = *(unsigned short*)buffer;
-             if (iSigned)
-                 if (*pRes & 0x8000)
-                     *pRes=  (DI_UINT64)*pRes - 1 - 0xFFFFUL;
+            if (iSigned)
+                if (*pRes & 0x8000)
+                    *pRes = (DI_UINT64)*pRes - 1 - 0xFFFFUL;
         break;
     case 4: *pRes = *(unsigned int*)buffer;
-             if (iSigned)
-                 if (*pRes & 0x80000000)
-                     *pRes=  (DI_UINT64)*pRes - 1 - 0xFFFFFFFFUL;
+            if (iSigned)
+                if (*pRes & 0x80000000)
+                    *pRes = (DI_UINT64)*pRes - 1 - 0xFFFFFFFFUL;
         break;
 
     case 8: *pRes = *(DI_UINT64*)buffer;
-             if (iSigned)
-                 if (*pRes & 0x8000000000000000ULL)
-                     *pRes=  (DI_UINT64)*pRes - 1 - 0xFFFFFFFFFFFFFFFFULL;
+            if (iSigned)
+                if (*pRes & 0x8000000000000000ULL)
+                    *pRes = (DI_UINT64)*pRes - 1 - 0xFFFFFFFFFFFFFFFFULL;
         break;
     };
     
@@ -207,7 +209,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
     DianaLinkedOperand * pLinkedImmOp[MAX_IMM] = {0,0};
     int iCurImm = 0;
 
-    DianaRmIndex  * pLinkedDispOp = 0;
+    DianaRmIndex * pLinkedDispOp = 0;
     DianaLinkedOperand * pLinkedDispOpFull = 0;
         
     char buffer[1];
@@ -236,11 +238,11 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             RegCode = Diana_GetReg2(pContext, PostByte);
 
         iCurOffset+=2;
-    }else
+    } else
     {
         // no postbyte
         int read = 0;
-        int err  = 0;
+        int err = 0;
         err = readStream->pReadFnc(readStream, buffer, 1, &read);
         if (err)
             return err;
@@ -268,10 +270,10 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
     }
 
     // read structure
-    for (i = 0;i < pResult->pInfo->m_operandCount; ++i, ++pResult->iLinkedOpCount)
+    for (i = 0; i < pResult->pInfo->m_operandCount; ++i, ++pResult->iLinkedOpCount)
     {
         DianaLinkedOperand * pLinkedOp = pResult->linkedOperands + pResult->iLinkedOpCount;
-        DianaOperandInfo * pOperInfo = pResult->pInfo->m_operands+i;
+        DianaOperandInfo * pOperInfo = pResult->pInfo->m_operands + i;
         DI_CHAR opSizeUsed = 0;
         DI_CHAR addrSizeUsed = 0;
 
@@ -305,328 +307,333 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         switch(pOperInfo->m_type)
         {
         case diana_orRegistry:
-                pLinkedOp->type = diana_register;
-                if (DianaRecognizeCommonReg(opSizeUsed, 
-                                            RegCode, 
-                                            &pLinkedOp->value.recognizedRegister,
-                                            pContext->iRexPrefix))
-                    return DI_ERROR;
-                break;
-
+			pLinkedOp->type = diana_register;
+            if (DianaRecognizeCommonReg(opSizeUsed, 
+                                        RegCode, 
+                                        &pLinkedOp->value.recognizedRegister,
+                                        pContext->iRexPrefix))
+                return DI_ERROR;
+            break;
              
         case diana_orRegMem_exact:
             pLinkedOp->usedSize = pOperInfo->m_size;
             opSizeUsed = pOperInfo->m_size;
+			// no break!
 
         case diana_orReg16_32_64_mem16:
         case diana_orMemoryMMX:
         case diana_orMemoryXMM:
         case diana_orRegMem:
-                if (DianaGetHandler(addrSizeUsed!=2)(pContext,
-                                                     pLinkedOp,
-                                                     opSizeUsed,
-                                                     PostByte,
-                                                     readStream,
-                                                     &pLinkedOp->value,
-                                                     &pLinkedOp->type
-                                        ))
-                    return DI_ERROR;
-                
-                if (pLinkedOp->type == diana_index)
+            if (DianaGetHandler(addrSizeUsed!=2)(pContext,
+                                                 pLinkedOp,
+                                                 opSizeUsed,
+                                                 PostByte,
+                                                 readStream,
+                                                 &pLinkedOp->value,
+                                                 &pLinkedOp->type))
+                return DI_ERROR;
+            
+            if (pLinkedOp->type == diana_index)
+            {
+                if (diana_orReg16_32_64_mem16 == pOperInfo->m_type)
                 {
-                    if (diana_orReg16_32_64_mem16 == pOperInfo->m_type)
-                    {
-                        // special for glorious reg16/32/64/mem16 8C opcode 
-                        pLinkedOp->usedSize = 2;
-                    }
-                    pLinkedOp->value.rmIndex.seg_reg = pContext->currentCmd_sreg;
-                    if  (pLinkedOp->value.rmIndex.dispSize)
-                    {
-                        pLinkedDispOp = &pLinkedOp->value.rmIndex;
-                        pLinkedDispOpFull = pLinkedOp;
-                    }
+                    // special for glorious reg16/32/64/mem16 8C opcode 
+                    pLinkedOp->usedSize = 2;
                 }
-                break;
+                pLinkedOp->value.rmIndex.seg_reg = pContext->currentCmd_sreg;
+                if (pLinkedOp->value.rmIndex.dispSize)
+                {
+                    pLinkedDispOp = &pLinkedOp->value.rmIndex;
+                    pLinkedDispOpFull = pLinkedOp;
+                }
+            }
+            break;
 
         case diana_orImmediate:
-                if (pOperInfo->m_value == DI_CHAR_NULL)
-                {
-                    if (iCurImm>=MAX_IMM)
-                    {
-                        Diana_FatalBreak();
-                        return DI_ERROR;
-                    }
-                    pLinkedOp->type = diana_imm;
-                    pLinkedImmOp[iCurImm] = pLinkedOp; 
-                    ++iCurImm;
-                }
-                else
-                {
-                    pLinkedOp->type = diana_imm;
-                    pLinkedOp->value.imm = pOperInfo->m_value;
-                }
-                break;
-
-        case diana_orEAX:
-                pLinkedOp->type = diana_register;
-                switch(pLinkedOp->usedSize)
-                {
-                    case 8:
-                        pLinkedOp->value.recognizedRegister = reg_RAX;
-                        break;
-                    case 4:
-                        pLinkedOp->value.recognizedRegister = reg_EAX;
-                        break;
-                    case 2:
-                        pLinkedOp->value.recognizedRegister = reg_AX;
-                        break;
-                    case 1:
-                        pLinkedOp->value.recognizedRegister = reg_AL;
-                        break;
-                    default:
-                        return DI_ERROR;
-                };
-                break;
-        case diana_orDX:
-                pLinkedOp->type = diana_register;
-                pLinkedOp->value.recognizedRegister = reg_DX;
-                break;
-
-        case diana_orECX:
-                pLinkedOp->type = diana_register;
-                switch(pLinkedOp->usedSize)
-                {
-                    case 4:
-                        pLinkedOp->value.recognizedRegister = reg_ECX;
-                        break;
-                    case 2:
-                        pLinkedOp->value.recognizedRegister = reg_CX;
-                        break;
-                    case 1:
-                        pLinkedOp->value.recognizedRegister = reg_CL;
-                        break;
-                    default:
-                        return DI_ERROR;
-                };
-                break;
-        case diana_orSreg:
-                pLinkedOp->type = diana_register;
-                if (RegCode == DI_CHAR_NULL)
-                {
-                    if (pOperInfo->m_sreg_type != diana_reg_none)
-                    {
-                        RegCode = pOperInfo->m_sreg_type-1;
-                    }
-                    else
-                        return DI_ERROR;
-                }
-                pLinkedOp->usedSize = 2;
-                iRes = Diana_RecognizeSreg(RegCode, &pLinkedOp->value.recognizedRegister);
-                if (iRes)
-                    return iRes;
-                break;
-        case diana_orOffset:
-                pLinkedOp->type = diana_index;
-                pLinkedOp->value.rmIndex.dispSize = pContext->iMainMode_addressSize;
-                pLinkedOp->value.rmIndex.index = 0;
-                pLinkedOp->value.rmIndex.indexed_reg  = reg_none;
-                pLinkedOp->value.rmIndex.reg = reg_none;
-                pLinkedOp->value.rmIndex.seg_reg = pContext->currentCmd_sreg;
-                pLinkedDispOp = &pLinkedOp->value.rmIndex;
-                pLinkedDispOpFull = pLinkedOp;
-                iDispIsSigned = 0;
-                pLinkedOp->usedAddressSize = pContext->iMainMode_addressSize;
-                break;
-        case diana_orAnyCR:
-                pLinkedOp->type = diana_register;
-                iRes = Diana_RecognizeCreg(RegCode, &pLinkedOp->value.recognizedRegister);
-                if (iRes)
-                    return iRes;
-                break;
-        case diana_orDR6or7:
-                pLinkedOp->type = diana_register;
-                iRes = Diana_RecognizeDreg(RegCode, &pLinkedOp->value.recognizedRegister);
-                if (iRes)
-                    return iRes;
-                break;
-        case diana_orTR6or7:
-                pLinkedOp->type = diana_register;
-                iRes = Diana_RecognizeTreg(RegCode, &pLinkedOp->value.recognizedRegister);
-                if (iRes)
-                    return iRes;
-                break;
-        case diana_orPtr:
-                if (pResult->pInfo->m_operandCount!=1)
+            if (pOperInfo->m_value == DI_CHAR_NULL)
+            {
+                if (iCurImm>=MAX_IMM)
                 {
                     Diana_FatalBreak();
                     return DI_ERROR;
                 }
-                pLinkedOp->type = diana_call_ptr;
+                pLinkedOp->type = diana_imm;
+                pLinkedImmOp[iCurImm] = pLinkedOp; 
+                ++iCurImm;
+            }
+            else
+            {
+                pLinkedOp->type = diana_imm;
+                pLinkedOp->value.imm = pOperInfo->m_value;
+            }
+            break;
 
-                pLinkedOp->value.ptr.m_segment_size = 2;
-                pLinkedOp->value.ptr.m_address_size = pLinkedOp->usedSize;
-                pLinkedOp->iOffset = iCurOffset;
-
-                iRes = DianaReadValueAsLong(readStream, 
-                                            pLinkedOp->value.ptr.m_address_size, 
-                                            &pLinkedOp->value.ptr.m_address,
-                                            0);
-                if (iRes)
-                    return iRes;
-
-                iRes = DianaReadValueAsLong(readStream, 
-                                            pLinkedOp->value.ptr.m_segment_size, 
-                                            &pLinkedOp->value.ptr.m_segment,
-                                           0);
-
-                if (iRes)
-                    return iRes;
+        case diana_orEAX:
+            pLinkedOp->type = diana_register;
+            switch(pLinkedOp->usedSize)
+            {
+            case 8:
+                pLinkedOp->value.recognizedRegister = reg_RAX;
                 break;
+            case 4:
+                pLinkedOp->value.recognizedRegister = reg_EAX;
+                break;
+            case 2:
+                pLinkedOp->value.recognizedRegister = reg_AX;
+                break;
+            case 1:
+                pLinkedOp->value.recognizedRegister = reg_AL;
+                break;
+            default:
+                return DI_ERROR;
+            };
+            break;
+
+		case diana_orDX:
+            pLinkedOp->type = diana_register;
+            pLinkedOp->value.recognizedRegister = reg_DX;
+            break;
+
+        case diana_orECX:
+            pLinkedOp->type = diana_register;
+            switch(pLinkedOp->usedSize)
+            {
+            case 4:
+                pLinkedOp->value.recognizedRegister = reg_ECX;
+                break;
+            case 2:
+                pLinkedOp->value.recognizedRegister = reg_CX;
+                break;
+            case 1:
+                pLinkedOp->value.recognizedRegister = reg_CL;
+                break;
+            default:
+                return DI_ERROR;
+            };
+            break;
+
+		case diana_orSreg:
+            pLinkedOp->type = diana_register;
+            if (RegCode == DI_CHAR_NULL)
+            {
+                if (pOperInfo->m_sreg_type != diana_reg_none)
+                {
+                    RegCode = pOperInfo->m_sreg_type-1;
+                }
+                else
+                    return DI_ERROR;
+            }
+            pLinkedOp->usedSize = 2;
+            iRes = Diana_RecognizeSreg(RegCode, &pLinkedOp->value.recognizedRegister);
+            if (iRes)
+                return iRes;
+            break;
+
+		case diana_orOffset:
+            pLinkedOp->type = diana_index;
+            pLinkedOp->value.rmIndex.dispSize = pContext->iMainMode_addressSize;
+            pLinkedOp->value.rmIndex.index = 0;
+            pLinkedOp->value.rmIndex.indexed_reg = reg_none;
+            pLinkedOp->value.rmIndex.reg = reg_none;
+            pLinkedOp->value.rmIndex.seg_reg = pContext->currentCmd_sreg;
+            pLinkedDispOp = &pLinkedOp->value.rmIndex;
+            pLinkedDispOpFull = pLinkedOp;
+            iDispIsSigned = 0;
+            pLinkedOp->usedAddressSize = pContext->iMainMode_addressSize;
+            break;
+
+		case diana_orAnyCR:
+            pLinkedOp->type = diana_register;
+            iRes = Diana_RecognizeCreg(RegCode, &pLinkedOp->value.recognizedRegister);
+            if (iRes)
+                return iRes;
+            break;
+
+		case diana_orDR6or7:
+            pLinkedOp->type = diana_register;
+            iRes = Diana_RecognizeDreg(RegCode, &pLinkedOp->value.recognizedRegister);
+            if (iRes)
+                return iRes;
+            break;
+
+		case diana_orTR6or7:
+            pLinkedOp->type = diana_register;
+            iRes = Diana_RecognizeTreg(RegCode, &pLinkedOp->value.recognizedRegister);
+            if (iRes)
+                return iRes;
+            break;
+
+		case diana_orPtr:
+            if (pResult->pInfo->m_operandCount!=1)
+            {
+                Diana_FatalBreak();
+                return DI_ERROR;
+            }
+            pLinkedOp->type = diana_call_ptr;
+
+            pLinkedOp->value.ptr.m_segment_size = 2;
+            pLinkedOp->value.ptr.m_address_size = pLinkedOp->usedSize;
+            pLinkedOp->iOffset = iCurOffset;
+
+            iRes = DianaReadValueAsLong(readStream, 
+                                        pLinkedOp->value.ptr.m_address_size, 
+                                        &pLinkedOp->value.ptr.m_address,
+                                        0);
+            if (iRes)
+                return iRes;
+
+            iRes = DianaReadValueAsLong(readStream, 
+                                        pLinkedOp->value.ptr.m_segment_size, 
+                                        &pLinkedOp->value.ptr.m_segment,
+                                        0);
+
+            if (iRes)
+                return iRes;
+            break;
                 
         case diana_orRel:
         case diana_orRel16x32:
-                // commented out because of
-                // E3  cb         JCXZ CX,rel8      9+m,5    Jump short if ECX(CX) register is 0
-                //if (pResult->pInfo->m_operandCount!=1)
-                //{
-                //    Diana_FatalBreak();
-                //    return DI_ERROR;
-                //}
-                if (iCSIPSize!= DI_CHAR_NULL)
-                {
-                        if (pResult->pInfo->m_bHas32BitAnalog && iCSIPSize!=1)
-                            iCSIPSize = pContext->iCurrentCmd_opsize;
+            // commented out because of
+            // E3  cb         JCXZ CX,rel8      9+m,5    Jump short if ECX(CX) register is 0
+            //if (pResult->pInfo->m_operandCount!=1)
+            //{
+            //    Diana_FatalBreak();
+            //    return DI_ERROR;
+            //}
+            if (iCSIPSize!= DI_CHAR_NULL)
+            {
+                if (pResult->pInfo->m_bHas32BitAnalog && iCSIPSize!=1)
+                    iCSIPSize = pContext->iCurrentCmd_opsize;
 
-                        if (iCSIPSize == 8)
-                            iCSIPSize = 4;
-                } else
-                {
-                    Diana_FatalBreak();
-                    return DI_ERROR;
-                }
+                if (iCSIPSize == 8)
+                    iCSIPSize = 4;
+            } else
+            {
+                Diana_FatalBreak();
+                return DI_ERROR;
+            }
 
-                pLinkedOp->iOffset = iCurOffset;
-                pLinkedOp->value.rel.m_size = iCSIPSize;
-                pLinkedOp->type = diana_rel;
-                iRes = DianaReadValueAsLong(readStream,
-                                            pLinkedOp->value.rel.m_size,
-                                            &pLinkedOp->value.rel.m_value,
-                                            1);
+            pLinkedOp->iOffset = iCurOffset;
+            pLinkedOp->value.rel.m_size = iCSIPSize;
+            pLinkedOp->type = diana_rel;
+            iRes = DianaReadValueAsLong(readStream,
+                                        pLinkedOp->value.rel.m_size,
+                                        &pLinkedOp->value.rel.m_value,
+                                        1);
 
-                if (iRes)
-                    return iRes;
-                break;
+            if (iRes)
+                return iRes;
+            break;
         
          case diana_orMemory_exact:
             pLinkedOp->usedSize = pOperInfo->m_size;
             opSizeUsed = pOperInfo->m_size;
+			// no break!
                
         case diana_orMemory16x32:
         case diana_orMemory:
-                if (PostByte == DI_FULL_CHAR_NULL)
-                {
-                    pLinkedOp->type = diana_reserved_reg;
-                    break;
-                }
-                if (DianaGetHandler(addrSizeUsed!=2)(pContext,
-                                        pLinkedOp,
-                                        opSizeUsed,  
-                                        PostByte, 
-                                        readStream,
-                                        &pLinkedOp->value,
-                                        &pLinkedOp->type
-                                        ))
-                    return DI_ERROR;
-                
-                if (pLinkedOp->type == diana_index)
-                {
-                    DianaRmIndex index = pLinkedOp->value.rmIndex;
-                    pLinkedOp->value.memory.m_index = index;
-
-                    pLinkedOp->value.rmIndex.seg_reg = pContext->currentCmd_sreg;
-                    if  (index.dispSize)
-                    {
-                        pLinkedDispOp = &pLinkedOp->value.memory.m_index;
-                        pLinkedDispOpFull = pLinkedOp;
-                    }
-
-                } else
-                {
-                    return DI_ERROR;
-                }
-                pLinkedOp->type = diana_memory;
-               
+            if (PostByte == DI_FULL_CHAR_NULL)
+            {
+                pLinkedOp->type = diana_reserved_reg;
                 break;
+            }
+            if (DianaGetHandler(addrSizeUsed!=2)(pContext,
+                                pLinkedOp,
+                                opSizeUsed,
+                                PostByte, 
+                                readStream,
+                                &pLinkedOp->value,
+                                &pLinkedOp->type))
+                return DI_ERROR;
+            
+            if (pLinkedOp->type == diana_index)
+            {
+                DianaRmIndex index = pLinkedOp->value.rmIndex;
+                pLinkedOp->value.memory.m_index = index;
+
+                pLinkedOp->value.rmIndex.seg_reg = pContext->currentCmd_sreg;
+                if (index.dispSize)
+                {
+                    pLinkedDispOp = &pLinkedOp->value.memory.m_index;
+                    pLinkedDispOpFull = pLinkedOp;
+                }
+
+            }
+            else
+            {
+                return DI_ERROR;
+            }
+            pLinkedOp->type = diana_memory;
+            break;
 
         case diana_orCL:
-                pLinkedOp->type = diana_register;
-                pLinkedOp->value.recognizedRegister = reg_CL;
-                break;
+            pLinkedOp->type = diana_register;
+            pLinkedOp->value.recognizedRegister = reg_CL;
+            break;
 
         case diana_orESI_ptr:
-                iRes = Diana_GetSI(addrSizeUsed, &pLinkedOp->value.rmIndex.reg);
-                if (iRes)
-                    return iRes;
+            iRes = Diana_GetSI(addrSizeUsed, &pLinkedOp->value.rmIndex.reg);
+            if (iRes)
+                return iRes;
 
-                pLinkedOp->type = diana_index;
-                pLinkedOp->value.rmIndex.dispSize = 0;
-                pLinkedOp->value.rmIndex.dispValue = 0;
-                pLinkedOp->value.rmIndex.index = 0;
-                pLinkedOp->value.rmIndex.indexed_reg = reg_none;
-                pLinkedOp->value.rmIndex.seg_reg = pContext->currentCmd_sreg;
-                break;
+            pLinkedOp->type = diana_index;
+            pLinkedOp->value.rmIndex.dispSize = 0;
+            pLinkedOp->value.rmIndex.dispValue = 0;
+            pLinkedOp->value.rmIndex.index = 0;
+            pLinkedOp->value.rmIndex.indexed_reg = reg_none;
+            pLinkedOp->value.rmIndex.seg_reg = pContext->currentCmd_sreg;
+            break;
 
         case diana_orEsDi:
-                iRes = Diana_GetDI(addrSizeUsed, &pLinkedOp->value.rmIndex.reg);
-                if (iRes)
-                    return iRes;
-                
-                pLinkedOp->type = diana_index;
-                pLinkedOp->value.rmIndex.dispSize = 0;
-                pLinkedOp->value.rmIndex.dispValue = 0;
-                pLinkedOp->value.rmIndex.index = 0;
-                pLinkedOp->value.rmIndex.indexed_reg = reg_none;
-                pLinkedOp->value.rmIndex.seg_reg = reg_ES;
-                break;
+            iRes = Diana_GetDI(addrSizeUsed, &pLinkedOp->value.rmIndex.reg);
+            if (iRes)
+                return iRes;
+            
+            pLinkedOp->type = diana_index;
+            pLinkedOp->value.rmIndex.dispSize = 0;
+            pLinkedOp->value.rmIndex.dispValue = 0;
+            pLinkedOp->value.rmIndex.index = 0;
+            pLinkedOp->value.rmIndex.indexed_reg = reg_none;
+            pLinkedOp->value.rmIndex.seg_reg = reg_ES;
+            break;
 
         case diana_orFPU_ST0:
         case diana_orFPU_ST:
-                pLinkedOp->type = diana_register;
-                pLinkedOp->value.recognizedRegister = reg_fpu_ST0;
-                break;
+            pLinkedOp->type = diana_register;
+            pLinkedOp->value.recognizedRegister = reg_fpu_ST0;
+            break;
             
         case diana_orFPU_STi:
-                pLinkedOp->type = diana_register;
-                if (fpuRegCode == DI_CHAR_NULL)
-                {
-                    Diana_FatalBreak();
-                }
-                pLinkedOp->value.recognizedRegister = reg_fpu_ST0 + fpuRegCode;
-                break;
+            pLinkedOp->type = diana_register;
+            if (fpuRegCode == DI_CHAR_NULL)
+            {
+                Diana_FatalBreak();
+            }
+            pLinkedOp->value.recognizedRegister = reg_fpu_ST0 + fpuRegCode;
+            break;
 
         case diana_orRegXMM:
-                pLinkedOp->type = diana_register;
-                pLinkedOp->value.recognizedRegister = reg_XMM0 + Diana_GetReg2(pContext, PostByte);
-                pLinkedOp->usedSize = 16;
-                break;
+            pLinkedOp->type = diana_register;
+            pLinkedOp->value.recognizedRegister = reg_XMM0 + Diana_GetReg2(pContext, PostByte);
+            pLinkedOp->usedSize = 16;
+            break;
 
         case diana_orRegMMX:
-                pLinkedOp->type = diana_register;
-                pLinkedOp->value.recognizedRegister = reg_MM0 + Diana_GetReg(PostByte);
-                pLinkedOp->usedSize = 8;
-                break;
+            pLinkedOp->type = diana_register;
+            pLinkedOp->value.recognizedRegister = reg_MM0 + Diana_GetReg(PostByte);
+            pLinkedOp->usedSize = 8;
+            break;
 
         case diana_orRegistry32:
-                pLinkedOp->type = diana_register;
-                if (DianaRecognizeCommonReg(opSizeUsed, 
-                                            Diana_GetReg(PostByte), 
-                                            &pLinkedOp->value.recognizedRegister,
-                                            pContext->iRexPrefix))
-                    return DI_ERROR;
-                break;
+            pLinkedOp->type = diana_register;
+            if (DianaRecognizeCommonReg(opSizeUsed, 
+                                        Diana_GetReg(PostByte), 
+                                        &pLinkedOp->value.recognizedRegister,
+                                        pContext->iRexPrefix))
+                return DI_ERROR;
+            break;
 
         default:
-            
             Diana_FatalBreak();
             return DI_ERROR;
         }
@@ -644,10 +651,8 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
     if (iRes)
         return iRes;
 
-
     if (iCurImm)
     {
-
         int i =0;
         DI_CHAR imms[MAX_IMM] = {pResult->pInfo->m_iImmediateOperandSizeInBytes, 
                                  pResult->pInfo->m_iImmediateOperandSizeInBytes2};
@@ -674,13 +679,10 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             }
         
             pLinkedImmOp[i]->iOffset = iCurOffset;
-            iRes = DianaReadValueAsLong
-            (
-                readStream, 
-                iImmUsedSize,  
-                &pLinkedImmOp[i]->value.imm,
-                0
-            );
+            iRes = DianaReadValueAsLong(readStream, 
+                                        iImmUsedSize,
+                                        &pLinkedImmOp[i]->value.imm,
+                                        0);
             iCurOffset += iImmUsedSize;
         }
     }

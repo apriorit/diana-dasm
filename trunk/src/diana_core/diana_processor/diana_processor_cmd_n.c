@@ -5,7 +5,7 @@
 #include "diana_processor_cmd_internal.h"
 
 int Diana_Call_neg(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST := 0 - SRC;
     DI_DEF_LOCALS(src, dest);
@@ -32,7 +32,7 @@ int Diana_Call_neg(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_not(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCAL(dest);
@@ -46,7 +46,7 @@ int Diana_Call_not(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_nop(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
 	pCallContext;
 	pCallContext;

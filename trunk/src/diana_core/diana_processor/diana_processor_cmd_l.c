@@ -19,7 +19,7 @@ int Diana_Call_lahf(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_lea(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST := offst of SRC
     OPERAND_SIZE memSelector = GET_REG_DS, memAddress=0;
@@ -36,10 +36,10 @@ int Diana_Call_lea(struct _dianaContext * pDianaContext,
     pIndex = &pCallContext->m_result.linkedOperands[1].value.rmIndex;
 
     DI_CHECK(DianaProcessor_CalcIndex(pDianaContext,
-                                  pCallContext,
-                                  pIndex,
-                                  &memSelector,
-                                  &memAddress));
+                                      pCallContext,
+                                      pIndex,
+                                      &memSelector,
+                                      &memAddress));
     dest = memAddress;
 
     DI_MEM_SET_DEST(dest);
@@ -48,7 +48,7 @@ int Diana_Call_lea(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_leave(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     OPERAND_SIZE rbp = 0;
     OPERAND_SIZE value = 0;
@@ -74,7 +74,8 @@ int Diana_Call_lods(struct _dianaContext * pDianaContext,
 
     rsi = GET_REG_RSI2( pCallContext->m_context.iCurrentCmd_addressSize );
     selector = (OPERAND_SIZE)DianaProcessor_GetValue(pCallContext, 
-                                                     DianaProcessor_QueryReg(pCallContext, pDianaContext->currentCmd_sreg));
+                                                     DianaProcessor_QueryReg(pCallContext,
+                                                                             pDianaContext->currentCmd_sreg));
 
     DI_CHECK(DianaProcessor_GetMemValue(pCallContext,
                                         selector,

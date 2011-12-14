@@ -1,4 +1,3 @@
-
  
 int DianaProcessor_GetMemValue(DianaProcessor * pThis,
                                OPERAND_SIZE selector,

@@ -4,15 +4,15 @@
 #include "diana_processor_core_impl.h"
 
 int Diana_Call_daa(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext);
+                   DianaProcessor * pCallContext);
 
 int Diana_Call_das(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext);
+                   DianaProcessor * pCallContext);
 
 int Diana_Call_dec(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext);
+                   DianaProcessor * pCallContext);
 
 int Diana_Call_div(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext);
+                   DianaProcessor * pCallContext);
 
 #endif

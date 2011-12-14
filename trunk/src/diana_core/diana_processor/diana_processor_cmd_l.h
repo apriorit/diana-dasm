@@ -7,22 +7,21 @@ int Diana_Call_lahf(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext);
 
 int Diana_Call_lea(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext);
+                   DianaProcessor * pCallContext);
 
 int Diana_Call_leave(struct _dianaContext * pDianaContext,
                      DianaProcessor * pCallContext);
 
 int Diana_Call_lods(struct _dianaContext * pDianaContext,
-                     DianaProcessor * pCallContext);
+                    DianaProcessor * pCallContext);
 
 int Diana_Call_loop(struct _dianaContext * pDianaContext,
-                     DianaProcessor * pCallContext);
+                    DianaProcessor * pCallContext);
 
 int Diana_Call_loope(struct _dianaContext * pDianaContext,
                      DianaProcessor * pCallContext);
 
 int Diana_Call_loopne(struct _dianaContext * pDianaContext,
-                     DianaProcessor * pCallContext);
-
+                      DianaProcessor * pCallContext);
 
 #endif

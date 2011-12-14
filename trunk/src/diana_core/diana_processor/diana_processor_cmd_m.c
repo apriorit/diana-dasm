@@ -48,12 +48,12 @@ int Diana_Call_movs(struct _dianaContext * pDianaContext,
 
     // move src to dest
     DI_CHECK(DianaProcessor_SetMemValue(pCallContext, 
-                                      selector,
-                                      destRegAddress, 
-                                      pCallContext->m_result.linkedOperands->usedSize,
-                                      &src,
-                                      0,
-                                      destIndex.seg_reg));
+                                        selector,
+                                        destRegAddress, 
+                                        pCallContext->m_result.linkedOperands->usedSize,
+                                        &src,
+                                        0,
+                                        destIndex.seg_reg));
 
     // shift registers
     Di_UpdateSIDI(pCallContext,
@@ -241,7 +241,7 @@ int Diana_Call_mul(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_movsxd(struct _dianaContext * pDianaContext,
-                     DianaProcessor * pCallContext)
+                      DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCALS(src, dest);

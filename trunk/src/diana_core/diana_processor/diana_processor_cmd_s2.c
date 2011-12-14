@@ -278,7 +278,7 @@ int Diana_Call_shld(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_shr(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //temp := COUNT;
     //WHILE (temp  0 )
@@ -419,7 +419,7 @@ int Diana_Call_shrd(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_scas(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                    DianaProcessor * pCallContext)
 {
     //SRC - DEST;
     DianaRmIndex destIndex;
@@ -468,7 +468,7 @@ int Diana_Call_scas(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_stos(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                    DianaProcessor * pCallContext)
 {
     //SRC - DEST;
     DianaRmIndex destIndex;

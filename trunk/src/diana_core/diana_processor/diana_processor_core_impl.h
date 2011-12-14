@@ -15,11 +15,11 @@ typedef struct _DianaRegInfo
 
 // FLAGS
 #define flag_CF         0x000001
-#define flag_1             0x000002 // 1
+#define flag_1          0x000002 // 1
 #define flag_PF         0x000004
-#define flag_3             0x000008 // 0
+#define flag_3          0x000008 // 0
 #define flag_AF         0x000010
-#define flag_5             0x000020 // 0
+#define flag_5          0x000020 // 0
 #define flag_ZF         0x000040
 #define flag_SF         0x000080
 #define flag_TF         0x000100
@@ -175,7 +175,7 @@ void DianaProcessor_CmdUsesNormalRep(DianaProcessor * pCallContext);
 int DianaProcessor_InitProcessorImpl(DianaProcessor * pThis);
 
 OPERAND_SIZE DianaProcessor_GetValue(DianaProcessor * pCallContext,
-                            DianaRegInfo * pReg);
+                                     DianaRegInfo * pReg);
 
 OPERAND_SIZE DianaProcessor_GetValueEx(DianaProcessor * pCallContext,
                                        DianaRegInfo * pReg,
@@ -204,21 +204,21 @@ int DianaProcessor_SetMemValue(DianaProcessor * pThis,
                                DianaUnifiedRegister segReg);
 //-------------
 DianaRegInfo * DianaProcessor_QueryReg(DianaProcessor * pThis, 
-                              DianaUnifiedRegister reg);
+                                       DianaUnifiedRegister reg);
 
 OPERAND_SIZE DianaProcessor_GetSignMask(int sizeInBytes);
 OPERAND_SIZE DianaProcessor_GetSignMaskSpecifyBit(OPERAND_SIZE sizeInBits);
 
 void DianaProcessor_SetValue(DianaProcessor * pCallContext,
-                    DianaUnifiedRegister regId,
-                    DianaRegInfo * pReg,
-                    OPERAND_SIZE value);
+                             DianaUnifiedRegister regId,
+                             DianaRegInfo * pReg,
+                             OPERAND_SIZE value);
 int  DianaProcessor_QueryFlag(DianaProcessor * pThis, 
-                     OPERAND_SIZE flag);
+                              OPERAND_SIZE flag);
 void DianaProcessor_SetFlag(DianaProcessor * pThis, 
-                   OPERAND_SIZE flag);
+                            OPERAND_SIZE flag);
 void DianaProcessor_ClearFlag(DianaProcessor * pThis, 
-                     OPERAND_SIZE flag);
+                              OPERAND_SIZE flag);
 
 int DianaProcessor_SetGetOperand(struct _dianaContext * pDianaContext,
                                  DianaProcessor * pCallContext,
@@ -289,12 +289,12 @@ int DianaProcessor_GetAddress(struct _dianaContext * pDianaContext,
                               OPERAND_SIZE * pAddress);
 
 int Diana_ProcessorGetOperand_index_ex2(struct _dianaContext * pDianaContext,
-                                          DianaProcessor * pCallContext,
-                                          int usedSize,
-                                          OPERAND_SIZE * pAddress,
-                                          OPERAND_SIZE * pResult,
-                                          DianaRmIndex * pRmIndex,
-                                          OPERAND_SIZE * pSelector);
+                                        DianaProcessor * pCallContext,
+                                        int usedSize,
+                                        OPERAND_SIZE * pAddress,
+                                        OPERAND_SIZE * pResult,
+                                        DianaRmIndex * pRmIndex,
+                                        OPERAND_SIZE * pSelector);
 
 int DianaProcessor_ReadMemory(DianaProcessor * pThis,
                               OPERAND_SIZE selector,
@@ -323,11 +323,11 @@ int Diana_ProcessorSetGetOperand_index(struct _dianaContext * pDianaContext,
                                        int flags);
 
 int Diana_ProcessorGetOperand_index_ex(struct _dianaContext * pDianaContext,
-                                          DianaProcessor * pCallContext,
-                                          int usedSize,
-                                          OPERAND_SIZE * pAddress,
-                                          OPERAND_SIZE * pResult,
-                                          DianaRmIndex * pRmIndex);
+                                       DianaProcessor * pCallContext,
+                                       int usedSize,
+                                       OPERAND_SIZE * pAddress,
+                                       OPERAND_SIZE * pResult,
+                                       DianaRmIndex * pRmIndex);
 
 void DianaProcessor_SetResetDefaultFlags(DianaProcessor * pThis);
 

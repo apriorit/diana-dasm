@@ -9,4 +9,7 @@ int Diana_Call_idiv(struct _dianaContext * pDianaContext,
 int Diana_Call_imul(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext);
 
+int Diana_Call_int(struct _dianaContext * pDianaContext,
+                   DianaProcessor * pCallContext);
+
 #endif

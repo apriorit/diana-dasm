@@ -70,7 +70,7 @@ int Diana_Call_aam(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_aas(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
    if ((GET_REG_AL & 0xF) > 9 || GET_FLAG_AF) 
    {
@@ -96,7 +96,7 @@ int Diana_Call_aas(struct _dianaContext * pDianaContext,
 
     
 int Diana_Call_adc(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {    
     //DEST := DEST + SRC + CF;
     int cfValue = 0;
@@ -129,7 +129,7 @@ int Diana_Call_adc(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_add(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST := DEST + SRC;
     DI_DEF_LOCALS(src, dest);

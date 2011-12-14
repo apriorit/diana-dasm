@@ -44,8 +44,8 @@ int Diana_Call_setae(struct _dianaContext * pDianaContext,
     if (GET_FLAG_CF == 0)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -58,8 +58,8 @@ int Diana_Call_setb(struct _dianaContext * pDianaContext,
     if (GET_FLAG_CF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -72,8 +72,8 @@ int Diana_Call_setbe(struct _dianaContext * pDianaContext,
     if (GET_FLAG_CF || GET_FLAG_ZF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -87,8 +87,8 @@ int Diana_Call_sete(struct _dianaContext * pDianaContext,
     if (GET_FLAG_ZF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -101,8 +101,8 @@ int Diana_Call_setg(struct _dianaContext * pDianaContext,
     if ((GET_FLAG_SF == GET_FLAG_OF) && (GET_FLAG_ZF == 0))
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -115,8 +115,8 @@ int Diana_Call_setge(struct _dianaContext * pDianaContext,
     if (GET_FLAG_SF == GET_FLAG_OF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -129,8 +129,8 @@ int Diana_Call_setl(struct _dianaContext * pDianaContext,
     if (GET_FLAG_SF != GET_FLAG_OF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -143,8 +143,8 @@ int Diana_Call_setle(struct _dianaContext * pDianaContext,
     if (GET_FLAG_ZF || (GET_FLAG_SF != GET_FLAG_OF))
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -157,8 +157,8 @@ int Diana_Call_setne(struct _dianaContext * pDianaContext,
     if (!GET_FLAG_ZF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -171,8 +171,8 @@ int Diana_Call_setno(struct _dianaContext * pDianaContext,
     if (!GET_FLAG_OF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -185,8 +185,8 @@ int Diana_Call_setnp(struct _dianaContext * pDianaContext,
     if (!GET_FLAG_PF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -199,8 +199,8 @@ int Diana_Call_setns(struct _dianaContext * pDianaContext,
     if (!GET_FLAG_SF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -213,8 +213,8 @@ int Diana_Call_seto(struct _dianaContext * pDianaContext,
     if (GET_FLAG_OF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -227,8 +227,8 @@ int Diana_Call_setp(struct _dianaContext * pDianaContext,
     if (GET_FLAG_PF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,
@@ -241,8 +241,8 @@ int Diana_Call_sets(struct _dianaContext * pDianaContext,
     if (GET_FLAG_SF)
     {
         return Diana_Call_setcc(pDianaContext, 
-                              pCallContext,
-                              1);
+                                pCallContext,
+                                1);
     }
     return Diana_Call_setcc(pDianaContext, 
                             pCallContext,

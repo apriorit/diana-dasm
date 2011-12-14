@@ -58,5 +58,4 @@ int Diana_Call_jecxz(struct _dianaContext * pDianaContext,
 int Diana_Call_jmp(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext);
 
-
 #endif

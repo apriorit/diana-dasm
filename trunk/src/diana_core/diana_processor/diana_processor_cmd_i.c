@@ -6,8 +6,8 @@
 
 static
 int Diana_Call_idiv8(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pDivisor)
+                     DianaProcessor * pCallContext,
+                     OPERAND_SIZE * pDivisor)
 {
     //byte    AX           r/m8       AL          AH
     DI_INT16 src = (DI_INT16)GET_REG_AX;
@@ -33,8 +33,8 @@ int Diana_Call_idiv8(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_idiv16(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pDivisor)
+                      DianaProcessor * pCallContext,
+                      OPERAND_SIZE * pDivisor)
 {
     //word    DX:AX        r/m16      AX          DX
     DianaRegisterValue32_signed_type src;
@@ -63,8 +63,8 @@ int Diana_Call_idiv16(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_idiv32(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pDivisor)
+                      DianaProcessor * pCallContext,
+                      OPERAND_SIZE * pDivisor)
 {
     //dword   EDX:EAX      r/m32      EAX         EDX 
     DianaRegisterValue_signed_type src;
@@ -94,8 +94,8 @@ int Diana_Call_idiv32(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_idiv64(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pDivisor)
+                      DianaProcessor * pCallContext,
+                      OPERAND_SIZE * pDivisor)
 {
     //qword   RDX:RAX      r/m64      RAX         RDX  
     DI_UINT64 r0 = GET_REG_RAX;
@@ -168,3 +168,11 @@ int Diana_Call_idiv(struct _dianaContext * pDianaContext,
     DI_PROC_END
 }
 
+int Diana_Call_int(struct _dianaContext * pDianaContext,
+                   DianaProcessor * pCallContext)
+{
+	pCallContext;
+	pCallContext;
+
+    DI_PROC_END
+}

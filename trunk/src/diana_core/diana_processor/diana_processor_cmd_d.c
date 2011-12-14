@@ -5,7 +5,7 @@
 #include "diana_processor_cmd_internal.h"
 
 int Diana_Call_daa(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
 	//IF ((AL AND 0FH) > 9) OR (AF = 1)
 	//THEN
@@ -62,7 +62,7 @@ int Diana_Call_daa(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_das(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
 	int tmpCF = 0;
 	unsigned char al = 0;
@@ -104,7 +104,7 @@ int Diana_Call_das(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_dec(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST := DEST + SRC;
     DI_DEF_LOCALS(src, dest);
@@ -153,8 +153,8 @@ int Diana_Call_div8(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_div16(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pDivisor)
+                     DianaProcessor * pCallContext,
+                     OPERAND_SIZE * pDivisor)
 {
     //word    DX:AX        r/m16      AX          DX
     DianaRegisterValue32_type src;
@@ -183,8 +183,8 @@ int Diana_Call_div16(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_div32(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pDivisor)
+                     DianaProcessor * pCallContext,
+                     OPERAND_SIZE * pDivisor)
 {
     //dword   EDX:EAX      r/m32      EAX         EDX 
     DianaRegisterValue_type src;
@@ -214,8 +214,8 @@ int Diana_Call_div32(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_div64(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pDivisor)
+                     DianaProcessor * pCallContext,
+                     OPERAND_SIZE * pDivisor)
 {
     //qword   RDX:RAX      r/m64      RAX         RDX  
     DI_UINT64 r0 = GET_REG_RAX;
@@ -240,7 +240,7 @@ int Diana_Call_div64(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_div(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //temp := dividend / divisor;
     //IF temp does not fit in quotient

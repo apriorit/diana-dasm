@@ -23,7 +23,7 @@
 
 
 int Diana_Call_xor(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST := LeftSRC XOR RightSRC
     //CF := 0
@@ -124,7 +124,7 @@ int Diana_Call_test(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_inc(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST := DEST + SRC;
     DI_DEF_LOCALS(src, dest);
@@ -145,7 +145,7 @@ int Diana_Call_inc(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_ret(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     return Diana_Call_internal_ret(pDianaContext,
                                    pCallContext,
@@ -427,6 +427,9 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(retf)
 
     DI_PROC_REGISTER_COMMAND(bswap)
+
+    // stubs
+    DI_PROC_REGISTER_COMMAND(int)
 }
 
 void DianaProcessor_LinkCommands()

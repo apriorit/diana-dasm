@@ -22,14 +22,15 @@ int Di_CheckZeroExtends(DianaProcessor * pCallContext,
                         int * dest_size);
 
 int Di_CheckZeroExtends2(DianaProcessor * pCallContext,
-                        OPERAND_SIZE * pDest,
-                        int src_size,
-                        int * dest_size);
+                         OPERAND_SIZE * pDest,
+                         int src_size,
+                         int * dest_size);
 
 int diana_internal_pop(DianaProcessor * pCallContext,
                        OPERAND_SIZE * pValue);
 int diana_internal_push(DianaProcessor * pCallContext,
                         OPERAND_SIZE * pValue);
+
 int Diana_Call_jcc(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext,
                    int opCount,

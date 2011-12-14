@@ -174,9 +174,9 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
     pThis->m_stateFlags &= ~DI_PROC_STATE_RIP_CHANGED;
 
     res = Diana_ParseCmd(&pThis->m_context, 
-                             Diana_GetRootLine(),  // IN
-                             &pThis->m_readStream,    // IN
-                             &pThis->m_result);
+                         Diana_GetRootLine(),  // IN
+                         &pThis->m_readStream,    // IN
+                         &pThis->m_result);
 
     if (res != DI_SUCCESS)
         return res;
@@ -187,10 +187,9 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
     {
         // command is not supported
         Diana_DebugFatalBreak();
-        return DI_ERROR;
+        return DI_UNSUPPORTED_COMMAND;
     }
 
-    
     // execute command
     switch(pThis->m_result.iPrefix)
     {

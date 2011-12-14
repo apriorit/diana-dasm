@@ -7,8 +7,8 @@
 // IMUL 1
 static
 int Diana_Call_imul8(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pArgument)
+                     DianaProcessor * pCallContext,
+                     OPERAND_SIZE * pArgument)
 {
     DianaRegisterValue16_signed_type result;
     DI_SIGNED_CHAR arg1 = (DI_SIGNED_CHAR)GET_REG_AL;
@@ -30,8 +30,8 @@ int Diana_Call_imul8(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_imul16(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pArgument)
+                      DianaProcessor * pCallContext,
+                      OPERAND_SIZE * pArgument)
 {
     DianaRegisterValue32_signed_type result;
     DI_INT16 arg1 = (DI_INT16)GET_REG_AX;
@@ -55,8 +55,8 @@ int Diana_Call_imul16(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_imul32(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pArgument)
+                      DianaProcessor * pCallContext,
+                      OPERAND_SIZE * pArgument)
 {
     DianaRegisterValue_signed_type result;
     DI_INT32 arg1 = (DI_INT32)GET_REG_EAX;
@@ -79,8 +79,8 @@ int Diana_Call_imul32(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_imul64(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext,
-                    OPERAND_SIZE * pArgument)
+                      DianaProcessor * pCallContext,
+                      OPERAND_SIZE * pArgument)
 {
     DI_INT64 arg1 = (DI_INT64)GET_REG_RAX;
     DI_INT64 arg2 = (DI_INT64)*pArgument;

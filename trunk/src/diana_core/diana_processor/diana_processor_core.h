@@ -16,7 +16,6 @@ int DianaProcessor_Init(DianaProcessor * pThis,
 
 void DianaProcessor_Free(DianaProcessor * pThis);
 
-
 int DianaProcessor_ExecOnce(DianaProcessor * pThis);
 
 void DianaProcessor_ClearCache(DianaProcessor * pThis);

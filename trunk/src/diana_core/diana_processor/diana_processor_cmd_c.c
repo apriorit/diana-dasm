@@ -114,7 +114,7 @@ int Diana_Call_call(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cbw(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     OPERAND_SIZE reg = 0;
     int size = 0;
@@ -123,16 +123,16 @@ int Diana_Call_cbw(struct _dianaContext * pDianaContext,
     {
     case DIANA_MODE64:
         reg = GET_REG_EAX;
-        DI_CHECK(DianaProcessor_SignExtend(&reg, 
-                                           4, 
+        DI_CHECK(DianaProcessor_SignExtend(&reg,
+                                           4,
                                            8));
         SET_REG_RAX(reg);
         break;
 
     case DIANA_MODE32:
         reg = GET_REG_AX;
-        DI_CHECK(DianaProcessor_SignExtend(&reg, 
-                                           2, 
+        DI_CHECK(DianaProcessor_SignExtend(&reg,
+                                           2,
                                            4));
         // zero-extended!
         SET_REG_RAX(reg);
@@ -140,8 +140,8 @@ int Diana_Call_cbw(struct _dianaContext * pDianaContext,
 
     case DIANA_MODE16:
         reg = GET_REG_AL;
-        DI_CHECK(DianaProcessor_SignExtend(&reg, 
-                                           1, 
+        DI_CHECK(DianaProcessor_SignExtend(&reg,
+                                           1,
                                            2));
         SET_REG_AX(reg);
         break;
@@ -153,7 +153,7 @@ int Diana_Call_cbw(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_clc(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
 	pDianaContext;
 
@@ -162,7 +162,7 @@ int Diana_Call_clc(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cld(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
 	pDianaContext;
 
@@ -171,7 +171,7 @@ int Diana_Call_cld(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cli(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
 	pDianaContext;
 
@@ -180,7 +180,7 @@ int Diana_Call_cli(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cmc(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
 	pDianaContext;
 
@@ -197,7 +197,7 @@ int Diana_Call_cmc(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_cmova(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCAL(src);
@@ -225,7 +225,7 @@ int Diana_Call_cmovae(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cmovb(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCAL(src);
@@ -254,7 +254,7 @@ int Diana_Call_cmovbe(struct _dianaContext * pDianaContext,
 
 
 int Diana_Call_cmove(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCAL(src);
@@ -268,7 +268,7 @@ int Diana_Call_cmove(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cmovg(struct _dianaContext * pDianaContext,
-                    DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCAL(src);
@@ -296,7 +296,7 @@ int Diana_Call_cmovge(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cmovl(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCAL(src);
@@ -380,7 +380,7 @@ int Diana_Call_cmovns(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cmovo(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCAL(src);
@@ -394,7 +394,7 @@ int Diana_Call_cmovo(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cmovp(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCAL(src);
@@ -408,7 +408,7 @@ int Diana_Call_cmovp(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cmovs(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                     DianaProcessor * pCallContext)
 {
     //DEST := SRC
     DI_DEF_LOCAL(src);
@@ -422,7 +422,7 @@ int Diana_Call_cmovs(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cmp(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                   DianaProcessor * pCallContext)
 {
     //DEST - SRC;
     DI_DEF_LOCALS(src, dest);
@@ -446,7 +446,7 @@ int Diana_Call_cmp(struct _dianaContext * pDianaContext,
 }
 
 int Diana_Call_cmps(struct _dianaContext * pDianaContext,
-                      DianaProcessor * pCallContext)
+                    DianaProcessor * pCallContext)
 {
     //SRC - DEST;
     DianaRmIndex srcIndex, destIndex;
@@ -647,7 +647,7 @@ int Diana_Call_cmpxchg8b_impl(struct _dianaContext * pDianaContext,
 
 static
 int Diana_Call_cmpxchg16b_impl(struct _dianaContext * pDianaContext,
-                              DianaProcessor * pCallContext)
+                               DianaProcessor * pCallContext)
 {
     OPERAND_SIZE low = 0, high= 0;
     OPERAND_SIZE selector = 0, address = 0;
@@ -659,26 +659,26 @@ int Diana_Call_cmpxchg16b_impl(struct _dianaContext * pDianaContext,
         return DI_ERROR;
     }
     DI_CHECK(DianaProcessor_CalcIndex(pDianaContext,
-                                            pCallContext,
-                                            &pCallContext->m_result.linkedOperands[0].value.rmIndex,
-                                            &selector,
-                                            &address));
+                                      pCallContext,
+                                      &pCallContext->m_result.linkedOperands[0].value.rmIndex,
+                                      &selector,
+                                      &address));
 
     DI_CHECK(DianaProcessor_GetMemValue(pCallContext,
-                              selector,
-                              address,
-                              sizeof(low), 
-                              &low,
-                              0,
-                              pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
+                                        selector,
+                                        address,
+                                        sizeof(low), 
+                                        &low,
+                                        0,
+                                        pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
 
     DI_CHECK(DianaProcessor_GetMemValue(pCallContext,
-                              selector,
-                              address+8,
-                              sizeof(high), 
-                              &high,
-                              0,
-                              pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
+                                        selector,
+                                        address+8,
+                                        sizeof(high), 
+                                        &high,
+                                        0,
+                                        pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
 
     if (low != GET_REG_RAX || high != GET_REG_RDX)
     {
@@ -694,19 +694,19 @@ int Diana_Call_cmpxchg16b_impl(struct _dianaContext * pDianaContext,
     high = GET_REG_RCX;
 
     DI_CHECK(DianaProcessor_SetMemValue(pCallContext,
-                              selector,
-                              address,
-                              sizeof(low), 
-                              &low,
-                              0,
-                              pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
+                                        selector,
+                                        address,
+                                        sizeof(low), 
+                                        &low,
+                                        0,
+                                        pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
     DI_CHECK(DianaProcessor_SetMemValue(pCallContext,
-                              selector,
-                              address+8,
-                              sizeof(high), 
-                              &high,
-                              0,
-                              pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
+                                        selector,
+                                        address+8,
+                                        sizeof(high), 
+                                        &high,
+                                        0,
+                                        pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
     DI_PROC_END
 }
 
@@ -724,4 +724,3 @@ int Diana_Call_cmpxchg16b(struct _dianaContext * pDianaContext,
                                          pCallContext);
 
 }
-
