@@ -175,7 +175,6 @@ PSADBW xmm1, xmm2/mem128 | 66 0F F6 /r
 PSADBW mmx, mmx/mem64 | 0F F6 /r
 PSHUFD xmm1, xmm2/mem128, imm8 | 66 0F 70 /r ib
 PSHUFHW xmm1, xmm2/mem128, imm8 | F3 0F 70 /r ib
-PSHUFLW xmm1, xmm2/mem128, imm8 | F2 0F 70 /r ib
 PSLLD xmm1, xmm2/mem128  | 66 0F F2 /r
 PSLLD mmx, mmx/mem64  | 0F F2 /r
 PSLLD xmm, imm8 | 66 0F 72 /6 ib
@@ -267,4 +266,3 @@ XORPS xmm1, xmm2/mem128 | 0F 57 /r
 PSHUFW mmx, mmx/mem64, imm8 | 0F 70 /r ib
 PSHUFD xmm1, xmm2/mem128, imm8 | 66 0F 70 /r ib
 PSHUFLW xmm1, xmm2/mem128, imm8 | F2 0F 70 /r ib
-EMMS | 0F 77

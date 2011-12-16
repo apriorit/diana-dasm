@@ -261,7 +261,7 @@ int Diana_Call_jcc(struct _dianaContext * pDianaContext,
         return DI_ERROR;
     }
 
-    newRIP = GET_REG_RIP + 
+    newRIP = GET_REG_RIP2(pCallContext->m_context.iCurrentCmd_opsize) + 
              pCallContext->m_result.linkedOperands[relOp].value.rel.m_value + 
              pCallContext->m_result.iFullCmdSize;
 

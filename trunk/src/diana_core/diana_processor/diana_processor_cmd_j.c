@@ -248,7 +248,7 @@ int Diana_Call_jmp(struct _dianaContext * pDianaContext,
     switch(pCallContext->m_result.linkedOperands[0].type)
     {
     case diana_rel:
-        newRIP = GET_REG_RIP + 
+        newRIP = GET_REG_RIP2(pCallContext->m_context.iCurrentCmd_opsize) + 
                  pCallContext->m_result.linkedOperands[0].value.rel.m_value + 
                  pCallContext->m_result.iFullCmdSize;
         break;
