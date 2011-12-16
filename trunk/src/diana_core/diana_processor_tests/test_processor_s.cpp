@@ -374,7 +374,6 @@ static void test_processor_smsw()
 	TEST_ASSERT(GET_REG_EAX == 0x8001003BULL);
 }
 
-
 void test_processor_s()
 {
     test_processor_set();
@@ -392,6 +391,5 @@ void test_processor_s()
     test_processor_stos();
     test_processor_stos2();
 	test_processor_seq64();
-	// not worked now
-	//test_processor_smsw();
+	// FIXME test_processor_smsw();
 }

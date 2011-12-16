@@ -128,6 +128,76 @@ static void test_processor_jmp_middle()
 	TEST_ASSERT( 0x0003 == GET_REG_RIP );
 }
 
+static void test_processor_jecxz()
+{
+	// jecxz 0
+	unsigned char buff[] = { 0xe3, 0xfe };
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE32);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_ECX( 0x0ULL );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT( 0x0ULL == GET_REG_RIP );
+}
+
+static void test_processor_jecxz2()
+{
+	// jecxz 0
+	unsigned char buff[] = { 0xe3, 0xfe };
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE32);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_ECX( 0x1ULL );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT( 0x2ULL == GET_REG_RIP );
+}
+
+static void test_processor_jecxz3()
+{
+	// jcxz 0
+	unsigned char buff[] = { 0x67, 0xe3, 0xfd };
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE32);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_ECX( 0x0ULL );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT( 0x0ULL == GET_REG_RIP );
+}
+
+static void test_processor_jecxz4()
+{
+	// jcxz 0
+	unsigned char buff[] = { 0x67, 0xe3, 0xfd };
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE32);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_ECX( 0x1ULL );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT( 0x3ULL == GET_REG_RIP );
+}
+
+static void test_processor_jecxz5()
+{
+	// jcxz 0
+	unsigned char buff[] = { 0x67, 0xe3, 0xfd };
+
+	CTestProcessor proc(buff, sizeof(buff), 0, DIANA_MODE32);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_ECX( 0x00010000ULL );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT( 0x0ULL == GET_REG_RIP );
+}
+
 void test_processor_j()
 {
     test_processor_jmp();
@@ -136,4 +206,9 @@ void test_processor_j()
     test_processor_jmp4();
 	test_processor_je();
 	test_processor_jmp_middle();
+	test_processor_jecxz();
+	test_processor_jecxz2();
+	test_processor_jecxz3();
+	test_processor_jecxz4();
+	// FIXME test_processor_jecxz5();
 }

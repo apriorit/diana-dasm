@@ -47,7 +47,8 @@ HSUBPS xmm1, xmm2/mem128 | F2 0F 7D /r
 INSERTQ xmm1, xmem64, imm8, imm8 | F2 0F 78 /r ib ib
 INSERTQ xmm1, xmem64 | F2 0F 79 /r
 LDDQU xmm1, xmem128 | F2 0F F0 /r
-MASKMOVDQU xmm1, xmem64 | 66 0F F7 /r
+MASKMOVDQU xmm1, xmem128 | 66 0F F7 /r
+MASKMOVQ xmem64, mmx | 0F F7 /r
 MAXPD xmm1, xmm2/mem128 | 66 0F 5F /r
 MAXPS xmm1, xmm2/mem128 | 0F 5F /r
 MAXSD xmm1, xmm2/mem64 | F2 0F 5F /r
@@ -76,6 +77,7 @@ MOVLPS xmm, xmem64 | 0F 12 /r
 MOVLPS xmem64, xmm | 0F 13 /r
 MOVMSKPD regOnly32, xmem64 | 66 0F 50 /r
 MOVMSKPS regOnly32, xmem64 | 0F 50 /r
+MOVNTQ xmem64, mmx | 0F E7 /r
 MOVNTDQ xmem128, xmm | 66 0F E7 /r
 MOVNTPD xmem128, xmm | 66 0F 2B /r
 MOVNTPS xmem128, xmm | 0F 2B /r
@@ -144,7 +146,7 @@ PCMPGTD xmm1, xmm2/mem128 | 66 0F 66 /r
 PCMPGTD mmx, mmx/mem64 | 0F 66 /r
 PCMPGTW xmm1, xmm2/mem128 | 66 0F 65 /r
 PCMPGTW mmx, mmx/mem64 | 0F 65 /r
-PEXTRW regOnly32, mmx, imm8 | 66 0F C5 /r ib
+PEXTRW regOnly32, mmx, imm8 | 0F C5 /r ib
 PEXTRW regOnly32, xmm, imm8 | 66 0F C5 /r ib
 PINSRW xmm, reg32/mem16, imm8 | 66 0F C4 /r ib
 PMADDWD xmm1, xmm2/mem128 | 66 0F F5 /r
@@ -157,7 +159,8 @@ PMINSW xmm1, xmm2/mem128 | 66 0F EA /r
 PMINSW mmx, mmx/mem64 | 0F EA /r
 PMINUB xmm1, xmm2/mem128 | 66 0F DA /r
 PMINUB mmx, mmx/mem64 | 0F DA /r
-PMOVMSKB regOnly32, xmem64 | 66 0F D7 /r
+PMOVMSKB regOnly32, mmx | 0F D7 /r
+PMOVMSKB regOnly32, xmm | 66 0F D7 /r
 PMULHUW xmm1, xmm2/mem128 | 66 0F E4 /r
 PMULHUW mmx, mmx/mem64 | 0F E4 /r
 PMULHW xmm1, xmm2/mem128 | 66 0F E5 /r

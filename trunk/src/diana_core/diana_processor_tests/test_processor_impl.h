@@ -29,19 +29,16 @@ public:
         Diana_InitRandomMemoryStream(&m_memoryStream,
                                      pBuffer,
                                      size,
-                                     segmentSize
-                                      );  
-
+                                     segmentSize);
 
         // memory allocator
         Diana_InitMAllocator(&m_memAllocator);
-           
 
         // processor
         int res = DianaProcessor_Init(&m_proc, 
-                                        &m_memoryStream.parent,
-                                        &m_memAllocator.m_parent,
-                                        iMode);
+                                      &m_memoryStream.parent,
+                                      &m_memAllocator.m_parent,
+                                      iMode);
         TEST_ASSERT(res == DI_SUCCESS);
     }
 

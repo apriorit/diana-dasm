@@ -51,9 +51,39 @@ void test_processor_lods2()
 	TEST_ASSERT(GET_REG_EAX == 0xAD66);
 }
 
+static void test_processor_lfs()
+{
+	// lfs ebx, [eax] ; fword
+	unsigned char code[] = {0x0f, 0xb4, 0x18, 0x12, 0x34, 0x56};
+
+	CTestProcessor proc(code, sizeof(code));
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_DS( 0x23ULL );
+	SET_REG_RAX( 0x0ULL );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+}
+
+static void test_processor_lfs2()
+{
+	// lfs bx, [eax] ; word
+	unsigned char code[] = {0x66, 0x0f, 0xb4, 0x18};
+
+	CTestProcessor proc(code, sizeof(code));
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_DS( 0x23ULL );
+	SET_REG_RAX( 0x0ULL );
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+}
+
 void test_processor_l()
 {
     test_processor_lea();
     test_processor_lods();
     test_processor_lods2();
+	//FIXME test_processor_lfs();
+	//FIXME test_processor_lfs2();
 }

@@ -228,9 +228,9 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
 
         // update it
         DianaProcessor_SetValue(pCallContext, 
-                       reg_none,  // skip check
-                       DianaProcessor_QueryReg(pCallContext, reg_RIP), 
-                       rip);
+                                reg_none,  // skip check
+                                DianaProcessor_QueryReg(pCallContext, reg_RIP), 
+                                rip);
     }
     return DI_SUCCESS;
 }
