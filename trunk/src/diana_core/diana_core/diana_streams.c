@@ -14,8 +14,8 @@ static int MemoryStream_Read(void * pThis, void * pBuffer, int iBufferSize, int 
 }
 
 void Diana_InitMemoryStream(DianaMemoryStream * pStream,
-                           void * pBuffer,
-                           size_t bufferSize)
+                            void * pBuffer,
+                            size_t bufferSize)
 {
     pStream->pBuffer = pBuffer;
     pStream->bufferSize = bufferSize;

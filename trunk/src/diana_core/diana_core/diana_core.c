@@ -308,8 +308,6 @@ void Diana_InitLine(DianaCmdKeyLine * pRoot)
             
             InitJmps(pGroupInfo);
             
-
-
             //--------------------------------------
             // AMD 64 ADDITIONAL INITIALIZATION
             //--------------------------------------
@@ -406,10 +404,11 @@ void Diana_ResetPrefixes(DianaContext * pContext)
 {
     Diana_Normal(pContext);
 }
+
 void Diana_Init()
 {
     // init prefixes
-    DianaCmdKeyLine *  pRoot = Diana_GetRootLine();
+    DianaCmdKeyLine * pRoot = Diana_GetRootLine();
     Diana_InitLine(pRoot);
 
     Diana_InitUtils();

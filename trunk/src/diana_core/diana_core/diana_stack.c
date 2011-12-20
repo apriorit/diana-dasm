@@ -76,8 +76,7 @@ int Diana_Stack_Push(Diana_Stack * pStack,
     return DI_SUCCESS;
 }
 int Diana_Stack_Pop(Diana_Stack * pStack,
-                    void * pData
-                    )
+                    void * pData)
 {
     char * pDataPlace = Diana_Stack_GetTopPtr(pStack);
     if (!pDataPlace)

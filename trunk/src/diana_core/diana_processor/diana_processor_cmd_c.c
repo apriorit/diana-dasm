@@ -39,10 +39,10 @@ int Diana_Call_call(struct _dianaContext * pDianaContext,
             OPERAND_SIZE memSelector = GET_REG_DS, memAddress=0;
             DianaRmIndex  * pIndex = &pCallContext->m_result.linkedOperands[0].value.memory.m_index;
             DI_CHECK(DianaProcessor_CalcIndex(pDianaContext,
-                                          pCallContext,
-                                          pIndex,
-                                          &memSelector,
-                                          &memAddress));
+                                              pCallContext,
+                                              pIndex,
+                                              &memSelector,
+                                              &memAddress));
 
             // load new IP and CS
             DI_CHECK(DianaProcessor_GetMemValue(pCallContext, 
@@ -94,12 +94,12 @@ int Diana_Call_call(struct _dianaContext * pDianaContext,
     retRIP = GET_REG_RIP + pCallContext->m_result.iFullCmdSize;
 
     DI_CHECK(DianaProcessor_SetMemValue(pCallContext, 
-                                            GET_REG_SS,
-                                            rsp-pCallContext->m_context.iCurrentCmd_opsize, 
-                                            pCallContext->m_context.iCurrentCmd_opsize,
-                                            &retRIP,
-                                            0,
-                                            reg_SS));
+                                        GET_REG_SS,
+                                        rsp-pCallContext->m_context.iCurrentCmd_opsize, 
+                                        pCallContext->m_context.iCurrentCmd_opsize,
+                                        &retRIP,
+                                        0,
+                                        reg_SS));
     rsp -= pCallContext->m_context.iCurrentCmd_opsize;
 
     SET_REG_RSP(rsp);
@@ -608,18 +608,18 @@ int Diana_Call_cmpxchg8b_impl(struct _dianaContext * pDianaContext,
         return DI_ERROR;
     }
     DI_CHECK(DianaProcessor_CalcIndex(pDianaContext,
-                                            pCallContext,
-                                            &pCallContext->m_result.linkedOperands[0].value.rmIndex,
-                                            &selector,
-                                            &address));
+                                      pCallContext,
+                                      &pCallContext->m_result.linkedOperands[0].value.rmIndex,
+                                      &selector,
+                                      &address));
 
     DI_CHECK(DianaProcessor_GetMemValue(pCallContext,
-                              selector,
-                              address,
-                              sizeof(mem), 
-                              &mem.value,
-                              0,
-                              pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
+                                        selector,
+                                        address,
+                                        sizeof(mem), 
+                                        &mem.value,
+                                        0,
+                                        pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
 
     if (mem.l.value != GET_REG_EAX || mem.h != GET_REG_EDX)
     {
@@ -635,12 +635,12 @@ int Diana_Call_cmpxchg8b_impl(struct _dianaContext * pDianaContext,
     mem.h = (DI_UINT32)GET_REG_ECX;
 
     DI_CHECK(DianaProcessor_SetMemValue(pCallContext,
-                              selector,
-                              address,
-                              sizeof(mem), 
-                              &mem.value,
-                              0,
-                              pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
+                                        selector,
+                                        address,
+                                        sizeof(mem), 
+                                        &mem.value,
+                                        0,
+                                        pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
     DI_PROC_END
 }
 
@@ -718,7 +718,6 @@ int Diana_Call_cmpxchg16b(struct _dianaContext * pDianaContext,
         return Diana_Call_cmpxchg8b_impl(pDianaContext,
                                          pCallContext);
     }
-
     // 16b
     return Diana_Call_cmpxchg16b_impl(pDianaContext,
                                          pCallContext);

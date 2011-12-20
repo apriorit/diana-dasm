@@ -16,10 +16,10 @@ typedef struct _DianaAnalyzeSession
 }DianaAnalyzeSession;
 
 void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
-                                 DianaRead_fnc pReadFnc,
-                                 DianaAnalyzeMoveTo_fnc pMoveFnc,
-                                 ConvertAddressToRelative_fnc pConvertAddress,
-                                 AddSuspectedDataAddress_fnc pSuspectedDataAddress)
+                               DianaRead_fnc pReadFnc,
+                               DianaAnalyzeMoveTo_fnc pMoveFnc,
+                               ConvertAddressToRelative_fnc pConvertAddress,
+                               AddSuspectedDataAddress_fnc pSuspectedDataAddress)
 {
     pThis->m_stream.pReadFnc = pReadFnc;
     pThis->m_pMoveTo = pMoveFnc;
@@ -149,31 +149,23 @@ int AnalyzeJumps(DianaParserResult * pResult,
 
     switch(pOp->type)
     {
-        // usual call smth
+    // usual call smth
     case diana_rel:
-        {
-            *pNewOffset = offset + pOp->value.rel.m_value;
-            break;
-        }
-        // crazy call for really crazy guys
+        *pNewOffset = offset + pOp->value.rel.m_value;
+        break;
+    // crazy call for really crazy guys
     case diana_call_ptr:
-        {
-            *pNewOffset = pOp->value.ptr.m_address;
-            break;
-        }
-
-        // call [rbx+0x5435345] 
+        *pNewOffset = pOp->value.ptr.m_address;
+        break;
+    // call [rbx+0x5435345] 
     case diana_index:
+        if (pOp->value.rmIndex.dispSize == 4)
         {
-            if (pOp->value.rmIndex.dispSize == 4)
-            {
-                // save it, it is interesting
-                DI_CHECK(pObserver->m_pSuspectedDataAddress(pObserver, 
-                                                          pOp->value.rmIndex.dispValue));
-
-            }
-            break;
+            // save it, it is interesting
+            DI_CHECK(pObserver->m_pSuspectedDataAddress(pObserver, 
+                                                        pOp->value.rmIndex.dispValue));
         }
+        break;
     case diana_register:
         return DI_UNSUPPORTED_COMMAND;
     }
@@ -239,86 +231,78 @@ void DispatchMode32(DianaAnalyzeSession * pSession,
     switch(pOp->type)
     {
     case diana_imm:
+        *pbFound = 1;
+        *pSuspectedOp = pOp->value.imm;
+        break;
+    case diana_index:
+        if (pOp->value.rmIndex.dispSize == 4 ||
+            pOp->value.rmIndex.dispSize ==  8)
         {
             *pbFound = 1;
-            *pSuspectedOp = pOp->value.imm;
-            break;
+            *pSuspectedOp = pOp->value.rmIndex.dispValue;
         }
-    case diana_index:
-        {
-            if (pOp->value.rmIndex.dispSize == 4 ||
-                pOp->value.rmIndex.dispSize ==  8)
-            {
-                *pbFound = 1;
-                *pSuspectedOp = pOp->value.rmIndex.dispValue;
-            }
-            break;
-        }
-    default:;
+        break;
+    default:
+        ;
     } 
 }
 
 static
 int DispatchMode64(DianaAnalyzeSession * pSession,
-                    Diana_Instruction * pInstruction,
-                    const DianaLinkedOperand * pOp,
-                    OPERAND_SIZE nextInstructionOffset,
-                    int * pbFound,
-                    OPERAND_SIZE * pSuspectedOp)
+                   Diana_Instruction * pInstruction,
+                   const DianaLinkedOperand * pOp,
+                   OPERAND_SIZE nextInstructionOffset,
+                   int * pbFound,
+                   OPERAND_SIZE * pSuspectedOp)
 {
     switch(pOp->type)
     {
     case diana_register:
+        if (pOp->value.recognizedRegister == reg_RIP || 
+            pOp->value.recognizedRegister == reg_IP)
         {
-            if (pOp->value.recognizedRegister == reg_RIP || 
-                pOp->value.recognizedRegister == reg_IP)
-            {
-                pInstruction->m_flags |= DI_INSTRUCTION_USES_RIP;
-            }
-            break;
+            pInstruction->m_flags |= DI_INSTRUCTION_USES_RIP;
         }
+        break;
     case diana_imm:
-        {
-            *pbFound = 1;
-            *pSuspectedOp = pOp->value.imm;
-            break;
-        }
+        *pbFound = 1;
+        *pSuspectedOp = pOp->value.imm;
+        break;
     case diana_index:
+        if (pOp->value.rmIndex.reg == reg_RIP ||
+            pOp->value.rmIndex.indexed_reg == reg_RIP)
         {
-            if (pOp->value.rmIndex.reg == reg_RIP ||
-                pOp->value.rmIndex.indexed_reg == reg_RIP)
+            // ooops 
+            if ((pOp->value.rmIndex.indexed_reg == reg_none ||
+                pOp->value.rmIndex.index == 0) ||
+                (pOp->value.rmIndex.reg == reg_none &&
+                 pOp->value.rmIndex.index == 1))
             {
-                // ooops 
-                if ((pOp->value.rmIndex.indexed_reg == reg_none ||
-                    pOp->value.rmIndex.index == 0) ||
-                    (pOp->value.rmIndex.reg == reg_none &&
-                     pOp->value.rmIndex.index == 1))
-                {
-                    // good case, no index
-                    DI_CHECK(SaveNewRoute(pSession, 
-                                          pInstruction,
-                                          nextInstructionOffset + pOp->value.rmIndex.dispValue,
-                                          DI_ROUTE_QUESTIONABLE)); 
+                // good case, no index
+                DI_CHECK(SaveNewRoute(pSession, 
+                                      pInstruction,
+                                      nextInstructionOffset + pOp->value.rmIndex.dispValue,
+                                      DI_ROUTE_QUESTIONABLE)); 
 
-                    pInstruction->m_flags |= DI_INSTRUCTION_USES_RIP;
-                    break;
-                }
-                
-                // bad case
-                pInstruction->m_flags |= DI_INSTRUCTION_USES_UNKNOWN_RIP;
+                pInstruction->m_flags |= DI_INSTRUCTION_USES_RIP;
                 break;
             }
-
-            // common check
-            if (pOp->value.rmIndex.dispSize == 4 ||
-                pOp->value.rmIndex.dispSize ==  8)
-            {
-                *pbFound = 1;
-                *pSuspectedOp = pOp->value.rmIndex.dispValue;
-            }
+            
+            // bad case
+            pInstruction->m_flags |= DI_INSTRUCTION_USES_UNKNOWN_RIP;
             break;
         }
-    default:;
+
+        // common check
+        if (pOp->value.rmIndex.dispSize == 4 ||
+            pOp->value.rmIndex.dispSize ==  8)
+        {
+            *pbFound = 1;
+            *pSuspectedOp = pOp->value.rmIndex.dispValue;
+        }
+        break;
+    default:
+        ;
     } 
     return DI_SUCCESS;
 }        
@@ -359,9 +343,9 @@ int AnalyzeAndConstructNormalInstruction(DianaAnalyzeSession * pSession,
             OPERAND_SIZE newOffset = 0;
             int bInvalidPointer = 0;
             DI_CHECK(pSession->pObserver->m_pConvertAddress(pSession->pObserver, 
-                                                  suspectedOp,
-                                                  &newOffset,
-                                                  &bInvalidPointer));
+                                                            suspectedOp,
+                                                            &newOffset,
+                                                            &bInvalidPointer));
             if (!bInvalidPointer)
             {
                 // this is not realy valid command
@@ -379,8 +363,7 @@ static
 int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
                                    OPERAND_SIZE instructionOffset,
                                    OPERAND_SIZE nextInstructionOffset,
-                                   int * pbNeedReset
-                                   )
+                                   int * pbNeedReset)
 {
     int iRes = 0;
     Diana_Instruction * pInstruction = 0;
@@ -476,7 +459,7 @@ int SwitchToLastState(DianaAnalyzeSession * pSession,
 }
 
 Diana_XRef * Diana_CastXREF(Diana_ListNode * pNode,
-                           int index)
+                            int index)
 {
     Diana_SubXRef * pSubXREF = (Diana_SubXRef * )pNode;
     return DIANA_CONTAINING_RECORD(pSubXREF, Diana_XRef, m_subrefs[index]);
@@ -484,8 +467,8 @@ Diana_XRef * Diana_CastXREF(Diana_ListNode * pNode,
 
 static
 int XrefRouteMarker(Diana_ListNode * pNode,
-                      void * pContext,
-                      int * pbDone)
+                    void * pContext,
+                    int * pbDone)
 {
     Diana_XRef * pXRef = Diana_CastXREF(pNode, (int)(size_t)pContext);
     pXRef->m_flags |= DI_XREF_INVALID;
@@ -497,8 +480,8 @@ int XrefRouteMarker(Diana_ListNode * pNode,
 
 static
 int RouteMarker(Diana_ListNode * pNode,
-                      void * pContext,
-                      int * pbDone)
+                void * pContext,
+                int * pbDone)
 {
     Diana_Instruction * pInstruction = (Diana_Instruction * )pNode;
     DianaAnalyzeSession * pSession  = pContext;
@@ -529,8 +512,7 @@ void RollbackCurrentRoute(DianaAnalyzeSession * pSession)
 
 static
 int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
-                          OPERAND_SIZE initialOffset
-                      )
+                          OPERAND_SIZE initialOffset)
 {
     int iRes = 0;
     OPERAND_SIZE offset = initialOffset;
@@ -562,9 +544,9 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
         prevOffset = offset;
 
         iRes = Diana_ParseCmd(&pSession->context,
-                               Diana_GetRootLine(),
-                               &pSession->pObserver->m_stream,
-                               &pSession->result);
+                              Diana_GetRootLine(),
+                              &pSession->pObserver->m_stream,
+                              &pSession->result);
 
         offset += pSession->result.iFullCmdSize;
         if (iRes)
@@ -648,4 +630,3 @@ int Diana_AnalyzeCode(Diana_InstructionsOwner * pOwner,
     Diana_Stack_Free(&session.stack);
     return res;
 }
-

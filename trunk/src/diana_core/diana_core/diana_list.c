@@ -72,8 +72,8 @@ void Diana_InsertAfter(Diana_List * pList,
 }
 
 void Diana_InsertBefore(Diana_List * pList,
-                       Diana_ListNode * pNode,
-                       Diana_ListNode * pNodeToInsert)
+                        Diana_ListNode * pNode,
+                        Diana_ListNode * pNodeToInsert)
 {
     Diana_ListNode * pPrevNode = pNode->m_pPrev;
     if (pList->m_pFirst == pNode)

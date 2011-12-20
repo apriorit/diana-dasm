@@ -228,10 +228,10 @@ int Di_CheckZeroExtends2(DianaProcessor * pCallContext,
     else if (pCallContext->m_context.iCurrentCmd_opsize == 4) {
         if (pCallContext->m_result.linkedOperands->type == diana_register) {
             DianaUnifiedRegister reg64;
-            if( DianaProcessor_Query64RegisterFor32( pCallContext->m_result.linkedOperands[ 1 ].value.recognizedRegister,
-                                                     &reg64) == DI_ERROR )
-                                                     // dirty hack, check this!
-                                                     return DI_SUCCESS;
+            if( DianaProcessor_Query64RegisterFor32(pCallContext->m_result.linkedOperands[ 1 ].value.recognizedRegister,
+                                                    &reg64) == DI_ERROR )
+                                                    // dirty hack, check this!
+                                                    return DI_SUCCESS;
 
             DianaProcessor_SetValue(pCallContext, reg64, DianaProcessor_QueryReg(pCallContext, reg64), 0);
         }
@@ -333,7 +333,7 @@ void Di_UpdateSIDI(DianaProcessor * pCallContext,
                    OPERAND_SIZE * pSrcRegAddress, 
                    OPERAND_SIZE * pDestRegAddress)
 {
-     if (GET_FLAG_DF)
+    if (GET_FLAG_DF)
     {
         *pDestRegAddress -= pCallContext->m_result.linkedOperands->usedSize;
         if (pSrcRegAddress)
@@ -403,12 +403,12 @@ int Diana_Call_internal_ret(struct _dianaContext * pDianaContext,
     if (bPopCS)
     {
         DI_CHECK(DianaProcessor_GetMemValue(pCallContext, 
-                                        GET_REG_SS,
-                                        rsp, 
-                                        pCallContext->m_context.iCurrentCmd_opsize,
-                                        &newCs,
-                                        0,
-                                        reg_SS));
+                                            GET_REG_SS,
+                                            rsp, 
+                                            pCallContext->m_context.iCurrentCmd_opsize,
+                                            &newCs,
+                                            0,
+                                            reg_SS));
 
         rsp += pCallContext->m_context.iCurrentCmd_opsize;
     }

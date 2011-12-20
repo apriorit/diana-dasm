@@ -347,9 +347,9 @@ int DianaRecognizeCommonReg(DI_CHAR iOpSize,
                             int isRexPrefix);
 
 int DianaRecognizeMMX(DI_CHAR regId, 
-                         DianaUnifiedRegister * pOut);
+                      DianaUnifiedRegister * pOut);
 int DianaRecognizeXMM(DI_CHAR regId, 
-                     DianaUnifiedRegister * pOut);
+                      DianaUnifiedRegister * pOut);
 
 typedef int (*Diana_ReadIndexStructure_type)(DianaContext * pContext,
                                              DianaLinkedOperand * pInfo,

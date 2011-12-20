@@ -298,9 +298,9 @@ int Diana_ReadIndexStructure32(DianaContext * pContext,
             else
             {
                 iRes = DianaRecognizeCommonReg(pContext->iCurrentCmd_addressSize,
-                                                index, 
-                                                &pIndex->indexed_reg,
-                                                pContext->iRexPrefix);
+                                               index, 
+                                               &pIndex->indexed_reg,
+                                               pContext->iRexPrefix);
                 if (iRes)
                     return DI_ERROR;
 

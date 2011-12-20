@@ -31,9 +31,9 @@ static int StreamProxy_Read(void * pThis, void * pBuffer, int iBufferSize, int *
     }
     // direct mode
     return pStream->pUsedStream->pReadFnc(pStream->pUsedStream, 
-                                           pBuffer,
-                                           iBufferSize,
-                                           readed);
+                                          pBuffer,
+                                          iBufferSize,
+                                          readed);
 
 }
 

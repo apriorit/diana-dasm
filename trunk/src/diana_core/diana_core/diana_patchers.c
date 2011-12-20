@@ -155,11 +155,11 @@ Diana_MoveSequence(void * pDestination,
 }
                    
 static int PatchSequence32(void * pPlaceToHook, 
-                         size_t summSize,
-                         Diana_PatchHandlerFunction_type pPatchFnc,
-                         void * pPatchContext,
-                         Diana_Allocator * pAllocator,
-                         void ** ppOriginalFunction)
+                           size_t summSize,
+                           Diana_PatchHandlerFunction_type pPatchFnc,
+                           void * pPatchContext,
+                           Diana_Allocator * pAllocator,
+                           void ** ppOriginalFunction)
 {
     // alloc stub: summSize + 5
     void * pStub = 0;

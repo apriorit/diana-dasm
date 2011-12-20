@@ -13,14 +13,14 @@ typedef struct _dianaParseParams
 DianaParseParams;
 
 int Di_ProcessRexPrefix(unsigned char value,
-                           int * pbPrefixFound, 
-                           DianaContext * pContext,
-                           DianaParserResult * pResult);
+                        int * pbPrefixFound, 
+                        DianaContext * pContext,
+                        DianaParserResult * pResult);
 
 void Di_ProcessCustomPrefix(unsigned char value,
-                           int * pbPrefixFound, 
-                           DianaContext * pContext,
-                           DianaParserResult * pResult);
+                            int * pbPrefixFound, 
+                            DianaContext * pContext,
+                            DianaParserResult * pResult);
 
 void Diana_InitUtils();
 

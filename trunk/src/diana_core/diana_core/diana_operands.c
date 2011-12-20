@@ -133,26 +133,30 @@ int DianaReadValueAsLong(DianaReadStream * readStream,
 
 	switch(iValueSize)
     {
-    case 1: *pRes = *(unsigned char*)buffer;
-            if (iSigned)
-                if (*pRes & 0x80)
-                    *pRes = (DI_UINT64)*pRes - 1 - 0xFFUL;
+    case 1:
+        *pRes = *(unsigned char*)buffer;
+        if (iSigned)
+            if (*pRes & 0x80)
+                *pRes = (DI_UINT64)*pRes - 1 - 0xFFUL;
         break;
-    case 2: *pRes = *(unsigned short*)buffer;
-            if (iSigned)
-                if (*pRes & 0x8000)
-                    *pRes = (DI_UINT64)*pRes - 1 - 0xFFFFUL;
+    case 2:
+        *pRes = *(unsigned short*)buffer;
+        if (iSigned)
+            if (*pRes & 0x8000)
+                *pRes = (DI_UINT64)*pRes - 1 - 0xFFFFUL;
         break;
-    case 4: *pRes = *(unsigned int*)buffer;
-            if (iSigned)
-                if (*pRes & 0x80000000)
-                    *pRes = (DI_UINT64)*pRes - 1 - 0xFFFFFFFFUL;
+    case 4:
+        *pRes = *(unsigned int*)buffer;
+        if (iSigned)
+            if (*pRes & 0x80000000)
+                *pRes = (DI_UINT64)*pRes - 1 - 0xFFFFFFFFUL;
         break;
 
-    case 8: *pRes = *(DI_UINT64*)buffer;
-            if (iSigned)
-                if (*pRes & 0x8000000000000000ULL)
-                    *pRes = (DI_UINT64)*pRes - 1 - 0xFFFFFFFFFFFFFFFFULL;
+    case 8:
+        *pRes = *(DI_UINT64*)buffer;
+        if (iSigned)
+            if (*pRes & 0x8000000000000000ULL)
+                *pRes = (DI_UINT64)*pRes - 1 - 0xFFFFFFFFFFFFFFFFULL;
         break;
     };
     
@@ -238,7 +242,8 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             RegCode = Diana_GetReg2(pContext, PostByte);
 
         iCurOffset+=2;
-    } else
+    }
+    else
     {
         // no postbyte
         int read = 0;

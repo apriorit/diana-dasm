@@ -40,7 +40,7 @@ static DianaCmdInfo g_Diana_GS;
                 
 
 int DianaRecognizeMMX(DI_CHAR regId, 
-                         DianaUnifiedRegister * pOut)
+                      DianaUnifiedRegister * pOut)
 {
     if (regId < sizeof(table3[0])/sizeof(table3[0][0]))
     {
@@ -51,7 +51,7 @@ int DianaRecognizeMMX(DI_CHAR regId,
 }
 
 int DianaRecognizeXMM(DI_CHAR regId, 
-                     DianaUnifiedRegister * pOut)
+                      DianaUnifiedRegister * pOut)
 {
     if (regId < sizeof(table3[1])/sizeof(table3[1][0]))
     {
@@ -100,9 +100,9 @@ int DianaRecognizeCommonReg(DI_CHAR iOpSize,
 
 
 int Di_ProcessRexPrefix(unsigned char value,
-                           int * pbPrefixFound, 
-                           DianaContext * pContext,
-                           DianaParserResult * pResult)
+                        int * pbPrefixFound, 
+                        DianaContext * pContext,
+                        DianaParserResult * pResult)
 {
     *pbPrefixFound = 0;
 
@@ -116,9 +116,9 @@ int Di_ProcessRexPrefix(unsigned char value,
 }
 
 void Di_ProcessCustomPrefix(unsigned char value,
-                           int * pbPrefixFound, 
-                           DianaContext * pContext,
-                           DianaParserResult * pResult)
+                            int * pbPrefixFound, 
+                            DianaContext * pContext,
+                            DianaParserResult * pResult)
 {
 	pContext;
 

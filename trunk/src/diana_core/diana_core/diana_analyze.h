@@ -41,9 +41,9 @@ typedef struct _Diana_XRef
 
 typedef int (* DianaAnalyzeMoveTo_fnc)(void * pThis, OPERAND_SIZE offset);
 typedef int (* ConvertAddressToRelative_fnc)(void * pThis, 
-                                            OPERAND_SIZE address,
-                                            OPERAND_SIZE * pRelativeOffset,
-                                            int * pbInvalidPointer);
+                                             OPERAND_SIZE address,
+                                             OPERAND_SIZE * pRelativeOffset,
+                                             int * pbInvalidPointer);
 typedef int (* AddSuspectedDataAddress_fnc)(void * pThis, 
                                             OPERAND_SIZE address);
 typedef struct _dianaAnalyzeObserver
@@ -55,10 +55,10 @@ typedef struct _dianaAnalyzeObserver
 }DianaAnalyzeObserver;
 
 void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
-                                 DianaRead_fnc pReadFnc,
-                                 DianaAnalyzeMoveTo_fnc pMoveFnc,
-                                 ConvertAddressToRelative_fnc pConvertAddress,
-                                 AddSuspectedDataAddress_fnc pSuspectedDataAddress);
+                               DianaRead_fnc pReadFnc,
+                               DianaAnalyzeMoveTo_fnc pMoveFnc,
+                               ConvertAddressToRelative_fnc pConvertAddress,
+                               AddSuspectedDataAddress_fnc pSuspectedDataAddress);
 
 void Diana_Instruction_Init(Diana_Instruction * pInstruction,
                             OPERAND_SIZE m_offset,
@@ -101,6 +101,6 @@ int Diana_AnalyzeCode(Diana_InstructionsOwner * pOwner,
                       OPERAND_SIZE maxOffset);
 
 Diana_XRef * Diana_CastXREF(Diana_ListNode * pNode,
-                           int index);
+                            int index);
 
 #endif

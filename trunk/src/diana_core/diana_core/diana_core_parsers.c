@@ -138,7 +138,7 @@ static DianaCmdKey * FindCmdKeyImpl(DianaCmdKeyLine * pLine,
                     // not clean opcode
                     CompareKeys(&usedKey, p, &pSecondaryResult, &pResult);
                 }
-             }// for
+             }
  
              if (!pResult)
                     pResult = pSecondaryResult;
@@ -262,9 +262,9 @@ static DianaCmdKey * ScanLeft(DianaCmdKeyLine * pLine,
 }
 
 static DianaCmdKey * ScanRight(DianaCmdKeyLine * pLine, 
-                              DianaCmdKey * pFoundKey, 
-                              DianaParseParams * pParseParams,
-                              DI_CHAR lastData)
+                               DianaCmdKey * pFoundKey, 
+                               DianaParseParams * pParseParams,
+                               DI_CHAR lastData)
 {
     size_t number = pFoundKey - pLine->key;
     DianaCmdKey * p = pFoundKey;
@@ -441,9 +441,9 @@ int TryMatch(DianaParseParams * pParseParams,
     {
         // [REX][OLDPREFIX][CMD] case
         Di_ProcessCustomPrefix(pParseParams->pContext->cache[pParseParams->pContext->cacheIt],
-                                &oldPrefixFound,
-                                pParseParams->pContext,
-                                0);
+                               &oldPrefixFound,
+                               pParseParams->pContext,
+                               0);
     }
                       
 
