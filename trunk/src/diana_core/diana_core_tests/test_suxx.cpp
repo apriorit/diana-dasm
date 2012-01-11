@@ -1176,7 +1176,7 @@ void test_suxx()
     }    
 
 
-    static unsigned char suxx80[] = {0x0f, 0xae, 0x3b };//         clflush [rbx]
+    /*static unsigned char suxx80[] = {0x0f, 0xae, 0x3b };//         clflush [rbx]
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,suxx80, sizeof(suxx80), Diana_GetRootLine(), &result, &read);
     TEST_ASSERT_IF(!iRes)
     {
@@ -1188,7 +1188,7 @@ void test_suxx()
         TEST_ASSERT(result.linkedOperands[0].type == diana_memory);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_RBX);
         TEST_ASSERT(result.linkedOperands[0].usedSize == 1);
-    }    
+    }*/
 
     
     static unsigned char suxx81[] = {0xf, 0x1, 0xDF};//         INVLPGA RAX, ECX | 0F 01 DF
