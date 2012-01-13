@@ -30,6 +30,7 @@ int Diana_Call_xor(struct _dianaContext * pDianaContext,
     //OF := 0
 
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
 
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
@@ -80,6 +81,7 @@ int Diana_Call_xchg(struct _dianaContext * pDianaContext,
     OPERAND_SIZE temp = 0;
     int temp_size = 0;
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
 
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
@@ -104,6 +106,7 @@ int Diana_Call_test(struct _dianaContext * pDianaContext,
     //CF := 0;
     //OF := 0;
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
 
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
@@ -128,6 +131,7 @@ int Diana_Call_inc(struct _dianaContext * pDianaContext,
 {
     //DEST := DEST + SRC;
     DI_DEF_LOCALS(src, dest);
+	src_size;
         
     DI_MEM_GET_DEST(dest);
 
@@ -168,6 +172,7 @@ int Diana_Call_or(struct _dianaContext * pDianaContext,
     //OF := 0;
 
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
 
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
@@ -195,6 +200,7 @@ int Diana_Call_enter(struct _dianaContext * pDianaContext,
     OPERAND_SIZE rbp = 0, rsp = 0, tempRBP = 0;
 
     DI_DEF_LOCALS(op1, op2);
+	oldDestValue;
     DI_MEM_GET_DEST(op1);
     DI_MEM_GET_SRC(op2);
 
@@ -280,7 +286,10 @@ int Diana_Call_xlat(struct _dianaContext * pDianaContext,
 static
 void DianaProcessor_OnGroup(DianaGroupInfo * p)
 {
+	#pragma warning( suppress : 4127 ) // conditional expression is constant
     if (0){}
+	#pragma warning( push )
+	#pragma warning( disable : 4152 ) // non standard extension, function/data ptr conversion in expression
     DI_PROC_REGISTER_COMMAND(aaa)
     DI_PROC_REGISTER_COMMAND(aad)
     DI_PROC_REGISTER_COMMAND(aam)
@@ -430,6 +439,7 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
 
     // stubs
     DI_PROC_REGISTER_COMMAND(int)
+	#pragma warning( pop )
 }
 
 void DianaProcessor_LinkCommands()

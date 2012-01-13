@@ -9,6 +9,7 @@ int Diana_Call_mov(struct _dianaContext * pDianaContext,
 {
     //DEST := SRC
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     
     DI_MEM_GET_DEST(dest)
     DI_MEM_GET_SRC(src);
@@ -28,6 +29,9 @@ int Diana_Call_movs(struct _dianaContext * pDianaContext,
     DianaRmIndex srcIndex, destIndex;
     OPERAND_SIZE srcRegAddress = 0, destRegAddress = 0;
     DI_DEF_LOCALS(src, dest);
+	dest;
+	oldDestValue;
+	dest_size;
     
     DianaProcessor_CmdUsesNormalRep(pCallContext);
 
@@ -83,6 +87,7 @@ int Diana_Call_movsx(struct _dianaContext * pDianaContext,
 {
     //DEST := SRC
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     
     DI_MEM_GET_DEST(dest)
     DI_MEM_GET_SRC(src);
@@ -100,6 +105,7 @@ int Diana_Call_movzx(struct _dianaContext * pDianaContext,
 {
     //DEST := SRC
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     
     DI_MEM_GET_DEST(dest)
     DI_MEM_GET_SRC(src);
@@ -209,6 +215,7 @@ int Diana_Call_mul(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext)
 {
     DI_DEF_LOCAL(argument);
+	oldDestValue;
     DI_MEM_GET_DEST(argument);
 
     CLEAR_FLAG_CF;
@@ -245,6 +252,7 @@ int Diana_Call_movsxd(struct _dianaContext * pDianaContext,
 {
     //DEST := SRC
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     
     DI_MEM_GET_DEST(dest)
     DI_MEM_GET_SRC(src);

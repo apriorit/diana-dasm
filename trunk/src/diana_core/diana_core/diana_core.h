@@ -144,6 +144,9 @@ typedef struct _dianaGroupInfo
     void * m_pTag;
 }DianaGroupInfo;
 
+// forward declaration
+struct _dianaContext;
+
 typedef void (*Diana_PrefixFnc)(struct _dianaContext * pContext);
 
 typedef void (*Diana_CallFnc)(struct _dianaContext * pDianaContext,
@@ -175,7 +178,7 @@ typedef struct _dianaRmIndex
     DianaUnifiedRegister indexed_reg;
     DI_CHAR index;
     DI_CHAR dispSize;
-    DI_INT64 dispValue;
+    DI_UINT64 dispValue;
 }DianaRmIndex;
 
 typedef struct _dianaCallPtr

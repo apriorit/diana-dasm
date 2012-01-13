@@ -104,6 +104,7 @@ int Diana_Call_imul_1(struct _dianaContext * pDianaContext,
                       DianaProcessor * pCallContext)
 {
     DI_DEF_LOCAL(argument);
+	oldDestValue;
     DI_MEM_GET_DEST(argument);
 
     switch(pCallContext->m_result.linkedOperands->usedSize)
@@ -207,6 +208,7 @@ int Diana_Call_imul_2(struct _dianaContext * pDianaContext,
                       DianaProcessor * pCallContext)
 {
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
@@ -225,6 +227,7 @@ int Diana_Call_imul_3(struct _dianaContext * pDianaContext,
                       DianaProcessor * pCallContext)
 {
     DI_DEF_LOCALS2(dest, src1, src2);
+	oldDestValue;
     
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src1);

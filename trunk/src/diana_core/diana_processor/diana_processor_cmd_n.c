@@ -36,6 +36,7 @@ int Diana_Call_not(struct _dianaContext * pDianaContext,
 {
     //DEST := SRC
     DI_DEF_LOCAL(dest);
+	oldDestValue;
     
     DI_MEM_GET_DEST(dest)
 
@@ -48,7 +49,7 @@ int Diana_Call_not(struct _dianaContext * pDianaContext,
 int Diana_Call_nop(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext)
 {
-	pCallContext;
+	pDianaContext;
 	pCallContext;
 
     DI_PROC_END

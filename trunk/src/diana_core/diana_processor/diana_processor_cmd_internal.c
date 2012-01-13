@@ -370,6 +370,7 @@ int Diana_Call_internal_ret(struct _dianaContext * pDianaContext,
     OPERAND_SIZE rsp = 0, dropBytes = 0;
     OPERAND_SIZE newRIP = 0;
     DI_DEF_LOCAL(src);
+	oldDestValue;
     
     if (pCallContext->m_result.iLinkedOpCount == 1)
     {

@@ -36,6 +36,7 @@ int Diana_Call_aad(struct _dianaContext * pDianaContext,
 {
     DianaRegisterValue16_type ax;
     DI_DEF_LOCAL(src);
+	oldDestValue;
     DI_MEM_GET_DEST(src);
 
     //AL := AH * 10 + AL;
@@ -54,6 +55,7 @@ int Diana_Call_aam(struct _dianaContext * pDianaContext,
 {
     DianaRegisterValue16_type ax;
     DI_DEF_LOCAL(src);
+	oldDestValue;
     DI_MEM_GET_DEST(src);
 
     //AH := AL / 10;
@@ -72,6 +74,8 @@ int Diana_Call_aam(struct _dianaContext * pDianaContext,
 int Diana_Call_aas(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext)
 {
+	pDianaContext;
+
    if ((GET_REG_AL & 0xF) > 9 || GET_FLAG_AF) 
    {
         SET_REG_AX(GET_REG_AX - 6);
@@ -158,6 +162,7 @@ int Diana_Call_and(struct _dianaContext * pDianaContext,
     //OF := 0;
 
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
 
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);

@@ -231,7 +231,6 @@ void test_x32_integrated_impl(const unsigned char * pData,
                               size_t dataSize,
                               const TestEntry_Name * pNames)
 {
-    DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
     
     int iRes = 0;

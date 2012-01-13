@@ -39,6 +39,8 @@ typedef struct _DianaRegInfo
 #define flag_ID         0x200000
 //RFLAGS
 
+#pragma warning( push )
+#pragma warning( disable : 4201 ) // nonstandard extension used : nameless struct/union
 
 typedef union _DianaRegisterValue16
 {
@@ -104,10 +106,15 @@ typedef union _DianaRegisterValue_signed
     OPERAND_SIZE_SIGNED value;
 } DianaRegisterValue_signed_type;
 
+#pragma warning( pop )
+
 #define DI_PROC_STATE_TEMP_RIP_IS_VALID       0x1
 #define DI_PROC_STATE_RIP_CHANGED             0x2
 #define DI_PROC_STATE_UPDATE_FLAGS_PSZ        0x4 
 #define DI_PROC_STATE_CMD_USES_NORMAL_REP     0x8 
+
+// forward declaration
+struct _dianaProcessorFirePoint;
 
 typedef void (*FireAction_type)(struct _dianaProcessorFirePoint * pPoint,
                                 struct _dianaProcessor * pProcessor);

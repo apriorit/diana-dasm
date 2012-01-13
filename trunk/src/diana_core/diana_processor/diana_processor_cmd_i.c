@@ -138,6 +138,7 @@ int Diana_Call_idiv(struct _dianaContext * pDianaContext,
     //qword   RDX:RAX      r/m64      RAX         RDX   
 
     DI_DEF_LOCAL(divisor);
+	oldDestValue;
 
     DI_MEM_GET_DEST(divisor);
 
@@ -171,7 +172,7 @@ int Diana_Call_idiv(struct _dianaContext * pDianaContext,
 int Diana_Call_int(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext)
 {
-	pCallContext;
+	pDianaContext;
 	pCallContext;
 
     DI_PROC_END

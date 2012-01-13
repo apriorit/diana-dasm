@@ -110,7 +110,8 @@ int CallWithRep(DianaProcessorCommand_type pCommand,
         Diana_DebugFatalBreak();
         return DI_ERROR;
     }
-        
+
+	#pragma warning( suppress : 4127 ) // conditional expression is constant
     while(1)
     {
         if (!DianaProcessor_GetValue(pCallContext, DianaProcessor_QueryReg(pCallContext, usedReg)))
@@ -182,6 +183,7 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
         return res;
     
     // query context 
+	#pragma warning( suppress : 4055 ) // 'conversion' : from data pointer 'type1' to function pointer 'type2'
     pCommand = DIANA_QUERY_PROCESSOR_TAG(pThis->m_result.pInfo->m_pGroupInfo);
     if (!pCommand)
     {

@@ -51,6 +51,7 @@ int Diana_Call_shl(struct _dianaContext * pDianaContext,
     OPERAND_SIZE i = 0;
     OPERAND_SIZE signMask = 0;
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
@@ -120,6 +121,7 @@ int Diana_Call_sar(struct _dianaContext * pDianaContext,
     OPERAND_SIZE i = 0;
     OPERAND_SIZE signMask = 0, prevSign = 0;
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
@@ -223,6 +225,7 @@ int Diana_Call_shld(struct _dianaContext * pDianaContext,
     OPERAND_SIZE i = 0;
     OPERAND_SIZE signMask = 0;
     DI_DEF_LOCALS2(src1, src2, dest);
+	oldDestValue;
     DI_MEM_GET_SRC2(src2);
     DI_MEM_GET_SRC(src1);
     DI_MEM_GET_DEST(dest);
@@ -298,6 +301,7 @@ int Diana_Call_shr(struct _dianaContext * pDianaContext,
     OPERAND_SIZE signMask = 0;
     OPERAND_SIZE original = 0;
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
@@ -363,6 +367,7 @@ int Diana_Call_shrd(struct _dianaContext * pDianaContext,
     OPERAND_SIZE i = 0;
     OPERAND_SIZE signMask = 0;
     DI_DEF_LOCALS2(src1, src2, dest);
+	oldDestValue;
     DI_MEM_GET_SRC2(src2);
     DI_MEM_GET_SRC(src1);
     DI_MEM_GET_DEST(dest);
@@ -425,6 +430,7 @@ int Diana_Call_scas(struct _dianaContext * pDianaContext,
     DianaRmIndex destIndex;
     OPERAND_SIZE destRegAddress = 0;
     DI_DEF_LOCALS(src, dest);
+	dest_size;
     
     src = GET_REG_RAX2(pCallContext->m_result.linkedOperands->usedSize);
     src_size = pCallContext->m_result.linkedOperands->usedSize;
@@ -474,6 +480,8 @@ int Diana_Call_stos(struct _dianaContext * pDianaContext,
     DianaRmIndex destIndex;
     OPERAND_SIZE destRegAddress = 0, destSelectorValue = 0;
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
+	dest_size;
     
     DianaProcessor_CmdUsesNormalRep(pCallContext);
 

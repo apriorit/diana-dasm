@@ -20,7 +20,7 @@ int Diana_ParseCmdOnBuffer_test(int iMode,
     if (iRes)
         return iRes;
 
-    if (pResult->iFullCmdSize !=size)
+    if (pResult->iFullCmdSize!=size)
         Diana_FatalBreak();
 
     if (*sizeRead!=size)

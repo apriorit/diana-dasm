@@ -341,8 +341,10 @@ static void InitRetStub(DianaPatcher_RetHook32 * pRet,
     *(void ** )(pRet->retStub + DI_RET_OFFSET_ORIGINAL_RETURN) = pOriginalRet;
     *(void ** )(pRet->retStub + DI_RET_OFFSET_CONTEXT) = pRet;
     *(void ** )(pRet->retStub + DI_RET_OFFSET_RET2) = pRet->retStub + DI_RET_RET2;
+	#pragma warning( suppress : 4152 ) // non standard extension, function/data ptr conversion in expression
     *(void ** )(pRet->retStub + DI_RET_OFFSET_FUNCTION) = pRet->pFunction;
     *(void ** )(pRet->retStub + DI_RET_OFFSET_HOOK) = pRet;
+	#pragma warning( suppress : 4152 ) // non standard extension, function/data ptr conversion in expression
     *(void ** )(pRet->retStub + DI_RET_OFFSET_FUNCTION2) = Diana_FreeRetHook;
 }
 

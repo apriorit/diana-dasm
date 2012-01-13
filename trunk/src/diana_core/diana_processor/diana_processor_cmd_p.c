@@ -17,8 +17,8 @@ int Diana_Call_push(struct _dianaContext * pDianaContext,
 {
     // DEST 
     int usedSize = 0;
-    OPERAND_SIZE rsp = 0;
     DI_DEF_LOCAL(src);
+	oldDestValue;
     DI_MEM_GET_DEST(src);
 
     if (pCallContext->m_result.pInfo->m_flags & DI_FLAG_CMD_PUSH_SEG)
@@ -93,6 +93,7 @@ int Diana_Call_pop(struct _dianaContext * pDianaContext,
                     DianaProcessor * pCallContext)
 {
     DI_DEF_LOCAL(dest);
+	oldDestValue;
     DI_MEM_GET_DEST(dest);
 
     DI_CHECK(diana_internal_pop(pCallContext,

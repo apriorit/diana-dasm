@@ -44,12 +44,12 @@ int Diana_DispatchMod3(DianaLinkedOperand * pInfo,
     if (pInfo->pInfo->m_type == diana_orMemoryMMX)
     {
          pInfo->usedSize = 8;
-         return DianaRecognizeMMX(rm, pOut);
+         return DianaRecognizeMMX(( DI_CHAR )rm, pOut);
     }
     if (pInfo->pInfo->m_type == diana_orMemoryXMM)
     {
         pInfo->usedSize = 16;
-        return DianaRecognizeXMM(rm, pOut);
+        return DianaRecognizeXMM(( DI_CHAR )rm, pOut);
     }
         
     switch (iRegSizeInBytes)

@@ -18,10 +18,12 @@
 
 #define DIANA_RET_ARG(espVal, num, type)  (*(type*)((unsigned long*)espVal+num))
 
+// forward declaration
+struct DianaPatcher_RetHook32_;
+
 typedef void (__stdcall *Diana_PatchHandlerFunction2_type)(void * pContext, 
                                                            void * pOriginalESP,
                                                            void * pInputRegisters);
-
 typedef void (__stdcall *Diana_PatchHandlerFunction_type)(void * pContext, void * pOriginalESP);
 typedef void (__stdcall *Diana_RetHandlerFunction_type)(struct DianaPatcher_RetHook32_ * pContext, 
                                                         void * pRegistersSet);
@@ -39,7 +41,6 @@ typedef struct DianaPatcher_RetHook32_
 
 #ifdef _MSC_VER 
 #pragma warning(disable:4731)
-
 #endif
 
 // should be used with Diana_PatchSomething32 handlers

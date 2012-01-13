@@ -239,7 +239,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         PostByte = buffer[1];
                 
         if(!iExtensionUsed)
-            RegCode = Diana_GetReg2(pContext, PostByte);
+            RegCode = Diana_GetReg2(pContext, ( DI_CHAR )PostByte);
 
         iCurOffset+=2;
     }
@@ -303,7 +303,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             opSizeUsed = 4;
         }
 
-        addrSizeUsed = pContext->iCurrentCmd_addressSize;
+        addrSizeUsed = ( unsigned char )pContext->iCurrentCmd_addressSize;
 
         pLinkedOp->pInfo = pOperInfo;
         pLinkedOp->usedSize = opSizeUsed;
@@ -332,7 +332,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             if (DianaGetHandler(addrSizeUsed!=2)(pContext,
                                                  pLinkedOp,
                                                  opSizeUsed,
-                                                 PostByte,
+                                                 ( DI_CHAR )PostByte,
                                                  readStream,
                                                  &pLinkedOp->value,
                                                  &pLinkedOp->type))
@@ -423,7 +423,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             {
                 if (pOperInfo->m_sreg_type != diana_reg_none)
                 {
-                    RegCode = pOperInfo->m_sreg_type-1;
+                    RegCode = ( DI_CHAR )(pOperInfo->m_sreg_type-1);
                 }
                 else
                     return DI_ERROR;
@@ -436,7 +436,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
 
 		case diana_orOffset:
             pLinkedOp->type = diana_index;
-            pLinkedOp->value.rmIndex.dispSize = pContext->iMainMode_addressSize;
+            pLinkedOp->value.rmIndex.dispSize = ( unsigned char )pContext->iMainMode_addressSize;
             pLinkedOp->value.rmIndex.index = 0;
             pLinkedOp->value.rmIndex.indexed_reg = reg_none;
             pLinkedOp->value.rmIndex.reg = reg_none;
@@ -545,7 +545,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             if (DianaGetHandler(addrSizeUsed!=2)(pContext,
                                 pLinkedOp,
                                 opSizeUsed,
-                                PostByte, 
+                                ( DI_CHAR )PostByte, 
                                 readStream,
                                 &pLinkedOp->value,
                                 &pLinkedOp->type))
@@ -619,20 +619,20 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
 
         case diana_orRegXMM:
             pLinkedOp->type = diana_register;
-            pLinkedOp->value.recognizedRegister = reg_XMM0 + Diana_GetReg2(pContext, PostByte);
+            pLinkedOp->value.recognizedRegister = reg_XMM0 + Diana_GetReg2(pContext, ( DI_CHAR )PostByte);
             pLinkedOp->usedSize = 16;
             break;
 
         case diana_orRegMMX:
             pLinkedOp->type = diana_register;
-            pLinkedOp->value.recognizedRegister = reg_MM0 + Diana_GetReg(PostByte);
+            pLinkedOp->value.recognizedRegister = reg_MM0 + Diana_GetReg(( DI_CHAR )PostByte);
             pLinkedOp->usedSize = 8;
             break;
 
         case diana_orRegistry32:
             pLinkedOp->type = diana_register;
             if (DianaRecognizeCommonReg(opSizeUsed, 
-                                        Diana_GetReg(PostByte), 
+                                        Diana_GetReg(( DI_CHAR )PostByte), 
                                         &pLinkedOp->value.recognizedRegister,
                                         pContext->iRexPrefix))
                 return DI_ERROR;
@@ -659,7 +659,9 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
     if (iCurImm)
     {
         int i =0;
-        DI_CHAR imms[MAX_IMM] = {pResult->pInfo->m_iImmediateOperandSizeInBytes, 
+		#pragma warning( suppress : 4204 ) // nonstandard extension used : non-constant aggregate initializer
+        DI_CHAR imms[MAX_IMM] = {pResult->pInfo->m_iImmediateOperandSizeInBytes,
+		#pragma warning( suppress : 4204 ) // nonstandard extension used : non-constant aggregate initializer
                                  pResult->pInfo->m_iImmediateOperandSizeInBytes2};
 
         for(;i<iCurImm;++i)

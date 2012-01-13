@@ -463,7 +463,6 @@ void test_x64_integrated_impl(const unsigned char * pData,
                               size_t dataSize,
                               const TestEntry_Name * pNames)
 {
-    DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
     
     int iRes = 0;
@@ -564,6 +563,7 @@ void test_fail_3()
     for(; ; ++i)
     {
         iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent,  &result);
+		pGroupInfo;
         if (iRes == DI_END)
             break;
     }

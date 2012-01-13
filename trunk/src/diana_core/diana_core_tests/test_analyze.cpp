@@ -57,7 +57,10 @@ int DianaConvertAddressToRelative(void * pThis,
                              OPERAND_SIZE * pRelativeOffset,
                              int * pbInvalidPointer)
 {
+	pbInvalidPointer;
+
     TestStream * pStream = (TestStream * )pThis;
+	pStream;
     *pRelativeOffset = address;
     return DI_SUCCESS;
 }
@@ -66,7 +69,10 @@ static
 int DianaAddSuspectedDataAddress(void * pThis, 
                                  OPERAND_SIZE address)
 {
-    TestStream * pStream = (TestStream * )pThis;
+	address;
+
+	TestStream * pStream = (TestStream * )pThis;
+	pStream;
     return DI_SUCCESS;
 }
 

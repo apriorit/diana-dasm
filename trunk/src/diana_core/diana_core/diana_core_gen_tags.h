@@ -3,6 +3,10 @@
 
 
 #include "diana_core.h"
+
+// forward declaration
+struct _dianaProcessor;
+
 typedef int (*DianaProcessorCommand_type)(struct _dianaContext * pDianaContext,
                                           struct _dianaProcessor * pCallContext);
 

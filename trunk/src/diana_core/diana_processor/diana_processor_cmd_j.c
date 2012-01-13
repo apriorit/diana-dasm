@@ -218,6 +218,7 @@ int Diana_Call_jecxz(struct _dianaContext * pDianaContext,
                      DianaProcessor * pCallContext)
 {
     DI_DEF_LOCAL(dest);
+	oldDestValue;
     DI_MEM_GET_DEST(dest);
 
     if (!dest)
@@ -237,6 +238,7 @@ int Diana_Call_jmp(struct _dianaContext * pDianaContext,
     int bNewSegmentIs = 0;
 
     DI_DEF_LOCAL(newRIP);
+	oldDestValue;
 
     if (pCallContext->m_result.iLinkedOpCount != 1)
     {

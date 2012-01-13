@@ -2,6 +2,10 @@
 #define DIANA_PROCESSOR_STREAMS_H
 
 #include "diana_streams.h"
+
+// forward declaration
+struct _dianaProcessor;
+
 // random stream
 typedef int (* DianaRandomRead_fnc)(void * pThis, 
                                     OPERAND_SIZE selector,

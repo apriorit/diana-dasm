@@ -18,6 +18,7 @@ int Diana_Call_setcc(struct _dianaContext * pDianaContext,
                      int op)
 {
     DI_DEF_LOCAL(dest);
+	oldDestValue;
     DI_MEM_GET_DEST(dest);
     dest = op;
     DI_MEM_SET_DEST(dest);

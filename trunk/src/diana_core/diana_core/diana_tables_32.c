@@ -280,8 +280,8 @@ int Diana_ReadIndexStructure32(DianaContext * pContext,
             } 
             else
             {
-                iRes = DianaRecognizeCommonReg(pContext->iCurrentCmd_addressSize,
-                                               base, 
+                iRes = DianaRecognizeCommonReg(( DI_CHAR )pContext->iCurrentCmd_addressSize,
+                                               ( DI_CHAR )base, 
                                                &pIndex->reg,
                                                pContext->iRexPrefix);
                 if (iRes)
@@ -297,8 +297,8 @@ int Diana_ReadIndexStructure32(DianaContext * pContext,
             }
             else
             {
-                iRes = DianaRecognizeCommonReg(pContext->iCurrentCmd_addressSize,
-                                               index, 
+                iRes = DianaRecognizeCommonReg(( DI_CHAR )pContext->iCurrentCmd_addressSize,
+                                               ( DI_CHAR )index, 
                                                &pIndex->indexed_reg,
                                                pContext->iRexPrefix);
                 if (iRes)

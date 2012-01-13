@@ -23,7 +23,8 @@ int Diana_Call_bsf(struct _dianaContext * pDianaContext,
     //FI; 
 
     DI_DEF_LOCALS(src, dest);
-        
+	oldDestValue;
+
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
@@ -63,7 +64,8 @@ int Diana_Call_bsr(struct _dianaContext * pDianaContext,
     //   OD;
     //FI; 
     DI_DEF_LOCALS(src, dest);
-        
+	oldDestValue;
+
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
@@ -92,7 +94,8 @@ int Diana_Call_bt(struct _dianaContext * pDianaContext,
     // CF := BIT[LeftSRC, RightSRC]; 
     OPERAND_SIZE temp = 0;
     DI_DEF_LOCALS(src, dest);
-        
+	oldDestValue;
+
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
@@ -131,7 +134,8 @@ int Diana_Call_btc(struct _dianaContext * pDianaContext,
 
     OPERAND_SIZE temp = 0;
     DI_DEF_LOCALS(src, dest);
-        
+	oldDestValue;
+
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
@@ -178,7 +182,8 @@ int Diana_Call_btr(struct _dianaContext * pDianaContext,
 
     OPERAND_SIZE temp = 0;
     DI_DEF_LOCALS(src, dest);
-        
+	oldDestValue;
+
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
@@ -220,7 +225,8 @@ int Diana_Call_bts(struct _dianaContext * pDianaContext,
 
     OPERAND_SIZE temp = 0;
     DI_DEF_LOCALS(src, dest);
-        
+	oldDestValue;
+
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
 
@@ -262,6 +268,7 @@ int Diana_Call_bswap(struct _dianaContext * pDianaContext,
 {
 	OPERAND_SIZE b0, b1, b2, b3, b4, b5, b6, b7;
 	DI_DEF_LOCAL(dest);
+	oldDestValue;
 	DI_MEM_GET_DEST(dest);
 
 	switch( dest_size )

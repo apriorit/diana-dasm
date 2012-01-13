@@ -25,6 +25,9 @@ int Diana_Call_lea(struct _dianaContext * pDianaContext,
     OPERAND_SIZE memSelector = GET_REG_DS, memAddress=0;
     DianaRmIndex  * pIndex = 0;
     DI_DEF_LOCALS(src, dest);
+	src;
+	src_size;
+	oldDestValue;
     
     DI_MEM_GET_DEST(dest);
 

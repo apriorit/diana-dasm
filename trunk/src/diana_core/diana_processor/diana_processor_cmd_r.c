@@ -28,6 +28,7 @@ int Diana_Call_rcl(struct _dianaContext * pDianaContext,
     OPERAND_SIZE i = 0;
     OPERAND_SIZE signMask = 0;
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
@@ -118,6 +119,7 @@ int Diana_Call_rcr(struct _dianaContext * pDianaContext,
     OPERAND_SIZE i = 0;
     OPERAND_SIZE signMask = 0;
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
@@ -208,6 +210,7 @@ int Diana_Call_rol(struct _dianaContext * pDianaContext,
     OPERAND_SIZE i = 0;
     OPERAND_SIZE signMask = 0;
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
@@ -284,6 +287,7 @@ int Diana_Call_ror(struct _dianaContext * pDianaContext,
     OPERAND_SIZE i = 0;
     OPERAND_SIZE signMask = 0;
     DI_DEF_LOCALS(src, dest);
+	oldDestValue;
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
