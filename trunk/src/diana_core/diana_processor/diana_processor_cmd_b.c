@@ -113,7 +113,6 @@ int Diana_Call_bt(struct _dianaContext * pDianaContext,
         break;
     case 1:
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
@@ -154,7 +153,6 @@ int Diana_Call_btc(struct _dianaContext * pDianaContext,
         break;
     case 1:
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
@@ -201,7 +199,6 @@ int Diana_Call_btr(struct _dianaContext * pDianaContext,
         break;
     case 1:
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
@@ -244,7 +241,6 @@ int Diana_Call_bts(struct _dianaContext * pDianaContext,
         break;
     case 1:
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
@@ -296,7 +292,6 @@ int Diana_Call_bswap(struct _dianaContext * pDianaContext,
 		dest |= (b0<<56) | (b1<<48) | (b2<<40) | (b3<<32) | (b4<<24) | (b5<<16) | (b6<<8);
 		break;
 	default:
-		Diana_DebugFatalBreak();
 		return DI_ERROR;
 	}
 	DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, dest_size, &dest_size));

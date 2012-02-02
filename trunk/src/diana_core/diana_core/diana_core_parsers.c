@@ -461,7 +461,6 @@ int TryMatch(DianaParseParams * pParseParams,
 
         if (pParseParams->pContext->iSizePrefixes & DIANA_INVALID_STATE)
         {
-            Diana_DebugFatalBreak();
             return DI_ERROR;
         }
 

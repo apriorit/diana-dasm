@@ -107,7 +107,6 @@ int CallWithRep(DianaProcessorCommand_type pCommand,
         usedReg = reg_CX;
         break;
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
@@ -187,8 +186,6 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
     pCommand = DIANA_QUERY_PROCESSOR_TAG(pThis->m_result.pInfo->m_pGroupInfo);
     if (!pCommand)
     {
-        // command is not supported
-        Diana_DebugFatalBreak();
         return DI_UNSUPPORTED_COMMAND;
     }
 

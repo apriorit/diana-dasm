@@ -362,7 +362,6 @@ int Diana_SetupRet(Diana_Allocator * pAllocator,
     {
         if (!ppCallContext)
         {
-            Diana_DebugFatalBreak();
             return DI_INVALID_INPUT;
         }
     }    

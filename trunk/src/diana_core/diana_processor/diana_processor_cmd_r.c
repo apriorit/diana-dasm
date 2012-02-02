@@ -47,7 +47,6 @@ int Diana_Call_rcl(struct _dianaContext * pDianaContext,
         src &= 0x3FULL;
         break;
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
     if (!src)
@@ -138,7 +137,6 @@ int Diana_Call_rcr(struct _dianaContext * pDianaContext,
         src &= 0x3FULL;
         break;
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
     if (!src)

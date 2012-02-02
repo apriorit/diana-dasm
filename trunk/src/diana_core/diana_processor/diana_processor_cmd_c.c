@@ -18,7 +18,6 @@ int Diana_Call_call(struct _dianaContext * pDianaContext,
 
     if (pCallContext->m_result.iLinkedOpCount != 1)
     {
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
@@ -73,7 +72,6 @@ int Diana_Call_call(struct _dianaContext * pDianaContext,
         newRIP = pCallContext->m_result.linkedOperands[0].value.ptr.m_address;
         break;
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
@@ -147,7 +145,6 @@ int Diana_Call_cbw(struct _dianaContext * pDianaContext,
         SET_REG_AX(reg);
         break;
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
     DI_PROC_END;
@@ -638,7 +635,6 @@ int Diana_Call_cmpxchg8b_impl(struct _dianaContext * pDianaContext,
     if (pCallContext->m_result.iLinkedOpCount != 1 ||
         pCallContext->m_result.linkedOperands[0].type != diana_index)
     {
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
     DI_CHECK(DianaProcessor_CalcIndex(pDianaContext,
@@ -689,7 +685,6 @@ int Diana_Call_cmpxchg16b_impl(struct _dianaContext * pDianaContext,
     if (pCallContext->m_result.iLinkedOpCount != 1 ||
         pCallContext->m_result.linkedOperands[0].type != diana_index)
     {
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
     DI_CHECK(DianaProcessor_CalcIndex(pDianaContext,

@@ -33,7 +33,6 @@ int Diana_Call_lea(struct _dianaContext * pDianaContext,
 
     if (pCallContext->m_result.linkedOperands[1].type != diana_index)
     {
-        Diana_DebugFatalBreak();     
         return DI_ERROR;
     }
     pIndex = &pCallContext->m_result.linkedOperands[1].value.rmIndex;

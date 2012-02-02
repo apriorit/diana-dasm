@@ -564,7 +564,6 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
                                                     offset));
             Diana_ClearCache(&pSession->context);
 
-            Diana_DebugFatalBreak();
             continue;
         }
 
@@ -584,10 +583,6 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
                     if (pSession->curRouteInfo.flags & DI_ROUTE_QUESTIONABLE)
                     {
                         RollbackCurrentRoute(pSession);
-                    }
-                    else
-                    {
-                        Diana_DebugFatalBreak();
                     }
                     bNeedReset = 1;
                     continue;

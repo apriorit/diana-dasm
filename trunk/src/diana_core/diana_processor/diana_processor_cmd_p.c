@@ -206,9 +206,6 @@ int Diana_Call_popa(struct _dianaContext * pDianaContext,
     {
     case DIANA_MODE64:
         return DI_UNSUPPORTED_COMMAND;
-    default:
-        Diana_DebugFatalBreak();
-        return DI_ERROR;
 
     case DIANA_MODE32:
         return Diana_Call_popa32(pDianaContext,
@@ -216,6 +213,8 @@ int Diana_Call_popa(struct _dianaContext * pDianaContext,
     case DIANA_MODE16:
         return Diana_Call_popa16(pDianaContext,
                                  pCallContext);
+    default:
+        return DI_ERROR;
     }
 }
 
@@ -235,10 +234,6 @@ int Diana_Call_popf(struct _dianaContext * pDianaContext,
 
     switch(pCallContext->m_context.iCurrentCmd_opsize)
     {
-    default:
-        Diana_DebugFatalBreak();
-        return DI_ERROR;
-
     case DIANA_MODE32:
         DI_CHECK(diana_internal_pop(pCallContext,
                                     &dest));
@@ -254,6 +249,9 @@ int Diana_Call_popf(struct _dianaContext * pDianaContext,
         pCallContext->m_flags.l.l.value = (DI_UINT16)dest;
         DianaProcessor_SetResetDefaultFlags(pCallContext);
         return DI_SUCCESS;
+
+    default:
+        return DI_ERROR;
     }
 }
 
@@ -364,9 +362,6 @@ int Diana_Call_pusha(struct _dianaContext * pDianaContext,
     {
     case DIANA_MODE64:
         return DI_UNSUPPORTED_COMMAND;
-    default:
-        Diana_DebugFatalBreak();
-        return DI_ERROR;
 
     case DIANA_MODE32:
         return Diana_Call_pusha32(pDianaContext,
@@ -374,5 +369,7 @@ int Diana_Call_pusha(struct _dianaContext * pDianaContext,
     case DIANA_MODE16:
         return Diana_Call_pusha16(pDianaContext,
                                   pCallContext);
+    default:
+        return DI_ERROR;
     }
 }

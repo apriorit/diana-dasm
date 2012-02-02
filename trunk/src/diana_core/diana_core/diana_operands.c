@@ -359,7 +359,6 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             {
                 if (iCurImm>=MAX_IMM)
                 {
-                    Diana_FatalBreak();
                     return DI_ERROR;
                 }
                 pLinkedOp->type = diana_imm;
@@ -471,7 +470,6 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
 		case diana_orPtr:
             if (pResult->pInfo->m_operandCount!=1)
             {
-                Diana_FatalBreak();
                 return DI_ERROR;
             }
             pLinkedOp->type = diana_call_ptr;
@@ -502,7 +500,6 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             // E3  cb         JCXZ CX,rel8      9+m,5    Jump short if ECX(CX) register is 0
             //if (pResult->pInfo->m_operandCount!=1)
             //{
-            //    Diana_FatalBreak();
             //    return DI_ERROR;
             //}
             if (iCSIPSize!= DI_CHAR_NULL)
@@ -514,7 +511,6 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                     iCSIPSize = 4;
             } else
             {
-                Diana_FatalBreak();
                 return DI_ERROR;
             }
 
@@ -613,6 +609,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             if (fpuRegCode == DI_CHAR_NULL)
             {
                 Diana_FatalBreak();
+                return DI_ERROR;
             }
             pLinkedOp->value.recognizedRegister = reg_fpu_ST0 + fpuRegCode;
             break;

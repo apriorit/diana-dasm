@@ -148,9 +148,31 @@ void test_nop_pause()
     }
 }
 
+void test_nop()
+{
+	DianaGroupInfo * pGroupInfo=0;
+	DianaParserResult result;
+	size_t read;
+
+	int iRes = 0;
+	static unsigned char nop[] = {0x90}; // NOP
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, nop, sizeof(nop), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==1);
+		TEST_ASSERT(result.iLinkedOpCount==0);
+		TEST_ASSERT(result.pInfo->m_operandCount==0);
+		TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+		TEST_ASSERT(strcmp(pGroupInfo->m_pName, "nop")==0);
+	}
+
+	//static unsigned char nop2[] = {0x66,0x90}; // NOP
+}
+
 void test_new()
 {
     test_nop_pause();
+	test_nop();
     test_r32_64();
     test_sal1();
 }

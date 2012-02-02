@@ -331,7 +331,6 @@ typedef struct _dianaContext
 }DianaContext;
 
 void Diana_FatalBreak();
-void Diana_DebugFatalBreak();
 
 DianaCmdInfo * Diana_GetNopInfo();
 

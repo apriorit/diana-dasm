@@ -85,14 +85,6 @@ void Diana_FatalBreak()
 #endif
 }
 
-void Diana_DebugFatalBreak()
-{
-#ifdef _DEBUG
-    Diana_FatalBreak();
-#endif
-}
-
-
 void Diana_InitContext(DianaContext * pThis, int Mode)
 {
     memset(pThis, 0, sizeof(*pThis));

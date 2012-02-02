@@ -240,7 +240,6 @@ int Diana_Call_mul(struct _dianaContext * pDianaContext,
         break;
 
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 

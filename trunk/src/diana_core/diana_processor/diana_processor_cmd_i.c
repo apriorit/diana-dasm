@@ -162,7 +162,6 @@ int Diana_Call_idiv(struct _dianaContext * pDianaContext,
         break;
 
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 

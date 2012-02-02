@@ -65,6 +65,7 @@ void DianaProcessor_UpdatePSZ(DianaProcessor * pCallContext,
         break;
     default:
         Diana_FatalBreak();
+        break;
     }
     pCallContext->m_stateFlags &= ~DI_PROC_STATE_UPDATE_FLAGS_PSZ;
     
@@ -226,7 +227,6 @@ int DianaProcessor_GetAddress(struct _dianaContext * pDianaContext,
             pIndex = &pLinkedOp->value.memory.m_index;
             break;
         default:
-            Diana_DebugFatalBreak();
             return DI_ERROR;
     }
 
@@ -358,8 +358,7 @@ int DianaProcessor_SetGetOperand(struct _dianaContext * pDianaContext,
 {
     DianaLinkedOperand * pLinkedOp = pCallContext->m_result.linkedOperands + opNumber;
 
-    if (opNumber >= pCallContext->m_result.iLinkedOpCount 
-        ||
+    if (opNumber >= pCallContext->m_result.iLinkedOpCount ||
         opNumber < 0)
     {
         Diana_FatalBreak();
@@ -620,9 +619,6 @@ int DianaProcessor_SignExtend(OPERAND_SIZE * pVariable,
 int DianaProcessor_Query64RegisterFor32(DianaUnifiedRegister registerIn,
                                         DianaUnifiedRegister * pUsedReg)
 {
-    //if (registerIn < reg_EAX || registerIn > reg_EDI)
-    //    return DI_ERROR;
-    //*pUsedReg = reg_RAX - reg_EAX + registerIn;
     *pUsedReg = reg_none;
     switch( registerIn ) {
         case reg_EAX:
@@ -671,7 +667,6 @@ int DianaProcessor_QueryRaxRegister(int size,
         *pUsedReg = reg_AL;
         break;
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
     return DI_SUCCESS;
@@ -699,7 +694,6 @@ int DianaProcessor_QueryRdxRegister(int size,
         *pUsedReg = reg_DL;
         break;
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
     return DI_SUCCESS;
@@ -727,7 +721,6 @@ int DianaProcessor_QueryRcxRegister(int size,
         *pUsedReg = reg_CL;
         break;
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
     return DI_SUCCESS;

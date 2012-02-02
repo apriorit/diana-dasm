@@ -126,7 +126,6 @@ int Diana_Call_imul_1(struct _dianaContext * pDianaContext,
         break;
 
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
     DI_PROC_END
@@ -197,7 +196,6 @@ int Diana_Call_imul_impl(struct _dianaContext * pDianaContext,
         break;
 
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
     *op3 = result.value;
@@ -259,6 +257,5 @@ int Diana_Call_imul(struct _dianaContext * pDianaContext,
     case 3:
         return Diana_Call_imul_3(pDianaContext, pCallContext);
     }
-    Diana_DebugFatalBreak();
     return DI_UNSUPPORTED_COMMAND;
 }

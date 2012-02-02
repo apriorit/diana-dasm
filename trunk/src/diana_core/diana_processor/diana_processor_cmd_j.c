@@ -242,7 +242,6 @@ int Diana_Call_jmp(struct _dianaContext * pDianaContext,
 
     if (pCallContext->m_result.iLinkedOpCount != 1)
     {
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
@@ -297,7 +296,6 @@ int Diana_Call_jmp(struct _dianaContext * pDianaContext,
         newRIP = pCallContext->m_result.linkedOperands[0].value.ptr.m_address;
         break;
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 

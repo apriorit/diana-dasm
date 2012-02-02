@@ -250,14 +250,12 @@ int Diana_Call_jcc(struct _dianaContext * pDianaContext,
 
     if (pCallContext->m_result.iLinkedOpCount != opCount)
     {
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
     // calculate absolute address
     if (pCallContext->m_result.linkedOperands[relOp].type != diana_rel)
     {
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
@@ -277,7 +275,6 @@ int Di_PrepareSIDI_regs(DianaProcessor * pCallContext,
     {
         if (pCallContext->m_result.iLinkedOpCount != 2)
         {
-            Diana_DebugFatalBreak();
             return DI_ERROR;
         }
 
@@ -288,7 +285,6 @@ int Di_PrepareSIDI_regs(DianaProcessor * pCallContext,
     {
         if (pCallContext->m_result.iLinkedOpCount != 1)
         {
-            Diana_DebugFatalBreak();
             return DI_ERROR;
         }
     }
@@ -322,7 +318,6 @@ int Di_PrepareSIDI_regs(DianaProcessor * pCallContext,
         break;
 
     default:
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
@@ -378,7 +373,6 @@ int Diana_Call_internal_ret(struct _dianaContext * pDianaContext,
 
         if (pCallContext->m_result.linkedOperands[0].type != diana_imm)
         {
-            Diana_DebugFatalBreak();
             return DI_ERROR;
         }
         dropBytes = pCallContext->m_result.linkedOperands[0].value.imm;
@@ -386,7 +380,6 @@ int Diana_Call_internal_ret(struct _dianaContext * pDianaContext,
     else
     if (pCallContext->m_result.iLinkedOpCount)
     {
-        Diana_DebugFatalBreak();
         return DI_ERROR;
     }
 
