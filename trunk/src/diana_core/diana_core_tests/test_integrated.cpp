@@ -37,9 +37,10 @@ void test_integrated()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(result.pInfo->m_operandCount==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "cmpxchg")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_index);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_ESI);
@@ -47,10 +48,8 @@ void test_integrated()
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
-
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_EDX);
-
         TEST_ASSERT(result.iPrefix == DI_PREFIX_LOCK);
    }
 
@@ -61,9 +60,10 @@ void test_integrated()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(result.pInfo->m_operandCount==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "shr")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_ECX);
         TEST_ASSERT(result.linkedOperands[1].type == diana_imm);
@@ -78,9 +78,10 @@ void test_integrated()
    TEST_ASSERT_IF(!iRes)
    {
         TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(result.pInfo->m_operandCount==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movs")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_reserved_reg);
         TEST_ASSERT(result.linkedOperands[1].type == diana_reserved_reg);
         TEST_ASSERT(result.iPrefix == DI_PREFIX_REP);
@@ -93,71 +94,71 @@ void test_integrated()
 
 
 static const TestEntry_Name g_Names[] = {
-{"mov",  2}, //    mov     ecx,eax
-{"inc",  1}, //    inc     edx
-{"xadd",  4}, //    lock    xadd [ecx],edx
-{"cmp",  3}, //    cmp     byte ptr [ebx],0x0
-{"jne",  2}, //    jne     nt!IoAcquireRemoveLockEx+0x85 (8266d525)
-{"cmp",  4}, //    cmp     dword ptr [ebp+0x18],0x58
-{"jne",  2}, //    jne     nt!IoAcquireRemoveLockEx+0x81 (8266d521)
-{"push",  1}, //    push    esi
-{"push",  3}, //    push    dword ptr [ebx+0x28]
-{"push",  2}, //    push    0x18
-{"push",  2}, //    push    0x0
-{"call",  5}, //    call    nt!ExAllocatePoolWithTag (82721bab)
-{"mov",  2}, //    mov     esi,eax
-{"xor",  2}, //    xor     eax,eax
-{"test",  2}, //    test    esi,esi
-{"jne",  2}, //    jne     nt!IoAcquireRemoveLockEx+0x3f (8266d4df)
-{"add",  3}, //    add     ebx,0x38
-{"inc",  1}, //    inc     eax
-{"xadd",  4}, //    lock    xadd [ebx],eax
-{"jmp",  2}, //    jmp     nt!IoAcquireRemoveLockEx+0x80 (8266d520)
-{"push",  1}, //    push    edi
-{"push",  2}, //    push    0x6
-{"pop",  1}, //    pop     ecx
-{"mov",  2}, //    mov     edi,esi
-{"stos",  2}, //    rep     stosd
-{"mov",  3}, //    mov     eax,[ebp+0xc]
-{"mov",  3}, //    mov     [esi+0x4],eax
-{"mov",  3}, //    mov     eax,[ebp+0x10]
-{"mov",  3}, //    mov     [esi+0x10],eax
-{"mov",  3}, //    mov     eax,[ebp+0x14]
-{"mov",  3}, //    mov     [esi+0x14],eax
-{"lea",  3}, //    lea     eax,[esi+0x8]
-{"push",  1}, //    push    eax
-{"call",  5}, //    call    nt!KeQueryTickCount (8266d54a)
-{"lea",  3}, //    lea     edi,[ebx+0x34]
-{"mov",  2}, //    mov     ecx,edi
-{"call",  6}, //    call    dword ptr [nt+0x1188 (82603188)]
-{"mov",  3}, //    mov     ecx,[ebx+0x50]
-{"mov",  2}, //    mov     [esi],ecx
-{"mov",  2}, //    mov     dl,al
-{"mov",  2}, //    mov     ecx,edi
-{"mov",  3}, //    mov     [ebx+0x50],esi
-{"call",  6}, //    call    dword ptr [nt+0x1184 (82603184)]
-{"pop",  1}, //    pop     edi
-{"pop",  1}, //    pop     esi
-{"xor",  2}, //    xor     eax,eax
-{"jmp",  2}, //    jmp     nt!IoAcquireRemoveLockEx+0xa0 (8266d540)
-{"or",  3}, //    or      ecx,0xffffffff
-{"xadd",  4}, //    lock    xadd [eax],ecx
-{"jne",  2}, //    jne     nt!IoAcquireRemoveLockEx+0x9b (8266d53b)
-{"push",  2}, //    push    0x0
-{"push",  2}, //    push    0x0
-{"add",  3}, //    add     ebx,0x8
-{"push",  1}, //    push    ebx
-{"call",  5}, //    call    nt!KeSetEvent (826696c5)
-{"mov",  5}, //    mov     eax,0xc0000056
-{"pop",  1}, //    pop     ebx
-{"pop",  1}, //    pop     ebp
-{"ret",  3}, //    ret     0x14
-{"int",  1}, //    int     3
-{"rdtsc",  2}, //    RDTSC 
-{"rdtscp",  3}, //    RDTSCP
-{"rdpmc",  2}, //    RDPMC 
-{"rdmsr",  2}, //    RDMSR
-{"wrmsr",  2}, //    WRMSR
+{"mov",  2,  0}, //    mov     ecx,eax
+{"inc",  1,  0}, //    inc     edx
+{"xadd",  4,  0}, //    lock    xadd [ecx],edx
+{"cmp",  3,  0}, //    cmp     byte ptr [ebx],0x0
+{"jne",  2,  0}, //    jne     nt!IoAcquireRemoveLockEx+0x85 (8266d525)
+{"cmp",  4,  0}, //    cmp     dword ptr [ebp+0x18],0x58
+{"jne",  2,  0}, //    jne     nt!IoAcquireRemoveLockEx+0x81 (8266d521)
+{"push",  1,  0}, //    push    esi
+{"push",  3,  0}, //    push    dword ptr [ebx+0x28]
+{"push",  2,  0}, //    push    0x18
+{"push",  2,  0}, //    push    0x0
+{"call",  5,  0}, //    call    nt!ExAllocatePoolWithTag (82721bab)
+{"mov",  2,  0}, //    mov     esi,eax
+{"xor",  2,  0}, //    xor     eax,eax
+{"test",  2,  0}, //    test    esi,esi
+{"jne",  2,  0}, //    jne     nt!IoAcquireRemoveLockEx+0x3f (8266d4df)
+{"add",  3,  0}, //    add     ebx,0x38
+{"inc",  1,  0}, //    inc     eax
+{"xadd",  4,  0}, //    lock    xadd [ebx],eax
+{"jmp",  2,  0}, //    jmp     nt!IoAcquireRemoveLockEx+0x80 (8266d520)
+{"push",  1,  0}, //    push    edi
+{"push",  2,  0}, //    push    0x6
+{"pop",  1,  0}, //    pop     ecx
+{"mov",  2,  0}, //    mov     edi,esi
+{"stos",  2,  0}, //    rep     stosd
+{"mov",  3,  0}, //    mov     eax,[ebp+0xc]
+{"mov",  3,  0}, //    mov     [esi+0x4],eax
+{"mov",  3,  0}, //    mov     eax,[ebp+0x10]
+{"mov",  3,  0}, //    mov     [esi+0x10],eax
+{"mov",  3,  0}, //    mov     eax,[ebp+0x14]
+{"mov",  3,  0}, //    mov     [esi+0x14],eax
+{"lea",  3,  0}, //    lea     eax,[esi+0x8]
+{"push",  1,  0}, //    push    eax
+{"call",  5,  0}, //    call    nt!KeQueryTickCount (8266d54a)
+{"lea",  3,  0}, //    lea     edi,[ebx+0x34]
+{"mov",  2,  0}, //    mov     ecx,edi
+{"call",  6,  0}, //    call    dword ptr [nt+0x1188 (82603188)]
+{"mov",  3,  0}, //    mov     ecx,[ebx+0x50]
+{"mov",  2,  0}, //    mov     [esi],ecx
+{"mov",  2,  0}, //    mov     dl,al
+{"mov",  2,  0}, //    mov     ecx,edi
+{"mov",  3,  0}, //    mov     [ebx+0x50],esi
+{"call",  6,  0}, //    call    dword ptr [nt+0x1184 (82603184)]
+{"pop",  1,  0}, //    pop     edi
+{"pop",  1,  0}, //    pop     esi
+{"xor",  2,  0}, //    xor     eax,eax
+{"jmp",  2,  0}, //    jmp     nt!IoAcquireRemoveLockEx+0xa0 (8266d540)
+{"or",  3,  0}, //    or      ecx,0xffffffff
+{"xadd",  4,  0}, //    lock    xadd [eax],ecx
+{"jne",  2,  0}, //    jne     nt!IoAcquireRemoveLockEx+0x9b (8266d53b)
+{"push",  2,  0}, //    push    0x0
+{"push",  2,  0}, //    push    0x0
+{"add",  3,  0}, //    add     ebx,0x8
+{"push",  1,  0}, //    push    ebx
+{"call",  5,  0}, //    call    nt!KeSetEvent (826696c5)
+{"mov",  5,  0}, //    mov     eax,0xc0000056
+{"pop",  1,  0}, //    pop     ebx
+{"pop",  1,  0}, //    pop     ebp
+{"ret",  3,  0}, //    ret     0x14
+{"int",  1,  DI_FLAG_CMD_PRIVILEGED}, //    int     3
+{"rdtsc",  2,  DI_FLAG_CMD_PRIVILEGED}, //    RDTSC 
+{"rdtscp",  3,  DI_FLAG_CMD_PRIVILEGED}, //    RDTSCP
+{"rdpmc",  2,  DI_FLAG_CMD_PRIVILEGED}, //    RDPMC 
+{"rdmsr",  2,  DI_FLAG_CMD_PRIVILEGED}, //    RDMSR
+{"wrmsr",  2,  DI_FLAG_CMD_PRIVILEGED}, //    WRMSR
 {"", 0}};
 static const unsigned char g_Data[] = {
  0x8b, 0xc8//    mov     ecx,eax
@@ -253,7 +254,13 @@ void test_x32_integrated_impl(const unsigned char * pData,
             Diana_FatalBreak();
             break;
         }
-        
+
+        if( ( result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED ) != pNames[i].iPrivileged )
+        {
+            Diana_FatalBreak();
+            break;
+        }
+
         DianaGroupInfo * pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId);
         
         if (strcmp(pNames[i].pCmdName,  pGroupInfo->m_pName))

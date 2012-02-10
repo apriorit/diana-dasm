@@ -29,7 +29,7 @@ INVD | 0F 08 /pprivileged
 CLGI | 0F 01 DD
 STGI | 0F 01 DC
 INVLPG m8 | 0F 01 /7 /pprivileged /*83
-INVLPGA RAX, ECX | 0F 01 DF
+INVLPGA RAX, ECX | 0F 01 DF /pprivileged
 SWAPGS | 0F 01 F8 /pprivileged //0
 RSM | 0F AA /pprivileged
 SALC | D6 /pundoc

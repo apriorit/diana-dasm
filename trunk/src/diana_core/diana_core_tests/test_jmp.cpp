@@ -29,9 +29,10 @@ void test_jmp()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==1);
-        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(result.pInfo->m_operandCount==1);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "jmp")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_rel);
         TEST_ASSERT(result.linkedOperands[0].value.rel.m_value == 0);
         TEST_ASSERT(result.linkedOperands[0].value.rel.m_size == 1);
@@ -42,9 +43,10 @@ void test_jmp()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==1);
-        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(result.pInfo->m_operandCount==1);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "jmp")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_rel);
         TEST_ASSERT(result.linkedOperands[0].value.rel.m_value == 0);
         TEST_ASSERT(result.linkedOperands[0].value.rel.m_size == 4);
@@ -55,9 +57,10 @@ void test_jmp()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==1);
-        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(result.pInfo->m_operandCount==1);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "jmp")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_rel);
         TEST_ASSERT(result.linkedOperands[0].value.rel.m_value == 0);
         TEST_ASSERT(result.linkedOperands[0].value.rel.m_size == 2);
@@ -68,9 +71,10 @@ void test_jmp()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==1);
-        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(result.pInfo->m_operandCount==1);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "jmp")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_rel);
         TEST_ASSERT(result.linkedOperands[0].value.rel.m_value == 0);
         TEST_ASSERT(result.linkedOperands[0].value.rel.m_size == 4);
@@ -81,16 +85,17 @@ void test_jmp()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==1);
-        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(result.pInfo->m_operandCount==1);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "jmp")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_index);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_EAX);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_none);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0);
-        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue== 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
 
     }
     //static unsigned char jmp5[] = {0xff, 0x28};     //jmp         fword ptr [eax] 
@@ -98,25 +103,27 @@ void test_jmp()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==1);
-        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(result.pInfo->m_operandCount==1);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "jmp")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_memory);
         TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.seg_reg == reg_DS);
         TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.reg == reg_EAX);
         TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.indexed_reg == reg_none);
         TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.index == 0);
         TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.dispSize == 0);
-        TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.dispValue== 0);
+        TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.dispValue == 0);
     }
     //static unsigned char jmp6[] = {0xea, 0x01, 0x02,0x03,0x04,0x05, 0x06};     //jmp         0605:04030201 
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,jmp6, sizeof(jmp6), Diana_GetRootLine(), &result, &read);
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==1);
-        TEST_ASSERT(result.pInfo->m_operandCount ==1);
+        TEST_ASSERT(result.pInfo->m_operandCount==1);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "jmp")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_call_ptr);
         TEST_ASSERT(result.linkedOperands[0].value.ptr.m_segment == 0x0605);
         TEST_ASSERT(result.linkedOperands[0].value.ptr.m_address == 0x04030201);

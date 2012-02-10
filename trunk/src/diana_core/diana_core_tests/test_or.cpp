@@ -25,9 +25,10 @@ void test_or()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(result.pInfo->m_operandCount==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "or")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_AL);
         TEST_ASSERT(result.linkedOperands[1].type == diana_imm);
@@ -37,9 +38,10 @@ void test_or()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(result.pInfo->m_operandCount==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "or")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_EAX);
         TEST_ASSERT(result.linkedOperands[1].type == diana_imm);
@@ -49,9 +51,10 @@ void test_or()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(result.pInfo->m_operandCount==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "or")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_index);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_EAX);
         TEST_ASSERT(result.linkedOperands[1].type == diana_imm);

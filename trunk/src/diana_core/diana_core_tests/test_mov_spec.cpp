@@ -35,6 +35,7 @@ void test_mov_spec()
         TEST_ASSERT(result.pInfo->m_operandCount ==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+///		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED == (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_EAX);
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
@@ -49,6 +50,7 @@ void test_mov_spec()
         TEST_ASSERT(result.pInfo->m_operandCount ==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+///		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED == (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_ECX);
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
@@ -63,6 +65,7 @@ void test_mov_spec()
         TEST_ASSERT(result.pInfo->m_operandCount ==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+///		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED == (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_CR7);
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
@@ -76,9 +79,9 @@ void test_mov_spec()
         TEST_ASSERT(result.pInfo->m_operandCount ==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+///		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED == (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_ECX);
-
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_DR7);
     }
@@ -87,12 +90,12 @@ void test_mov_spec()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(result.pInfo->m_operandCount==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+///		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED == (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_ECX);
-
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_TR7);
     }
@@ -102,13 +105,13 @@ void test_mov_spec()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(result.pInfo->m_operandCount==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movsxd")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.iFullCmdSize == sizeof(mov5));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_RCX);
-
         TEST_ASSERT(result.linkedOperands[1].type == diana_index);
 		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.seg_reg == reg_DS);
 		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_RSP);
@@ -125,11 +128,11 @@ void test_mov_spec()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(result.pInfo->m_operandCount==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "arpl")==0);
         TEST_ASSERT(result.iFullCmdSize == sizeof(mov5)-1);
-
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED == (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_index);
 		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
 		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_ESP);
@@ -137,7 +140,6 @@ void test_mov_spec()
 		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0x00);
 		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0x01);
 		TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0x0000000000000004);
-
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_CX);
     }
@@ -150,10 +152,10 @@ void test_mov_spec()
         TEST_ASSERT(result.pInfo->m_operandCount ==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "movsxd")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.iFullCmdSize == sizeof(mov6));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_RBP);
-
         TEST_ASSERT(result.linkedOperands[1].type == diana_index);
 		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.seg_reg == reg_DS);
 		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_RAX);
@@ -168,12 +170,12 @@ void test_mov_spec()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(result.iLinkedOpCount==2);
-        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(result.pInfo->m_operandCount==2);
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
         TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+///		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED == (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_CR7);
-
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_RCX);
     }

@@ -25,6 +25,7 @@ struct TestEntry_Name
 {
     const char * pCmdName;
     int iCmdSize;
+	int iPrivileged;
 };
 
 #endif

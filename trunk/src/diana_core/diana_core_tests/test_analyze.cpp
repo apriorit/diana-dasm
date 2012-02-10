@@ -53,9 +53,9 @@ int DianaAnalyzeMoveTo(void * pThis,
 }
 static 
 int DianaConvertAddressToRelative(void * pThis, 
-                             OPERAND_SIZE address,
-                             OPERAND_SIZE * pRelativeOffset,
-                             int * pbInvalidPointer)
+                                  OPERAND_SIZE address,
+                                  OPERAND_SIZE * pRelativeOffset,
+                                  int * pbInvalidPointer)
 {
 	pbInvalidPointer;
 
@@ -175,19 +175,19 @@ void test_analyzer1()
 
     TestStream stream((OPERAND_SIZE)code, start, sizeof(code));
     DianaAnalyzeObserver_Init(&stream, 
-                                DianaRead, 
-                                DianaAnalyzeMoveTo,
-                                DianaConvertAddressToRelative,
-                                DianaAddSuspectedDataAddress);
+                              DianaRead, 
+                              DianaAnalyzeMoveTo,
+                              DianaConvertAddressToRelative,
+                              DianaAddSuspectedDataAddress);
     Diana_InstructionsOwner owner;
 
-    TEST_ASSERT(DI_SUCCESS ==Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
+    TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
 
     TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
-                      &stream,
-                      DIANA_MODE64,
-                      start,
-                      maxOffset));
+                                                &stream,
+                                                DIANA_MODE64,
+                                                start,
+                                                maxOffset));
 
     TEST_ASSERT(owner.m_actualSize == instructionsCount);
     // verify found instructions
@@ -241,19 +241,19 @@ void test_analyzer2()
 
     TestStream stream((OPERAND_SIZE)code, start, sizeof(code));
     DianaAnalyzeObserver_Init(&stream, 
-                                DianaRead, 
-                                DianaAnalyzeMoveTo,
-                                DianaConvertAddressToRelative,
-                                DianaAddSuspectedDataAddress);
+                              DianaRead, 
+                              DianaAnalyzeMoveTo,
+                              DianaConvertAddressToRelative,
+                              DianaAddSuspectedDataAddress);
     Diana_InstructionsOwner owner;
 
-    TEST_ASSERT(DI_SUCCESS ==Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
+    TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
 
     TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
-                      &stream,
-                      DIANA_MODE64,
-                      start,
-                      maxOffset));
+                                                &stream,
+                                                DIANA_MODE64,
+                                                start,
+                                                maxOffset));
 
     TEST_ASSERT(owner.m_actualSize == instructionsCount);
     // verify found instructions

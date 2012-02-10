@@ -20,6 +20,22 @@ void test_processor_lea()
     TEST_ASSERT(GET_REG_EBX == 13);
 }
 
+void test_processor_lea2()
+{
+	// lea rax,[rax+05b8c110h] 
+	unsigned char code[] = {0x48, 0x8d, 0x80, 0x10, 0xc1, 0xb8, 0x05 };
+
+	CTestProcessor proc(code, sizeof(code),0,DIANA_MODE64);
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RAX(0);
+
+	int res = proc.ExecOnce();
+
+	TEST_ASSERT(res == DI_SUCCESS);
+	TEST_ASSERT(0x05b8c110ULL == GET_REG_RAX);
+}
+
 
 void test_processor_lods()
 {
@@ -82,6 +98,7 @@ static void test_processor_lfs2()
 void test_processor_l()
 {
     test_processor_lea();
+	test_processor_lea2();
     test_processor_lods();
     test_processor_lods2();
 	//FIXME test_processor_lfs();

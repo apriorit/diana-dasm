@@ -446,30 +446,6 @@ static void test_processor_idiv64_4()
 	TEST_ASSERT(GET_REG_RDX == 0x000000005ED95EDFULL);
 }
 
-static void test_processor_int()
-{
-	// int 3
-	unsigned char code[] = {0xcc};
-
-	CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE32);
-	DianaProcessor * pCallContext = proc.GetSelf();
-
-	int res = proc.ExecOnce();
-	TEST_ASSERT(res == DI_SUCCESS);
-}
-
-static void test_processor_int2()
-{
-	// int 3
-	unsigned char code[] = {0xcd, 0x03};
-
-	CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE32);
-	DianaProcessor * pCallContext = proc.GetSelf();
-
-	int res = proc.ExecOnce();
-	TEST_ASSERT(res == DI_SUCCESS);
-}
-
 void test_processor_i()
 {
     test_processor_idiv();
@@ -498,7 +474,4 @@ void test_processor_i()
 	test_processor_idiv64_2();
 	test_processor_idiv64_3();
 	test_processor_idiv64_4();
-
-    test_processor_int();
-    test_processor_int2();
 }

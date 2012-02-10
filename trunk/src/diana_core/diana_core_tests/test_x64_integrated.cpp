@@ -8,199 +8,199 @@ extern "C"
 
 
 static const TestEntry_Name g_Names[] = {
-{"mov",  3}, //    mov     rax,rsp
-{"mov",  4}, //    mov     [rax+0x8],rbx
-{"mov",  4}, //    mov     [rax+0x10],rsi
-{"mov",  4}, //    mov     [rax+0x18],rdi
-{"mov",  4}, //    mov     [rax+0x20],r12
-{"push",  2}, //    push    r13
-{"push",  2}, //    push    r14
-{"push",  2}, //    push    r15
-{"sub",  7}, //    sub     rsp,0x1c0
-{"mov",  3}, //    mov     rdi,r8
-{"mov",  3}, //    mov     rbx,rdx
-{"mov",  3}, //    mov     rsi,rcx
-{"xor",  3}, //    xor     r14d,r14d
-{"mov",  3}, //    mov     r15,r14
-{"mov",  9}, //    mov rax,gs:[nt!KiInitialPCR+0x188 (00000188)]
-{"mov",  7}, //    mov     r12b,[rax+0x1f6]
-{"cmp",  3}, //    cmp     r12b,r14b
-{"je",  6}, //    je nt!NtCreatePagingFile+0xd5 (fffff80002d27a28)
-{"mov",  3}, //    mov     dl,r12b
-{"mov",  7}, //    mov rcx,[nt!SeCreatePagefilePrivilege (fffff80002d863a0)]
-{"call",  5}, //    call nt!SeSinglePrivilegeCheck (fffff80002b83a58)
-{"cmp",  3}, //    cmp     al,r14b
-{"jne",  2}, //    jnz nt!NtCreatePagingFile+0x66 (fffff80002d279b6)
-{"mov",  5}, //    mov     eax,0xc0000061
-{"jmp",  5}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
-{"mov",  6}, //    mov     r13d,0x3
-{"test",  3}, //    test    r13b,sil
-{"je",  2}, //    je nt!NtCreatePagingFile+0x76 (fffff80002d279c7)
-{"call",  5}, //    call nt!ExRaiseDatatypeMisalignment (fffff80002c46a20)
-{"int",  1}, //    int     3
-{"mov",  3}, //    mov     rcx,rsi
-{"mov",  7}, //    mov rax,[nt!MmUserProbeAddress (fffff80002af4000)]
-{"cmp",  3}, //    cmp     rsi,rax
-{"cmovae",  4}, //    cmovae  rcx,rax
-{"mov",  2}, //    mov     al,[rcx]
-{"test",  3}, //    test    r13b,dil
-{"je",  2}, //    je nt!NtCreatePagingFile+0x93 (fffff80002d279e5)
-{"call",  5}, //    call nt!ExRaiseDatatypeMisalignment (fffff80002c46a20)
-{"int",  1}, //    int     3
-{"mov",  3}, //    mov     rcx,rdi
-{"mov",  7}, //    mov rax,[nt!MmUserProbeAddress (fffff80002af4000)]
-{"cmp",  3}, //    cmp     rdi,rax
-{"cmovae",  4}, //    cmovae  rcx,rax
-{"mov",  2}, //    mov     al,[rcx]
-{"test",  3}, //    test    r13b,bl
-{"je",  2}, //    je nt!NtCreatePagingFile+0xb0 (fffff80002d27a03)
-{"call",  5}, //    call nt!ExRaiseDatatypeMisalignment (fffff80002c46a20)
-{"int",  1}, //    int     3
-{"mov",  3}, //    mov     rcx,rbx
-{"mov",  7}, //    mov rax,[nt!MmUserProbeAddress (fffff80002af4000)]
-{"cmp",  3}, //    cmp     rbx,rax
-{"cmovae",  4}, //    cmovae  rcx,rax
-{"mov",  2}, //    mov     al,[rcx]
-{"mov",  3}, //    mov     rbx,[rbx]
-{"mov",  8}, //    mov     [rsp+0xa0],rbx
-{"jmp",  2}, //    jmp nt!NtCreatePagingFile+0xe6 (fffff80002d27a39)
-{"jmp",  5}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
-{"mov",  3}, //    mov     rbx,[rdx]
-{"mov",  8}, //    mov     [rsp+0xa0],rbx
-{"mov",  6}, //    mov     r13d,0x3
-{"mov",  10}, //    mov rax,0xffffffff000
-{"cmp",  3}, //    cmp     rbx,rax
-{"ja",  6}, //    ja nt!NtCreatePagingFile+0xcc8 (fffff80002d2861b)
-{"cmp",  7}, //    cmp     rbx,0x100000
-{"jl",  6}, //    jl nt!NtCreatePagingFile+0xcc8 (fffff80002d2861b)
-{"cmp",  3}, //    cmp     r12b,r14b
-{"je",  2}, //    je nt!NtCreatePagingFile+0x11d (fffff80002d27a70)
-{"mov",  3}, //    mov     rdi,[rdi]
-{"mov",  8}, //    mov     [rsp+0xc8],rdi
-{"jmp",  2}, //    jmp nt!NtCreatePagingFile+0x128 (fffff80002d27a7b)
-{"jmp",  5}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
-{"mov",  3}, //    mov     rdi,[rdi]
-{"mov",  8}, //    mov     [rsp+0xc8],rdi
-{"cmp",  3}, //    cmp     rdi,rax
-{"jbe",  2}, //    jbe nt!NtCreatePagingFile+0x137 (fffff80002d27a8a)
-{"mov",  5}, //    mov     eax,0xc00000f1
-{"jmp",  5}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
-{"cmp",  3}, //    cmp     rbx,rdi
-{"jle",  2}, //    jle nt!NtCreatePagingFile+0x146 (fffff80002d27a99)
-{"mov",  5}, //    mov     eax,0xc00000f1
-{"jmp",  5}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
-{"cmp",  3}, //    cmp     r12b,r14b
-{"je",  2}, //    je nt!NtCreatePagingFile+0x15f (fffff80002d27ab2)
-{"movdqu",  4}, //    movdqu  xmm0,oword ptr [rsi]
-{"movdqu",  9}, //    movdqu oword ptr [rsp+0x88],xmm0
-{"jmp",  2}, //    jmp nt!NtCreatePagingFile+0x16c (fffff80002d27abf)
-{"jmp",  5}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
-{"movdqu",  4}, //    movdqu  xmm0,oword ptr [rsi]
-{"movdqu",  9}, //    movdqu oword ptr [rsp+0x88],xmm0
-{"movzx",  8}, //    movzx   eax,word ptr [rsp+0x88]
-{"mov",  8}, //    mov     [rsp+0x8a],ax
-{"cmp",  4}, //    cmp     ax,r14w
-{"je",  6}, //    je nt!NtCreatePagingFile+0xcc1 (fffff80002d28614)
-{"mov",  5}, //    mov     ecx,0x100
-{"cmp",  3}, //    cmp     ax,cx
-{"ja",  6}, //    ja nt!NtCreatePagingFile+0xcc1 (fffff80002d28614)
-{"movzx",  3}, //    movzx   edx,ax
-{"mov",  5}, //    mov     esi,0x1
-{"mov",  6}, //    mov     r8d,0x20206d4d
-{"mov",  2}, //    mov     ecx,esi
-{"call",  5}, //    call nt!ExAllocatePoolWithTag (fffff800029f03d0)
-{"mov",  3}, //    mov     r14,rax
-{"mov",  8}, //    mov     [rsp+0x80],rax
-{"xor",  3}, //    xor     r9d,r9d
-{"cmp",  3}, //    cmp     rax,r9
-{"jne",  2}, //    jnz nt!NtCreatePagingFile+0x1c6 (fffff80002d27b19)
-{"mov",  5}, //    mov     eax,0xc000009a
-{"jmp",  5}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
-{"cmp",  3}, //    cmp     r12b,r9b
-{"je",  2}, //    je nt!NtCreatePagingFile+0x23d (fffff80002d27b90)
-{"movzx",  8}, //    movzx   ecx,word ptr [rsp+0x88]
-{"cmp",  4}, //    cmp     cx,r9w
-{"je",  2}, //    je nt!NtCreatePagingFile+0x20e (fffff80002d27b61)
-{"movzx",  4}, //    movzx   r8d,cx
-{"mov",  8}, //    mov     rdx,[rsp+0x90]
-{"add",  3}, //    add     r8,rdx
-{"mov",  7}, //    mov rax,[nt!MmUserProbeAddress (fffff80002af4000)]
-{"cmp",  3}, //    cmp     r8,rax
-{"ja",  2}, //    ja nt!NtCreatePagingFile+0x1f9 (fffff80002d27b4c)
-{"cmp",  3}, //    cmp     r8,rdx
-{"jae",  2}, //    jnb nt!NtCreatePagingFile+0x216 (fffff80002d27b69)
-{"mov",  3}, //    mov     [rax],r9b
-{"mov",  8}, //    mov     rdx,[rsp+0x90]
-{"mov",  2}, //    mov     esi,eax
-{"cmp",  2}, //    cmp     eax,ebx
-{"jl",  6}, //    jl nt!NtCreatePagingFile+0xc19 (fffff80002d2856c)
-{"test",  8}, //    test    byte ptr [rsp+0xf4],0x4
-{"je",  2}, //    je nt!NtCreatePagingFile+0x564 (fffff80002d27eb7)
-{"mov",  5}, //    mov     esi,0xc0000164
-{"jmp",  5}, //    jmp nt!NtCreatePagingFile+0xc19 (fffff80002d2856c)
-{"mov",  3}, //    mov     rcx,r12
-{"call",  5}, //    call nt!PpPagePathAssign (fffff80002cf6a50)
-{"mov",  2}, //    mov     esi,eax
-{"cmp",  2}, //    cmp     eax,ebx
-{"jl",  6}, //    jl nt!NtCreatePagingFile+0xc19 (fffff80002d2856c)
-{"mov",  5}, //    mov     eax,0x1
-{"mov",  7}, //    mov     [rsp+0x98],eax
-{"lea",  7}, //    lea r8,[nt!FILE_TYPE_NOTIFICATION_GUID_PAGE_FILE (fffff80002a006f0)]
-{"mov",  2}, //    mov     edx,eax
-{"mov",  3}, //    mov     rcx,r12
-{"call",  5}, //    call nt!FsRtlIssueFileNotificationFsctl (fffff80002cacca0)
-{"mov",  3}, //    mov     rcx,r12
-{"call",  5}, //    call nt!MiZeroPageFileFirstPage (fffff80002cab5c0)
-{"mov",  2}, //    mov     esi,eax
-{"cmp",  2}, //    cmp     eax,ebx
-{"jl",  6}, //    jl nt!NtCreatePagingFile+0xc19 (fffff80002d2856c)
-{"mov",  5}, //    mov     esi,0x90
-{"mov",  6}, //    mov     r8d,0x20206d4d
-{"mov",  3}, //    mov     rdx,rsi
-{"xor",  2}, //    xor     ecx,ecx
-{"call",  5}, //    call nt!ExAllocatePoolWithTag (fffff800029f03d0)
-{"mov",  3}, //    mov     rbx,rax
-{"test",  3}, //    test    rax,rax
-{"jne",  2}, //    jnz nt!NtCreatePagingFile+0x5cc (fffff80002d27f1f)
-{"mov",  5}, //    mov     esi,0xc000009a
-{"jmp",  5}, //    jmp nt!NtCreatePagingFile+0xc19 (fffff80002d2856c)
-{"mov",  3}, //    mov     r8,rsi
-{"xor",  2}, //    xor     edx,edx
-{"mov",  3}, //    mov     rcx,rax
-{"call",  5}, //    call    nt!memset (fffff800028c0080)
-{"mov",  4}, //    mov     [rbx+0x30],r12
-{"mov",  5}, //    mov     rax,[rsp+0x78]
-{"mov",  4}, //    mov     [rbx+0x78],rax
-{"mov",  8}, //    mov     rax,[rsp+0xa0]
-{"sar",  4}, //    sar     rax,0xc
-{"mov",  3}, //    mov     [rbx],rax
-{"mov",  4}, //    mov     [rbx+0x10],rax
-{"dec",  3}, //    dec     rax
-{"mov",  4}, //    mov     [rbx+0x18],rax
-{"sar",  4}, //    sar     rdi,0xc
-{"mov",  4}, //    mov     [rbx+0x8],rdi
-{"xor",  2}, //    xor     edi,edi
-{"xor",  3}, //    xor     r13d,r13d
-{"lea",  4}, //    lea     r12,[rbx+0x38]
-{"mov",  3}, //    mov     rsi,r12
-{"mov",  5}, //    mov     edx,0x8a0
-{"xor",  2}, //    xor     ecx,ecx
-{"mov",  6}, //    mov     r8d,0x20206d4d
-{"call",  5}, //    call      nt!ExAllocatePoolWithTag (fffff800029f03d0)
-{"mov",  3}, //    mov     [rsi],rax
-{"test",  3}, //    test    rax,rax
-{"je",  6}, //    je nt!NtCreatePagingFile+0x79d (fffff80002d280f0)
-{"xor",  2}, //    xor     edx,edx
-{"mov",  6}, //    mov     r8d,0xa0
-{"mov",  3}, //    mov     rcx,rax
-{"call",  5}, //    call    nt!memset (fffff800028c0080)
-{"mov",  3}, //    mov     r11,[rsi]
-{"mov",  4}, //    mov     [r11+0x30],rbx
-{"mov",  5}, //    mov     eax,0x1
-{"add",  2}, //    add     edi,eax
-{"add",  3}, //    add     r13,rax
-{"add",  4}, //    add     rsi,0x8
-{"cmp",  3}, //    cmp     edi,r14d
+{"mov",  3,  0}, //    mov     rax,rsp
+{"mov",  4,  0}, //    mov     [rax+0x8],rbx
+{"mov",  4,  0}, //    mov     [rax+0x10],rsi
+{"mov",  4,  0}, //    mov     [rax+0x18],rdi
+{"mov",  4,  0}, //    mov     [rax+0x20],r12
+{"push",  2,  0}, //    push    r13
+{"push",  2,  0}, //    push    r14
+{"push",  2,  0}, //    push    r15
+{"sub",  7,  0}, //    sub     rsp,0x1c0
+{"mov",  3,  0}, //    mov     rdi,r8
+{"mov",  3,  0}, //    mov     rbx,rdx
+{"mov",  3,  0}, //    mov     rsi,rcx
+{"xor",  3,  0}, //    xor     r14d,r14d
+{"mov",  3,  0}, //    mov     r15,r14
+{"mov",  9,  0}, //    mov rax,gs:[nt!KiInitialPCR+0x188 (00000188)]
+{"mov",  7,  0}, //    mov     r12b,[rax+0x1f6]
+{"cmp",  3,  0}, //    cmp     r12b,r14b
+{"je",  6,  0}, //    je nt!NtCreatePagingFile+0xd5 (fffff80002d27a28)
+{"mov",  3,  0}, //    mov     dl,r12b
+{"mov",  7,  0}, //    mov rcx,[nt!SeCreatePagefilePrivilege (fffff80002d863a0)]
+{"call",  5,  0}, //    call nt!SeSinglePrivilegeCheck (fffff80002b83a58)
+{"cmp",  3,  0}, //    cmp     al,r14b
+{"jne",  2,  0}, //    jnz nt!NtCreatePagingFile+0x66 (fffff80002d279b6)
+{"mov",  5,  0}, //    mov     eax,0xc0000061
+{"jmp",  5,  0}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
+{"mov",  6,  0}, //    mov     r13d,0x3
+{"test",  3,  0}, //    test    r13b,sil
+{"je",  2,  0}, //    je nt!NtCreatePagingFile+0x76 (fffff80002d279c7)
+{"call",  5,  0}, //    call nt!ExRaiseDatatypeMisalignment (fffff80002c46a20)
+{"int",  1,  DI_FLAG_CMD_PRIVILEGED}, //    int     3
+{"mov",  3,  0}, //    mov     rcx,rsi
+{"mov",  7,  0}, //    mov rax,[nt!MmUserProbeAddress (fffff80002af4000)]
+{"cmp",  3,  0}, //    cmp     rsi,rax
+{"cmovae",  4,  0}, //    cmovae  rcx,rax
+{"mov",  2,  0}, //    mov     al,[rcx]
+{"test",  3,  0}, //    test    r13b,dil
+{"je",  2,  0}, //    je nt!NtCreatePagingFile+0x93 (fffff80002d279e5)
+{"call",  5,  0}, //    call nt!ExRaiseDatatypeMisalignment (fffff80002c46a20)
+{"int",  1,  DI_FLAG_CMD_PRIVILEGED}, //    int     3
+{"mov",  3,  0}, //    mov     rcx,rdi
+{"mov",  7,  0}, //    mov rax,[nt!MmUserProbeAddress (fffff80002af4000)]
+{"cmp",  3,  0}, //    cmp     rdi,rax
+{"cmovae",  4,  0}, //    cmovae  rcx,rax
+{"mov",  2,  0}, //    mov     al,[rcx]
+{"test",  3,  0}, //    test    r13b,bl
+{"je",  2,  0}, //    je nt!NtCreatePagingFile+0xb0 (fffff80002d27a03)
+{"call",  5,  0}, //    call nt!ExRaiseDatatypeMisalignment (fffff80002c46a20)
+{"int",  1,  DI_FLAG_CMD_PRIVILEGED}, //    int     3
+{"mov",  3,  0}, //    mov     rcx,rbx
+{"mov",  7,  0}, //    mov rax,[nt!MmUserProbeAddress (fffff80002af4000)]
+{"cmp",  3,  0}, //    cmp     rbx,rax
+{"cmovae",  4,  0}, //    cmovae  rcx,rax
+{"mov",  2,  0}, //    mov     al,[rcx]
+{"mov",  3,  0}, //    mov     rbx,[rbx]
+{"mov",  8,  0}, //    mov     [rsp+0xa0],rbx
+{"jmp",  2,  0}, //    jmp nt!NtCreatePagingFile+0xe6 (fffff80002d27a39)
+{"jmp",  5,  0}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
+{"mov",  3,  0}, //    mov     rbx,[rdx]
+{"mov",  8,  0}, //    mov     [rsp+0xa0],rbx
+{"mov",  6,  0}, //    mov     r13d,0x3
+{"mov",  10,  0}, //    mov rax,0xffffffff000
+{"cmp",  3,  0}, //    cmp     rbx,rax
+{"ja",  6,  0}, //    ja nt!NtCreatePagingFile+0xcc8 (fffff80002d2861b)
+{"cmp",  7,  0}, //    cmp     rbx,0x100000
+{"jl",  6,  0}, //    jl nt!NtCreatePagingFile+0xcc8 (fffff80002d2861b)
+{"cmp",  3,  0}, //    cmp     r12b,r14b
+{"je",  2,  0}, //    je nt!NtCreatePagingFile+0x11d (fffff80002d27a70)
+{"mov",  3,  0}, //    mov     rdi,[rdi]
+{"mov",  8,  0}, //    mov     [rsp+0xc8],rdi
+{"jmp",  2,  0}, //    jmp nt!NtCreatePagingFile+0x128 (fffff80002d27a7b)
+{"jmp",  5,  0}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
+{"mov",  3,  0}, //    mov     rdi,[rdi]
+{"mov",  8,  0}, //    mov     [rsp+0xc8],rdi
+{"cmp",  3,  0}, //    cmp     rdi,rax
+{"jbe",  2,  0}, //    jbe nt!NtCreatePagingFile+0x137 (fffff80002d27a8a)
+{"mov",  5,  0}, //    mov     eax,0xc00000f1
+{"jmp",  5,  0}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
+{"cmp",  3,  0}, //    cmp     rbx,rdi
+{"jle",  2,  0}, //    jle nt!NtCreatePagingFile+0x146 (fffff80002d27a99)
+{"mov",  5,  0}, //    mov     eax,0xc00000f1
+{"jmp",  5,  0}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
+{"cmp",  3,  0}, //    cmp     r12b,r14b
+{"je",  2,  0}, //    je nt!NtCreatePagingFile+0x15f (fffff80002d27ab2)
+{"movdqu",  4,  0}, //    movdqu  xmm0,oword ptr [rsi]
+{"movdqu",  9,  0}, //    movdqu oword ptr [rsp+0x88],xmm0
+{"jmp",  2,  0}, //    jmp nt!NtCreatePagingFile+0x16c (fffff80002d27abf)
+{"jmp",  5,  0}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
+{"movdqu",  4,  0}, //    movdqu  xmm0,oword ptr [rsi]
+{"movdqu",  9,  0}, //    movdqu oword ptr [rsp+0x88],xmm0
+{"movzx",  8,  0}, //    movzx   eax,word ptr [rsp+0x88]
+{"mov",  8,  0}, //    mov     [rsp+0x8a],ax
+{"cmp",  4,  0}, //    cmp     ax,r14w
+{"je",  6,  0}, //    je nt!NtCreatePagingFile+0xcc1 (fffff80002d28614)
+{"mov",  5,  0}, //    mov     ecx,0x100
+{"cmp",  3,  0}, //    cmp     ax,cx
+{"ja",  6,  0}, //    ja nt!NtCreatePagingFile+0xcc1 (fffff80002d28614)
+{"movzx",  3,  0}, //    movzx   edx,ax
+{"mov",  5,  0}, //    mov     esi,0x1
+{"mov",  6,  0}, //    mov     r8d,0x20206d4d
+{"mov",  2,  0}, //    mov     ecx,esi
+{"call",  5,  0}, //    call nt!ExAllocatePoolWithTag (fffff800029f03d0)
+{"mov",  3,  0}, //    mov     r14,rax
+{"mov",  8,  0}, //    mov     [rsp+0x80],rax
+{"xor",  3,  0}, //    xor     r9d,r9d
+{"cmp",  3,  0}, //    cmp     rax,r9
+{"jne",  2,  0}, //    jnz nt!NtCreatePagingFile+0x1c6 (fffff80002d27b19)
+{"mov",  5,  0}, //    mov     eax,0xc000009a
+{"jmp",  5,  0}, //    jmp nt!NtCreatePagingFile+0xccd (fffff80002d28620)
+{"cmp",  3,  0}, //    cmp     r12b,r9b
+{"je",  2,  0}, //    je nt!NtCreatePagingFile+0x23d (fffff80002d27b90)
+{"movzx",  8,  0}, //    movzx   ecx,word ptr [rsp+0x88]
+{"cmp",  4,  0}, //    cmp     cx,r9w
+{"je",  2,  0}, //    je nt!NtCreatePagingFile+0x20e (fffff80002d27b61)
+{"movzx",  4,  0}, //    movzx   r8d,cx
+{"mov",  8,  0}, //    mov     rdx,[rsp+0x90]
+{"add",  3,  0}, //    add     r8,rdx
+{"mov",  7,  0}, //    mov rax,[nt!MmUserProbeAddress (fffff80002af4000)]
+{"cmp",  3,  0}, //    cmp     r8,rax
+{"ja",  2,  0}, //    ja nt!NtCreatePagingFile+0x1f9 (fffff80002d27b4c)
+{"cmp",  3,  0}, //    cmp     r8,rdx
+{"jae",  2,  0}, //    jnb nt!NtCreatePagingFile+0x216 (fffff80002d27b69)
+{"mov",  3,  0}, //    mov     [rax],r9b
+{"mov",  8,  0}, //    mov     rdx,[rsp+0x90]
+{"mov",  2,  0}, //    mov     esi,eax
+{"cmp",  2,  0}, //    cmp     eax,ebx
+{"jl",  6,  0}, //    jl nt!NtCreatePagingFile+0xc19 (fffff80002d2856c)
+{"test",  8,  0}, //    test    byte ptr [rsp+0xf4],0x4
+{"je",  2,  0}, //    je nt!NtCreatePagingFile+0x564 (fffff80002d27eb7)
+{"mov",  5,  0}, //    mov     esi,0xc0000164
+{"jmp",  5,  0}, //    jmp nt!NtCreatePagingFile+0xc19 (fffff80002d2856c)
+{"mov",  3,  0}, //    mov     rcx,r12
+{"call",  5,  0}, //    call nt!PpPagePathAssign (fffff80002cf6a50)
+{"mov",  2,  0}, //    mov     esi,eax
+{"cmp",  2,  0}, //    cmp     eax,ebx
+{"jl",  6,  0}, //    jl nt!NtCreatePagingFile+0xc19 (fffff80002d2856c)
+{"mov",  5,  0}, //    mov     eax,0x1
+{"mov",  7,  0}, //    mov     [rsp+0x98],eax
+{"lea",  7,  0}, //    lea r8,[nt!FILE_TYPE_NOTIFICATION_GUID_PAGE_FILE (fffff80002a006f0)]
+{"mov",  2,  0}, //    mov     edx,eax
+{"mov",  3,  0}, //    mov     rcx,r12
+{"call",  5,  0}, //    call nt!FsRtlIssueFileNotificationFsctl (fffff80002cacca0)
+{"mov",  3,  0}, //    mov     rcx,r12
+{"call",  5,  0}, //    call nt!MiZeroPageFileFirstPage (fffff80002cab5c0)
+{"mov",  2,  0}, //    mov     esi,eax
+{"cmp",  2,  0}, //    cmp     eax,ebx
+{"jl",  6,  0}, //    jl nt!NtCreatePagingFile+0xc19 (fffff80002d2856c)
+{"mov",  5,  0}, //    mov     esi,0x90
+{"mov",  6,  0}, //    mov     r8d,0x20206d4d
+{"mov",  3,  0}, //    mov     rdx,rsi
+{"xor",  2,  0}, //    xor     ecx,ecx
+{"call",  5,  0}, //    call nt!ExAllocatePoolWithTag (fffff800029f03d0)
+{"mov",  3,  0}, //    mov     rbx,rax
+{"test",  3,  0}, //    test    rax,rax
+{"jne",  2,  0}, //    jnz nt!NtCreatePagingFile+0x5cc (fffff80002d27f1f)
+{"mov",  5,  0}, //    mov     esi,0xc000009a
+{"jmp",  5,  0}, //    jmp nt!NtCreatePagingFile+0xc19 (fffff80002d2856c)
+{"mov",  3,  0}, //    mov     r8,rsi
+{"xor",  2,  0}, //    xor     edx,edx
+{"mov",  3,  0}, //    mov     rcx,rax
+{"call",  5,  0}, //    call    nt!memset (fffff800028c0080)
+{"mov",  4,  0}, //    mov     [rbx+0x30],r12
+{"mov",  5,  0}, //    mov     rax,[rsp+0x78]
+{"mov",  4,  0}, //    mov     [rbx+0x78],rax
+{"mov",  8,  0}, //    mov     rax,[rsp+0xa0]
+{"sar",  4,  0}, //    sar     rax,0xc
+{"mov",  3,  0}, //    mov     [rbx],rax
+{"mov",  4,  0}, //    mov     [rbx+0x10],rax
+{"dec",  3,  0}, //    dec     rax
+{"mov",  4,  0}, //    mov     [rbx+0x18],rax
+{"sar",  4,  0}, //    sar     rdi,0xc
+{"mov",  4,  0}, //    mov     [rbx+0x8],rdi
+{"xor",  2,  0}, //    xor     edi,edi
+{"xor",  3,  0}, //    xor     r13d,r13d
+{"lea",  4,  0}, //    lea     r12,[rbx+0x38]
+{"mov",  3,  0}, //    mov     rsi,r12
+{"mov",  5,  0}, //    mov     edx,0x8a0
+{"xor",  2,  0}, //    xor     ecx,ecx
+{"mov",  6,  0}, //    mov     r8d,0x20206d4d
+{"call",  5,  0}, //    call      nt!ExAllocatePoolWithTag (fffff800029f03d0)
+{"mov",  3,  0}, //    mov     [rsi],rax
+{"test",  3,  0}, //    test    rax,rax
+{"je",  6,  0}, //    je nt!NtCreatePagingFile+0x79d (fffff80002d280f0)
+{"xor",  2,  0}, //    xor     edx,edx
+{"mov",  6,  0}, //    mov     r8d,0xa0
+{"mov",  3,  0}, //    mov     rcx,rax
+{"call",  5,  0}, //    call    nt!memset (fffff800028c0080)
+{"mov",  3,  0}, //    mov     r11,[rsi]
+{"mov",  4,  0}, //    mov     [r11+0x30],rbx
+{"mov",  5,  0}, //    mov     eax,0x1
+{"add",  2,  0}, //    add     edi,eax
+{"add",  3,  0}, //    add     r13,rax
+{"add",  4,  0}, //    add     rsi,0x8
+{"cmp",  3,  0}, //    cmp     edi,r14d
 {"", 0}};
 static const unsigned char g_Data[] = {
  0x48, 0x8b, 0xc4//    mov     rax,rsp
@@ -400,33 +400,33 @@ static const unsigned char g_Data[] = {
 
 
 static const TestEntry_Name g_Names2[] = {
-{"mov",  3}, //    mov     [rcx],rdx
-{"mov",  4}, //    mov     [rcx+0x8],rbx
-{"mov",  4}, //    mov     [rcx+0x18],rbp
-{"mov",  4}, //    mov     [rcx+0x20],rsi
-{"mov",  4}, //    mov     [rcx+0x28],rdi
-{"mov",  4}, //    mov     [rcx+0x30],r12
-{"mov",  4}, //    mov     [rcx+0x38],r13
-{"mov",  4}, //    mov     [rcx+0x40],r14
-{"mov",  4}, //    mov     [rcx+0x48],r15
-{"lea",  5}, //    lea     r8,[rsp+0x8]
-{"mov",  4}, //    mov     [rcx+0x10],r8
-{"mov",  4}, //    mov     r8,[rsp]
-{"mov",  4}, //    mov     [rcx+0x50],r8
+{"mov",  3,  0}, //    mov     [rcx],rdx
+{"mov",  4,  0}, //    mov     [rcx+0x8],rbx
+{"mov",  4,  0}, //    mov     [rcx+0x18],rbp
+{"mov",  4,  0}, //    mov     [rcx+0x20],rsi
+{"mov",  4,  0}, //    mov     [rcx+0x28],rdi
+{"mov",  4,  0}, //    mov     [rcx+0x30],r12
+{"mov",  4,  0}, //    mov     [rcx+0x38],r13
+{"mov",  4,  0}, //    mov     [rcx+0x40],r14
+{"mov",  4,  0}, //    mov     [rcx+0x48],r15
+{"lea",  5,  0}, //    lea     r8,[rsp+0x8]
+{"mov",  4,  0}, //    mov     [rcx+0x10],r8
+{"mov",  4,  0}, //    mov     r8,[rsp]
+{"mov",  4,  0}, //    mov     [rcx+0x50],r8
 {"stmxcsr",  4}, //    stmxcsr dword ptr [rcx+0x58]
-{"fnstcw",  3}, //    fstcw   [rcx+0x5c]
-{"movdqa",  5}, //    movdqa  oword ptr [rcx+0x60],xmm6
-{"movdqa",  5}, //    movdqa  oword ptr [rcx+0x70],xmm7
-{"movdqa",  9}, //    movdqa oword ptr [rcx+0x80],xmm8
-{"movdqa",  9}, //    movdqa oword ptr [rcx+0x90],xmm9
-{"movdqa",  9}, //    movdqa oword ptr [rcx+0xa0],xmm10
-{"movdqa",  9}, //    movdqa oword ptr [rcx+0xb0],xmm11
-{"movdqa",  9}, //    movdqa oword ptr [rcx+0xc0],xmm12
-{"movdqa",  9}, //    movdqa oword ptr [rcx+0xd0],xmm13
-{"movdqa",  9}, //    movdqa oword ptr [rcx+0xe0],xmm14
-{"movdqa",  9}, //    movdqa oword ptr [rcx+0xf0],xmm15
-{"xor",  2}, //    xor     eax,eax
-{"ret",  1}, //    ret
+{"fnstcw",  3,  0}, //    fstcw   [rcx+0x5c]
+{"movdqa",  5,  0}, //    movdqa  oword ptr [rcx+0x60],xmm6
+{"movdqa",  5,  0}, //    movdqa  oword ptr [rcx+0x70],xmm7
+{"movdqa",  9,  0}, //    movdqa oword ptr [rcx+0x80],xmm8
+{"movdqa",  9,  0}, //    movdqa oword ptr [rcx+0x90],xmm9
+{"movdqa",  9,  0}, //    movdqa oword ptr [rcx+0xa0],xmm10
+{"movdqa",  9,  0}, //    movdqa oword ptr [rcx+0xb0],xmm11
+{"movdqa",  9,  0}, //    movdqa oword ptr [rcx+0xc0],xmm12
+{"movdqa",  9,  0}, //    movdqa oword ptr [rcx+0xd0],xmm13
+{"movdqa",  9,  0}, //    movdqa oword ptr [rcx+0xe0],xmm14
+{"movdqa",  9,  0}, //    movdqa oword ptr [rcx+0xf0],xmm15
+{"xor",  2,  0}, //    xor     eax,eax
+{"ret",  1,  0}, //    ret
 {"", 0}};
 static const unsigned char g_Data2[] = {
  0x48, 0x89, 0x11//    mov     [rcx],rdx
@@ -486,6 +486,12 @@ void test_x64_integrated_impl(const unsigned char * pData,
             break;
         }
         
+        if( ( result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED ) != pNames[i].iPrivileged )
+        {
+            Diana_FatalBreak();
+            break;
+        }
+
         DianaGroupInfo * pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId);
         
         if (strcmp(pNames[i].pCmdName,  pGroupInfo->m_pName))

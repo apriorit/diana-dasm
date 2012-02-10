@@ -436,9 +436,6 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(retf)
 
     DI_PROC_REGISTER_COMMAND(bswap)
-
-    // stubs
-    DI_PROC_REGISTER_COMMAND(int)
 	#pragma warning( pop )
 }
 
