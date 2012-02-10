@@ -14,11 +14,11 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>OUTS/OUTSB/OUTSW/OUTSD -- Output String to Port</H1>
 
 <PRE>
-Opcode   Instruction       Clocks          Description
+Opcode               Instruction       Clocks          Description
 
-6E       OUTS DX,esi_ptr8  14,pm=8*/28**   Output byte [(E)SI] to port in DX
-6F       OUTS DX,esi_ptr16 14,pm=8*/28**   Output word [(E)SI] to port in DX
-6F       OUTS DX,esi_ptr32 14,pm=8*/28**   Output dword [(E)SI] to port in DX
+6E /pprivileged      OUTS DX,esi_ptr8  14,pm=8*/28**   Output byte [(E)SI] to port in DX
+6F /pprivileged      OUTS DX,esi_ptr16 14,pm=8*/28**   Output word [(E)SI] to port in DX
+6F /pprivileged      OUTS DX,esi_ptr32 14,pm=8*/28**   Output dword [(E)SI] to port in DX
 </PRE>
 
 

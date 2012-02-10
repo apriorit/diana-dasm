@@ -14,12 +14,12 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>RETF -- Return from Procedure(far)</H1>
 
 <PRE>
-Opcode     Instruction  Clocks         Description
+Opcode                 Instruction  Clocks         Description
 
-CB         RETF         18+m,pm=32+m   Return (far) to caller, same
-                                       privilege
-CA  iw     RETF imm16   18+m,pm=32+m   Return (far), same privilege, pop
-                                       imm16 bytes
+CB /pprivileged        RETF         18+m,pm=32+m   Return (far) to caller, same
+                                                   privilege
+CA  iw /pprivileged    RETF imm16   18+m,pm=32+m   Return (far), same privilege, pop
+                                                   imm16 bytes
 </PRE>
 
 

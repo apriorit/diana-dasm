@@ -14,17 +14,17 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>IN -- Input from Port</H1>
 
 <PRE>
-Opcode    Instruction   Clocks            Description
+Opcode                Instruction   Clocks            Description
 
-E4  ib    IN AL,imm8    12,pm=6*/26**     Input byte from immediate port
-                                          into AL
-E5  ib    IN AX,imm8    12,pm=6*/26**     Input word from immediate port
-                                          into AX
-E5  ib    IN EAX,imm8   12,pm=6*/26**     Input dword from immediate port
-                                          into EAX
-EC        IN AL,DX      13,pm=7*/27**     Input byte from port DX into AL
-ED        IN AX,DX      13,pm=7*/27**     Input word from port DX into AX
-ED        IN EAX,DX     13,pm=7*/27**     Input dword from port DX into
+E4 /pprivileged ib    IN AL,imm8    12,pm=6*/26**     Input byte from immediate port
+                                                      into AL
+E5 /pprivileged ib    IN AX,imm8    12,pm=6*/26**     Input word from immediate port
+                                                      into AX
+E5 /pprivileged ib    IN EAX,imm8   12,pm=6*/26**     Input dword from immediate port
+                                                      into EAX
+EC /pprivileged       IN AL,DX      13,pm=7*/27**     Input byte from port DX into AL
+ED /pprivileged       IN AX,DX      13,pm=7*/27**     Input word from port DX into AX
+ED /pprivileged       IN EAX,DX     13,pm=7*/27**     Input dword from port DX into
                                           EAX
 </PRE>
 

@@ -14,11 +14,11 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>INS/INSB/INSW/INSD -- Input from Port to String</H1>
 
 <PRE>
-Opcode  Instruction    Clocks         Description
+Opcode              Instruction    Clocks         Description
 
-6C      INS es_di8,DX    15,pm=9*/29**  Input byte from port DX into ES:(E)DI
-6D      INS es_di16,DX   15,pm=9*/29**  Input word from port DX into ES:(E)DI
-6D      INS es_di32,DX   15,pm=9*/29**  Input dword from port DX into ES:(E)DI
+6C /pprivileged     INS es_di8,DX    15,pm=9*/29**  Input byte from port DX into ES:(E)DI
+6D /pprivileged     INS es_di16,DX   15,pm=9*/29**  Input word from port DX into ES:(E)DI
+6D /pprivileged     INS es_di32,DX   15,pm=9*/29**  Input dword from port DX into ES:(E)DI
 </PRE>
 
 <EM>

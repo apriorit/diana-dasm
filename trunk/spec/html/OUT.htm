@@ -14,20 +14,20 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>OUT -- Output to Port</H1>
 
 <PRE>
-Opcode    Instruction     Clocks          Description
+Opcode                Instruction     Clocks          Description
 
-E6  ib    OUT imm8,AL     10,pm=4*/24**   Output byte AL to immediate port
-                                          number
-E7  ib    OUT imm8,AX     10,pm=4*/24**   Output word AL to immediate port
-                                          number
-E7  ib    OUT imm8,EAX    10,pm=4*/24**   Output dword AL to immediate
-                                          port number
-EE        OUT DX,AL       11,pm=5*/25**   Output byte AL to port number in
-                                          DX
-EF        OUT DX,AX       11,pm=5*/25**   Output word AL to port number in
-                                          DX
-EF        OUT DX,EAX      11,pm=5*/25**   Output dword AL to port number
-                                          in DX
+E6 /pprivileged ib    OUT imm8,AL     10,pm=4*/24**   Output byte AL to immediate port
+                                                      number
+E7 /pprivileged ib    OUT imm8,AX     10,pm=4*/24**   Output word AL to immediate port
+                                                      number
+E7 /pprivileged ib    OUT imm8,EAX    10,pm=4*/24**   Output dword AL to immediate
+                                                      port number
+EE /pprivileged       OUT DX,AL       11,pm=5*/25**   Output byte AL to port number in
+                                                      DX
+EF /pprivileged       OUT DX,AX       11,pm=5*/25**   Output word AL to port number in
+                                                      DX
+EF /pprivileged       OUT DX,EAX      11,pm=5*/25**   Output dword AL to port number
+                                                      in DX
 </PRE>
 
 

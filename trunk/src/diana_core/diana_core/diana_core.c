@@ -78,10 +78,12 @@ DianaGroupInfo * Diana_GetGroupInfo(long lId)
 
 void Diana_FatalBreak()
 {
-#ifdef DIANA_CFG_USE_INLINE_ASSEMBLER
-    __asm int 3
-#else
-    __debugbreak();
+#ifdef _DEBUG 
+    #ifdef DIANA_CFG_USE_INLINE_ASSEMBLER
+        __asm int 3
+    #else
+        __debugbreak();
+    #endif
 #endif
 }
 

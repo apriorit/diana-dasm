@@ -496,6 +496,7 @@ int RouteMarker(Diana_ListNode * pNode,
 
     Diana_ListForEach(&pInstruction->m_refsTo, 
                       XrefRouteMarker, 
+                      #pragma warning( suppress : 4306 ) // conversion from ' type1 ' to ' type2 ' of greater size
                       (void*)1);
 
     --pSession->pOwner->m_actualSize;

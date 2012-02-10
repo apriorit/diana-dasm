@@ -56,6 +56,7 @@ typedef enum
 #define DI_FLAG_CMD_AMD64_SIGN_EXTENDS      0x0080
 #define DI_FLAG_CMD_PUSH_SEG                0x0100
 #define DI_FLAG_CMD_UNDOCUMENTED            0x0200
+#define DI_FLAG_CMD_PRIVILEGED              0x0400
 
 // index fields
 #define DI_UINT16         unsigned short
@@ -77,7 +78,7 @@ typedef enum
 #define DI_MAX_OPCODE_COUNT   (4)
 
 #define DI_CACHE_RESERVED      2
-#define DI_CACHE_SIZE (DI_MAX_OPCODE_COUNT + 1+ DI_CACHE_RESERVED)
+#define DI_CACHE_SIZE (DI_MAX_OPCODE_COUNT + 1 + DI_CACHE_RESERVED)
 
 #define DI_MAX_PREFIXES_COUNT  16
 

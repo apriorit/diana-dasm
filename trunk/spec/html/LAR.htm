@@ -14,10 +14,10 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>LAR -- Load Access Rights Byte</H1>
 
 <PRE>
-Opcode        Instruction      Clocks      Description
+Opcode                    Instruction      Clocks      Description
 
-0F  02 /r     LAR r16,r/m16    pm=15/16    r16 := r/m16 masked by FF00
-0F  02 /r     LAR r32,r/m32    pm=15/16    r32 := r/m32 masked by 00FxFF00
+0F  02 /r /pprivileged    LAR r16,r/m16    pm=15/16    r16 := r/m16 masked by FF00
+0F  02 /r /pprivileged    LAR r32,r/m32    pm=15/16    r32 := r/m32 masked by 00FxFF00
 </PRE>
 
 <H2>Description</H2>

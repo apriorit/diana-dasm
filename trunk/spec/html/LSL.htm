@@ -14,12 +14,12 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>LSL -- Load Segment Limit</H1>
 
 <PRE>
-Opcode       Instruction      Clocks      Description
+Opcode                   Instruction      Clocks      Description
 
-0F  03 /r    LSL r16,r/m16    pm=20/21    Load: r16 := segment limit,
-                                          selector r/m16 (byte granular)
-0F  03 /r    LSL r32,r/m32    pm=20/21    Load: r32 := segment limit,
-                                          selector r/m32 (byte granular)
+0F  03 /r /pprivileged   LSL r16,r/m16    pm=20/21    Load: r16 := segment limit,
+                                                      selector r/m16 (byte granular)
+0F  03 /r /pprivileged   LSL r32,r/m32    pm=20/21    Load: r32 := segment limit,
+                                                      selector r/m32 (byte granular)
 </PRE>
 
 <H2>Description</H2>

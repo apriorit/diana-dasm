@@ -14,12 +14,12 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>BOUND -- Check Array Index Against Bounds</H1>
 
 <PRE>
-Opcode    Instruction          Clocks    Description
+Opcode                Instruction          Clocks    Description
 
-62 /r     BOUND r16,m16        10        Check if r16 is within bounds
-                                         (passes test)
-62 /r     BOUND r32,m32        10        Check if r32 is within bounds
-                                         (passes test)
+62 /r /pprivileged    BOUND r16,m16        10        Check if r16 is within bounds
+                                                     (passes test)
+62 /r /pprivileged    BOUND r32,m32        10        Check if r32 is within bounds
+                                                     (passes test)
 </PRE>
 
 <H2>Operation</H2>
