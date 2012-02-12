@@ -1400,5 +1400,23 @@ void test_suxx()
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0);
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
     }
+
+    static unsigned char suxx92[] = {0x0F, 0x1E, 0x84, 0xC0, 0x90, 0x90, 0x90, 0x90}; // nop dword ptr [eax+eax*8-0x6f6f6f70]
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, suxx92, sizeof(suxx92), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "hint_nop") == 0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 1);
+        TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_EAX);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_EAX);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 8);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0xffffffff90909090);
+    }
+
 }
 

@@ -17,7 +17,7 @@ int Di_ProcessRexPrefix(unsigned char value,
                         DianaContext * pContext,
                         DianaParserResult * pResult);
 
-void Di_ProcessCustomPrefix(unsigned char value,
+int Di_ProcessCustomPrefix(unsigned char value,
                             int * pbPrefixFound, 
                             DianaContext * pContext,
                             DianaParserResult * pResult);

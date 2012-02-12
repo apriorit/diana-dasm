@@ -462,7 +462,7 @@ static void test_processor_enter2()
     {
         *--pStackPtr = i;
     }
-	SET_REG_RSP( (DI_UINT32)pStackPtr  - (DI_UINT32)pBegin);
+	SET_REG_RSP( (char*)pStackPtr  - (char*)pBegin);
 
     int res = proc.ExecOnce();
     TEST_ASSERT(res == DI_SUCCESS);
@@ -498,7 +498,7 @@ static void test_processor_enter3()
     {
         *--pStackPtr = i;
     }
-	SET_REG_RSP( (DI_UINT32)pStackPtr  - (DI_UINT32)pBegin);
+	SET_REG_RSP( (char*)pStackPtr  - (char*)pBegin);
 
     int res = proc.ExecOnce();
     TEST_ASSERT(res == DI_SUCCESS);

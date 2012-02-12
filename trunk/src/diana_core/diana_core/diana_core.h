@@ -2,6 +2,7 @@
 #define DIANA_CORE_H
 
 #include "diana_config.h"
+#include "diana_commands.h"
 #include "memory.h"
 
 // <gen
@@ -143,6 +144,7 @@ typedef struct _dianaGroupInfo
     const char * m_pName;
     Diana_LinkedAdditionalGroupInfo * m_pLinkedInfo;
     void * m_pTag;
+    DianaCommandId m_commandId;
 }DianaGroupInfo;
 
 // forward declaration

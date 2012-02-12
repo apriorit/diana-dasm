@@ -378,6 +378,7 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(neg)
     DI_PROC_REGISTER_COMMAND(not)
     DI_PROC_REGISTER_COMMAND(nop)
+    DI_PROC_REGISTER_COMMAND(hint_nop)
 
     DI_PROC_REGISTER_COMMAND(or)
 

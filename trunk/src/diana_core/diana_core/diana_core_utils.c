@@ -115,11 +115,13 @@ int Di_ProcessRexPrefix(unsigned char value,
     return 0;
 }
 
-void Di_ProcessCustomPrefix(unsigned char value,
+int Di_ProcessCustomPrefix(unsigned char value,
                             int * pbPrefixFound, 
                             DianaContext * pContext,
                             DianaParserResult * pResult)
 {
+    // result: IsPrefixCanNotBeUsedWithRepInstruction
+    int result = 1;
 	pContext;
 
     *pbPrefixFound = 0;
@@ -165,15 +167,18 @@ void Di_ProcessCustomPrefix(unsigned char value,
     case 0x66: //     L"prefix_OperandSize",    L"Operand-size override",      true},
         if (pResult)
             pResult->pInfo = &g_Diana_OpSize;
+        result = 0;
         break;
     case 0x67: //     L"prefix_AddressSize",    L"Address-size override",      true}
         if (pResult)
             pResult->pInfo = &g_Diana_AddrSize;
+        result = 0;
         break;
     default:
-        return;
+        return result;
     }
     *pbPrefixFound = 1;
+    return result;
 }
 
 

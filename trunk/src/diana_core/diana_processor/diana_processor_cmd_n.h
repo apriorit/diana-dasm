@@ -12,4 +12,6 @@ int Diana_Call_not(struct _dianaContext * pDianaContext,
 int Diana_Call_nop(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext);
 
+int Diana_Call_hint_nop(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext);
 #endif

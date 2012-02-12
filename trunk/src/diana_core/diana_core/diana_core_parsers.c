@@ -498,6 +498,7 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
     int dataValid = 1;
     int iBytesCounter = 0;
     int iOriginalCacheSize = 0;
+    int nopFlags = 0;
     pParseParams->pContext->prefixesCount = 0;
     
     Diana_ResetPrefixes(pParseParams->pContext);
@@ -514,9 +515,9 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
 
         data = Diana_CacheEatOne(pParseParams->pContext);
 
-        if (!iBytesCounter)
+        if (!iBytesCounter || !nopFlags)
         {
-            // first byte, check nop
+            // check nop
             switch(data)
             {
             case 0x90:
@@ -528,10 +529,10 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
         }
 
         // parse prefixes
-        Di_ProcessCustomPrefix(data, 
-                               &prefixFound,
-                               pParseParams->pContext, 
-                               pParseParams->pResult);
+        nopFlags |= Di_ProcessCustomPrefix(data, 
+                                           &prefixFound,
+                                           pParseParams->pContext, 
+                                           pParseParams->pResult);
     
         if (!prefixFound)
             break;

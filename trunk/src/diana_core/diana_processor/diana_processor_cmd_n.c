@@ -54,3 +54,12 @@ int Diana_Call_nop(struct _dianaContext * pDianaContext,
 
     DI_PROC_END
 }
+
+int Diana_Call_hint_nop(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+	pDianaContext;
+	pCallContext;
+
+    DI_PROC_END
+}

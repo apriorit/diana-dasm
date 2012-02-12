@@ -8,22 +8,23 @@ extern "C"
 #include "test_common.h"
 #include "string.h"
 
-unsigned char nop[1] = {0x90};
-unsigned char push[] = {0x50};            //         push        eax  
-unsigned char push1[] = {0x51};           //         push        ecx  
-unsigned char push2[] = {0x52};           //         push        edx  
-unsigned char push3[] = {0x6A, 0x01};     //         push        1    
-unsigned char push4[] = {0xFF, 0x75, 0xFC};     //         push        ttt    
-unsigned char push5[]= {0xFF, 0x74, 0x71, 0x05};//      push        dword ptr [ecx+esi*2+5] 
-unsigned char push6[]= {0xFF, 0x34, 0x75, 0x05, 0x00, 0x00, 0x00}; // push        dword ptr [esi*2+5] 
-unsigned char push7[]= {0xFF, 0xB4, 0x71, 0xF6, 0x00, 0x00, 0x00}; // push        dword ptr [ecx+esi*2+0F6h] 
-unsigned char push8[]= {0x0E};//         PUSH CS       2        Push CS
-unsigned char push9[]= {0x16};//         PUSH SS       2        Push SS
-unsigned char push10[]= {0x1E};//         PUSH DS       2        Push DS
-unsigned char push11[]= {0x06};//         PUSH ES       2        Push ES
-unsigned char push12[]= {0x0F, 0xA0};//   PUSH FS       2        Push FS
-unsigned char push13[]= {0x0F, 0xA8};//   PUSH GS       2        Push GS
-unsigned char push14[]= {0x68,0x08,0xaf,0x98,0xbf};//   push    offset win32k!`string'+0x168 (bf98af08)
+static unsigned char nop[] = {0x90};
+static unsigned char nop2[] = {0x66, 0x67, 0x90};
+static unsigned char push[] = {0x50};            //         push        eax  
+static unsigned char push1[] = {0x51};           //         push        ecx  
+static unsigned char push2[] = {0x52};           //         push        edx  
+static unsigned char push3[] = {0x6A, 0x01};     //         push        1    
+static unsigned char push4[] = {0xFF, 0x75, 0xFC};     //         push        ttt    
+static unsigned char push5[]= {0xFF, 0x74, 0x71, 0x05};//      push        dword ptr [ecx+esi*2+5] 
+static unsigned char push6[]= {0xFF, 0x34, 0x75, 0x05, 0x00, 0x00, 0x00}; // push        dword ptr [esi*2+5] 
+static unsigned char push7[]= {0xFF, 0xB4, 0x71, 0xF6, 0x00, 0x00, 0x00}; // push        dword ptr [ecx+esi*2+0F6h] 
+static unsigned char push8[]= {0x0E};//         PUSH CS       2        Push CS
+static unsigned char push9[]= {0x16};//         PUSH SS       2        Push SS
+static unsigned char push10[]= {0x1E};//         PUSH DS       2        Push DS
+static unsigned char push11[]= {0x06};//         PUSH ES       2        Push ES
+static unsigned char push12[]= {0x0F, 0xA0};//   PUSH FS       2        Push FS
+static unsigned char push13[]= {0x0F, 0xA8};//   PUSH GS       2        Push GS
+static unsigned char push14[]= {0x68,0x08,0xaf,0x98,0xbf};//   push    offset win32k!`string'+0x168 (bf98af08)
 
 
 int test_push()
@@ -31,8 +32,27 @@ int test_push()
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
     size_t read;
-    //unsigned char nop[1] = {0x90};
     int iRes = 0;
+
+    //unsigned char nop[1] = {0x90};
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,nop, sizeof(nop), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==0);
+        TEST_ASSERT(result.pInfo->m_operandCount==0);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "nop")==0);
+    }
+
+    // static unsigned char nop2[] = {0x66, 0x67, 0x90};
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,nop2, sizeof(nop2), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==0);
+        TEST_ASSERT(result.pInfo->m_operandCount==0);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "nop")==0);
+    }
 
     //unsigned char push[] = {0x50};            //         push        eax  
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,push, sizeof(push), Diana_GetRootLine(), &result, &read);
