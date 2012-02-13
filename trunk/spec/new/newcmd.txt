@@ -7,8 +7,8 @@ RDMSR | 0F 32 /pprivileged
 WRMSR | 0F 30 /pprivileged
 CMPXCHG16B mem128 | 0F C7 /1
 CPUID | 0F A2
-SYSENTER | 0F 34 /pprivileged
-SYSCALL | 0F 05 /pamd64 /pprivileged
+SYSENTER | 0F 34
+SYSCALL | 0F 05 /pamd64
 SYSEXIT | 0F 35 /pprivileged
 SYSRET | 0F 07 /pamd64 /pprivileged
 WBINVD | 0F 09 /pprivileged
