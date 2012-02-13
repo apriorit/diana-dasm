@@ -156,30 +156,185 @@ void test_nop_pause()
 
 void test_nop()
 {
-	DianaGroupInfo * pGroupInfo=0;
 	DianaParserResult result;
 	size_t read;
-
 	int iRes = 0;
-	static unsigned char nop[] = {0x90}; // NOP
+
+	static unsigned char nop[] = {0x66, 0x90}; // NOP
 	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, nop, sizeof(nop), Diana_GetRootLine(), &result, &read);
 	TEST_ASSERT_IF(!iRes)
 	{
-		TEST_ASSERT(result.iFullCmdSize==1);
+		TEST_ASSERT(result.iFullCmdSize==2);
 		TEST_ASSERT(result.iLinkedOpCount==0);
 		TEST_ASSERT(result.pInfo->m_operandCount==0);
-		TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
-		TEST_ASSERT(strcmp(pGroupInfo->m_pName, "nop")==0);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "nop")==0);
 		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
 	}
 
-	//static unsigned char nop2[] = {0x66,0x90}; // NOP
+	static unsigned char nop2[] = {0x66, 0x90}; // NOP
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, nop2, sizeof(nop2), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==2);
+		TEST_ASSERT(result.iLinkedOpCount==0);
+		TEST_ASSERT(result.pInfo->m_operandCount==0);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "nop")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
+	}
+
+}
+
+void test_nops()
+{
+	// this form GAS, the GNU Assembler
+	// nopl (%[re]ax)
+	static unsigned char alt_3[] = {0x0f,0x1f,0x00};
+	// nopl 0(%[re]ax)
+	static unsigned char alt_4[] = {0x0f,0x1f,0x40,0x00};
+	// nopl 0(%[re]ax,%[re]ax,1)
+	static unsigned char alt_5[] = {0x0f,0x1f,0x44,0x00,0x00};
+	// nopw 0(%[re]ax,%[re]ax,1)
+	static unsigned char alt_6[] = {0x66,0x0f,0x1f,0x44,0x00,0x00};
+	// nopl 0L(%[re]ax)
+	static unsigned char alt_7[] = {0x0f,0x1f,0x80,0x00,0x00,0x00,0x00};
+	// nopl 0L(%[re]ax,%[re]ax,1)
+	static unsigned char alt_8[] = {0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00};
+	// nopw 0L(%[re]ax,%[re]ax,1)
+	static unsigned char alt_9[] = {0x66,0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00};
+	// nopw %cs:0L(%[re]ax,%[re]ax,1)
+	static unsigned char alt_10[] = {0x66,0x2e,0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00};
+	// nopw %cs:0L(%[re]ax,%[re]ax,1)
+	static unsigned char alt_long_11[] = {0x66,0x66,0x2e,0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00};
+	// nopw %cs:0L(%[re]ax,%[re]ax,1)
+	static unsigned char alt_long_12[] = {0x66,0x66,0x66,0x2e,0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00};
+	// nopw %cs:0L(%[re]ax,%[re]ax,1)
+	static unsigned char alt_long_13[] = {0x66,0x66,0x66,0x66,0x2e,0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00};
+	// nopw %cs:0L(%[re]ax,%[re]ax,1)
+	static unsigned char alt_long_14[] = {0x66,0x66,0x66,0x66,0x66,0x2e,0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00};
+	// nopw %cs:0L(%[re]ax,%[re]ax,1)
+	static unsigned char alt_long_15[] = {0x66,0x66,0x66,0x66,0x66,0x66,0x2e,0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00};
+	// nopl 0(%[re]ax,%[re]ax,1)
+	static unsigned char alt_short_11[] = {0x0f,0x1f,0x44,0x00,0x00};
+	// nopl 0L(%[re]ax)
+	static unsigned char alt_short_14[] = {0x0f,0x1f,0x80,0x00,0x00,0x00,0x00};
+
+	DianaParserResult result;
+	size_t read;
+	int iRes = 0;
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_3, sizeof(alt_3), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==3);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_4, sizeof(alt_4), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==4);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_5, sizeof(alt_5), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==5);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_6, sizeof(alt_6), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==6);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_7, sizeof(alt_7), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==7);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_8, sizeof(alt_8), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==8);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_9, sizeof(alt_9), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==9);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_10, sizeof(alt_10), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==10);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_long_11, sizeof(alt_long_11), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==11);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_long_12, sizeof(alt_long_12), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==12);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_long_13, sizeof(alt_long_13), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==13);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_long_14, sizeof(alt_long_14), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==14);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_long_15, sizeof(alt_long_15), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==15);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_short_11, sizeof(alt_short_11), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==5);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, alt_short_14, sizeof(alt_short_14), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==7);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
 }
 
 void test_new()
 {
     test_nop_pause();
 	test_nop();
+	test_nops();
     test_r32_64();
     test_sal1();
 }
