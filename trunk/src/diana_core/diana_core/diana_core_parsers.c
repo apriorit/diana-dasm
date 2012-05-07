@@ -180,15 +180,16 @@ int Diana_InsertPrefix(DianaContext * pContext,
                        )
 {
     DI_FULL_CHAR i = 0;
+
+	if (pContext->prefixesCount >= DI_MAX_PREFIXES_COUNT) 
+		return DI_ERROR;
+
     for(; i<  pContext->prefixesCount; ++i)
     {
         if (pContext->prefixes[i].prefix == prefix)
             return DI_SUCCESS;
     }
 
-    if (pContext->prefixesCount >= DI_MAX_PREFIXES_COUNT) 
-        return DI_ERROR;
-    
     pContext->prefixes[pContext->prefixesCount].prefix = prefix;
     pContext->prefixes[pContext->prefixesCount].linkedPrefixFnc = linkedPrefixFnc;
     ++pContext->prefixesCount;
@@ -507,6 +508,8 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
     // check prefixes
     for(;;++iBytesCounter)
     {
+		if( iBytesCounter > DI_MAX_PREFIXES_COUNT )
+			return DI_ERROR;
         iResult = Diana_ReadCache(pParseParams->pContext, 
                                   pParseParams->readStream, 
                                   0);

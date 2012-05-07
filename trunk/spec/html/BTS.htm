@@ -14,12 +14,12 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>BTS -- Bit Test and Set</H1>
 
 <PRE>
-Opcode        Instruction     Clocks  Description
+Opcode                     Instruction     Clocks  Description
 
-0F  AB /r     BTS r/m16,r16   6/13    Save bit in carry flag and set
-0F  AB /r     BTS r/m32,r32   6/13    Save bit in carry flag and set
-0F  BA /5 ib  BTS r/m16,imm8  6/8     Save bit in carry flag and set
-0F  BA /5 ib  BTS r/m32,imm8  6/8     Save bit in carry flag and set
+0F  AB /r /pprefixlock     BTS r/m16,r16   6/13    Save bit in carry flag and set
+0F  AB /r /pprefixlock     BTS r/m32,r32   6/13    Save bit in carry flag and set
+0F  BA /5 /pprefixlock ib  BTS r/m16,imm8  6/8     Save bit in carry flag and set
+0F  BA /5 /pprefixlock ib  BTS r/m32,imm8  6/8     Save bit in carry flag and set
 </PRE>
 
 <H2>Operation</H2>

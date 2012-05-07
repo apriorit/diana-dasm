@@ -446,6 +446,16 @@ static void test_processor_idiv64_4()
 	TEST_ASSERT(GET_REG_RDX == 0x000000005ED95EDFULL);
 }
 
+static void test_processor_invalid_lock()
+{
+	unsigned char code[] = {0xF0, 0x41}; // lock inc ecx
+	CTestProcessor proc(code, sizeof(code));
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_INVALID_OPCODE);
+}
+
 void test_processor_i()
 {
     test_processor_idiv();
@@ -474,4 +484,6 @@ void test_processor_i()
 	test_processor_idiv64_2();
 	test_processor_idiv64_3();
 	test_processor_idiv64_4();
+
+	test_processor_invalid_lock();
 }

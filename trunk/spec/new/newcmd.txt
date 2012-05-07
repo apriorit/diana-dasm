@@ -5,7 +5,7 @@ RDTSCP | 0F 01 F9 /pprivileged
 RDPMC | 0F 33 /pprivileged
 RDMSR | 0F 32 /pprivileged
 WRMSR | 0F 30 /pprivileged
-CMPXCHG16B mem128 | 0F C7 /1
+CMPXCHG16B mem128 | 0F C7 /1 /pprefixlock
 CPUID | 0F A2
 SYSENTER | 0F 34
 SYSCALL | 0F 05 /pamd64

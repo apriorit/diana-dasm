@@ -14,13 +14,13 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>XCHG -- Exchange Register/Memory with Register</H1>
 
 <PRE>
-Opcode    Instruction      Clocks     Description
+Opcode                 Instruction      Clocks     Description
 
-90 + rw   XCHG AX,r16      3          Exchange word register with AX
-90 + rw   XCHG EAX,r32     3          Exchange dword register with EAX
-86  /r    XCHG r/m8,r8     3          Exchange byte register with EA byte
-87  /r    XCHG r/m16,r16   3          Exchange word register with EA word
-87  /r    XCHG r/m32,r32   3          Exchange dword register with EA dword
+90 + rw                XCHG AX,r16      3          Exchange word register with AX
+90 + rw                XCHG EAX,r32     3          Exchange dword register with EAX
+86  /r  /pprefixlock   XCHG r/m8,r8     3          Exchange byte register with EA byte
+87  /r  /pprefixlock   XCHG r/m16,r16   3          Exchange word register with EA word
+87  /r  /pprefixlock   XCHG r/m32,r32   3          Exchange dword register with EA dword
 </PRE>
 
 

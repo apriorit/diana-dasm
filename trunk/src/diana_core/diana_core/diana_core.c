@@ -63,6 +63,9 @@ int Diana_ParseCmd(DianaContext * pContext, //IN
 
     pResult->iFullCmdSize = iPreviousCacheSize + proxy.m_iReadSize - pContext->cacheSize;
 
+	if( pResult->iFullCmdSize > DI_MAX_INSTRUCTION_SIZE )
+		return DI_ERROR;
+
 	return iRes;
 }
 

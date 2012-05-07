@@ -14,11 +14,11 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>NEG -- Two's Complement Negation</H1>
 
 <PRE>
-Opcode  Instruction   Clocks    Description
+Opcode               Instruction   Clocks    Description
 
-F6  /3  NEG r/m8      2/6       Two's complement negate r/m byte
-F7  /3  NEG r/m16     2/6       Two's complement negate r/m word
-F7  /3  NEG r/m32     2/6       Two's complement negate r/m dword
+F6  /3 /pprefixlock  NEG r/m8      2/6       Two's complement negate r/m byte
+F7  /3 /pprefixlock  NEG r/m16     2/6       Two's complement negate r/m word
+F7  /3 /pprefixlock  NEG r/m32     2/6       Two's complement negate r/m dword
 </PRE>
 
 <H2>Operation</H2>

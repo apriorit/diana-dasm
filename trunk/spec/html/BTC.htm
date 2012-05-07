@@ -14,12 +14,12 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>BTC -- Bit Test and Complement</H1>
 
 <PRE>
-Opcode        Instruction     Clocks  Description
+Opcode                     Instruction     Clocks  Description
 
-0F  BB /r     BTC r/m16,r16   6/13    Save bit in carry flag and complement
-0F  BB /r     BTC r/m32,r32   6/13    Save bit in carry flag and complement
-0F  BA /7 ib  BTC r/m16,imm8  6/8     Save bit in carry flag and complement
-0F  BA /7 ib  BTC r/m32,imm8  6/8     Save bit in carry flag and complement
+0F  BB /r /pprefixlock     BTC r/m16,r16   6/13    Save bit in carry flag and complement
+0F  BB /r /pprefixlock     BTC r/m32,r32   6/13    Save bit in carry flag and complement
+0F  BA /7 /pprefixlock ib  BTC r/m16,imm8  6/8     Save bit in carry flag and complement
+0F  BA /7 /pprefixlock ib  BTC r/m32,imm8  6/8     Save bit in carry flag and complement
 </PRE>
 
 <H2>Operation</H2>

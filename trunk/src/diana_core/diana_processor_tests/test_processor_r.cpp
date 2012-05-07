@@ -153,10 +153,10 @@ void test_processor_ror2()
 
 void test_processor_ret64()
 {
-    // ror eax, 1
+    // ret
     unsigned char code[] = {0xC3, 0x01, 0x01, 0x01, 
                             0x01, 0x01, 0x01, 0xFF};
-    CTestProcessor proc(code, sizeof(code), 0, 8);
+    CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE64);
     DianaProcessor * pCallContext = proc.GetSelf();
     
     SET_REG_RSP(0);
@@ -167,7 +167,6 @@ void test_processor_ret64()
     TEST_ASSERT(GET_REG_RIP == 0xff010101010101c3);
     TEST_ASSERT(GET_REG_RSP == 8);
 }
-
 
 void test_processor_retf()
 {
@@ -186,6 +185,23 @@ void test_processor_retf()
     TEST_ASSERT(GET_REG_RSP == 0x2a);
 }
 
+void test_processor_rep_add()
+{
+	// rep add eax,eax
+	unsigned char code[] = {0xF3, 0x03, 0xC0};
+	CTestProcessor proc(code, sizeof(code));
+	DianaProcessor * pCallContext = proc.GetSelf();
+
+	SET_REG_RAX(1);
+	SET_REG_ECX(3);
+
+	int res = proc.ExecOnce();
+	TEST_ASSERT(res == DI_SUCCESS);
+
+	TEST_ASSERT(GET_REG_RAX == 2);
+	TEST_ASSERT(GET_REG_RCX == 3);
+}
+
 void test_processor_r()
 {
     test_processor_rcl();
@@ -201,4 +217,5 @@ void test_processor_r()
     test_processor_ret64();
     test_processor_retf();
     
+	test_processor_rep_add();
 }

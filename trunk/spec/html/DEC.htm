@@ -14,13 +14,13 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>DEC -- Decrement by 1</H1>
 
 <PRE>
-Opcode    Instruction        Clocks   Description
+Opcode                 Instruction        Clocks   Description
 
-FE /1     DEC r/m8           2/6      Decrement r/m byte by 1
-FF /1     DEC r/m16          2/6      Decrement r/m word by 1
-FF /1     DEC r/m32          2/6      Decrement r/m dword by 1
-48+rw     DEC r16            2        Decrement word register by 1
-48+rw     DEC r32            2        Decrement dword register by 1
+FE /1 /pprefixlock     DEC r/m8           2/6      Decrement r/m byte by 1
+FF /1 /pprefixlock     DEC r/m16          2/6      Decrement r/m word by 1
+FF /1 /pprefixlock     DEC r/m32          2/6      Decrement r/m dword by 1
+48+rw                  DEC r16            2        Decrement word register by 1
+48+rw                  DEC r32            2        Decrement dword register by 1
 </PRE>
 
 <H2>Operation</H2>

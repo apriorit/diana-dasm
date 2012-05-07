@@ -14,11 +14,11 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>CMPXCHG -- Compare and Exchange</H1>
 
 <PRE>
-Opcode    Instruction         Clocks     Description
+Opcode                 Instruction         Clocks     Description
 
-0F B0 /r  CMPXCHG r/m8,r8     3          Compare AL with r/m8. If equal, ZF is set and r8 is loaded into r/m8. Else, clear ZF and load r/m8 into AL
-0F B1 /r  CMPXCHG r/m16,r16   3          Compare AX with r/m16. If equal, ZF is set and r16 is loaded into r/m16. Else, clear ZF and load r/m16 into AL
-0F B1 /r  CMPXCHG r/m32,r32   3          Compare EAX with r/m32. If equal, ZF is set and r32 is loaded into r/m32. Else, clear ZF and load r/m32 into AL
+0F B0 /r /pprefixlock  CMPXCHG r/m8,r8     3          Compare AL with r/m8. If equal, ZF is set and r8 is loaded into r/m8. Else, clear ZF and load r/m8 into AL
+0F B1 /r /pprefixlock  CMPXCHG r/m16,r16   3          Compare AX with r/m16. If equal, ZF is set and r16 is loaded into r/m16. Else, clear ZF and load r/m16 into AL
+0F B1 /r /pprefixlock  CMPXCHG r/m32,r32   3          Compare EAX with r/m32. If equal, ZF is set and r32 is loaded into r/m32. Else, clear ZF and load r/m32 into AL
 </PRE>
 
 

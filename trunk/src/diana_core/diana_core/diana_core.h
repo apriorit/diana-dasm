@@ -58,6 +58,7 @@ typedef enum
 #define DI_FLAG_CMD_PUSH_SEG                0x0100
 #define DI_FLAG_CMD_UNDOCUMENTED            0x0200
 #define DI_FLAG_CMD_PRIVILEGED              0x0400
+#define DI_FLAG_CMD_PREFIX_LOCK             0x0800
 
 // index fields
 #define DI_UINT16         unsigned short
@@ -81,8 +82,8 @@ typedef enum
 #define DI_CACHE_RESERVED      2
 #define DI_CACHE_SIZE (DI_MAX_OPCODE_COUNT + 1 + DI_CACHE_RESERVED)
 
-#define DI_MAX_PREFIXES_COUNT  16
-
+#define DI_MAX_INSTRUCTION_SIZE 15
+#define DI_MAX_PREFIXES_COUNT DI_MAX_INSTRUCTION_SIZE-1
 
 // common
 void Diana_DispatchSIB(unsigned char sib, int * pSS, int *pIndex, int *pBase);
@@ -257,6 +258,7 @@ typedef struct _dianaParserResult
 #define DI_WIN32_ERROR              ((int)-7)
 #define DI_ERROR_NOT_USED_BY_CORE   ((int)-8)
 #define DI_INVALID_INPUT            ((int)-9)
+#define DI_INVALID_OPCODE           ((int)-10)
 
 #define DI_SUCCESS ((int)0)
 

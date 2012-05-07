@@ -120,7 +120,6 @@ static void test_r32_64()
 		TEST_ASSERT(result.linkedOperands[1].value.rmIndex.dispValue == 0);
     }
     
- 
 }
 
 void test_nop_pause()
@@ -181,7 +180,6 @@ void test_nop()
 		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "nop")==0);
 		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
 	}
-
 }
 
 void test_nops()
@@ -328,6 +326,101 @@ void test_nops()
 		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
 	}
 
+	// this form Intel manual
+	static unsigned char intel1[] = {0x0f,0x1f,0x00};
+	static unsigned char intel2[] = {0x0f,0x1f,0x40,0x00};
+	static unsigned char intel3[] = {0x0f,0x1f,0x44,0x00,0x00};
+	static unsigned char intel4[] = {0x66,0x0f,0x1f,0x44,0x00,0x00};
+	static unsigned char intel5[] = {0x0f,0x1f,0x80,0x00,0x00,0x00,0x00};
+	static unsigned char intel6[] = {0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00};
+	static unsigned char intel7[] = {0x66,0x0f,0x1f,0x84,0x00,0x00,0x00,0x00,0x00};
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, intel1, sizeof(intel1), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==3);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, intel2, sizeof(intel2), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==4);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, intel3, sizeof(intel3), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==5);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, intel4, sizeof(intel4), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==6);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, intel5, sizeof(intel5), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==7);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, intel6, sizeof(intel6), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==8);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, intel7, sizeof(intel7), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==9);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "hint_nop")==0);
+	}
+
+}
+
+void test_ret()
+{
+	DianaParserResult result;
+	size_t read;
+	int iRes = 0;
+
+	// ret 0
+	unsigned char code[] = {0xC2, 0x00, 0x00};
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, code, sizeof(code), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==3);
+		TEST_ASSERT(result.iLinkedOpCount==1);
+		TEST_ASSERT(strcmp(result.pInfo->m_pGroupInfo->m_pName, "ret")==0);
+		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED != (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
+	}
+
+}
+
+void test_nop_toobig()
+{
+	DianaParserResult result;
+	size_t read;
+	int iRes = 0;
+
+	static unsigned char nop[] = {0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x90}; // NOP
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, nop, sizeof(nop), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT_IF(!iRes)
+	{
+		TEST_ASSERT(result.iFullCmdSize==15);
+		TEST_ASSERT(result.pInfo->m_pGroupInfo->m_commandId==diana_cmd_nop);
+	}
+	static unsigned char nop2[] = {0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x90}; // NOP
+	iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32, nop2, sizeof(nop2), Diana_GetRootLine(), &result, &read);
+	TEST_ASSERT(iRes)
 }
 
 void test_new()
@@ -337,4 +430,6 @@ void test_new()
 	test_nops();
     test_r32_64();
     test_sal1();
+	test_ret();
+	test_nop_toobig();
 }

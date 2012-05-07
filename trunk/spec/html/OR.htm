@@ -14,23 +14,23 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>OR -- Logical Inclusive OR</H1>
 
 <PRE>
-Opcode               Instruction       Clocks    Description
+Opcode                            Instruction       Clocks    Description
 
-0C  ib               OR AL,imm8        2         OR immediate byte to AL
-0D  iw               OR AX,imm16       2         OR immediate word to AX
-0D  id               OR EAX,imm32      2         OR immediate dword to EAX
-80  /1 ib            OR r/m8,imm8      2/7       OR immediate byte to r/m byte
-82  /1 /pundoc ib    OR r/m8,imm8      2/7       OR immediate byte to r/m byte
-81  /1 iw            OR r/m16,imm16    2/7       OR immediate word to r/m word
-81  /1 id            OR r/m32,imm32    2/7       OR immediate dword to r/m dword
-83  /1 ib            OR r/m16,imm8     2/7       OR sign-extended immediate byte
-83  /1 ib            OR r/m32,imm8     2/7       OR sign-extended immediate byte
-08  /r               OR r/m8,r8        2/6       OR byte register to r/m byte
-09  /r               OR r/m16,r16      2/6       OR word register to r/m word
-09  /r               OR r/m32,r32      2/6       OR dword register to r/m dword
-0A  /r               OR r8,r/m8        2/7       OR byte register to r/m byte
-0B  /r               OR r16,r/m16      2/7       OR word register to r/m word
-0B  /r               OR r32,r/m32      2/7       OR dword register to r/m dword
+0C  ib                            OR AL,imm8        2         OR immediate byte to AL
+0D  iw                            OR AX,imm16       2         OR immediate word to AX
+0D  id                            OR EAX,imm32      2         OR immediate dword to EAX
+80  /1 ib      /pprefixlock       OR r/m8,imm8      2/7       OR immediate byte to r/m byte
+82  /1 /pundoc /pprefixlock ib    OR r/m8,imm8      2/7       OR immediate byte to r/m byte
+81  /1 iw      /pprefixlock       OR r/m16,imm16    2/7       OR immediate word to r/m word
+81  /1 id      /pprefixlock       OR r/m32,imm32    2/7       OR immediate dword to r/m dword
+83  /1 ib      /pprefixlock       OR r/m16,imm8     2/7       OR sign-extended immediate byte
+83  /1 ib      /pprefixlock       OR r/m32,imm8     2/7       OR sign-extended immediate byte
+08  /r         /pprefixlock       OR r/m8,r8        2/6       OR byte register to r/m byte
+09  /r         /pprefixlock       OR r/m16,r16      2/6       OR word register to r/m word
+09  /r         /pprefixlock       OR r/m32,r32      2/6       OR dword register to r/m dword
+0A  /r                            OR r8,r/m8        2/7       OR byte register to r/m byte
+0B  /r                            OR r16,r/m16      2/7       OR word register to r/m word
+0B  /r                            OR r32,r/m32      2/7       OR dword register to r/m dword
 </PRE>
 
 

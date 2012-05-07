@@ -14,13 +14,13 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>INC -- Increment by 1</H1>
 
 <PRE>
-Opcode      Instruction        Clocks      Description
+Opcode                   Instruction        Clocks      Description
 
-FE  /0      INC r/m8                       Increment r/m byte by 1
-FF  /0      INC r/m16                      Increment r/m word by 1
-FF  /0      INC r/m32                      Increment r/m dword by 1
-40 + rw     INC r16                        Increment word register by 1
-40 + rd     INC r32                        Increment dword register by 1
+FE  /0  /pprefixlock     INC r/m8                       Increment r/m byte by 1
+FF  /0  /pprefixlock     INC r/m16                      Increment r/m word by 1
+FF  /0  /pprefixlock     INC r/m32                      Increment r/m dword by 1
+40 + rw                  INC r16                        Increment word register by 1
+40 + rd                  INC r32                        Increment dword register by 1
 </PRE>
 
 <H2>Operation</H2>

@@ -14,11 +14,11 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>XADD -- Exchange and Add</H1>
 
 <PRE>
-Opcode    Instruction      Clocks     Description
+Opcode                 Instruction      Clocks     Description
 
-0F C0 /r  XADD r/m8,r8     3          Exchange r8 and r/m8; load sum into r/m8.
-0F C1 /r  XADD r/m16,r16   3          Exchange r16 and r/m16; load sum into r/m16.
-0F C1 /r  XADD r/m32,r32   3          Exchange r32 and r/m32; load sum into r/m32.
+0F C0 /r /pprefixlock  XADD r/m8,r8     3          Exchange r8 and r/m8; load sum into r/m8.
+0F C1 /r /pprefixlock  XADD r/m16,r16   3          Exchange r16 and r/m16; load sum into r/m16.
+0F C1 /r /pprefixlock  XADD r/m32,r32   3          Exchange r32 and r/m32; load sum into r/m32.
 </PRE>
 
 

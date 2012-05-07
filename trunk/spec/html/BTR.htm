@@ -13,12 +13,12 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <P>
 <H1>BTR -- Bit Test and Reset</H1>
 <PRE>
-Opcode        Instruction     Clocks  Description
+Opcode                     Instruction     Clocks  Description
 
-0F  B3 /r     BTR r/m16,r16   6/13    Save bit in carry flag and reset
-0F  B3 /r     BTR r/m32,r32   6/13    Save bit in carry flag and reset
-0F  BA /6 ib  BTR r/m16,imm8  6/8     Save bit in carry flag and reset
-0F  BA /6 ib  BTR r/m32,imm8  6/8     Save bit in carry flag and reset
+0F  B3 /r /pprefixlock     BTR r/m16,r16   6/13    Save bit in carry flag and reset
+0F  B3 /r /pprefixlock     BTR r/m32,r32   6/13    Save bit in carry flag and reset
+0F  BA /6 /pprefixlock ib  BTR r/m16,imm8  6/8     Save bit in carry flag and reset
+0F  BA /6 /pprefixlock ib  BTR r/m32,imm8  6/8     Save bit in carry flag and reset
 </PRE>
 
 <H2>Operation</H2>
