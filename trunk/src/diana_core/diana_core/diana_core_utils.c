@@ -116,9 +116,9 @@ int Di_ProcessRexPrefix(unsigned char value,
 }
 
 int Di_ProcessCustomPrefix(unsigned char value,
-                            int * pbPrefixFound, 
-                            DianaContext * pContext,
-                            DianaParserResult * pResult)
+                           int * pbPrefixFound, 
+                           DianaContext * pContext,
+                           DianaParserResult * pResult)
 {
     // result: IsPrefixCanNotBeUsedWithRepInstruction
     int result = 1;
@@ -362,12 +362,12 @@ int Diana_ReadCache(DianaContext * pContext,
 
     if (pContext->cacheIt + pContext->cacheSize < DI_CACHE_SIZE)
     {
-        /// first read 
+        // first read 
         int bytesRead = 0;
         int iResult = readStream->pReadFnc(readStream, 
-                                       pContext->cache + pContext->cacheIt + pContext->cacheSize, 
-                                       DI_CACHE_SIZE - pContext->cacheSize - pContext->cacheIt, 
-                                       &bytesRead);
+                                           pContext->cache + pContext->cacheIt + pContext->cacheSize, 
+                                           DI_CACHE_SIZE - pContext->cacheSize - pContext->cacheIt, 
+                                           &bytesRead);
         if (iResult != DI_END)
         {
             if (iResult != DI_SUCCESS)
@@ -379,5 +379,6 @@ int Diana_ReadCache(DianaContext * pContext,
 
     if (pContext->cacheSize == 0)
         return DI_END;
+
     return DI_SUCCESS;
 }

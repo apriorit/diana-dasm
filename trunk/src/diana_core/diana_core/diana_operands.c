@@ -539,12 +539,12 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 break;
             }
             if (DianaGetHandler(addrSizeUsed!=2)(pContext,
-                                pLinkedOp,
-                                opSizeUsed,
-                                ( DI_CHAR )PostByte, 
-                                readStream,
-                                &pLinkedOp->value,
-                                &pLinkedOp->type))
+                                                 pLinkedOp,
+                                                 opSizeUsed,
+                                                 ( DI_CHAR )PostByte, 
+                                                 readStream,
+                                                 &pLinkedOp->value,
+                                                 &pLinkedOp->type))
                 return DI_ERROR;
             
             if (pLinkedOp->type == diana_index)

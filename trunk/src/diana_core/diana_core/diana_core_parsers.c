@@ -36,8 +36,8 @@ static int Diana_IsLess(const DianaCmdKey * key1, const DianaCmdKey * key2)
 
 static int logical_xor(int bValue1, int bValue2)
 {
-    int val1 = bValue1?1:0;
-    int val2 = bValue2?1:0;
+    int val1 = bValue1 ? 1 : 0;
+    int val2 = bValue2 ? 1 : 0;
     return val1 ^ val2;
 }
 
@@ -72,106 +72,106 @@ static void CompareKeys(DianaCmdKey * pUsedKey,
         }
     }
 }
-static DianaCmdKey * FindCmdKeyImpl(DianaCmdKeyLine * pLine, 
-                                    const DianaCmdKey * pKey,
-                                    DianaCmdKeyLine ** pNextLine,
-                                    int bCleanOpcode)
+
+static DianaCmdKey *FindCmdKeyImpl(int left,
+                                   int right,
+                                   DianaCmdKeyLine *pLine, 
+                                   const DianaCmdKey *pKey,
+                                   DianaCmdKeyLine **pNextLine,
+                                   int bCleanOpcode)
 {
-    int left  = 0;
-    int right = pLine->iKeysCount;
-    DianaCmdKey usedKey = *pKey;
-    *pNextLine = 0;
+	int foundClean = 0;
+	int nextLeft = 0;
+	int nextRight = pLine->iKeysCount;
+	DianaCmdKey usedKey = *pKey;
+	unsigned char cleanOpcode = usedKey.chOpcode & ~7;
+	*pNextLine = 0;
 
-    
-    if (bCleanOpcode)
-    {
-        usedKey.chOpcode &= ~7;
-    }
-    while(left < right)
-    {
-        int mid = (left + right)/2;
-        DianaCmdKey * p = pLine->key + mid;
-        if (p->chOpcode == usedKey.chOpcode)
-        {
-            // opcode found
-            // analyze it
-            int i =0;
-            DianaCmdKey * pResult = 0;
-            DianaCmdKey * pSecondaryResult = 0;
-            DianaCmdKey * pBegin = p;
+	if (bCleanOpcode)
+	{
+		usedKey.chOpcode &= ~7;
+	}
+	while(left < right)
+	{
+		int mid = ( left + right ) / 2;
+		DianaCmdKey *p = pLine->key + mid;
 
-            --pBegin;
-            while(pBegin >= pLine->key)
-            {
-                if (pBegin->chOpcode != usedKey.chOpcode)
-                {
-                    break;
-                }
-                --pBegin;
-            }
-            ++pBegin;
-            
-            p = pBegin;
-            i = (int)(p - pLine->key);
-            pResult = 0;
-            
-            for(; (i < pLine->iKeysCount) && (p->chOpcode == usedKey.chOpcode); ++i, ++p)
-            {
-                // check extension
-                if (!(p->options & DIANA_OPT_HAS_RESULT))
-                {
-                    *pNextLine = (DianaCmdKeyLine * )p->keyLineOrCmdInfo;
-                    pSecondaryResult = p;
-                }
+		if (bCleanOpcode == 0 && foundClean == 0 && p->chOpcode == cleanOpcode ) {
+			foundClean = 1;
+			nextLeft = left;
+			nextRight = right;
+		}
+		if (p->chOpcode == usedKey.chOpcode)
+		{
+			// opcode found
+			// analyze it
+			int i = 0;
+			DianaCmdKey *pResult = 0;
+			DianaCmdKey *pSecondaryResult = 0;
+			DianaCmdKey *pBegin = p;
 
-                if (bCleanOpcode)
-                {
-                    DianaCmdInfo * pCmdInfo = (DianaCmdInfo * )p->keyLineOrCmdInfo;
-                    DI_CHAR reg= pCmdInfo->m_iRegisterCodeAsOpcodePart;
-                    if ((reg != DI_CHAR_NULL) || (pCmdInfo->m_flags & DI_FLAG_CMD_FPU_I))
-                    {
-                        pResult = p;
-                    }
-                }
-                else
-                {
-                    // not clean opcode
-                    CompareKeys(&usedKey, p, &pSecondaryResult, &pResult);
-                }
-             }
- 
-             if (!pResult)
-                    pResult = pSecondaryResult;
+			--pBegin;
+			while(pBegin >= pLine->key) {
+				if (pBegin->chOpcode != usedKey.chOpcode) {
+					break;
+				}
+				--pBegin;
+			}
+			++pBegin;
 
-             return pResult;
-        }
-        
-        if (Diana_IsLess(&usedKey, p))
-            right = mid;
-        else 
-            left = mid+1;
-    }
-    return 0;
+			p = pBegin;
+			i = (int)(p - pLine->key);
+			pResult = 0;
+
+			for( ; (i < pLine->iKeysCount) && (p->chOpcode == usedKey.chOpcode); ++i, ++p) {
+				// check extension
+				if (!(p->options & DIANA_OPT_HAS_RESULT)) {
+					*pNextLine = (DianaCmdKeyLine * )p->keyLineOrCmdInfo;
+					pSecondaryResult = p;
+				}
+
+				if (bCleanOpcode) {
+					DianaCmdInfo * pCmdInfo = (DianaCmdInfo * )p->keyLineOrCmdInfo;
+					DI_CHAR reg = pCmdInfo->m_iRegisterCodeAsOpcodePart;
+					if ((reg != DI_CHAR_NULL) || (pCmdInfo->m_flags & DI_FLAG_CMD_FPU_I)) {
+						pResult = p;
+					}
+				} else {
+					// not clean opcode
+					CompareKeys(&usedKey, p, &pSecondaryResult, &pResult);
+				}
+			}
+
+			if (!pResult)
+				pResult = pSecondaryResult;
+
+			return pResult;
+		}
+
+		if (Diana_IsLess(&usedKey, p))
+			right = mid;
+		else 
+			left = mid + 1;
+	}
+
+	if( bCleanOpcode == 0 ) {
+		return FindCmdKeyImpl( nextLeft, nextRight, pLine, pKey, pNextLine, 1 );
+	}
+
+	return 0;
 }
 
 static DianaCmdKey * FindCmdKey(DianaCmdKeyLine * pLine, 
                                 const DianaCmdKey * pKey,
                                 DianaCmdKeyLine ** pNextLine)
 {
-    DianaCmdKey * pResult = FindCmdKeyImpl(pLine, 
-                                           pKey,
-                                           pNextLine,
-                                           0);
-    if (!pResult)
-    {
-        pResult = FindCmdKeyImpl(pLine, 
-                                 pKey,
-                                 pNextLine,
-                                 1);
-    }
-    return pResult;
+    return FindCmdKeyImpl(0,
+                          pLine->iKeysCount,
+                          pLine, 
+                          pKey,
+                          pNextLine,
+                          0);
 }
-
 
 int Diana_InsertPrefix(DianaContext * pContext, 
                        DI_CHAR prefix,
@@ -184,7 +184,7 @@ int Diana_InsertPrefix(DianaContext * pContext,
 	if (pContext->prefixesCount >= DI_MAX_PREFIXES_COUNT) 
 		return DI_ERROR;
 
-    for(; i<  pContext->prefixesCount; ++i)
+    for(; i < pContext->prefixesCount; ++i)
     {
         if (pContext->prefixes[i].prefix == prefix)
             return DI_SUCCESS;
@@ -315,7 +315,7 @@ int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
                 if (!pFoundKeyWithResult)
                     return DI_ERROR;
 
-                // use previos solution
+                // use previous solution
                 pFoundKey = pFoundKeyWithResult;
                 it = resultIt;
                 pNextLine = 0;
@@ -367,7 +367,7 @@ int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
             } 
             else
             {
-                pLine = (DianaCmdKeyLine *)pFoundKey->keyLineOrCmdInfo;
+                pLine = (DianaCmdKeyLine * )pFoundKey->keyLineOrCmdInfo;
             }
         }
 
@@ -386,7 +386,7 @@ static void ApplyPrefixes(DianaContext * pContext,
                           unsigned int iToExclude)
 {
     DI_FULL_CHAR i = 0;
-    for(; i < pContext->prefixesCount; ++i)
+    for( ; i < pContext->prefixesCount; ++i)
     {
         if (i != iToExclude)
         {
@@ -472,9 +472,9 @@ int TryMatch(DianaParseParams * pParseParams,
         }
 
         pParseParams->pContext->cacheIt = newIt;
-        iResult = Diana_LinkOperands( pParseParams->pContext, 
-                                      pParseParams->pResult, 
-                                      &cmdProxy.parent);
+        iResult = Diana_LinkOperands(pParseParams->pContext, 
+                                     pParseParams->pResult, 
+                                     &cmdProxy.parent);
         
         pParseParams->pContext->cacheSize = cmdProxy.tail_size;
         pParseParams->pContext->cacheIt += oldTailSize - cmdProxy.tail_size;
@@ -563,9 +563,9 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
         if (prefixFound)
         {
             iResult = Diana_InsertPrefix(pParseParams->pContext,
-                                        data,
-                                        pParseParams->pResult->pInfo->m_linkedPrefixFnc,
-                                        1);
+                                         data,
+                                         pParseParams->pResult->pInfo->m_linkedPrefixFnc,
+                                         1);
             if (iResult)
             {
                 return iResult;

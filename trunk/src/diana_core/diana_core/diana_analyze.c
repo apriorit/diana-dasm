@@ -537,8 +537,6 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
             DI_CHECK(SwitchToLastState(pSession, 
                                        &pSession->curRouteInfo, 
                                        &offset));
-
-
         }
         bNeedReset = 0;
 
