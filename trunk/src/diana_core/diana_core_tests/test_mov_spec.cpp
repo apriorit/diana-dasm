@@ -20,6 +20,7 @@ static unsigned char mov5[] = {0x48, 0x63, 0x4C, 0x24, 0x04};  // movsxd  rcx, [
 static unsigned char mov6[] = {0x66, 0x63, 0x68, 0x4c};  // movsxd  rbp,[rax+0x4c]
 static unsigned char mov7[] = {0xf, 0x22, 0xf9};         // mov cr7, rcx
 
+static unsigned char mov0_64[] = {0x45, 0x0F, 0x20, 0xC7};  // MOV r15,CR8
 
 void test_mov_spec()
 {
@@ -40,6 +41,21 @@ void test_mov_spec()
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_EAX);
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_CR0);
+    }
+
+//static unsigned char mov0_64[] = {0x45, 0x0F, 0x20, 0xC7};  // MOV r15,CR8
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64,mov0_64, sizeof(mov0_64), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(result.iLinkedOpCount==2);
+        TEST_ASSERT(result.pInfo->m_operandCount ==2);
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mov")==0);
+///		TEST_ASSERT(DI_FLAG_CMD_PRIVILEGED == (result.pInfo->m_flags & DI_FLAG_CMD_PRIVILEGED));
+        TEST_ASSERT(result.linkedOperands[0].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_R15);
+        TEST_ASSERT(result.linkedOperands[1].type == diana_register);
+        TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_CR8);
     }
 
     //static unsigned char mov1[] = {0x0F, 0x20, 0xFF&~7|1};  // mov     ecx, cr7

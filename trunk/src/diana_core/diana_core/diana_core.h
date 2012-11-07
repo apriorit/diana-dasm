@@ -39,6 +39,8 @@ typedef enum
 
  reg_fpu_ST0, reg_fpu_ST1, reg_fpu_ST2, reg_fpu_ST3, reg_fpu_ST4, reg_fpu_ST5, reg_fpu_ST6, reg_fpu_ST7,
 
+ reg_CR8,   reg_CR9,   reg_CR10,   reg_CR11,   reg_CR12,   reg_CR13,   reg_CR14,   reg_CR15,
+ reg_DR8,   reg_DR9,   reg_DR10,   reg_DR11,   reg_DR12,   reg_DR13,   reg_DR14,   reg_DR15,
  count_of_DianaUnifiedRegister
 
 }DianaUnifiedRegister;

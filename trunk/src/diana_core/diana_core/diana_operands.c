@@ -54,7 +54,8 @@ int Diana_RecognizeSreg(DI_CHAR reg, DianaUnifiedRegister * pReg)
 }
 
 // cregs
-static DianaUnifiedRegister g_cregs[] = {reg_CR0,   reg_CR1,   reg_CR2,   reg_CR3,   reg_CR4,   reg_CR5,   reg_CR6,   reg_CR7};
+static DianaUnifiedRegister g_cregs[] = {reg_CR0,   reg_CR1,   reg_CR2,   reg_CR3,   reg_CR4,   reg_CR5,   reg_CR6,   reg_CR7,
+                                         reg_CR8,   reg_CR9,   reg_CR10,   reg_CR11,   reg_CR12,   reg_CR13,   reg_CR14,   reg_CR15};
 int Diana_RecognizeCreg(DI_CHAR reg, DianaUnifiedRegister * pReg)
 {
     if (reg<0)
@@ -66,7 +67,8 @@ int Diana_RecognizeCreg(DI_CHAR reg, DianaUnifiedRegister * pReg)
 }
 
 // dregs
-static DianaUnifiedRegister g_dregs[] = {reg_DR0,   reg_DR1,   reg_DR2,   reg_DR3,   reg_DR4,   reg_DR5,   reg_DR6,   reg_DR7};
+static DianaUnifiedRegister g_dregs[] = {reg_DR0,   reg_DR1,   reg_DR2,   reg_DR3,   reg_DR4,   reg_DR5,   reg_DR6,   reg_DR7,
+                                         reg_DR8,   reg_DR9,   reg_DR10,   reg_DR11,   reg_DR12,   reg_DR13,   reg_DR14,   reg_DR15};
 int Diana_RecognizeDreg(DI_CHAR reg, DianaUnifiedRegister * pReg)
 {
     if (reg<0)
