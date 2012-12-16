@@ -63,3 +63,4 @@ HINT_NOP r/m16/32/64 | 0F 1B /r
 HINT_NOP r/m16/32/64 | 0F 1C /r
 HINT_NOP r/m16/32/64 | 0F 1D /r
 HINT_NOP r/m16/32/64 | 0F 1E /r
+TEST_CMD | 66 0F /ptest_cmd

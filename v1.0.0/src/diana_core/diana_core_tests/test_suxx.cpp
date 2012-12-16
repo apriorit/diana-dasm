@@ -1424,7 +1424,7 @@ void test_suxx()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
-        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "nop") == 0);
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "test_cmd") == 0);
         TEST_ASSERT(result.pInfo->m_operandCount == 0);
         TEST_ASSERT(result.iFullCmdSize == 2);
     }
@@ -1435,7 +1435,7 @@ void test_suxx()
     TEST_ASSERT_IF(!iRes)
     {
         TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
-        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "nop") == 0);
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "test_cmd") == 0);
         TEST_ASSERT(result.pInfo->m_operandCount == 0);
         TEST_ASSERT(result.iFullCmdSize == 2);
     }

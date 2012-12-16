@@ -485,8 +485,9 @@ typedef enum {
     diana_cmd_xadd,
     diana_cmd_xchg,
     diana_cmd_xlat,
-    diana_cmd_xor
+    diana_cmd_xor,
     // add new commands here:
+    diana_cmd_test_cmd
 
 } DianaCommandId;
 
