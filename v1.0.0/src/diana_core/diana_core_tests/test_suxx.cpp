@@ -1418,5 +1418,27 @@ void test_suxx()
         TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0xffffffff90909090);
     }
 
+    // 1. spec cmd test
+    static unsigned char suxx93[] = {0x66, 0x0F, 0xFE}; // special test command
+    iRes = Diana_ParseCmdOnBuffer_testmode(DIANA_MODE32, suxx93, sizeof(suxx93), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "nop") == 0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 0);
+        TEST_ASSERT(result.iFullCmdSize == 2);
+    }
+
+    // 2. with finalizer
+    static unsigned char suxx94[] = {0x66, 0x0F}; 
+    iRes = Diana_ParseCmdOnBuffer_testmode(DIANA_MODE32, suxx94, sizeof(suxx94), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "nop") == 0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 0);
+        TEST_ASSERT(result.iFullCmdSize == 2);
+    }
+
 }
 

@@ -94,7 +94,7 @@ void test_integrated()
 
 
 static const TestEntry_Name g_Names[] = {
-{"mov",  2,  0}, //    mov     ecx,eax
+{"mov",  2,  0}, //    mov     ecx,eax             ; 0
 {"inc",  1,  0}, //    inc     edx
 {"xadd",  4,  0}, //    lock    xadd [ecx],edx
 {"cmp",  3,  0}, //    cmp     byte ptr [ebx],0x0
@@ -104,7 +104,7 @@ static const TestEntry_Name g_Names[] = {
 {"push",  1,  0}, //    push    esi
 {"push",  3,  0}, //    push    dword ptr [ebx+0x28]
 {"push",  2,  0}, //    push    0x18
-{"push",  2,  0}, //    push    0x0
+{"push",  2,  0}, //    push    0x0                 ; 10
 {"call",  5,  0}, //    call    nt!ExAllocatePoolWithTag (82721bab)
 {"mov",  2,  0}, //    mov     esi,eax
 {"xor",  2,  0}, //    xor     eax,eax

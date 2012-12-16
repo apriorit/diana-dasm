@@ -9,7 +9,7 @@
 #include "diana_gen.h"
 // >gen
 
-typedef enum 
+typedef enum
 {
  reg_none,
  reg_AL,    reg_CL,    reg_DL,    reg_BL,    reg_AH,    reg_CH,    reg_DH,    reg_BH,
@@ -62,6 +62,12 @@ typedef enum
 #define DI_FLAG_CMD_PRIVILEGED              0x0400
 #define DI_FLAG_CMD_PREFIX_LOCK             0x0800
 
+#define DI_FLAG_CMD_POSTBYTE_USED           0x01000
+#define DI_FLAG_CMD_REGISTER_AS_OPCODE      0x02000
+#define DI_FLAG_CMD_HAS32BIT_ANALOG         0x04000
+#define DI_FLAG_CMD_IS_TRUE_PREFIX          0x08000
+#define DI_FLAG_CMD_TEST_MODE_ONLY          0x10000
+
 // index fields
 #define DI_UINT16         unsigned short
 #define DI_INT16          short
@@ -93,29 +99,45 @@ DI_CHAR Diana_GetReg(unsigned char postbyte);
 DI_CHAR Diana_GetRm(unsigned char postbyte);
 DI_CHAR Diana_GetMod(unsigned char postbyte);
 
+typedef struct _dianaBaseGenObject
+{
+    DI_UINT16 m_type;
+    DI_UINT16 m_flags;
+}DianaBaseGenObject_type;
+
+// types:
+#define DIANA_BASE_GEN_OBJECT_CMD                0x01
+#define DIANA_BASE_GEN_OBJECT_LINE               0x02
+#define DIANA_BASE_GEN_OBJECT_INDEX              0x03
+// flags:
+#define DIANA_BASE_GEN_OBJECT_THE_SAME_OPCODE    0x01
+
 // parser structures:
+// 1) line
 typedef struct _dianaCmdKey
 {
     void * keyLineOrCmdInfo;
-    DI_CHAR options;
-    DI_CHAR extension;
-    DI_CHAR chOpcode;
-    DI_CHAR rmExtension;
-    DI_CHAR modExtension;
+    DI_CHAR opcode;
 }DianaCmdKey;
-
-// extension additional values:
-#define DIANA_OPT_HAS_RESULT         0x01
-#define DIANA_OPT_RM_EXTENSION       0x02
-#define DIANA_OPT_USES_MOD_EXTENSION 0x04
-
 
 typedef struct _dianaCmdKeyLine
 {
+    DianaBaseGenObject_type parent;
     int iKeysCount;
     DianaCmdKey key[1];
 }DianaCmdKeyLine;
+//-------
+// 2) index line
+typedef struct _dianaIndexKey
+{
+    void * keyLineOrCmdInfo;
+}DianaIndexKey;
 
+typedef struct _dianaIndexKeyLine
+{
+    DianaBaseGenObject_type parent;
+    DianaIndexKey key[256];
+}DianaIndexKeyLine;
 
 // result
 typedef struct _dianaOperandInfo
@@ -123,10 +145,8 @@ typedef struct _dianaOperandInfo
     DianaOperands_type m_type;
     DI_CHAR m_size;
     DI_CHAR m_size2;
-
     DI_CHAR m_value;
     DianaSreg_type m_sreg_type;
-
 }DianaOperandInfo;
 
 #define DIANA_GT_CAN_CHANGE_RIP                      0x1
@@ -158,20 +178,21 @@ typedef void (*Diana_PrefixFnc)(struct _dianaContext * pContext);
 typedef void (*Diana_CallFnc)(struct _dianaContext * pDianaContext,
                               void * pCallContext);
 
-// WARNING! This structure SHOULD EXACT MATCH DianaCmdInfo1 from diana_gen.c 
+// WARNING! This structure SHOULD EXACT MATCH DianaCmdInfo1 from diana_gen.c
 typedef struct _dianaCmdInfo
 {
+    DianaBaseGenObject_type m_parent;
+    DI_CHAR m_extension;
+    DI_CHAR m_extension_mask;
+    DI_CHAR m_extension_deny_mask;
+
     DI_INT32 m_lGroupId;
-    DI_UINT32 m_flags;
-    DI_CHAR m_bFullPostbyteUsed;
+    DI_UINT32 m_flags;  // DI_FLAG_CMD_*
     DI_CHAR m_iCSIPExtensionSizeInBytes;
     DI_CHAR m_iImmediateOperandSizeInBytes;
     DI_CHAR m_iImmediateOperandSizeInBytes2;
-    DI_CHAR m_iRegisterCodeAsOpcodePart;
-    DI_CHAR m_bHas32BitAnalog;
-    DI_CHAR m_extension;
+
     DI_CHAR m_operandCount;
-    DI_CHAR m_bIsTruePrefix;
     Diana_PrefixFnc m_linkedPrefixFnc;
     DianaGroupInfo * m_pGroupInfo;
     DianaOperandInfo m_operands[1];
@@ -229,7 +250,7 @@ typedef struct _dianaLinkedOperand
 {
     DianaOperandInfo * pInfo;
 
-    DianaValueType type;    
+    DianaValueType type;
 
     DianaOperandValue value;
     // offset
@@ -261,19 +282,20 @@ typedef struct _dianaParserResult
 #define DI_ERROR_NOT_USED_BY_CORE   ((int)-8)
 #define DI_INVALID_INPUT            ((int)-9)
 #define DI_INVALID_OPCODE           ((int)-10)
+#define DI_END_OF_STREAM            ((int)-11)
 
 #define DI_SUCCESS ((int)0)
 
 #define DI_CHECK_ALLOC(x) { if(!(x)) return DI_OUT_OF_MEMORY; }
 #define DI_CHECK(x) { int di____code = (x); if (di____code != DI_SUCCESS) { return di____code; } }
 
-typedef int (* DianaRead_fnc)(void * pThis, 
-                              void * pBuffer, 
-                              int iBufferSize, 
+typedef int (* DianaRead_fnc)(void * pThis,
+                              void * pBuffer,
+                              int iBufferSize,
                               int * readed);
-typedef int (* DianaWrite_fnc)(void * pThis, 
-                               void * pBuffer, 
-                               int iBufferSize, 
+typedef int (* DianaWrite_fnc)(void * pThis,
+                               void * pBuffer,
+                               int iBufferSize,
                                int * wrote);
 
 typedef struct _dianaReadStream
@@ -318,8 +340,8 @@ typedef struct _dianaContext
     int iMainMode_addressSize;    // 4 or 2
     int iCurrentCmd_addressSize;  // 4 or 2
 
-    DianaUnifiedRegister mainMode_sreg;    
-    DianaUnifiedRegister currentCmd_sreg;  
+    DianaUnifiedRegister mainMode_sreg;
+    DianaUnifiedRegister currentCmd_sreg;
 
     int iPrefix;
     int iSizePrefixes;
@@ -331,10 +353,11 @@ typedef struct _dianaContext
     unsigned char cache[DI_CACHE_SIZE];
     int cacheSize;
     int cacheIt;
-    
+
     DI_FULL_CHAR lastPrefixBeforeRex;
     DianaPrefixInfo prefixes[DI_MAX_PREFIXES_COUNT];
     DI_FULL_CHAR prefixesCount;
+    int testMode;
 }DianaContext;
 
 void Diana_FatalBreak();
@@ -342,29 +365,31 @@ void Diana_FatalBreak();
 DianaCmdInfo * Diana_GetNopInfo();
 
 void Diana_InitContext(DianaContext * pThis, int Mode);
+// only in tests
+void Diana_InitContextWithTestMode(DianaContext * pThis, int Mode);
 
 void Diana_ClearCache(DianaContext * pThis);
 
 int Diana_ParseCmd(DianaContext * pContext, // IN
-                   DianaCmdKeyLine * pInitialLine,  // IN
+                   DianaBaseGenObject_type * pInitialLine,  // IN
                    DianaReadStream * readStream,    // IN
                    DianaParserResult * pResult);    // OUT
 
 int DianaRecognizeCommonReg(DI_CHAR iOpSize,
-                            DI_CHAR regId, 
+                            DI_CHAR regId,
                             DianaUnifiedRegister * pOut,
                             int isRexPrefix);
 
-int DianaRecognizeMMX(DI_CHAR regId, 
+int DianaRecognizeMMX(DI_CHAR regId,
                       DianaUnifiedRegister * pOut);
-int DianaRecognizeXMM(DI_CHAR regId, 
+int DianaRecognizeXMM(DI_CHAR regId,
                       DianaUnifiedRegister * pOut);
 
 typedef int (*Diana_ReadIndexStructure_type)(DianaContext * pContext,
                                              DianaLinkedOperand * pInfo,
                                              DI_CHAR iOpSize,
                                              unsigned char postbyte,
-                                             DianaReadStream * pStream, 
+                                             DianaReadStream * pStream,
                                              DianaOperandValue * pValue,
                                              DianaValueType * pType);
 
@@ -385,7 +410,7 @@ typedef struct _Diana_Allocator
 }Diana_Allocator;
 
 void Diana_AllocatorInit(Diana_Allocator * pAllocator,
-                         Diana_Alloc_type alloc,    
+                         Diana_Alloc_type alloc,
                          Diana_Free_type free,
                          Diana_Patcher_type patch);
 

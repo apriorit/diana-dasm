@@ -27,8 +27,7 @@ extern "C"
 
 int main()
 {
-    Diana_Init();
-
+    Diana_Init();    
     test_new();
     test_stack();
     test_analyze();

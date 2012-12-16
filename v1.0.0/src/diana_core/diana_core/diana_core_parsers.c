@@ -1,46 +1,97 @@
 #include "diana_core_parsers.h"
 #include "diana_core_utils.h"
 #include "diana_stream_proxy.h"
-#include "string.h"
 #include "diana_operands.h"
 
-static void GetKeyByAddress(const unsigned char * pAddress, int iLostSize, DianaCmdKey * key)
+typedef struct _dianaParserCmdKey
 {
-    key->keyLineOrCmdInfo = 0;
-    key->options = 0;
+    DI_CHAR chOpcode;
+    DI_CHAR extension;
+    DI_CHAR has_extension;
+}DianaParserCmdKey;
 
-    if (iLostSize)
+
+// base lines + optional lines
+#define DI_MAX_LINES_COUNT   DI_MAX_OPCODE_COUNT*2
+
+typedef struct _dianaParserContextState
+{
+    DianaBaseGenObject_type * pLine;
+    int position;
+    int opcodePosition;
+    DI_CHAR flags;
+}DianaParserContextState;
+
+#define DI_PARSER_CONTEXT_FLAG_THE_SAME_OPCODE  1 
+
+typedef struct _dianaParserContext
+{
+    // INTERNAL:
+    DianaParserContextState states[DI_MAX_LINES_COUNT];
+    int currentState;
+    // OUT
+    DianaCmdInfo * pResult;
+
+}DianaParserContext;
+
+static void DianaParserContext_Init(DianaParserContext * pContext, 
+                                    DianaBaseGenObject_type * pLine)
+{
+    pContext->states[0].pLine = pLine;
+    pContext->states[0].position = -1;
+    pContext->states[0].opcodePosition = 0;
+
+    pContext->pResult = 0;
+
+    pContext->currentState = 0;
+}
+
+static DianaParserContextState * DianaParserContext_GetCurrentState(DianaParserContext * pContext)
+{
+    return &pContext->states[pContext->currentState];
+}
+static DianaParserContextState * DianaParserContext_GetPrevState(DianaParserContext * pContext)
+{
+    if (!pContext->currentState)
+        return 0;
+    return &pContext->states[pContext->currentState-1];
+}
+
+static void DianaParserContext_PushOpcode(DianaParserContext * pContext,
+                                          DianaBaseGenObject_type * pLine,
+                                          int iPos,
+                                          int opcodePosition,
+                                          DI_CHAR flags)
+{
+    if (pContext->currentState >= DI_MAX_LINES_COUNT)
     {
-        key->extension = Diana_GetReg(*(pAddress+1));
-        key->rmExtension = Diana_GetRm(*(pAddress+1));
-        key->modExtension = Diana_GetMod(*(pAddress+1));
+        Diana_FatalBreak();
+        return;
     }
-    else
+    ++pContext->currentState;
     {
-        key->extension = DI_CHAR_NULL;
-        key->rmExtension = DI_CHAR_NULL;
-        key->modExtension = DI_CHAR_NULL;
+        DianaParserContextState * pState = &pContext->states[pContext->currentState];
+        pState->pLine = pLine;
+        pState->position = iPos;
+        pState->opcodePosition = opcodePosition;
+        pState->flags = flags;
     }
 
+}
+static void GetKeyByAddress(const unsigned char * pAddress, 
+                            int iHaveAdditionalSize, 
+                            DianaParserCmdKey * key)
+{
+    key->has_extension = 0;
+    if (iHaveAdditionalSize)
+    {
+        key->extension = *(pAddress+1);
+        key->has_extension = 1;
+    }
     key->chOpcode = *pAddress;
 }
 
-static int Diana_IsLess(const DianaCmdKey * key1, const DianaCmdKey * key2)
-{
-    if (key1->chOpcode < key2->chOpcode)
-        return 1;
-    if (key1->chOpcode > key2->chOpcode)
-        return 0;
-    return 0;
-}
-
-static int logical_xor(int bValue1, int bValue2)
-{
-    int val1 = bValue1 ? 1 : 0;
-    int val2 = bValue2 ? 1 : 0;
-    return val1 ^ val2;
-}
-
+/*
 static void CompareKeys(DianaCmdKey * pUsedKey, 
                         DianaCmdKey * p, 
                         DianaCmdKey ** ppSecondaryResult,
@@ -75,9 +126,9 @@ static void CompareKeys(DianaCmdKey * pUsedKey,
 
 static DianaCmdKey *FindCmdKeyImpl(int left,
                                    int right,
-                                   DianaCmdKeyLine *pLine, 
+                                   DianaBaseGenObject_type *pLine, 
                                    const DianaCmdKey *pKey,
-                                   DianaCmdKeyLine **pNextLine,
+                                   DianaBaseGenObject_type **pNextLine,
                                    int bCleanOpcode)
 {
 	int foundClean = 0;
@@ -126,7 +177,7 @@ static DianaCmdKey *FindCmdKeyImpl(int left,
 			for( ; (i < pLine->iKeysCount) && (p->chOpcode == usedKey.chOpcode); ++i, ++p) {
 				// check extension
 				if (!(p->options & DIANA_OPT_HAS_RESULT)) {
-					*pNextLine = (DianaCmdKeyLine * )p->keyLineOrCmdInfo;
+					*pNextLine = (DianaBaseGenObject_type * )p->keyLineOrCmdInfo;
 					pSecondaryResult = p;
 				}
 
@@ -161,9 +212,9 @@ static DianaCmdKey *FindCmdKeyImpl(int left,
 	return 0;
 }
 
-static DianaCmdKey * FindCmdKey(DianaCmdKeyLine * pLine, 
+static DianaCmdKey * FindCmdKey(DianaBaseGenObject_type * pLine, 
                                 const DianaCmdKey * pKey,
-                                DianaCmdKeyLine ** pNextLine)
+                                DianaBaseGenObject_type ** pNextLine)
 {
     return FindCmdKeyImpl(0,
                           pLine->iKeysCount,
@@ -173,32 +224,6 @@ static DianaCmdKey * FindCmdKey(DianaCmdKeyLine * pLine,
                           0);
 }
 
-int Diana_InsertPrefix(DianaContext * pContext, 
-                       DI_CHAR prefix,
-                       Diana_PrefixFnc linkedPrefixFnc,
-                       int isRex
-                       )
-{
-    DI_FULL_CHAR i = 0;
-
-	if (pContext->prefixesCount >= DI_MAX_PREFIXES_COUNT) 
-		return DI_ERROR;
-
-    for(; i < pContext->prefixesCount; ++i)
-    {
-        if (pContext->prefixes[i].prefix == prefix)
-            return DI_SUCCESS;
-    }
-
-    pContext->prefixes[pContext->prefixesCount].prefix = prefix;
-    pContext->prefixes[pContext->prefixesCount].linkedPrefixFnc = linkedPrefixFnc;
-    ++pContext->prefixesCount;
-
-    if (!isRex)
-        pContext->lastPrefixBeforeRex = i;
-
-    return DI_SUCCESS;
-}
 
 
 static int TryMatchKey(DianaCmdKey * pFoundKey, DianaParseParams * pParseParams)
@@ -241,7 +266,7 @@ static int KeyIsAcceptable(DianaCmdKey * p,
         return 1;
     return 0;
 }
-static DianaCmdKey * ScanLeft(DianaCmdKeyLine * pLine, 
+static DianaCmdKey * ScanLeft(DianaBaseGenObject_type * pLine, 
                               DianaCmdKey * pFoundKey, 
                               DianaParseParams * pParseParams,
                               DI_CHAR lastData)
@@ -262,7 +287,7 @@ static DianaCmdKey * ScanLeft(DianaCmdKeyLine * pLine,
     return 0;
 }
 
-static DianaCmdKey * ScanRight(DianaCmdKeyLine * pLine, 
+static DianaCmdKey * ScanRight(DianaBaseGenObject_type * pLine, 
                                DianaCmdKey * pFoundKey, 
                                DianaParseParams * pParseParams,
                                DI_CHAR lastData)
@@ -285,101 +310,307 @@ static DianaCmdKey * ScanRight(DianaCmdKeyLine * pLine,
     }
     return 0;
 }
+*/
 
+
+static int TryMatchKey(DianaBaseGenObject_type * pFoundKey, DianaParseParams * pParseParams)
+{
+    DI_CHAR flagMask = 0;
+    DianaCmdInfo * pInfo = (DianaCmdInfo * )pFoundKey;
+
+    if (pInfo->m_flags & DI_FLAG_CMD_TEST_MODE_ONLY)
+    {
+        if (!pParseParams->pContext->testMode)
+            return 0;
+    }
+
+    flagMask = pInfo->m_flags & (DI_FLAG_CMD_AMD64 | DI_FLAG_CMD_I386);
+    if (!flagMask)
+        return 1;
+
+    if (flagMask & DI_FLAG_CMD_AMD64 &&
+        pParseParams->pContext->iMainMode_addressSize == DIANA_MODE64)
+    {
+        return 1;
+    }
+
+    if (flagMask & DI_FLAG_CMD_I386 &&
+        pParseParams->pContext->iMainMode_addressSize == DIANA_MODE32)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+
+static int AreKeysGood(DianaBaseGenObject_type * pFoundKey, 
+                       const DianaParserCmdKey  * pKey)
+{
+    DianaCmdInfo * pInfo = (DianaCmdInfo * )pFoundKey;
+    
+    if (pInfo->m_flags & DI_FLAG_CMD_POSTBYTE_USED)
+    {
+        // ensure that we have enough space
+        if (!pKey->has_extension)
+            return 0;
+    }
+
+    if (pInfo->m_extension_mask)
+    {
+        if (!pKey->has_extension)
+            return 0;
+
+        if ((pInfo->m_extension & pInfo->m_extension_mask) != (pInfo->m_extension_mask & pKey->extension))
+            return 0;
+    }
+
+    if (pInfo->m_extension_deny_mask)
+    {
+        if (!pKey->has_extension)
+            return 0;
+
+        if ((pInfo->m_extension & pInfo->m_extension_deny_mask) == (pInfo->m_extension_deny_mask & pKey->extension))
+            return 0;
+    }
+    return 1;
+}
+
+static
+int DispatchKey(DianaParserContext * pContext,
+                DianaParseParams * pParseParams,
+                const DianaParserCmdKey  * pKey,
+                DianaCmdKey * pCmdKey,
+                int * pbRetry,
+                int bIgnoreSubLines,
+                int opcodePosition)
+{
+    DianaBaseGenObject_type * pObject = 0;
+    *pbRetry = 0;
+
+    if (pCmdKey->opcode != pKey->chOpcode)
+    {
+        Diana_FatalBreak();
+        return 0;
+    }
+
+    pObject = (DianaBaseGenObject_type * )pCmdKey->keyLineOrCmdInfo;
+    if (!pObject)
+        return 0;
+
+    switch(pObject->m_type)
+    {
+    case DIANA_BASE_GEN_OBJECT_CMD:
+        // result found
+        // check proc mode and compare
+        if (!TryMatchKey(pObject, pParseParams))
+            return 0;
+
+        if (!AreKeysGood(pObject, pKey))
+            return 0;
+        
+        pContext->pResult = (DianaCmdInfo*)pObject;
+        break;
+
+    case DIANA_BASE_GEN_OBJECT_LINE:
+    case DIANA_BASE_GEN_OBJECT_INDEX:
+        if (pObject->m_flags & DIANA_BASE_GEN_OBJECT_THE_SAME_OPCODE)
+        {
+            *pbRetry = 1;
+        }
+        else
+        {
+            ++opcodePosition;
+            if (bIgnoreSubLines)
+                return 0;
+        }
+
+        DianaParserContext_PushOpcode(pContext, 
+                                      pObject,
+                                      -1,
+                                      opcodePosition,
+                                      (pObject->m_flags & DIANA_BASE_GEN_OBJECT_THE_SAME_OPCODE) ?  DI_PARSER_CONTEXT_FLAG_THE_SAME_OPCODE : 0
+                                      );
+    }
+    return 1;
+
+}
+
+static
+int FindNextCmdKey(DianaParserContext * pContext, 
+                   DianaParseParams * pParseParams,
+                   DianaParserCmdKey  * pKey,
+                   int bIgnoreSubLines,
+                   int opcodePosition)
+{
+    int bRetry = 0;
+    DianaParserContextState * pState = DianaParserContext_GetCurrentState(pContext);
+
+    ++pState->position;
+    pContext->pResult = 0;
+
+
+    if (pState->pLine->m_type == DIANA_BASE_GEN_OBJECT_INDEX)
+    {
+        DianaIndexKeyLine * pLine = (DianaIndexKeyLine * )pState->pLine;
+        DianaIndexKey * pIndexKey = &pLine->key[(size_t)pKey->chOpcode];
+        DianaCmdKey cmdKey;
+
+        if ((size_t)pState->position > (size_t)pKey->chOpcode)
+        {
+            return 0;
+        }
+        pState->position = pKey->chOpcode;
+        if (!pIndexKey)
+        {
+            return 0;
+        }
+        
+        cmdKey.keyLineOrCmdInfo =  pIndexKey->keyLineOrCmdInfo;
+        cmdKey.opcode = pKey->chOpcode;
+
+        if (!DispatchKey(pContext,
+                        pParseParams,
+                        pKey,
+                        &cmdKey,
+                        &bRetry,
+                        bIgnoreSubLines,
+                        opcodePosition
+                        ))
+        {
+            return 0;
+        }
+        if (bRetry)
+        {
+            pState = DianaParserContext_GetCurrentState(pContext);
+        }
+        else
+        {
+            return 1;
+        }
+    }
+
+    if (pState->pLine->m_type == DIANA_BASE_GEN_OBJECT_LINE)
+    {
+        DianaCmdKeyLine * pLine = (DianaCmdKeyLine * )pState->pLine;
+
+        for(; pState->position < pLine->iKeysCount; ++pState->position)
+        {
+            DianaCmdKey * pCmdKey = &pLine->key[pState->position];
+
+            if (pCmdKey->opcode != pKey->chOpcode)
+                continue;
+
+            if (DispatchKey(pContext,
+                            pParseParams,
+                            pKey,
+                            pCmdKey,
+                            &bRetry,
+                            bIgnoreSubLines,
+                            opcodePosition))
+            {
+                return 1;
+            }
+        }
+        return 0;
+    }
+    return 0;
+}
+
+
+static
+int FindNextCmdKey_Rollback(DianaParserContext * pContext, 
+                             int * pIt)
+{
+    DianaParserContextState * pState = DianaParserContext_GetCurrentState(pContext);
+    DianaParserContextState * pPrevState = DianaParserContext_GetPrevState(pContext);
+    if (!pPrevState) 
+        return 0;
+
+    &pState;
+    --pContext->currentState;
+    *pIt = pPrevState->opcodePosition;
+    return 1;
+}
+
+static
+int FindNextCmdKey_Finalize(DianaParserContext * pContext, 
+                            DianaParseParams * pParseParams)
+{
+    DianaParserCmdKey prevKey;
+    DianaParserContextState * pState = DianaParserContext_GetCurrentState(pContext);
+    if (pState->position != -1 || !pContext->currentState)
+    {
+        return 0;
+    }
+    // rollback one state and try found smth
+    --pContext->currentState;
+    pState = DianaParserContext_GetCurrentState(pContext);
+
+    GetKeyByAddress(pParseParams->pContext->cache + pState->opcodePosition,
+                    pParseParams->pContext->cacheIt + pParseParams->pContext->cacheSize - pState->opcodePosition - 1, 
+                    &prevKey);
+
+
+    return FindNextCmdKey(pContext, 
+                          pParseParams,
+                          &prevKey,
+                          1,
+                          pState->opcodePosition);
+}
 static
 int Diana_ParseCmdImpl(DianaParseParams * pParseParams, // IN
                        DianaStreamProxy * pOutProxy, // OUT
                        int * pOutIt)    // OUT
 {
-    DianaCmdKeyLine * pLine = pParseParams->pInitialLine;
+    DianaParserContext context;
+    DianaParserCmdKey key;
 
-    //int readed = 0;
-    //int iResult = 0;
     int it = pParseParams->pContext->cacheIt;
-    DianaCmdKey * pFoundKeyWithResult = 0;
-    int resultIt = 0;
+    int it_end = pParseParams->pContext->cacheIt + pParseParams->pContext->cacheSize;
 
-    do
+    if (!pParseParams->pContext->cacheSize)
     {
+        return DI_ERROR;
+    }
+    
+    DianaParserContext_Init(&context, pParseParams->pInitialLine);
+    for(;;)
+    {
+        GetKeyByAddress(pParseParams->pContext->cache + it, 
+                        pParseParams->pContext->cacheIt + pParseParams->pContext->cacheSize - it - 1, 
+                        &key);
+
+        
+        if (FindNextCmdKey(&context, pParseParams, &key, 0, it))
         {
-            DianaCmdKey * pFoundKey = 0;
-            DianaCmdKey key;
-            DianaCmdKeyLine * pNextLine = 0;
-            
-            GetKeyByAddress(pParseParams->pContext->cache + it, 
-                            pParseParams->pContext->cacheIt + pParseParams->pContext->cacheSize - it - 1, 
-                            &key);
-            pFoundKey = FindCmdKey(pLine, &key, &pNextLine);
-            if (!pFoundKey)
+            // smth found, check is it line or result
+            if (context.pResult)
             {
-                if (!pFoundKeyWithResult)
-                    return DI_ERROR;
-
-                // use previous solution
-                pFoundKey = pFoundKeyWithResult;
-                it = resultIt;
-                pNextLine = 0;
-            }
-
-            if (pFoundKey->options & DIANA_OPT_HAS_RESULT)
-            {
-                //int iResult = 0;
-
-                if (pNextLine && it+1 <= pParseParams->pContext->cacheSize)
-                {
-                    // try to get more
-                    pLine = pNextLine;
-                    pFoundKeyWithResult = pFoundKey;
-                    resultIt = it;
-                    ++it;
-                    continue;
-                }
-
-                // found data, check processor mode
-                if (!TryMatchKey(pFoundKey, pParseParams))
-                {
-                    // not matched totally, scan left or right
-                    pFoundKey = ScanLeft(pLine, 
-                                         pFoundKey, 
-                                         pParseParams,
-                                         pParseParams->pContext->cache[it]);
-                    if (!pFoundKey)
-                    {
-                        pFoundKey = ScanRight(pLine, 
-                                              pFoundKey, 
-                                              pParseParams,
-                                              pParseParams->pContext->cache[it]);
-                    }
-                    if (!pFoundKey)
-                    {
-                        return DI_UNSUPPORTED_COMMAND;
-                    }
-                }
-
                 Diana_InitStreamProxy(pOutProxy, 
                                       pParseParams->readStream,
                                       pParseParams->pContext->cache+it, 
                                       pParseParams->pContext->cacheIt + pParseParams->pContext->cacheSize - it);
                 *pOutIt = it;
 
-                pParseParams->pResult->pInfo = (DianaCmdInfo * )pFoundKey->keyLineOrCmdInfo;
+                pParseParams->pResult->pInfo = context.pResult;
                 return DI_SUCCESS;
-            } 
-            else
-            {
-                pLine = (DianaCmdKeyLine * )pFoundKey->keyLineOrCmdInfo;
             }
+            if (it + 1 < it_end)
+            {
+                ++it;
+                continue;
+            }
+            // no data in cache, rollback
         }
-
-        ++it;
-
-        if (it-pParseParams->pContext->cacheIt >= pParseParams->pContext->cacheSize)
+        
+        // rollback
+        if (!FindNextCmdKey_Rollback(&context, &it))
         {
-            return DI_ERROR;
+            // rollback failed, exit
+            break;
         }
     }
-	#pragma warning( suppress : 4127 ) // conditional expression is constant
-    while(1);
+    return DI_ERROR;
 }
 
 static void ApplyPrefixes(DianaContext * pContext,
@@ -489,6 +720,33 @@ int TryMatch(DianaParseParams * pParseParams,
     pParseParams->pContext->cacheIt = DI_CACHE_RESERVED;
     pParseParams->pContext->cacheSize = iOriginalCacheSize;
     return iResult;
+}
+
+int Diana_InsertPrefix(DianaContext * pContext, 
+                       DI_CHAR prefix,
+                       Diana_PrefixFnc linkedPrefixFnc,
+                       int isRex
+                       )
+{
+    DI_FULL_CHAR i = 0;
+
+	if (pContext->prefixesCount >= DI_MAX_PREFIXES_COUNT) 
+		return DI_ERROR;
+
+    for(; i < pContext->prefixesCount; ++i)
+    {
+        if (pContext->prefixes[i].prefix == prefix)
+            return DI_SUCCESS;
+    }
+
+    pContext->prefixes[pContext->prefixesCount].prefix = prefix;
+    pContext->prefixes[pContext->prefixesCount].linkedPrefixFnc = linkedPrefixFnc;
+    ++pContext->prefixesCount;
+
+    if (!isRex)
+        pContext->lastPrefixBeforeRex = i;
+
+    return DI_SUCCESS;
 }
 
 int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT

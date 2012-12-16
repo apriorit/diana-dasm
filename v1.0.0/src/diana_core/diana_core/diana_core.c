@@ -38,7 +38,7 @@ static int ProxyDianaReadFnc(void * pThisIn, void * pBuffer, int iBufferSize, in
 
 
 int Diana_ParseCmd(DianaContext * pContext, //IN
-                   DianaCmdKeyLine * pInitialLine,  // IN
+                   DianaBaseGenObject_type * pInitialLine,  // IN
                    DianaReadStream * readStream,    // IN
                    DianaParserResult * pResult)    // OUT
 {
@@ -55,6 +55,12 @@ int Diana_ParseCmd(DianaContext * pContext, //IN
     parseParams.pInitialLine = pInitialLine;
     parseParams.pResult = pResult;
     parseParams.readStream = &proxy.m_parent;
+
+    pResult->pInfo = 0;
+    pResult->iLinkedOpCount = 0;
+    pResult->iPrefix = 0;
+    pResult->iRexPrefix = 0;
+    pResult->iFullCmdSize = 0;
 
     iRes = Diana_ParseCmdEx(&parseParams);
 
@@ -115,6 +121,12 @@ void Diana_InitContext(DianaContext * pThis, int Mode)
 
     pThis->mainMode_sreg = reg_DS;
     pThis->currentCmd_sreg = reg_DS;
+}
+
+void Diana_InitContextWithTestMode(DianaContext * pThis, int Mode)
+{
+    Diana_InitContext(pThis, Mode);
+    pThis->testMode = 1;
 }
 
 void Diana_ClearCache(DianaContext * pThis)
@@ -285,115 +297,144 @@ static int InitJmps(DianaGroupInfo * pGroupInfo)
     return 0;
 }
 
-void Diana_InitLine(DianaCmdKeyLine * pRoot)
+void Diana_InitLine(DianaBaseGenObject_type * pRoot);
+
+static void ProcessCmdInfo(DianaBaseGenObject_type * pCurrentLine, 
+                           DianaCmdInfo * pInfo, 
+                           DI_CHAR opcode)
 {
-    int i = 0;
-    for(i = 0; i<pRoot->iKeysCount; ++i)
+    DianaGroupInfo * pGroupInfo = 0;
+
+    if (pInfo->m_flags & DI_FLAG_CMD_IS_TRUE_PREFIX)
+        pInfo->m_linkedPrefixFnc = Diana_Nope;
+    else
+        pInfo->m_linkedPrefixFnc = Diana_Normal;
+
+    
+    pGroupInfo = Diana_GetGroupInfo(pInfo->m_lGroupId);
+    
+    InitJmps(pGroupInfo);
+    
+    //--------------------------------------
+    // AMD 64 ADDITIONAL INITIALIZATION
+    //--------------------------------------
+    if (pCurrentLine == Diana_GetRootLine())
     {
-        if (pRoot->key[i].options & DIANA_OPT_HAS_RESULT)
+        switch (opcode)
         {
-            DianaCmdInfo * pInfo = (DianaCmdInfo * )pRoot->key[i].keyLineOrCmdInfo;
-            DianaGroupInfo * pGroupInfo = 0;
+		case 0x82: // add/or/adc/sbb/and/sub/xor/cmp
+		case 0x9A: // callf
 
-            if (pInfo->m_bIsTruePrefix)
-                pInfo->m_linkedPrefixFnc = Diana_Nope;
-            else
-                pInfo->m_linkedPrefixFnc = Diana_Normal;
-
-            
-            pGroupInfo = Diana_GetGroupInfo(pInfo->m_lGroupId);
-            
-            InitJmps(pGroupInfo);
-            
-            //--------------------------------------
-            // AMD 64 ADDITIONAL INITIALIZATION
-            //--------------------------------------
-            if (pRoot == Diana_GetRootLine())
-            {
-                switch (pRoot->key[i].chOpcode)
-                {
-                case 0x68: // push
-                case 0xC7: // mov
-                    pInfo->m_flags |= DI_FLAG_CMD_AMD64_SIGN_EXTENDS;
-                    break;
-                case 0xB8: // mov
-                    pInfo->m_flags |= DI_FLAG_CMD_SUPPORTS_IMM64;
-                    break;
-				case 0x06: // push es
-				case 0x07: // pop es
-				case 0x0E: // push cs
-				case 0x16: // push ss
-				case 0x17: // pop ss
-				case 0x1E: // push ds
-				case 0x1F: // pop ds
-				case 0x27: // daa
-				case 0x2F: // das
-				case 0x37: // aaa
-				case 0x3F: // aas
-				case 0x60: // pushad
-				case 0x61: // popad
-				case 0x62: // bound
-				case 0x82: // add/or/adc/sbb/and/sub/xor/cmp
-				case 0x9A: // callf
-				case 0xC4: // les
-				case 0xC5: // lds
-				case 0xD4: // aam
-				case 0xD5: // aad
-				case 0xD6: // setalc
-				case 0xEA: // jmpf
-				case 0x40: // inc eax
-				case 0x41: // inc ecx
-				case 0x42: // inc edx
-				case 0x43: // inc ebx
-				case 0x44: // inc esp
-				case 0x45: // inc ebp
-				case 0x46: // inc esi
-				case 0x47: // inc edi
-				case 0x48: // dec eax
-				case 0x49: // dec ecx
-				case 0x4A: // dec edx
-				case 0x4B: // dec ebx
-				case 0x4C: // dec esp
-				case 0x4D: // dec ebp
-				case 0x4E: // dec esi
-				case 0x4F: // dec edi
-					pInfo->m_flags |= DI_FLAG_CMD_I386;
-					break;
-                }
-            }
-
-            // 2) DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64
-            // a) all who can change CS/IP should have def operand size 64
-            if (pGroupInfo->m_pLinkedInfo)
-            {
-                if (pGroupInfo->m_pLinkedInfo->flags & DIANA_GT_CAN_CHANGE_RIP)
-                {
-                    pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
-                }
-            }
-            // b) pop and push should have def operand size 64
-            if (!strcmp(pGroupInfo->m_pName,"pop"))
-            {
-                pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
-            } else
-            if (!strcmp(pGroupInfo->m_pName,"popf"))
-            {
-                pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
-            } else
-            if (!strcmp(pGroupInfo->m_pName,"push"))
-            {
-                pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
-            } else
-            if (!strcmp(pGroupInfo->m_pName,"pushf"))
-            {
-                pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
-            }
+		case 0x06: // push es
+		case 0x07: // pop es
+		case 0x0E: // push cs
+		case 0x16: // push ss
+		case 0x17: // pop ss
+		case 0x1E: // push ds
+		case 0x1F: // pop ds
+		case 0x27: // daa
+		case 0x2F: // das
+		case 0x37: // aaa
+		case 0x3F: // aas
+		case 0x60: // pushad
+		case 0x61: // popad
+		case 0x62: // bound
+		case 0xC4: // les
+		case 0xC5: // lds
+		case 0xD4: // aam
+		case 0xD5: // aad
+		case 0xD6: // setalc
+		case 0xEA: // jmpf
+		case 0x40: // inc eax
+		case 0x41: // inc ecx
+		case 0x42: // inc edx
+		case 0x43: // inc ebx
+		case 0x44: // inc esp
+		case 0x45: // inc ebp
+		case 0x46: // inc esi
+		case 0x47: // inc edi
+		case 0x48: // dec eax
+		case 0x49: // dec ecx
+		case 0x4A: // dec edx
+		case 0x4B: // dec ebx
+		case 0x4C: // dec esp
+		case 0x4D: // dec ebp
+		case 0x4E: // dec esi
+		case 0x4F: // dec edi
+			pInfo->m_flags |= DI_FLAG_CMD_I386;
+			break;
         }
-        else
+    }
+
+    // 2) DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64
+    // a) all who can change CS/IP should have def operand size 64
+    if (pGroupInfo->m_pLinkedInfo)
+    {
+        if (pGroupInfo->m_pLinkedInfo->flags & DIANA_GT_CAN_CHANGE_RIP)
         {
-            DianaCmdKeyLine * pLine = (DianaCmdKeyLine * )pRoot->key[i].keyLineOrCmdInfo;
-            Diana_InitLine(pLine);
+            pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
         }
+    }
+    // b) pop and push should have def operand size 64
+    if (!strcmp(pGroupInfo->m_pName,"pop"))
+    {
+        pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
+    } else
+    if (!strcmp(pGroupInfo->m_pName,"popf"))
+    {
+        pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
+    } else
+    if (!strcmp(pGroupInfo->m_pName,"push"))
+    {
+        pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
+    } else
+    if (!strcmp(pGroupInfo->m_pName,"pushf"))
+    {
+        pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
+    }
+}
+void Diana_InitIndex(DianaIndexKeyLine * pRoot)
+{
+    int i;
+    for(i = 0; i < 256; ++i)
+    {
+        DianaBaseGenObject_type * pLineOrCmd = pRoot->key[i].keyLineOrCmdInfo;
+        if (!pLineOrCmd)
+            continue;
+        if (pLineOrCmd->m_type == DIANA_BASE_GEN_OBJECT_CMD)
+        {
+            ProcessCmdInfo(&pRoot->parent, (DianaCmdInfo *)pLineOrCmd, (DI_CHAR)i);
+            continue;
+        }
+        Diana_InitLine(pLineOrCmd);
+    }
+}
+void Diana_InitRegularLine(DianaCmdKeyLine * pRoot)
+{
+    int i;
+    for(i = 0; i < pRoot->iKeysCount; ++i)
+    {
+        DianaBaseGenObject_type * pLineOrCmd = pRoot->key[i].keyLineOrCmdInfo;
+        if (pLineOrCmd->m_type == DIANA_BASE_GEN_OBJECT_CMD)
+        {
+            ProcessCmdInfo(&pRoot->parent, (DianaCmdInfo *)pLineOrCmd, pRoot->key[i].opcode);
+            continue;
+        }
+        Diana_InitLine(pLineOrCmd);
+    }
+}
+
+void Diana_InitLine(DianaBaseGenObject_type * pRoot)
+{
+    if (pRoot->m_type == DIANA_BASE_GEN_OBJECT_INDEX)
+    {
+        Diana_InitIndex((DianaIndexKeyLine * )pRoot);
+        return;
+    }
+    if (pRoot->m_type == DIANA_BASE_GEN_OBJECT_LINE)
+    {
+        Diana_InitRegularLine((DianaCmdKeyLine *)pRoot);
+        return;
     }
 }
 
@@ -405,7 +446,7 @@ void Diana_ResetPrefixes(DianaContext * pContext)
 void Diana_Init()
 {
     // init prefixes
-    DianaCmdKeyLine * pRoot = Diana_GetRootLine();
+    DianaBaseGenObject_type * pRoot = Diana_GetRootLine();
     Diana_InitLine(pRoot);
 
     Diana_InitUtils();

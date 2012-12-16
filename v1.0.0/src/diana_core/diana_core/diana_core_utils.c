@@ -292,42 +292,42 @@ static void Diana_Rex(struct _dianaContext * pContext)
 void Diana_InitUtils()
 {
     // prefixes
-    g_rexInfo.m_bIsTruePrefix = 1;
+    g_rexInfo.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
     g_rexInfo.m_linkedPrefixFnc = Diana_Rex;
 
 
     g_Diana_Lock.m_linkedPrefixFnc = Diana_Lock;
-    g_Diana_Lock.m_bIsTruePrefix = 1;
+    g_Diana_Lock.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 
     g_Diana_Rep.m_linkedPrefixFnc = Diana_Rep;
-    g_Diana_Rep.m_bIsTruePrefix = 1;
+    g_Diana_Rep.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 
     g_Diana_Repn.m_linkedPrefixFnc = Diana_Repn;
-    g_Diana_Repn.m_bIsTruePrefix = 1;
+    g_Diana_Repn.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 
     g_Diana_OpSize.m_linkedPrefixFnc = Diana_OpSize;
-    g_Diana_OpSize.m_bIsTruePrefix = 1;
+    g_Diana_OpSize.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 
     g_Diana_AddrSize.m_linkedPrefixFnc = Diana_AddrSize;
-    g_Diana_AddrSize.m_bIsTruePrefix = 1;
+    g_Diana_AddrSize.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 
     g_Diana_CS.m_linkedPrefixFnc = Diana_CS;
-    g_Diana_CS.m_bIsTruePrefix = 1;
+    g_Diana_CS.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 
     g_Diana_SS.m_linkedPrefixFnc = Diana_SS;
-    g_Diana_SS.m_bIsTruePrefix = 1;
+    g_Diana_SS.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 
     g_Diana_DS.m_linkedPrefixFnc = Diana_DS;
-    g_Diana_DS.m_bIsTruePrefix = 1;
+    g_Diana_DS.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 
     g_Diana_ES.m_linkedPrefixFnc = Diana_ES;
-    g_Diana_ES.m_bIsTruePrefix = 1;
+    g_Diana_ES.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 
     g_Diana_FS.m_linkedPrefixFnc = Diana_FS;
-    g_Diana_FS.m_bIsTruePrefix = 1;
+    g_Diana_FS.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 
     g_Diana_GS.m_linkedPrefixFnc = Diana_GS;
-    g_Diana_GS.m_bIsTruePrefix = 1;
+    g_Diana_GS.m_flags = DI_FLAG_CMD_IS_TRUE_PREFIX;
 }
 
 DI_CHAR Diana_CacheEatOne(DianaContext * pContext)

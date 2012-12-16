@@ -17,7 +17,7 @@ extern "C"
 int Diana_ParseCmdOnBuffer_test(int iMode,
                            void * pBuffer,
                            size_t size,
-                           DianaCmdKeyLine * pInitialLine,  // IN
+                           DianaBaseGenObject_type * pInitialLine,  // IN
                            DianaParserResult * pResult,  //OUT
                            size_t * sizeRead);    // OUT
 

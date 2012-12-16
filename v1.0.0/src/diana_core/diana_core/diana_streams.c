@@ -27,7 +27,7 @@ void Diana_InitMemoryStream(DianaMemoryStream * pStream,
 int Diana_ParseCmdOnBuffer(int iMode,
                            void * pBuffer,
                            size_t size,
-                           DianaCmdKeyLine * pInitialLine,  // IN
+                           DianaBaseGenObject_type * pInitialLine,  // IN
                            DianaParserResult * pResult,  //OUT
                            size_t * sizeRead)    // OUT
 {
@@ -36,6 +36,25 @@ int Diana_ParseCmdOnBuffer(int iMode,
     int iRes;
 
     Diana_InitContext(&context, iMode);
+    Diana_InitMemoryStream(&stream, pBuffer, size);
+    iRes = Diana_ParseCmd(&context, pInitialLine, &stream.parent,  pResult);
+    *sizeRead = stream.curSize - context.cacheSize;
+    return iRes;
+}
+
+
+int Diana_ParseCmdOnBuffer_testmode(int iMode,
+                                    void * pBuffer,
+                                    size_t size,
+                                    DianaBaseGenObject_type * pInitialLine,  // IN
+                                    DianaParserResult * pResult,  //OUT
+                                    size_t * sizeRead)    // OUT
+{
+    DianaMemoryStream stream;
+    DianaContext context;
+    int iRes;
+
+    Diana_InitContextWithTestMode(&context, iMode);
     Diana_InitMemoryStream(&stream, pBuffer, size);
     iRes = Diana_ParseCmd(&context, pInitialLine, &stream.parent,  pResult);
     *sizeRead = stream.curSize - context.cacheSize;

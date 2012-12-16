@@ -62,7 +62,6 @@ static void test_r32_64()
         TEST_ASSERT(result.linkedOperands[0].usedSize == 4);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_ECX);
     }
-
     
     static unsigned char bswap1[] = {0x48, 0x0f, 0xc9}; //    bswap rcx
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64, bswap1, sizeof(bswap1), Diana_GetRootLine(), &result, &read);
@@ -426,10 +425,10 @@ void test_nop_toobig()
 void test_new()
 {
     test_nop_pause();
-	test_nop();
-	test_nops();
+    test_nop();
+    test_nops();
     test_r32_64();
     test_sal1();
-	test_ret();
-	test_nop_toobig();
+    test_ret();
+    test_nop_toobig();
 }

@@ -6,7 +6,7 @@
 typedef struct _dianaParseParams
 {
     DianaContext * pContext;
-    DianaCmdKeyLine * pInitialLine;
+    DianaBaseGenObject_type * pInitialLine;
     DianaReadStream * readStream;
     DianaParserResult * pResult;
 }

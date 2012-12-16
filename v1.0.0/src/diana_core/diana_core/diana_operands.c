@@ -207,10 +207,12 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
     DI_CHAR fpuRegCode = DI_CHAR_NULL;
     DI_CHAR RegCode = DI_CHAR_NULL;
     DI_FULL_CHAR PostByte = DI_FULL_CHAR_NULL;
-    int iRegisterCodeAsOpcodePartUsed = pResult->pInfo->m_iRegisterCodeAsOpcodePart != DI_CHAR_NULL;
-    int iExtensionUsed = (pResult->pInfo->m_extension != DI_CHAR_NULL);
-    int iFullPostbyteUsed = (pResult->pInfo->m_bFullPostbyteUsed != DI_CHAR_NULL) && pResult->pInfo->m_bFullPostbyteUsed;
+
+    int iRegisterCodeAsOpcodePartUsed = pResult->pInfo->m_flags & DI_FLAG_CMD_REGISTER_AS_OPCODE;
+    int iExtensionUsed = (pResult->pInfo->m_extension_deny_mask | pResult->pInfo->m_extension_mask);
+    int iFullPostbyteUsed = pResult->pInfo->m_flags & DI_FLAG_CMD_POSTBYTE_USED;
     int iCSIPSize = pResult->pInfo->m_iCSIPExtensionSizeInBytes;
+    int bHas32BitAnalog = (pResult->pInfo->m_flags & DI_FLAG_CMD_HAS32BIT_ANALOG);
 
     DianaLinkedOperand * pLinkedImmOp[MAX_IMM] = {0,0};
     int iCurImm = 0;
@@ -236,7 +238,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         if (err)
             return err;
         if (read != 2)
-            return DI_ERROR;
+            return DI_END_OF_STREAM;
 
         PostByte = buffer[1];
                 
@@ -254,18 +256,21 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         if (err)
             return err;
         if (read != 1)
-            return DI_ERROR;
+            return DI_END_OF_STREAM;
 
         if (iRegisterCodeAsOpcodePartUsed)
         {
             // read register number
-            RegCode = Diana_GetRm2(pContext, buffer[0]);
+            if (pResult->pInfo->m_flags & DI_FLAG_CMD_FPU_I)
+            {
+                fpuRegCode = Diana_GetRm(buffer[0]);
+            }
+            else
+            {
+                RegCode = Diana_GetRm2(pContext, buffer[0]);
+            }
         }
 
-        if (pResult->pInfo->m_flags | DI_FLAG_CMD_FPU_I)
-        {
-            fpuRegCode = Diana_GetRm(buffer[0]);
-        }
 
         ++iCurOffset;
     }
@@ -288,7 +293,8 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
 
         // prefixes id 
         opSizeUsed = pOperInfo->m_size;
-        if ((!opSizeUsed) || (pResult->pInfo->m_bHas32BitAnalog && opSizeUsed != 1))
+
+        if ((!opSizeUsed) || (bHas32BitAnalog && opSizeUsed != 1))
         {
             opSizeUsed = ( unsigned char )pContext->iCurrentCmd_opsize;
         }
@@ -506,7 +512,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             //}
             if (iCSIPSize!= DI_CHAR_NULL)
             {
-                if (pResult->pInfo->m_bHas32BitAnalog && iCSIPSize!=1)
+                if (bHas32BitAnalog && iCSIPSize!=1)
                     iCSIPSize = pContext->iCurrentCmd_opsize;
 
                 if (iCSIPSize == 8)
