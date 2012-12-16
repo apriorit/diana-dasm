@@ -15,38 +15,23 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 
 
 <PRE>
-Opcode                            Instruction       Clocks  Description
+Opcode                                   Instruction       Clocks  Description
 
-1C  ib                            SBB AL,imm8       2       Subtract with borrow immediate byte
-                                                            from AL
-1D  iw                            SBB AX,imm16      2       Subtract with borrow immediate word
-                                                            from AX
-1D  id                            SBB EAX,imm32     2       Subtract with borrow immediate
-                                                            dword from EAX
-80  /3 ib      /pprefixlock       SBB r/m8,imm8     2/7     Subtract with borrow immediate byte
-                                                            from r/m byte
-82  /3 /pundoc /pprefixlock ib    SBB r/m8,imm8     2/7     Subtract with borrow immediate byte
-                                                            from r/m byte
-81  /3 iw      /pprefixlock       SBB r/m16,imm16   2/7     Subtract with borrow immediate word
-                                                            from r/m word
-81  /3 id      /pprefixlock       SBB r/m32,imm32   2/7     Subtract with borrow immediate
-                                                            dword from r/m dword
-83  /3 ib      /pprefixlock       SBB r/m16,imm8    2/7     Subtract with borrow sign-extended
-                                                            immediate byte from r/m word
-83  /3 ib      /pprefixlock       SBB r/m32,imm8    2/7     Subtract with borrow sign-extended
-                                                            immediate byte from r/m dword
-18  /r         /pprefixlock       SBB r/m8,r8       2/6     Subtract with borrow byte register
-                                                            from r/m byte
-19  /r         /pprefixlock       SBB r/m16,r16     2/6     Subtract with borrow word register
-                                                            from r/m word
-19  /r         /pprefixlock       SBB r/m32,r32     2/6     Subtract with borrow dword register
-                                                            from r/m dword
-1A  /r                            SBB r8,r/m8       2/7     Subtract with borrow byte register
-                                                            from r/m byte
-1B  /r                            SBB r16,r/m16     2/7     Subtract with borrow word register
-                                                            from r/m word
-1B  /r                            SBB r32,r/m32     2/7     Subtract with borrow dword register
-                                                            from r/m dword
+1C  ib                                   SBB AL,imm8       2       Subtract with borrow immediate byte
+1D  iw                                   SBB AX,imm16      2       Subtract with borrow immediate word
+1D  id                                   SBB EAX,imm32     2       Subtract with borrow immediate
+80  /3 ib      /pprefixlock              SBB r/m8,imm8     2/7     Subtract with borrow immediate byte
+82  /3 /pundoc /pprefixlock /pi386 ib    SBB r/m8,imm8     2/7     Subtract with borrow immediate byte
+81  /3 iw      /pprefixlock              SBB r/m16,imm16   2/7     Subtract with borrow immediate word
+81  /3 id      /pprefixlock              SBB r/m32,imm32   2/7     Subtract with borrow immediate
+83  /3 ib      /pprefixlock              SBB r/m16,imm8    2/7     Subtract with borrow sign-extended
+83  /3 ib      /pprefixlock              SBB r/m32,imm8    2/7     Subtract with borrow sign-extended
+18  /r         /pprefixlock              SBB r/m8,r8       2/6     Subtract with borrow byte register
+19  /r         /pprefixlock              SBB r/m16,r16     2/6     Subtract with borrow word register
+19  /r         /pprefixlock              SBB r/m32,r32     2/6     Subtract with borrow dword register
+1A  /r                                   SBB r8,r/m8       2/7     Subtract with borrow byte register
+1B  /r                                   SBB r16,r/m16     2/7     Subtract with borrow word register
+1B  /r                                   SBB r32,r/m32     2/7     Subtract with borrow dword register
 </PRE>
 
 <H2>Operation</H2>

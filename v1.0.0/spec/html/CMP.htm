@@ -15,23 +15,23 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 
 
 <PRE>
-Opcode              Instruction        Clocks   Description
+Opcode                     Instruction        Clocks   Description
 
-3C  ib              CMP AL,imm8        2        Compare immediate byte to AL
-3D  iw              CMP AX,imm16       2        Compare immediate word to AX
-3D  id              CMP EAX,imm32      2        Compare immediate dword to EAX
-80  /7 ib           CMP r/m8,imm8      2/5      Compare immediate byte to r/m
-82  /7 /pundoc ib   CMP r/m8,imm8      2/5      Compare immediate byte to r/m
-81  /7 iw           CMP r/m16,imm16    2/5      Compare immediate word to r/m
-81  /7 id           CMP r/m32,imm32    2/5      Compare immediate dword to r/m
-83  /7 ib           CMP r/m16,imm8     2/5      Compare sign extended immediate
-83  /7 ib           CMP r/m32,imm8     2/5      Compare sign extended immediate
-38  /r              CMP r/m8,r8        2/5      Compare byte register to r/m
-39  /r              CMP r/m16,r16      2/5      Compare word register to r/m
-39  /r              CMP r/m32,r32      2/5      Compare dword register to r/m
-3A  /r              CMP r8,r/m8        2/6      Compare r/m byte to byte
-3B  /r              CMP r16,r/m16      2/6      Compare r/m word to word
-3B  /r              CMP r32,r/m32      2/6      Compare r/m dword to dword
+3C  ib                     CMP AL,imm8        2        Compare immediate byte to AL
+3D  iw                     CMP AX,imm16       2        Compare immediate word to AX
+3D  id                     CMP EAX,imm32      2        Compare immediate dword to EAX
+80  /7 ib                  CMP r/m8,imm8      2/5      Compare immediate byte to r/m
+82  /7 /pundoc /pi386 ib   CMP r/m8,imm8      2/5      Compare immediate byte to r/m
+81  /7 iw                  CMP r/m16,imm16    2/5      Compare immediate word to r/m
+81  /7 id                  CMP r/m32,imm32    2/5      Compare immediate dword to r/m
+83  /7 ib                  CMP r/m16,imm8     2/5      Compare sign extended immediate
+83  /7 ib                  CMP r/m32,imm8     2/5      Compare sign extended immediate
+38  /r                     CMP r/m8,r8        2/5      Compare byte register to r/m
+39  /r                     CMP r/m16,r16      2/5      Compare word register to r/m
+39  /r                     CMP r/m32,r32      2/5      Compare dword register to r/m
+3A  /r                     CMP r8,r/m8        2/6      Compare r/m byte to byte
+3B  /r                     CMP r16,r/m16      2/6      Compare r/m word to word
+3B  /r                     CMP r32,r/m32      2/6      Compare r/m dword to dword
 </PRE>
 
 <H2>Operation</H2>

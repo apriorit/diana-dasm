@@ -14,63 +14,32 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>CALL -- Call Procedure</H1>
 
 <PRE>
-Opcode    Instruction     Clocks
-  Values of ts are given by the following table:
+Opcode          Instruction      Clocks         Description
 
-                             New Task
-              386 TSS         386 TSS         286 TSS
-  Old         VM = 0          VM = 1
-  Task                     Via Task Gate?
-
-              N     Y         N     Y         N     Y
-
-386          300   309       217   226       273   282
-TSS VM=0
-
-286          298   307       217   226       273   282
-
-
-TSS       Description
-
-E8  cw    CALL rel16       7+m            Call near, displacement relative
-                                          to next instruction
-FF  /2    CALL r/m16       7+m/10+m       Call near, register
-                                          indirect/memory indirect
-9A  cd    CALL ptr16:16    17+m,pm=34+m   Call intersegment, to full
-                                          pointer given
-9A  cd    CALL ptr16:16    pm=52+m        Call gate, same privilege
-9A  cd    CALL ptr16:16    pm=86+m        Call gate, more privilege, no
-                                          parameters
-9A  cd    CALL ptr16:16    pm=94+4x+m     Call gate, more privilege, x
-                                          parameters
-9A  cd    CALL ptr16:16    ts             Call to task
-FF  /3    CALL m16:16      22+m,pm=38+m   Call intersegment, address at
-                                          r/m dword
-FF  /3    CALL m16:16      pm=56+m        Call gate, same privilege
-FF  /3    CALL m16:16      pm=90+m        Call gate, more privilege, no
-                                          parameters
-FF  /3    CALL m16:16      pm=98+4x+m     Call gate, more privilege, x
-                                          parameters
-FF  /3    CALL m16:16      5 + ts         Call to task
-E8  cd    CALL rel32       7+m            Call near, displacement relative
-                                          to next instruction
-FF  /2    CALL r/m32       7+m/10+m       Call near, indirect
-9A  cp    CALL ptr16:32    17+m,pm=34+m   Call intersegment, to full
-                                          pointer given
-9A  cp    CALL ptr16:32    pm=52+m        Call gate, same privilege
-9A  cp    CALL ptr16:32    pm=86+m        Call gate, more privilege, no
-                                          parameters
-9A  cp    CALL ptr32:32    pm=94+4x+m     Call gate, more privilege, x
-                                          parameters
-9A  cp    CALL ptr16:32    ts             Call to task
-FF  /3    CALL m16:32      22+m,pm=38+m   Call intersegment, address at
-                                          r/m dword
-FF  /3    CALL m16:32      pm=56+m        Call gate, same privilege
-FF  /3    CALL m16:32      pm=90+m        Call gate, more privilege, no
-                                          parameters
-FF  /3    CALL m16:32      pm=98+4x+m     Call gate, more privilege, x
-                                          parameters
-FF  /3    CALL m16:32      5 + ts         Call to task
+E8  cw          CALL rel16       7+m            Call near, displacement relative
+FF  /2          CALL r/m16       7+m/10+m       Call near, register
+9A  cd /pi386   CALL ptr16:16    17+m,pm=34+m   Call intersegment, to full
+9A  cd /pi386   CALL ptr16:16    pm=52+m        Call gate, same privilege
+9A  cd /pi386   CALL ptr16:16    pm=86+m        Call gate, more privilege, no
+9A  cd /pi386   CALL ptr16:16    pm=94+4x+m     Call gate, more privilege, x
+9A  cd /pi386   CALL ptr16:16    ts             Call to task
+FF  /3          CALL m16:16      22+m,pm=38+m   Call intersegment, address at
+FF  /3          CALL m16:16      pm=56+m        Call gate, same privilege
+FF  /3          CALL m16:16      pm=90+m        Call gate, more privilege, no
+FF  /3          CALL m16:16      pm=98+4x+m     Call gate, more privilege, x
+FF  /3          CALL m16:16      5 + ts         Call to task
+E8  cd          CALL rel32       7+m            Call near, displacement relative
+FF  /2          CALL r/m32       7+m/10+m       Call near, indirect
+9A  cp /pi386   CALL ptr16:32    17+m,pm=34+m   Call intersegment, to full
+9A  cp /pi386   CALL ptr16:32    pm=52+m        Call gate, same privilege
+9A  cp /pi386   CALL ptr16:32    pm=86+m        Call gate, more privilege, no
+9A  cp /pi386   CALL ptr32:32    pm=94+4x+m     Call gate, more privilege, x
+9A  cp /pi386   CALL ptr16:32    ts             Call to task
+FF  /3          CALL m16:32      22+m,pm=38+m   Call intersegment, address at
+FF  /3          CALL m16:32      pm=56+m        Call gate, same privilege
+FF  /3          CALL m16:32      pm=90+m        Call gate, more privilege, no
+FF  /3          CALL m16:32      pm=98+4x+m     Call gate, more privilege, x
+FF  /3          CALL m16:32      5 + ts         Call to task
 </PRE>
 
 <EM>

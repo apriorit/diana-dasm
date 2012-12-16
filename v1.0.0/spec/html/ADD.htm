@@ -14,23 +14,23 @@ Chapter 17 -- 80386 Instruction Set</A><BR>
 <H1>ADD -- Add</H1>
 
 <PRE>
-Opcode                         Instruction         Clocks    Description
+Opcode                                Instruction         Clocks    Description
 
-04 ib                          ADD AL,imm8          2        Add immediate byte to AL
-05 iw                          ADD AX,imm16         2        Add immediate word to AX
-05 id                          ADD EAX,imm32        2        Add immediate dword to EAX
-80 /0 ib      /pprefixlock     ADD r/m8,imm8        2/7      Add immediate byte to r/m byte
-82 /0 /pundoc /pprefixlock ib  ADD r/m8,imm8        2/7      Add immediate byte to r/m byte
-81 /0 iw      /pprefixlock     ADD r/m16,imm16      2/7      Add immediate word to r/m word
-81 /0 id      /pprefixlock     ADD r/m32,imm32      2/7      Add immediate dword to r/m dword
-83 /0 ib      /pprefixlock     ADD r/m16,imm8       2/7      Add sign-extended immediate byte
-83 /0 ib      /pprefixlock     ADD r/m32,imm8       2/7      Add sign-extended immediate byte
-00 /r         /pprefixlock     ADD r/m8,r8          2/7      Add byte register to r/m byte
-01 /r         /pprefixlock     ADD r/m16,r16        2/7      Add word register to r/m word
-01 /r         /pprefixlock     ADD r/m32,r32        2/7      Add dword register to r/m dword
-02 /r                          ADD r8,r/m8          2/6      Add r/m byte to byte register
-03 /r                          ADD r16,r/m16        2/6      Add r/m word to word register
-03 /r                          ADD r32,r/m32        2/6      Add r/m dword to dword register
+04 ib                                 ADD AL,imm8          2        Add immediate byte to AL
+05 iw                                 ADD AX,imm16         2        Add immediate word to AX
+05 id                                 ADD EAX,imm32        2        Add immediate dword to EAX
+80 /0 ib      /pprefixlock            ADD r/m8,imm8        2/7      Add immediate byte to r/m byte
+82 /0 /pundoc /pprefixlock /pi386 ib  ADD r/m8,imm8        2/7      Add immediate byte to r/m byte
+81 /0 iw      /pprefixlock            ADD r/m16,imm16      2/7      Add immediate word to r/m word
+81 /0 id      /pprefixlock            ADD r/m32,imm32      2/7      Add immediate dword to r/m dword
+83 /0 ib      /pprefixlock            ADD r/m16,imm8       2/7      Add sign-extended immediate byte
+83 /0 ib      /pprefixlock            ADD r/m32,imm8       2/7      Add sign-extended immediate byte
+00 /r         /pprefixlock            ADD r/m8,r8          2/7      Add byte register to r/m byte
+01 /r         /pprefixlock            ADD r/m16,r16        2/7      Add word register to r/m word
+01 /r         /pprefixlock            ADD r/m32,r32        2/7      Add dword register to r/m dword
+02 /r                                 ADD r8,r/m8          2/6      Add r/m byte to byte register
+03 /r                                 ADD r16,r/m16        2/6      Add r/m word to word register
+03 /r                                 ADD r32,r/m32        2/6      Add r/m dword to dword register
 </PRE>
 
 <H2>Operation</H2>

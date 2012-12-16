@@ -21,8 +21,8 @@ FF   /6                   PUSH r/m32    5        Push memory dword
 50 + rw                   PUSH r16      2        Push register word
 50 + rd                   PUSH r32      2        Push register dword
 6A                        PUSH imm8     2        Push immediate byte
-68                        PUSH imm16    2        Push immediate word
-68                        PUSH imm32    2        Push immediate dword
+68 /pamd64_sign_extends   PUSH imm16    2        Push immediate word
+68 /pamd64_sign_extends   PUSH imm32    2        Push immediate dword
 0E /pi386 /ppush_cs       PUSH CS       2        Push CS
 16 /pi386 /ppush_cs       PUSH SS       2        Push SS
 1E /pi386 /ppush_cs       PUSH DS       2        Push DS
