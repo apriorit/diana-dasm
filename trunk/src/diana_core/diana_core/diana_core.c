@@ -214,6 +214,11 @@ static int InitJmps(DianaGroupInfo * pGroupInfo)
         pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
         return 1;
     }else
+    if (!strcmp(pGroupInfo->m_pName,"jbe"))
+    {
+        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
+        return 1;
+    }else
     if (!strcmp(pGroupInfo->m_pName,"je"))
     {
         pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
