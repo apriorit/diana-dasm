@@ -1440,5 +1440,79 @@ void test_suxx()
         TEST_ASSERT(result.iFullCmdSize == 2);
     }
 
+    // 3. without flag
+    iRes = Diana_ParseCmdOnBuffer(DIANA_MODE32, suxx94, sizeof(suxx94), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT(iRes);
+
+
+    // xrstor
+    static unsigned char suxx95[] = {0x0f, 0xae, 0x28};  // xrstor  [rax]
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64, suxx95, sizeof(suxx95), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "xrstor") == 0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 1);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_RAX);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0);
+    }
+
+    // lfence 
+    static unsigned char suxx96[] = {0x0f, 0xae, 0xe8};  // lfence
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64, suxx96, sizeof(suxx96), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "lfence") == 0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 0);
+    }
+
+    // mfence 
+    static unsigned char suxx97[] = {0x0f, 0xae, 0xf0};  // mfence
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64, suxx97, sizeof(suxx97), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "mfence") == 0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 0);
+    }
+
+    static unsigned char suxx98[] = {0x0f, 0xae, 0x68, 0x10}; // xrstor  [rax+10h]
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64, suxx98, sizeof(suxx98), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "xrstor") == 0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 1);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_index);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.seg_reg == reg_DS);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.reg == reg_RAX);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.index == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispSize == 1);
+        TEST_ASSERT(result.linkedOperands[0].value.rmIndex.dispValue == 0x10);
+    }
+
+    
+    static unsigned char suxx99[] = {0x0f, 0xae, 0xb8, 0x0c, 0x10, 0x00, 0x0f}; //  clflush [rax+0F00100Ch]
+    iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE64, suxx99, sizeof(suxx99), Diana_GetRootLine(), &result, &read);
+    TEST_ASSERT_IF(!iRes)
+    {
+        TEST_ASSERT(pGroupInfo = Diana_GetGroupInfo(result.pInfo->m_lGroupId));
+        TEST_ASSERT(strcmp(pGroupInfo->m_pName, "clflush") == 0);
+        TEST_ASSERT(result.pInfo->m_operandCount == 1);
+        TEST_ASSERT(result.linkedOperands[0].type == diana_memory);
+        TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.seg_reg == reg_DS);
+        TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.reg == reg_RAX);
+        TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.indexed_reg == reg_none);
+        TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.index == 0);
+        TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.dispSize == 4);
+        TEST_ASSERT(result.linkedOperands[0].value.memory.m_index.dispValue == 0x0F00100C);
+    }
 }
 

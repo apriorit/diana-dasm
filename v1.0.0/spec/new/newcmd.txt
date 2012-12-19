@@ -30,7 +30,7 @@ CLGI | 0F 01 DD
 STGI | 0F 01 DC
 INVLPG m8 | 0F 01 /7 /pprivileged /*83
 INVLPGA RAX, ECX | 0F 01 DF /pprivileged
-SWAPGS | 0F 01 F8 /pprivileged 
+SWAPGS | 0F 01 F8 /pprivileged
 RSM | 0F AA /pprivileged
 SALC | D6 /pundoc
 ICEBP | F1 /pundoc
@@ -55,7 +55,6 @@ XGETBV | 0F 01 D0 /pprivileged
 XSETBV | 0F 01 D1 /pprivileged
 EMMS | 0F 77
 FEMMS | 0F 0E
-MFENCE | 0F AE /6
 HINT_NOP r/m16/32/64 | 0F 1F /0
 HINT_NOP r/m16/32/64 | 0F 19 /r
 HINT_NOP r/m16/32/64 | 0F 1A /r
@@ -64,3 +63,8 @@ HINT_NOP r/m16/32/64 | 0F 1C /r
 HINT_NOP r/m16/32/64 | 0F 1D /r
 HINT_NOP r/m16/32/64 | 0F 1E /r
 TEST_CMD | 66 0F /ptest_cmd
+MFENCE | 0F AE F0
+LFENCE | 0F AE E8
+SFENCE | 0F AE F8
+XRSTOR m512byte | 0F AE /5
+CLFLUSH m8 | 0F AE /7

@@ -486,8 +486,12 @@ typedef enum {
     diana_cmd_xchg,
     diana_cmd_xlat,
     diana_cmd_xor,
+    diana_cmd_test_cmd,
+    diana_cmd_xrstor,
+    diana_cmd_lfence,
+    diana_cmd_clflush,
+    diana_cmd_sfence
     // add new commands here:
-    diana_cmd_test_cmd
 
 } DianaCommandId;
 
