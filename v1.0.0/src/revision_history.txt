@@ -1,3 +1,21 @@
+[1.0.0-diana-win32-src] - 116 revision
+
++ added MFENCE/LFENCE/SFENCE/XRSTOR/CLFLUSH
++ improved database format
++ imporved performance
++ fixed mov r15, cr8 | 45 0F 20 C7 added cr8-15, dr8-15
++ fixes LOCK/REP prefixes in DianaProcessor
++ fixed specs for SYSENTER/SYSCALL
++ HINT_NOP tests
++ added hint_nop support and long nops with prefixes, added command ids
++ fixed SLDT/INVLPGA
++ added special flag for privileged instructions
++ added GETSECXGETBV/XSETBVEMMS/FEMMSXSAVE/XRSTOR
++ DianaProcessor: fixed prefix 0x67 for jmp/loop/call
++ added MASKMOVQ/MOVNTQfix PMOVMSKB/MASKMOVDQU/PEXTRW
++ added VMREAD/VMWRITE opcodes
+
+
 [0.5.0-diana-win32-src] - 58 revision
 + amd64 support mode in emulator
 + a lot of fixes in emulator
