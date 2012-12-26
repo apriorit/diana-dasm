@@ -21,5 +21,4 @@ int Diana_Call_movzx(struct _dianaContext * pDianaContext,
 int Diana_Call_mul(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext);
 
-
 #endif

@@ -5,18 +5,18 @@ extern "C"
 }
 
 int Diana_ParseCmdOnBuffer_test(int iMode,
-                           void * pBuffer,
-                           size_t size,
-                           DianaBaseGenObject_type * pInitialLine, // IN
-                           DianaParserResult * pResult,    //OUT
-                           size_t * sizeRead)              // OUT
+                                void * pBuffer,
+                                size_t size,
+                                DianaBaseGenObject_type * pInitialLine, // IN
+                                DianaParserResult * pResult,            // OUT
+                                size_t * sizeRead)                      // OUT
 {
     int iRes = Diana_ParseCmdOnBuffer(iMode,
                                       pBuffer,
                                       size,
-                                      pInitialLine,  // IN
-                                      pResult,       //OUT
-                                      sizeRead);     // OUT
+                                      pInitialLine, // IN
+                                      pResult,      // OUT
+                                      sizeRead);    // OUT
     if (iRes)
         return iRes;
 

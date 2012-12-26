@@ -310,6 +310,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_processor_cmd_internal_xmm.c"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_processor_cmd_j.c"
 				>
 			</File>
@@ -318,7 +322,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_processor_cmd_l_xmm.c"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_processor_cmd_m.c"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_processor_cmd_m_xmm.c"
 				>
 			</File>
 			<File
@@ -351,6 +363,10 @@
 			</File>
 			<File
 				RelativePath=".\diana_processor_core_impl.c"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_processor_core_impl_xmm.c"
 				>
 			</File>
 			<File
@@ -392,6 +408,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_processor_cmd_internal_xmm.h"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_processor_cmd_j.h"
 				>
 			</File>
@@ -400,7 +420,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_processor_cmd_l_xmm.h"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_processor_cmd_m.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_processor_cmd_m_xmm.h"
 				>
 			</File>
 			<File
@@ -436,6 +464,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_processor_core_impl_xmm.h"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_processor_streams.h"
 				>
 			</File>
@@ -448,6 +480,10 @@
 				</File>
 				<File
 					RelativePath=".\diana_processor_specific.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor_specific_xmm.h"
 					>
 				</File>
 			</Filter>

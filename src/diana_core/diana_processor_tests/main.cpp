@@ -20,6 +20,7 @@ extern "C"
 #include "test_processor_o.h"
 #include "test_processor_n.h"
 #include "test_processor_b.h"
+#include "test_processor_m_xmm.h"
 
 void di_gen();
 
@@ -44,5 +45,6 @@ int main()
     test_processor();
     test_processor_flags();
 	test_processor_b();
+    test_processor_m_xmm();
     return 0;
 }

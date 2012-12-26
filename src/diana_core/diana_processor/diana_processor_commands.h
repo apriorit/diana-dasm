@@ -1,7 +1,6 @@
 #ifndef DIANA_PROCESSOR_COMMANDS_H
 #define DIANA_PROCESSOR_COMMANDS_H
 
-
 #define DI_PROC_REGISTER_COMMAND(Name) \
     else if (strcmp(p->m_pName, #Name)==0) \
     {\

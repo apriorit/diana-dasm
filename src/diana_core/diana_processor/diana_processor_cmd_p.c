@@ -373,3 +373,12 @@ int Diana_Call_pusha(struct _dianaContext * pDianaContext,
         return DI_ERROR;
     }
 }
+
+int Diana_Call_pause(struct _dianaContext * pDianaContext,
+                     DianaProcessor * pCallContext)
+{
+	pDianaContext;
+	pCallContext;
+
+    DI_PROC_END
+}

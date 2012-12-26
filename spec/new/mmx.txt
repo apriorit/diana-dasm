@@ -2,7 +2,7 @@ ADDPD xmm1, xmm2/mem128 | 66 0F 58 /r
 ADDPS xmm1, xmm2/mem128 | 0F 58 /r
 ADDSD xmm1, xmm2/mem64 | F2 0F 58 /r
 ADDSS xmm1, xmm2/mem32 | F3 0F 58 /r
-ADDSUBPD xmm1, xmm2/mem128 | 66 0F D0 /r
+ADDSUBPD xmm1, xmm2/mem128 | 66 0F D0 /r /paligned
 ADDSUBPS xmm1, xmm2/mem128 | F2 0F D0 /r
 ANDNPD xmm1, xmm2/mem128 | 66 0F 55 /r
 ANDNPS xmm1, xmm2/mem128 | 0F 55 /r
@@ -57,16 +57,16 @@ MINPD xmm1, xmm2/mem128 | 66 0F 5D /r
 MINPS xmm1, xmm2/mem128 | 0F 5D /r
 MINSD xmm1, xmm2/mem64 | F2 0F 5D /r
 MINSS xmm1, xmm2/mem32 | F3 0F 5D /r
-MOVAPD xmm1, xmm2/mem128 | 66 0F 28 /r
-MOVAPD xmm1/mem128, xmm2 | 66 0F 29 /r
-MOVAPS xmm1, xmm2/mem128 | 0F 28 /r
-MOVAPS xmm1/mem128, xmm2 | 0F 29 /r
+MOVAPD xmm1, xmm2/mem128 | 66 0F 28 /r /paligned
+MOVAPD xmm1/mem128, xmm2 | 66 0F 29 /r /paligned
+MOVAPS xmm1, xmm2/mem128 | 0F 28 /r /paligned
+MOVAPS xmm1/mem128, xmm2 | 0F 29 /r /paligned
 MOVDDUP xmm1, xmm2/mem64 | F2 0F 12 /r
 MOVDQ2Q mmx, xmem64 | F2 0F D6 /r
-MOVDQA xmm1, xmm2/mem128 | 66 0F 6F /r
-MOVDQA xmm1/mem128, xmm2 | 66 0F 7F /r
-MOVDQU xmm1, xmm2/mem128 | F3 0F 6F /r
-MOVDQU xmm1/mem128, xmm2 | F3 0F 7F /r
+MOVDQA xmm1, xmm2/mem128 | 66 0F 6F /r /paligned
+MOVDQA xmm1/mem128, xmm2 | 66 0F 7F /r /paligned
+MOVDQU xmm1, xmm2/mem128 | F3 0F 6F /r /paligned
+MOVDQU xmm1/mem128, xmm2 | F3 0F 7F /r /paligned
 MOVHPD xmm, xmem64 | 66 0F 16 /r
 MOVHPD xmem64, xmm | 66 0F 17 /r
 MOVHPS xmm, xmem64 | 0F 16 /r
@@ -78,9 +78,9 @@ MOVLPS xmem64, xmm | 0F 13 /r
 MOVMSKPD regOnly32, xmem64 | 66 0F 50 /r
 MOVMSKPS regOnly32, xmem64 | 0F 50 /r
 MOVNTQ xmem64, mmx | 0F E7 /r
-MOVNTDQ xmem128, xmm | 66 0F E7 /r
-MOVNTPD xmem128, xmm | 66 0F 2B /r
-MOVNTPS xmem128, xmm | 0F 2B /r
+MOVNTDQ xmem128, xmm | 66 0F E7 /r /paligned
+MOVNTPD xmem128, xmm | 66 0F 2B /r /paligned
+MOVNTPS xmem128, xmm | 0F 2B /r /paligned
 MOVNTSD xmem64, xmm | F2 0F 2B /r
 MOVNTSS xmem32, xmm | F3 0F 2B /r
 MOVQ xmm1, xmm2/mem64 | F3 0F 7E /r

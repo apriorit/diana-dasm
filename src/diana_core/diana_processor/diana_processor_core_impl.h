@@ -12,7 +12,6 @@ typedef struct _DianaRegInfo
     int m_offset;
 }DianaRegInfo;
 
-
 // FLAGS
 #define flag_CF         0x000001
 #define flag_1          0x000002 // 1
@@ -193,7 +192,8 @@ void DianaProcessor_SetValueEx(DianaProcessor * pCallContext,
                                DianaRegInfo * pReg,
                                OPERAND_SIZE value,
                                int size);
-// These functions only for size <= sizeof(*pResult):
+
+// This function only for size <= sizeof(*pResult)
 int DianaProcessor_GetMemValue(DianaProcessor * pThis,
                                OPERAND_SIZE selector,
                                OPERAND_SIZE offset,
@@ -202,6 +202,7 @@ int DianaProcessor_GetMemValue(DianaProcessor * pThis,
                                int flags,
                                DianaUnifiedRegister segReg);
 
+// This function only for size <= sizeof(*pResult)
 int DianaProcessor_SetMemValue(DianaProcessor * pThis,
                                OPERAND_SIZE selector,
                                OPERAND_SIZE offset,
@@ -209,21 +210,26 @@ int DianaProcessor_SetMemValue(DianaProcessor * pThis,
                                OPERAND_SIZE * pResult,
                                int flags,
                                DianaUnifiedRegister segReg);
+
 //-------------
 DianaRegInfo * DianaProcessor_QueryReg(DianaProcessor * pThis, 
                                        DianaUnifiedRegister reg);
 
 OPERAND_SIZE DianaProcessor_GetSignMask(int sizeInBytes);
+
 OPERAND_SIZE DianaProcessor_GetSignMaskSpecifyBit(OPERAND_SIZE sizeInBits);
 
 void DianaProcessor_SetValue(DianaProcessor * pCallContext,
                              DianaUnifiedRegister regId,
                              DianaRegInfo * pReg,
                              OPERAND_SIZE value);
+
 int  DianaProcessor_QueryFlag(DianaProcessor * pThis, 
                               OPERAND_SIZE flag);
+
 void DianaProcessor_SetFlag(DianaProcessor * pThis, 
                             OPERAND_SIZE flag);
+
 void DianaProcessor_ClearFlag(DianaProcessor * pThis, 
                               OPERAND_SIZE flag);
 
@@ -240,6 +246,7 @@ void DianaProcessor_ProcImplInit();
 void DianaProcessor_UpdatePSZ(DianaProcessor * pCallContext,
                               OPERAND_SIZE value,
                               int opSize);
+
 OPERAND_SIZE DianaProcessor_CutValue(OPERAND_SIZE value,
                                      int size);
 
@@ -347,6 +354,7 @@ int DianaProcessor_QueryRdxRegister(int size,
                                     DianaUnifiedRegister * pUsedReg);
 int DianaProcessor_QueryRcxRegister(int size, 
                                     DianaUnifiedRegister * pUsedReg);
+
 #define DI_UPDATE_FLAGS_PSZ(X) \
     pCallContext->m_stateFlags |= DI_PROC_STATE_UPDATE_FLAGS_PSZ;\
     pCallContext->m_stateFlagsToRemove |= DI_PROC_STATE_UPDATE_FLAGS_PSZ;\

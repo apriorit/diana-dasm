@@ -8,39 +8,39 @@
 #include "diana_processor_specific.h"
 
 DianaRegInfo * DianaProcessor_QueryReg(DianaProcessor * pThis, 
-                              DianaUnifiedRegister reg)
+                                       DianaUnifiedRegister reg)
 {
     return pThis->m_registers + reg;
 }
  
 int  DianaProcessor_QueryFlag(DianaProcessor * pThis, 
-                     OPERAND_SIZE flag)
+                              OPERAND_SIZE flag)
 {
-    return (pThis->m_flags.value & flag)? 1 : 0;
+    return (pThis->m_flags.value & flag) ? 1 : 0;
 }
 
 void DianaProcessor_SetFlag(DianaProcessor * pThis, 
-                   OPERAND_SIZE flag)
+                            OPERAND_SIZE flag)
 {
     pThis->m_flags.value |= flag;
 }
  
 void DianaProcessor_ClearFlag(DianaProcessor * pThis, 
-                     OPERAND_SIZE flag)
+                              OPERAND_SIZE flag)
 {
-    pThis->m_flags.value &=  ~flag;
+    pThis->m_flags.value &= ~flag;
 }
 
 void DianaProcessor_SetValue(DianaProcessor * pCallContext,
-                            DianaUnifiedRegister regId,
-                            DianaRegInfo * pReg,
-                            OPERAND_SIZE value)
+                             DianaUnifiedRegister regId,
+                             DianaRegInfo * pReg,
+                             OPERAND_SIZE value)
 {
     DianaProcessor_SetValueEx(pCallContext,
-                                   regId,
-                                   pReg,
-                                   value,
-                                   pReg->m_size);
+                              regId,
+                              pReg,
+                              value,
+                              pReg->m_size);
 }
 
 //---
@@ -96,38 +96,35 @@ int DianaProcessor_ReadMemory(DianaProcessor * pThis,
                               DianaUnifiedRegister segReg)
 {
 	flags;
-
-    return 
-        pThis->m_pMemoryStream->pReadFnc(pThis->m_pMemoryStream,
-                                     selector, 
-                                     offset,
-                                     pBuffer, 
-                                     iBufferSize, 
-                                     readed,
-                                     pThis,
-                                     segReg);
+    return pThis->m_pMemoryStream->pReadFnc(pThis->m_pMemoryStream,
+                                            selector, 
+                                            offset,
+                                            pBuffer, 
+                                            iBufferSize, 
+                                            readed,
+                                            pThis,
+                                            segReg);
                                      
 }
 
 int DianaProcessor_WriteMemory(DianaProcessor * pThis,
-                      OPERAND_SIZE selector,
-                      OPERAND_SIZE offset,
-                      void * pBuffer, 
-                      OPERAND_SIZE iBufferSize, 
-                      OPERAND_SIZE * readed,
-                      int flags,
-                      DianaUnifiedRegister segReg)
+                               OPERAND_SIZE selector,
+                               OPERAND_SIZE offset,
+                               void * pBuffer, 
+                               OPERAND_SIZE iBufferSize, 
+                               OPERAND_SIZE * readed,
+                               int flags,
+                               DianaUnifiedRegister segReg)
 {
 	flags;
-    return 
-        pThis->m_pMemoryStream->pWriteFnc(pThis->m_pMemoryStream,
-                                     selector,
-                                     offset,
-                                     pBuffer, 
-                                     iBufferSize, 
-                                     readed,
-                                     pThis,
-                                     segReg);
+    return pThis->m_pMemoryStream->pWriteFnc(pThis->m_pMemoryStream,
+                                             selector,
+                                             offset,
+                                             pBuffer, 
+                                             iBufferSize, 
+                                             readed,
+                                             pThis,
+                                             segReg);
                                      
 }
 
@@ -177,7 +174,6 @@ int DianaProcessor_CalcIndex(struct _dianaContext * pDianaContext,
                                                               pIndex->reg));
     }
 
-    
     if (pIndex->indexed_reg != reg_none)
     {
         indexedReg = DianaProcessor_GetValue(pCallContext, 
@@ -194,7 +190,7 @@ int DianaProcessor_CalcIndex(struct _dianaContext * pDianaContext,
 		reg += pCallContext->m_result.iFullCmdSize;
 	}
 
-    address = reg + indexedReg*index + dispValue;
+    address = reg + indexedReg * index + dispValue;
 
     selector = DianaProcessor_GetValue(pCallContext, 
                                        DianaProcessor_QueryReg(pCallContext, 
@@ -253,13 +249,14 @@ int Diana_ProcessorSetGetOperand_index(struct _dianaContext * pDianaContext,
                                       pRmIndex,
                                       &selector,
                                       &address))
+
     if (bSet)
     {
         if (pCallContext->m_stateFlags & DI_PROC_STATE_UPDATE_FLAGS_PSZ)
         {
             DianaProcessor_UpdatePSZ(pCallContext, 
-                                    *pResult,
-                                    usedSize);
+                                     *pResult,
+                                     usedSize);
         }
         return DianaProcessor_SetMemValue(pCallContext, 
                                           selector,
@@ -281,11 +278,11 @@ int Diana_ProcessorSetGetOperand_index(struct _dianaContext * pDianaContext,
 }
 
 int Diana_ProcessorGetOperand_index_ex(struct _dianaContext * pDianaContext,
-                                          DianaProcessor * pCallContext,
-                                          int usedSize,
-                                          OPERAND_SIZE * pAddress,
-                                          OPERAND_SIZE * pResult,
-                                          DianaRmIndex * pRmIndex)
+                                       DianaProcessor * pCallContext,
+                                       int usedSize,
+                                       OPERAND_SIZE * pAddress,
+                                       OPERAND_SIZE * pResult,
+                                       DianaRmIndex * pRmIndex)
 {
     OPERAND_SIZE selector = GET_REG_DS;
     DI_CHECK(DianaProcessor_CalcIndex(pDianaContext,
@@ -305,12 +302,12 @@ int Diana_ProcessorGetOperand_index_ex(struct _dianaContext * pDianaContext,
 
 
 int Diana_ProcessorGetOperand_index_ex2(struct _dianaContext * pDianaContext,
-                                          DianaProcessor * pCallContext,
-                                          int usedSize,
-                                          OPERAND_SIZE * pAddress,
-                                          OPERAND_SIZE * pResult,
-                                          DianaRmIndex * pRmIndex,
-                                          OPERAND_SIZE * pSelector)
+                                        DianaProcessor * pCallContext,
+                                        int usedSize,
+                                        OPERAND_SIZE * pAddress,
+                                        OPERAND_SIZE * pResult,
+                                        DianaRmIndex * pRmIndex,
+                                        OPERAND_SIZE * pSelector)
 {
     *pSelector = GET_REG_DS;
     DI_CHECK(DianaProcessor_CalcIndex(pDianaContext,
@@ -370,30 +367,28 @@ int DianaProcessor_SetGetOperand(struct _dianaContext * pDianaContext,
     switch(pLinkedOp->type)
     {
         case diana_register:
-
             return Diana_ProcessorSetGetOperand_register(pDianaContext,
-                                                            pCallContext,
-                                                            pLinkedOp,
-                                                            pResult,
-                                                            bSet);
-
-
+                                                         pCallContext,
+                                                         pLinkedOp,
+                                                         pResult,
+                                                         bSet);
 
         case diana_index:
             return Diana_ProcessorSetGetOperand_index(pDianaContext,
-                                                            pCallContext,
-                                                            pLinkedOp->usedSize,
-                                                            pResult,
-                                                            bSet,
-                                                            &pLinkedOp->value.rmIndex,
-                                                            flags);
+                                                      pCallContext,
+                                                      pLinkedOp->usedSize,
+                                                      pResult,
+                                                      bSet,
+                                                      &pLinkedOp->value.rmIndex,
+                                                      flags);
 
         case diana_imm:
             return Diana_ProcessorSetGetOperand_imm(pDianaContext,
-                                                            pCallContext,
-                                                            pLinkedOp,
-                                                            pResult,
-                                                            bSet);
+                                                    pCallContext,
+                                                    pLinkedOp,
+                                                    pResult,
+                                                    bSet);
+
         case diana_call_ptr:
             break;
         case diana_rel:
@@ -408,11 +403,9 @@ int DianaProcessor_SetGetOperand(struct _dianaContext * pDianaContext,
             return DI_ERROR;
     }
 
-
     Diana_FatalBreak();
     return DI_ERROR;
 }
-
 
 int DianaProcessor_SetCOA_Add(struct _dianaContext * pDianaContext,
                               DianaProcessor * pCallContext,

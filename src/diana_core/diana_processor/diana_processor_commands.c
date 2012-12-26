@@ -7,20 +7,20 @@
 #include "diana_processor_cmd_i.h"
 #include "diana_processor_cmd_j.h"
 #include "diana_processor_cmd_l.h"
+#include "diana_processor_cmd_l_xmm.h"
 #include "diana_processor_cmd_m.h"
+#include "diana_processor_cmd_m_xmm.h"
 #include "diana_processor_cmd_n.h"
 #include "diana_processor_cmd_p.h"
 #include "diana_processor_cmd_r.h"
 #include "diana_processor_cmd_s.h"
 #include "diana_processor_cmd_s2.h"
 
-
 #include "diana_proc_gen.h"
 #include "diana_gen.h"
 #include "string.h"
 #include "diana_core_gen_tags.h"
 #include "diana_processor_cmd_internal.h"
-
 
 int Diana_Call_xor(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext)
@@ -388,6 +388,7 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(pop)
     DI_PROC_REGISTER_COMMAND(popa)
     DI_PROC_REGISTER_COMMAND(pusha)
+    DI_PROC_REGISTER_COMMAND(pause)
 
     DI_PROC_REGISTER_COMMAND(rcl)
     DI_PROC_REGISTER_COMMAND(rcr)
@@ -437,6 +438,22 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(retf)
 
     DI_PROC_REGISTER_COMMAND(bswap)
+
+    DI_PROC_REGISTER_COMMAND(lddqu)
+    DI_PROC_REGISTER_COMMAND(movups)
+    DI_PROC_REGISTER_COMMAND(movupd)
+    DI_PROC_REGISTER_COMMAND(movdqu)
+    DI_PROC_REGISTER_COMMAND(movaps)
+    DI_PROC_REGISTER_COMMAND(movapd)
+    DI_PROC_REGISTER_COMMAND(movdqa)
+    DI_PROC_REGISTER_COMMAND(movntps)
+    DI_PROC_REGISTER_COMMAND(movntpd)
+    DI_PROC_REGISTER_COMMAND(movntdq)
+    DI_PROC_REGISTER_COMMAND(movss)
+    DI_PROC_REGISTER_COMMAND(movlpd)
+    DI_PROC_REGISTER_COMMAND(movlps)
+    DI_PROC_REGISTER_COMMAND(movsd)
+    DI_PROC_REGISTER_COMMAND(movddup)
 	#pragma warning( pop )
 }
 
