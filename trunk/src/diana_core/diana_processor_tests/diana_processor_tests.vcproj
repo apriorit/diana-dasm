@@ -378,6 +378,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\test_processor_m_xmm.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\test_processor_n.cpp"
 				>
 			</File>
@@ -449,6 +453,10 @@
 			</File>
 			<File
 				RelativePath=".\test_processor_m.h"
+				>
+			</File>
+			<File
+				RelativePath=".\test_processor_m_xmm.h"
 				>
 			</File>
 			<File

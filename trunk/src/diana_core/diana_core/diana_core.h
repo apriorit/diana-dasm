@@ -21,7 +21,6 @@ typedef enum
  reg_TR0,   reg_TR1,   reg_TR2,   reg_TR3,   reg_TR4,   reg_TR5,   reg_TR6,   reg_TR7,
  reg_IP,
 
-
  // x64 part
  reg_RAX,   reg_RCX,   reg_RDX,   reg_RBX,   reg_RSP,   reg_RBP,   reg_RSI,   reg_RDI,
  reg_SIL,   reg_DIL,   reg_BPL,   reg_SPL,
@@ -31,42 +30,44 @@ typedef enum
  reg_R8B,   reg_R9B,   reg_R10B,  reg_R11B,  reg_R12B,  reg_R13B,  reg_R14B,  reg_R15B,
  reg_RIP,
 
- reg_MM0, reg_MM1, reg_MM2, reg_MM3, reg_MM4, reg_MM5, reg_MM6, reg_MM7,
- reg_MM8, reg_MM9, reg_MM10, reg_MM11, reg_MM12, reg_MM13, reg_MM14, reg_MM15,
+ reg_MM0,   reg_MM1,   reg_MM2,   reg_MM3,   reg_MM4,   reg_MM5,   reg_MM6,   reg_MM7,
+ reg_MM8,   reg_MM9,   reg_MM10,  reg_MM11,  reg_MM12,  reg_MM13,  reg_MM14,  reg_MM15,
 
- reg_XMM0, reg_XMM1, reg_XMM2, reg_XMM3, reg_XMM4, reg_XMM5, reg_XMM6, reg_XMM7,
- reg_XMM8, reg_XMM9, reg_XMM10, reg_XMM11, reg_XMM12, reg_XMM13, reg_XMM14, reg_XMM15,
+ reg_XMM0,  reg_XMM1,  reg_XMM2,  reg_XMM3,  reg_XMM4,  reg_XMM5,  reg_XMM6,  reg_XMM7,
+ reg_XMM8,  reg_XMM9,  reg_XMM10, reg_XMM11, reg_XMM12, reg_XMM13, reg_XMM14, reg_XMM15,
 
  reg_fpu_ST0, reg_fpu_ST1, reg_fpu_ST2, reg_fpu_ST3, reg_fpu_ST4, reg_fpu_ST5, reg_fpu_ST6, reg_fpu_ST7,
 
- reg_CR8,   reg_CR9,   reg_CR10,   reg_CR11,   reg_CR12,   reg_CR13,   reg_CR14,   reg_CR15,
- reg_DR8,   reg_DR9,   reg_DR10,   reg_DR11,   reg_DR12,   reg_DR13,   reg_DR14,   reg_DR15,
- count_of_DianaUnifiedRegister
+ reg_CR8,   reg_CR9,   reg_CR10,  reg_CR11,  reg_CR12,  reg_CR13,  reg_CR14,  reg_CR15,
+ reg_DR8,   reg_DR9,   reg_DR10,  reg_DR11,  reg_DR12,  reg_DR13,  reg_DR14,  reg_DR15,
 
+ count_of_DianaUnifiedRegister
 }DianaUnifiedRegister;
 
 #define DI_VALUE_FLAG_CMD_REVERSE           ((DI_CHAR)0x80)
 #define DI_VALUE_FLAG_CMD_MASK              ((DI_CHAR)0x7F)
 
 // flags -> DI_UINT32 m_flags
-#define DI_FLAG_CMD_SUPPORTS_IMM64          0x0001
-#define DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64   0x0002
-#define DI_FLAG_CMD_AMD_INVALID             0x0004
-#define DI_FLAG_CMD_FPU_I                   0x0008
-#define DI_FLAG_CMD_IGNORE_REX_PREFIX       0x0010
-#define DI_FLAG_CMD_I386                    0x0020
-#define DI_FLAG_CMD_AMD64                   0x0040
-#define DI_FLAG_CMD_AMD64_SIGN_EXTENDS      0x0080
-#define DI_FLAG_CMD_PUSH_SEG                0x0100
-#define DI_FLAG_CMD_UNDOCUMENTED            0x0200
-#define DI_FLAG_CMD_PRIVILEGED              0x0400
-#define DI_FLAG_CMD_PREFIX_LOCK             0x0800
+#define DI_FLAG_CMD_SUPPORTS_IMM64          0x00000001
+#define DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64   0x00000002
+#define DI_FLAG_CMD_AMD_INVALID             0x00000004
+#define DI_FLAG_CMD_FPU_I                   0x00000008
+#define DI_FLAG_CMD_IGNORE_REX_PREFIX       0x00000010
+#define DI_FLAG_CMD_I386                    0x00000020
+#define DI_FLAG_CMD_AMD64                   0x00000040
+#define DI_FLAG_CMD_AMD64_SIGN_EXTENDS      0x00000080
+#define DI_FLAG_CMD_PUSH_SEG                0x00000100
+#define DI_FLAG_CMD_UNDOCUMENTED            0x00000200
+#define DI_FLAG_CMD_PRIVILEGED              0x00000400
+#define DI_FLAG_CMD_PREFIX_LOCK             0x00000800
 
-#define DI_FLAG_CMD_POSTBYTE_USED           0x01000
-#define DI_FLAG_CMD_REGISTER_AS_OPCODE      0x02000
-#define DI_FLAG_CMD_HAS32BIT_ANALOG         0x04000
-#define DI_FLAG_CMD_IS_TRUE_PREFIX          0x08000
-#define DI_FLAG_CMD_TEST_MODE_ONLY          0x10000
+#define DI_FLAG_CMD_POSTBYTE_USED           0x00001000
+#define DI_FLAG_CMD_REGISTER_AS_OPCODE      0x00002000
+#define DI_FLAG_CMD_HAS32BIT_ANALOG         0x00004000
+#define DI_FLAG_CMD_IS_TRUE_PREFIX          0x00008000
+#define DI_FLAG_CMD_TEST_MODE_ONLY          0x00010000
+
+#define DI_FLAG_CMD_MUST_BE_ALIGNED         0x00020000
 
 // index fields
 #define DI_UINT16         unsigned short
@@ -79,13 +80,13 @@ typedef enum
 #define DI_SIGNED_CHAR    char
 #define DI_CHAR_NULL      ((unsigned char)(-1))
 
-#define OPERAND_SIZE  unsigned long long
+#define OPERAND_SIZE         unsigned long long
 #define OPERAND_SIZE_SIGNED  long long
 
 #define DI_FULL_CHAR           unsigned int
-#define DI_FULL_CHAR_NULL           ((unsigned int)(-1))
-#define DI_MAX_OPERANDS_COUNT   (4)
-#define DI_MAX_OPCODE_COUNT   (4)
+#define DI_FULL_CHAR_NULL      ((unsigned int)(-1))
+#define DI_MAX_OPERANDS_COUNT  (4)
+#define DI_MAX_OPCODE_COUNT    (4)
 
 #define DI_CACHE_RESERVED      2
 #define DI_CACHE_SIZE (DI_MAX_OPCODE_COUNT + 1 + DI_CACHE_RESERVED)
@@ -243,7 +244,6 @@ typedef union _dianaOperandValue
     DianaRel rel;
     // memory
     DianaMemory memory;
-
 }DianaOperandValue;
 
 typedef struct _dianaLinkedOperand
@@ -283,6 +283,7 @@ typedef struct _dianaParserResult
 #define DI_INVALID_INPUT            ((int)-9)
 #define DI_INVALID_OPCODE           ((int)-10)
 #define DI_END_OF_STREAM            ((int)-11)
+#define DI_GP                       ((int)-12)
 
 #define DI_SUCCESS ((int)0)
 
@@ -416,7 +417,6 @@ void Diana_AllocatorInit(Diana_Allocator * pAllocator,
 
 
 void Diana_CacheEatOneSafe(DianaContext * pContext);
-
 
 #define DIANA_CONTAINING_RECORD(address, type, field) ((type *)( \
                                                   (char*)(address) - \

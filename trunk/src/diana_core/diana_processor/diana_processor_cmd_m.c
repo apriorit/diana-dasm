@@ -201,7 +201,8 @@ int Diana_Call_mul64(struct _dianaContext * pDianaContext,
 
     mul64( &r0, &r1, rax, argument );
 
-    if( r1 ) {
+    if( r1 )
+    {
         SET_FLAG_CF;
         SET_FLAG_OF;
     }

@@ -29,7 +29,6 @@ int DianaProcessor_GetMemValue(DianaProcessor * pThis,
     return status;
 }
 
-
 int DianaProcessor_SetMemValue(DianaProcessor * pThis,
                                OPERAND_SIZE selector,
                                OPERAND_SIZE offset,
@@ -44,13 +43,13 @@ int DianaProcessor_SetMemValue(DianaProcessor * pThis,
 	flags;
 
     status = pThis->m_pMemoryStream->pWriteFnc(pThis->m_pMemoryStream, 
-                               selector,
-                               offset, 
-                               pResult, 
-                               size, 
-                               &wrote,
-                               pThis,
-                               segReg);
+                                               selector,
+                                               offset, 
+                                               pResult, 
+                                               size, 
+                                               &wrote,
+                                               pThis,
+                                               segReg);
     DI_CHECK(status);
 
     if (wrote != size)
@@ -59,7 +58,6 @@ int DianaProcessor_SetMemValue(DianaProcessor * pThis,
     return status;
 }
 
-//---
 void DianaProcessor_SetValueEx(DianaProcessor * pCallContext,
                                DianaUnifiedRegister regId,
                                DianaRegInfo * pReg,
@@ -88,13 +86,12 @@ void DianaProcessor_SetValueEx(DianaProcessor * pCallContext,
         UPDATE_PSZ(*(unsigned int*)pStart, 0x80000000UL);
         return;
     case 8:
-        *(OPERAND_SIZE*)pStart = (OPERAND_SIZE)value; 
+        *(OPERAND_SIZE*)pStart = (OPERAND_SIZE)value;
         UPDATE_PSZ(*(OPERAND_SIZE*)pStart, 0x8000000000000000ULL);
-        return;    
+        return;
     }
     Diana_FatalBreak();
 }
-
 
 OPERAND_SIZE DianaProcessor_GetValueEx(DianaProcessor * pCallContext,
                                        DianaRegInfo * pReg,
@@ -115,6 +112,7 @@ OPERAND_SIZE DianaProcessor_GetValueEx(DianaProcessor * pCallContext,
     Diana_FatalBreak();
     return 0;
 }
+
 OPERAND_SIZE DianaProcessor_GetValue(DianaProcessor * pCallContext,
                                      DianaRegInfo * pReg)
 {

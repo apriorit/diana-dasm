@@ -55,9 +55,12 @@ int Diana_Call_shl(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
-    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) )
+    {
         src &= 0x3FULL;
-    } else {
+    }
+    else
+    {
         src &= 0x1FULL;
     }
     if (!src)
@@ -125,9 +128,12 @@ int Diana_Call_sar(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src);
     DI_MEM_GET_DEST(dest);
 
-    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) )
+    {
         src &= 0x3FULL;
-    } else {
+    }
+    else
+    {
         src &= 0x1FULL;
     }
     if (!src)
@@ -230,9 +236,12 @@ int Diana_Call_shld(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src1);
     DI_MEM_GET_DEST(dest);
     
-    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) )
+    {
         src2 &= 0x3FULL;
-    } else {
+    }
+    else
+    {
         src2 &= 0x1FULL;
     }
     if (!src2)
@@ -248,7 +257,8 @@ int Diana_Call_shld(struct _dianaContext * pDianaContext,
     for(i = 0; i < src2; ++i)
     {
         // hack to act like x86 SHLD when count > 16
-        if( dest_size == 2 && i > 0 && i % 16 == 0 ) {
+        if( dest_size == 2 && i > 0 && i % 16 == 0 )
+        {
             // when count > 16 actually shifting op1:op2:op2 << count,
             // it is the same as shifting op2:op2 by count-16
             DI_MEM_GET_DEST(src1);
@@ -306,9 +316,12 @@ int Diana_Call_shr(struct _dianaContext * pDianaContext,
     DI_MEM_GET_DEST(dest);
 
     original = dest;
-    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) )
+    {
         src &= 0x3FULL;
-    } else {
+    }
+    else
+    {
         src &= 0x1FULL;
     }
     if (!src)
@@ -372,9 +385,12 @@ int Diana_Call_shrd(struct _dianaContext * pDianaContext,
     DI_MEM_GET_SRC(src1);
     DI_MEM_GET_DEST(dest);
 
-    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) ) {
+    if( pDianaContext->iAMD64Mode == 1 && DI_REX_HAS_FLAG_W( pDianaContext->iRexPrefix ) )
+    {
         src2 &= 0x3FULL;
-    } else {
+    }
+    else
+    {
         src2 &= 0x1FULL;
     }
     if (!src2)

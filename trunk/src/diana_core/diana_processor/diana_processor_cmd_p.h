@@ -24,4 +24,7 @@ int Diana_Call_popf(struct _dianaContext * pDianaContext,
 int Diana_Call_pusha32(struct _dianaContext * pDianaContext,
                        DianaProcessor * pCallContext);
 
+int Diana_Call_pause(struct _dianaContext * pDianaContext,
+                     DianaProcessor * pCallContext);
+
 #endif

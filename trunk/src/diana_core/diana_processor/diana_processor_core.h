@@ -3,6 +3,7 @@
 
 
 #include "diana_processor_core_impl.h"
+#include "diana_processor_core_impl_xmm.h"
 #include "diana_core.h"
 
 
