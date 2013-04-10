@@ -1,6 +1,7 @@
 #include "diana_core_utils.h"
 #include "string.h"
 
+// extern, uses at commmon.c
 DianaUnifiedRegister g_diana_regsAmd8[4] = {reg_SPL, reg_BPL, reg_SIL, reg_DIL};
 
 static

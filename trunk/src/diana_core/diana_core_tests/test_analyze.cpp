@@ -5,7 +5,7 @@ extern "C"
 }
 
 
-struct TestStream:public DianaAnalyzeObserver
+struct TestStream:public DianaMovableReadStream
 {
     OPERAND_SIZE m_base;
     OPERAND_SIZE m_current;
@@ -174,9 +174,13 @@ void test_analyzer1()
     size_t start = 0;
 
     TestStream stream((OPERAND_SIZE)code, start, sizeof(code));
-    DianaAnalyzeObserver_Init(&stream, 
-                              DianaRead, 
-                              DianaAnalyzeMoveTo,
+    DianaMovableReadStream_Init(&stream,
+                                DianaRead,
+                                DianaAnalyzeMoveTo);
+    
+    DianaAnalyzeObserver observer;
+    DianaAnalyzeObserver_Init(&observer, 
+                              &stream,
                               DianaConvertAddressToRelative,
                               DianaAddSuspectedDataAddress);
     Diana_InstructionsOwner owner;
@@ -184,7 +188,7 @@ void test_analyzer1()
     TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
 
     TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
-                                                &stream,
+                                                &observer,
                                                 DIANA_MODE64,
                                                 start,
                                                 maxOffset));
@@ -225,12 +229,13 @@ void test_analyzer2()
                             };
 
     IntructionInfo instructions[] =   
-                        {{0,               0,                           0},
-                         {5,               0,                           0},
-                         {10,               0,                        0},
-                         {15,              "22",                        0},
+                        {{0,               0,                        0},
+                         {5,            "24",                        0},
+                         {10,              0,                        0},
+                         {15,           "22",                        0},
                          {17,              0,                        0},
-                         {22,              0,                        "15"},
+                         {22,              0,                     "15"},
+                         {23,              0,                        0},
     };
 
     const int instructionsCount = sizeof(instructions)/sizeof(instructions[0]);
@@ -240,17 +245,22 @@ void test_analyzer2()
     size_t start = 0;
 
     TestStream stream((OPERAND_SIZE)code, start, sizeof(code));
-    DianaAnalyzeObserver_Init(&stream, 
+    DianaMovableReadStream_Init(&stream, 
                               DianaRead, 
-                              DianaAnalyzeMoveTo,
+                              DianaAnalyzeMoveTo);
+
+    DianaAnalyzeObserver observer;
+    DianaAnalyzeObserver_Init(&observer, 
+                              &stream,
                               DianaConvertAddressToRelative,
                               DianaAddSuspectedDataAddress);
+
     Diana_InstructionsOwner owner;
 
     TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
 
     TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
-                                                &stream,
+                                                &observer,
                                                 DIANA_MODE64,
                                                 start,
                                                 maxOffset));
@@ -274,5 +284,5 @@ void test_analyzer2()
 void test_analyze()
 {
     test_analyzer1();
-   // test_analyzer2();
+    test_analyzer2();
 }

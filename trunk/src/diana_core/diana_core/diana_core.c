@@ -36,7 +36,24 @@ static int ProxyDianaReadFnc(void * pThisIn, void * pBuffer, int iBufferSize, in
     }
 }
 
+int DianaExactRead(DianaReadStream * pThis,
+                   void * pBuffer,
+                   int iBufferSize)
+{
+    int read = 0;
+    DI_CHECK(pThis->pReadFnc(pThis, pBuffer, iBufferSize, &read));
+    if (read != iBufferSize)
+        return DI_END_OF_STREAM;
+    return DI_SUCCESS;
+}
 
+void DianaMovableReadStream_Init(DianaMovableReadStream * pStream,
+                                 DianaRead_fnc pReadFnc, 
+                                 DianaAnalyzeMoveTo_fnc pMoveTo)
+{
+    pStream->parent.pReadFnc = pReadFnc;
+    pStream->pMoveTo = pMoveTo;
+}
 int Diana_ParseCmd(DianaContext * pContext, //IN
                    DianaBaseGenObject_type * pInitialLine,  // IN
                    DianaReadStream * readStream,    // IN
