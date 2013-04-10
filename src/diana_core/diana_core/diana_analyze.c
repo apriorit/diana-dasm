@@ -16,13 +16,11 @@ typedef struct _DianaAnalyzeSession
 }DianaAnalyzeSession;
 
 void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
-                               DianaRead_fnc pReadFnc,
-                               DianaAnalyzeMoveTo_fnc pMoveFnc,
+                               DianaMovableReadStream * pStream,
                                ConvertAddressToRelative_fnc pConvertAddress,
                                AddSuspectedDataAddress_fnc pSuspectedDataAddress)
 {
-    pThis->m_stream.pReadFnc = pReadFnc;
-    pThis->m_pMoveTo = pMoveFnc;
+    pThis->m_pStream = pStream;
     pThis->m_pConvertAddress = pConvertAddress;
     pThis->m_pSuspectedDataAddress = pSuspectedDataAddress;
 }
@@ -453,7 +451,7 @@ int SwitchToLastState(DianaAnalyzeSession * pSession,
 {
     DI_CHECK(Diana_Stack_Pop(&pSession->stack, pCurRouteInfo));
     *pOffset = pCurRouteInfo->startOffset;
-    DI_CHECK(pSession->pObserver->m_pMoveTo(pSession->pObserver, pCurRouteInfo->startOffset));
+    DI_CHECK(pSession->pObserver->m_pStream->pMoveTo(pSession->pObserver->m_pStream, pCurRouteInfo->startOffset));
     Diana_ClearCache(&pSession->context);
     return DI_SUCCESS;
 }
@@ -544,7 +542,7 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
 
         iRes = Diana_ParseCmd(&pSession->context,
                               Diana_GetRootLine(),
-                              &pSession->pObserver->m_stream,
+                              &pSession->pObserver->m_pStream->parent,
                               &pSession->result);
 
         offset += pSession->result.iFullCmdSize;
@@ -559,8 +557,8 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
             }
 
             offset = prevOffset + 1;
-            DI_CHECK(pSession->pObserver->m_pMoveTo(pSession->pObserver, 
-                                                    offset));
+            DI_CHECK(pSession->pObserver->m_pStream->pMoveTo(pSession->pObserver->m_pStream, 
+                                                             offset));
             Diana_ClearCache(&pSession->context);
 
             continue;

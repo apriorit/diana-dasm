@@ -46,7 +46,7 @@ typedef struct _DIANA_IMAGE_NT_HEADERS
     char                        Signature[4];
     DIANA_IMAGE_FILE_HEADER     FileHeader;
     //DIANA_IMAGE_OPTIONAL_HEADER OptionalHeader;
-} 
+}
 DIANA_IMAGE_NT_HEADERS, *PDIANA_IMAGE_NT_HEADERS;
 
 

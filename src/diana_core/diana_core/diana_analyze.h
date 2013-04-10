@@ -48,15 +48,13 @@ typedef int (* AddSuspectedDataAddress_fnc)(void * pThis,
                                             OPERAND_SIZE address);
 typedef struct _dianaAnalyzeObserver
 {
-    DianaReadStream m_stream;
-    DianaAnalyzeMoveTo_fnc m_pMoveTo;
+    DianaMovableReadStream * m_pStream;
     ConvertAddressToRelative_fnc m_pConvertAddress;
     AddSuspectedDataAddress_fnc m_pSuspectedDataAddress;
 }DianaAnalyzeObserver;
 
 void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
-                               DianaRead_fnc pReadFnc,
-                               DianaAnalyzeMoveTo_fnc pMoveFnc,
+                               DianaMovableReadStream * pStream,
                                ConvertAddressToRelative_fnc pConvertAddress,
                                AddSuspectedDataAddress_fnc pSuspectedDataAddress);
 
