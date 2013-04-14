@@ -18,7 +18,7 @@ static unsigned char lea6[] = {0x67, 0x66, 0x8D, 0x01};             // lea     a
 static unsigned char lea7[] = {0x67, 0x66, 0x8D, 0xBD, 0x40, 0xFF}; // lea         di,[di+0000h] 
 static unsigned char lea8[] = {0x67, 0x45, 0x8d, 0x31};             // lea     r14d,[r9d]
 
-void test_lea()
+static void test_lea_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -194,4 +194,9 @@ void test_lea()
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.index == 0);
         TEST_ASSERT(result.linkedOperands[1].usedSize == 4);
     }
+}
+
+void test_lea()
+{
+    DIANA_TEST(test_lea_impl());
 }

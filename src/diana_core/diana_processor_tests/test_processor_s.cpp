@@ -3,7 +3,7 @@
 #include "test_processor_impl.h"
 #include "vector"
 
-void test_processor_set()
+static void test_processor_set()
 {
     // set al
     unsigned char code[] = {0x0F, 0x97, 0xC0,
@@ -28,7 +28,7 @@ void test_processor_set()
 
 }
 
-void test_processor_sahf()
+static void test_processor_sahf()
 {
     // sahf
     unsigned char code[] = {0x9E};
@@ -41,7 +41,7 @@ void test_processor_sahf()
     TEST_ASSERT(GET_REG_RIP == 1);
 }
 
-void test_processor_sal()
+static void test_processor_sal()
 {
     // shl         eax,1
     unsigned char code[] = {0xD1, 0xE0, 0xD1, 0xE0};
@@ -68,7 +68,7 @@ void test_processor_sal()
     TEST_ASSERT(GET_FLAG_PF);
 }
 
-void test_processor_sar()
+static void test_processor_sar()
 {
     // sar         eax,1
     unsigned char code[] = {0xD1, 0xF8, 0xD1, 0xF8};
@@ -95,7 +95,7 @@ void test_processor_sar()
     TEST_ASSERT(GET_FLAG_PF);
 }
 
-void test_processor_sar2()
+static void test_processor_sar2()
 {
     // sar         eax,5 
     unsigned char code[] = {0xC1, 0xF8, 0x05};
@@ -111,8 +111,7 @@ void test_processor_sar2()
     TEST_ASSERT(rax == 0x1);
 }
 
-
-void test_processor_shld()
+static void test_processor_shld()
 {
     // shld        ebx,eax,1 
     unsigned char code[] = {0x0F, 0xA4, 0xC3, 0x01};
@@ -135,7 +134,7 @@ void test_processor_shld()
     TEST_ASSERT(rax == 0xC0000000);
 }
 
-void test_processor_shld2()
+static void test_processor_shld2()
 {
     // shld        ebx,eax,1 
     unsigned char code[] = {0x0F, 0xA4, 0xC3, 0x1f};
@@ -159,8 +158,7 @@ void test_processor_shld2()
     TEST_ASSERT(rax == 0xC0000000);
 }
 
-
-void test_processor_shr()
+static void test_processor_shr()
 {
     // shr         eax,1
     unsigned char code[] = {0xD1, 0xE8};
@@ -179,8 +177,7 @@ void test_processor_shr()
     TEST_ASSERT(GET_FLAG_PF);
 }
 
-
-void test_processor_shrd()
+static void test_processor_shrd()
 {
     // shrd         ebx, eax,1
     unsigned char code[] = {0x0F, 0xAC, 0xC3, 0x01,
@@ -228,7 +225,7 @@ void test_processor_shrd()
     TEST_ASSERT(!GET_FLAG_OF);
 }
 
-void test_processor_shrd2()
+static void test_processor_shrd2()
 {
     // shrd         ebx, eax,1
     unsigned char code[] = {0x0F, 0xAC, 0xd0, 0x18};
@@ -243,7 +240,7 @@ void test_processor_shrd2()
     TEST_ASSERT(GET_FLAG_CF);
 }
 
-void test_processor_scas()
+static void test_processor_scas()
 {
     // repz scasb   al, byte ptr es:[edi] 
     unsigned char code[] = {0xF2, 0xAE, 1, 2};
@@ -268,8 +265,7 @@ void test_processor_scas()
     TEST_ASSERT(proc.GetSelf()->m_flags.value == 0x00000246);
 }
 
-
-void test_processor_scas2()
+static void test_processor_scas2()
 {
     // repe scas   word ptr es:[edi] 
     unsigned char code[] = {0xF3, 0x66, 0xAF, 0, 0, 1, 2};
@@ -295,7 +291,7 @@ void test_processor_scas2()
     TEST_ASSERT(proc.GetSelf()->m_flags.value == 0x00000297);
 }
 
-void test_processor_stos()
+static void test_processor_stos()
 {
     // rep stos 
     unsigned char code[] = {0xF3, 0xAA, 0, 0, 0};
@@ -315,8 +311,7 @@ void test_processor_stos()
     TEST_ASSERT(memcmp(code, etalon, sizeof(etalon)) == 0);
 }
 
-
-void test_processor_stos2()
+static void test_processor_stos2()
 {
     // rep stos 
     unsigned char code[] = {0xF3, 0xAB, 0, 0, 0};
@@ -376,20 +371,20 @@ static void test_processor_smsw()
 
 void test_processor_s()
 {
-    test_processor_set();
-    test_processor_sahf();
-    test_processor_sal();
-    test_processor_sar();
-    test_processor_sar2();
-    test_processor_shld();
-    test_processor_shld2();
-    test_processor_shr();
-    test_processor_shrd2();
-    test_processor_shrd();
-    test_processor_scas();
-    test_processor_scas2();
-    test_processor_stos();
-    test_processor_stos2();
-	test_processor_seq64();
+    DIANA_TEST(test_processor_set());
+    DIANA_TEST(test_processor_sahf());
+    DIANA_TEST(test_processor_sal());
+    DIANA_TEST(test_processor_sar());
+    DIANA_TEST(test_processor_sar2());
+    DIANA_TEST(test_processor_shld());
+    DIANA_TEST(test_processor_shld2());
+    DIANA_TEST(test_processor_shr());
+    DIANA_TEST(test_processor_shrd2());
+    DIANA_TEST(test_processor_shrd());
+    DIANA_TEST(test_processor_scas());
+    DIANA_TEST(test_processor_scas2());
+    DIANA_TEST(test_processor_stos());
+    DIANA_TEST(test_processor_stos2());
+	DIANA_TEST(test_processor_seq64());
 	// FIXME test_processor_smsw();
 }

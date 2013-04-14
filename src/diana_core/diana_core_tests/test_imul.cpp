@@ -12,7 +12,7 @@ unsigned char imul[] = {0x0F, 0xAF, 0xFE};                         // imul      
 unsigned char imul1[] = {0x6B, 0x7D, 0xF8, 0x0F};                  // imul        edi,dword ptr [c],0Fh 
 unsigned char imul2[] = {0x69, 0x7D, 0xF8, 0x78, 0x56, 0x34, 0x12};// imul        edi,dword ptr [c],12345678h 
 
-int test_imul()
+static int test_imul_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -72,4 +72,9 @@ int test_imul()
     }
 
     return 0;
+}
+
+void test_imul()
+{
+    DIANA_TEST(test_imul_impl());
 }

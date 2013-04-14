@@ -54,7 +54,7 @@ static void test_processor_or64_2()
 
 void test_processor_o()
 {
-    test_processor_or();
-	test_processor_or64();
-	test_processor_or64_2();
+    DIANA_TEST(test_processor_or());
+	DIANA_TEST(test_processor_or64());
+	DIANA_TEST(test_processor_or64_2());
 }

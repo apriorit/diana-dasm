@@ -319,7 +319,7 @@ void test_analyzer3()
 }
 void test_analyze()
 {
-    test_analyzer1();
-    test_analyzer2();
-    test_analyzer3();
+    DIANA_TEST(test_analyzer1());
+    DIANA_TEST(test_analyzer2());
+    DIANA_TEST(test_analyzer3());
 }

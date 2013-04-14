@@ -127,12 +127,12 @@ static void test_processor_aam()
 
 void test_processor_a()
 {
-    test_processor_and();
-    test_processor_and2();
-    test_processor_adc();
-	test_processor_and64();
-	test_processor_and64_2();
-	test_processor_and64_3();
-	test_processor_aad();
-	test_processor_aam();
+    DIANA_TEST(test_processor_and());
+    DIANA_TEST(test_processor_and2());
+    DIANA_TEST(test_processor_adc());
+	DIANA_TEST(test_processor_and64());
+	DIANA_TEST(test_processor_and64_2());
+	DIANA_TEST(test_processor_and64_3());
+	DIANA_TEST(test_processor_aad());
+	DIANA_TEST(test_processor_aam());
 }

@@ -196,7 +196,6 @@ static void test_patchers1()
 void test_patchers()
 {
     Diana_InitHeapAllocator(&g_allocator);
-
-    test_patchers0();
-    test_patchers1();
+    DIANA_TEST(test_patchers0());
+    DIANA_TEST(test_patchers1());
 }

@@ -8,7 +8,7 @@ extern "C"
 #include "test_common.h"
 #include "string.h"
 
-void test_suxx()
+static void test_suxx_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -1516,3 +1516,7 @@ void test_suxx()
     }
 }
 
+void test_suxx()
+{
+    DIANA_TEST(test_suxx_impl());
+}

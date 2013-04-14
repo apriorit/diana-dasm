@@ -576,7 +576,7 @@ void test_fail_3()
 }
 void test_x64_integrated()
 {
-    test_x64_integrated_impl(g_Data, sizeof(g_Data), g_Names);
-    test_x64_integrated_impl(g_Data2, sizeof(g_Data2), g_Names2);
-    test_fail_3();
+    DIANA_TEST(test_x64_integrated_impl(g_Data, sizeof(g_Data), g_Names));
+    DIANA_TEST(test_x64_integrated_impl(g_Data2, sizeof(g_Data2), g_Names2));
+    DIANA_TEST(test_fail_3());
 }

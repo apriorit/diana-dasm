@@ -22,7 +22,7 @@ static unsigned char mov7[] = {0xf, 0x22, 0xf9};         // mov cr7, rcx
 
 static unsigned char mov0_64[] = {0x45, 0x0F, 0x20, 0xC7};  // MOV r15,CR8
 
-void test_mov_spec()
+static void test_mov_spec_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -195,4 +195,9 @@ void test_mov_spec()
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_RCX);
     }
+}
+
+void test_mov_spec()
+{
+    DIANA_TEST(test_mov_spec_impl());
 }

@@ -69,7 +69,7 @@ void test_cmpxchg8b()
 
 int test_cmp()
 {
-    test_cmp1();
-    test_cmpxchg8b();
+    DIANA_TEST(test_cmp1());
+    DIANA_TEST(test_cmpxchg8b());
     return 0;
 }

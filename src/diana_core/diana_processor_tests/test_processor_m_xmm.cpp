@@ -2,7 +2,7 @@
 #include "test_common.h"
 #include "test_processor_impl.h"
 
-void test_processor_movups()
+static void test_processor_movups()
 {
     // movups xmm1,xmm0
     unsigned char code[] = {0x0f, 0x10, 0xc8};
@@ -24,7 +24,7 @@ void test_processor_movups()
     TEST_ASSERT(0x090a0b0c0d0e0f10ULL == xmm1.u64[1]);
 }
 
-void test_processor_movups_2()
+static void test_processor_movups_2()
 {
     // movups [eax],xmm0
     unsigned char code[] = {0x0f, 0x11, 0x40, 0x00,
@@ -45,7 +45,7 @@ void test_processor_movups_2()
     TEST_ASSERT(0 == memcmp(code + 4, xmm0.u8, 16));
 }
 
-void test_processor_movups_3()
+static void test_processor_movups_3()
 {
     // movups xmm0,[eax]
     unsigned char code[] = {0x0f, 0x10, 0x40, 0x00,
@@ -63,7 +63,7 @@ void test_processor_movups_3()
     TEST_ASSERT(0 == memcmp(xmm0.u8, code + 4, 16));
 }
 
-void test_processor_movaps()
+static void test_processor_movaps()
 {
     // movaps xmm1,xmm0
     unsigned char code[] = {0x0f, 0x28, 0xc8};
@@ -82,7 +82,7 @@ void test_processor_movaps()
     TEST_ASSERT(0 == memcmp(xmm1.u8, xmm0.u8, 16));
 }
 
-void test_processor_movaps_2()
+static void test_processor_movaps_2()
 {
     // movaps [eax],xmm0
     unsigned char code[] = {0x0f, 0x29, 0x40, 0x00,
@@ -103,7 +103,7 @@ void test_processor_movaps_2()
     TEST_ASSERT(0 != memcmp(code + 4, xmm0.u8, 16));
 }
 
-void test_processor_movaps_3()
+static void test_processor_movaps_3()
 {
     // movaps xmm0,[eax]
     unsigned char code[] = {0x0f, 0x28, 0x40, 0x00,
@@ -118,7 +118,7 @@ void test_processor_movaps_3()
     TEST_ASSERT(res == DI_GP);
 }
 
-void test_processor_movss()
+static void test_processor_movss()
 {
     // movss xmm0,xmm1
     unsigned char code[] = {0xf3, 0x0f, 0x10, 0xc1};
@@ -143,7 +143,7 @@ void test_processor_movss()
     TEST_ASSERT(0x1111111111111111ULL == xmm0.u64[1]);
 }
 
-void test_processor_movss_2()
+static void test_processor_movss_2()
 {
     // movss xmm0,[8] ; rip
     unsigned char code[] = {0xf3, 0x0f, 0x10, 0x05, 0x00, 0x00, 0x00, 0x00,
@@ -166,7 +166,7 @@ void test_processor_movss_2()
     TEST_ASSERT(0x0000000000000000ULL == xmm0.u64[1]);
 }
 
-void test_processor_movss_3()
+static void test_processor_movss_3()
 {
     // movss [8],xmm0 ; rip
     unsigned char code[] = {0xf3, 0x0f, 0x11, 0x05, 0x00, 0x00, 0x00, 0x00,
@@ -191,7 +191,7 @@ void test_processor_movss_3()
     TEST_ASSERT(0x11 == code[12]);
 }
 
-void test_processor_movlps()
+static void test_processor_movlps()
 {
     // movlps xmm0,[7] ; rip
     unsigned char code[] = {0x0f, 0x12, 0x05, 0x00, 0x00, 0x00, 0x00,
@@ -214,7 +214,7 @@ void test_processor_movlps()
     TEST_ASSERT(0x3333333333333333ULL == xmm0.u64[1]);
 }
 
-void test_processor_movlps_2()
+static void test_processor_movlps_2()
 {
     // movlps [7],xmm0 ; rip
     unsigned char code[] = {0x0f, 0x13, 0x05, 0x00, 0x00, 0x00, 0x00,
@@ -244,7 +244,7 @@ void test_processor_movlps_2()
     TEST_ASSERT(0x44 == code[16]);
 }
 
-void test_processor_movsd()
+static void test_processor_movsd()
 {
     // movsd xmm1,xmm0
     unsigned char code[] = {0xf2, 0x0f, 0x10, 0xc8};
@@ -271,7 +271,7 @@ void test_processor_movsd()
     TEST_ASSERT(0x2222222222222222ULL == xmm1.u64[1]);
 }
 
-void test_processor_movsd_2()
+static void test_processor_movsd_2()
 {
     // movsd xmm0,[8] ;rip
     unsigned char code[] = {0xF2, 0x0F, 0x10, 0x05, 0x00, 0x00, 0x00, 0x00,
@@ -294,7 +294,7 @@ void test_processor_movsd_2()
     TEST_ASSERT(0x0000000000000000ULL == xmm0.u64[1]);
 }
 
-void test_processor_movsd_3()
+static void test_processor_movsd_3()
 {
     // movsd [8],xmm0 ;rip
     unsigned char code[] = {0xF2, 0x0F, 0x11, 0x05, 0x00, 0x00, 0x00, 0x00,
@@ -323,7 +323,7 @@ void test_processor_movsd_3()
     TEST_ASSERT(0x28 == code[16]);
 }
 
-void test_processor_movddup()
+static void test_processor_movddup()
 {
     // movddup xmm1,xmm0
     unsigned char code[] = {0xf2, 0x0f, 0x12, 0xc8};
@@ -347,7 +347,7 @@ void test_processor_movddup()
     TEST_ASSERT(0x0123456789abcdefULL == xmm1.u64[1]);
 }
 
-void test_processor_movddup_2()
+static void test_processor_movddup_2()
 {
     // movddup xmm0,[8] ; rip
     unsigned char code[] = {0xf2, 0x0f, 0x12, 0x05, 0x00, 0x00, 0x00, 0x00,
@@ -366,25 +366,25 @@ void test_processor_movddup_2()
 
 void test_processor_m_xmm()
 {
-    test_processor_movups();
-    test_processor_movups_2();
-    test_processor_movups_3();
+    DIANA_TEST(test_processor_movups());
+    DIANA_TEST(test_processor_movups_2());
+    DIANA_TEST(test_processor_movups_3());
 
-    test_processor_movaps();
-    test_processor_movaps_2();
-    test_processor_movaps_3();
+    DIANA_TEST(test_processor_movaps());
+    DIANA_TEST(test_processor_movaps_2());
+    DIANA_TEST(test_processor_movaps_3());
 
-    test_processor_movss();
-    test_processor_movss_2();
-    test_processor_movss_3();
+    DIANA_TEST(test_processor_movss());
+    DIANA_TEST(test_processor_movss_2());
+    DIANA_TEST(test_processor_movss_3());
 
-    test_processor_movlps();
-    test_processor_movlps_2();
+    DIANA_TEST(test_processor_movlps());
+    DIANA_TEST(test_processor_movlps_2());
 
-    test_processor_movsd();
-    test_processor_movsd_2();
-    test_processor_movsd_3();
+    DIANA_TEST(test_processor_movsd());
+    DIANA_TEST(test_processor_movsd_2());
+    DIANA_TEST(test_processor_movsd_3());
 
-    test_processor_movddup();
-    test_processor_movddup_2();
+    DIANA_TEST(test_processor_movddup());
+    DIANA_TEST(test_processor_movddup_2());
 }

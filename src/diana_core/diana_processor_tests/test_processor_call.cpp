@@ -153,8 +153,8 @@ static void test_processor_call_4()
 
 void test_processor_call()
 {
-    test_processor_call_1();
-    test_processor_call_2();
-    test_processor_call_3();
-    test_processor_call_4();
+    DIANA_TEST(test_processor_call_1());
+    DIANA_TEST(test_processor_call_2());
+    DIANA_TEST(test_processor_call_3());
+    DIANA_TEST(test_processor_call_4());
 }

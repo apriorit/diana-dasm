@@ -279,5 +279,5 @@ void test_x32_integrated_impl(const unsigned char * pData,
 
 void test_integrated2()
 {
-    test_x32_integrated_impl(g_Data, sizeof(g_Data), g_Names);
+    DIANA_TEST(test_x32_integrated_impl(g_Data, sizeof(g_Data), g_Names));
 }

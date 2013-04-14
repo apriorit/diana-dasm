@@ -14,8 +14,7 @@ static void __cdecl test_function()
     }
 }
 
-
-void test_processor3()
+static void test_processor3_impl()
 {
     DianaWin32Processor proc;
 
@@ -52,3 +51,7 @@ void test_processor3()
     }
 }
 
+void test_processor3()
+{
+    DIANA_TEST(test_processor3_impl());
+}

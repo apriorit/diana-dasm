@@ -25,7 +25,7 @@ static unsigned char mov13[] = {0x67, 0x41, 0x63, 0x1b}; // :movsxd rbx dword pt
 static unsigned char mov14[] = {0x40, 0xb6, 0x01}; // mov sil,1
 static unsigned char mov15[] = {0xb6, 0x01};             // mov     dh,1
 
-void test_mov()
+static void test_mov_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -310,4 +310,8 @@ void test_mov()
     }
     
 
+}
+void test_mov()
+{
+    DIANA_TEST(test_mov_impl());
 }

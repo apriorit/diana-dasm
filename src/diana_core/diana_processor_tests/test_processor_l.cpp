@@ -3,7 +3,7 @@
 #include "test_processor_impl.h"
 #include "vector"
 
-void test_processor_lea()
+static void test_processor_lea()
 {
 	// lea         ebx,[esp+ebx*2] 
     unsigned char code[] = {0x8D, 0x1C, 0x5C};
@@ -20,7 +20,7 @@ void test_processor_lea()
     TEST_ASSERT(GET_REG_EBX == 13);
 }
 
-void test_processor_lea2()
+static void test_processor_lea2()
 {
 	// lea rax,[rax+05b8c110h] 
 	unsigned char code[] = {0x48, 0x8d, 0x80, 0x10, 0xc1, 0xb8, 0x05 };
@@ -36,8 +36,7 @@ void test_processor_lea2()
 	TEST_ASSERT(0x05b8c110ULL == GET_REG_RAX);
 }
 
-
-void test_processor_lods()
+static void test_processor_lods()
 {
 	// lods    byte ptr [esi] 
     unsigned char code[] = {0xAC};
@@ -52,7 +51,7 @@ void test_processor_lods()
     TEST_ASSERT(GET_REG_EAX == 0xAC);
 }
 
-void test_processor_lods2()
+static void test_processor_lods2()
 {
 	// lods        word ptr [esi] 
     unsigned char code[] = {0x66, 0xAD};
@@ -97,10 +96,10 @@ static void test_processor_lfs2()
 
 void test_processor_l()
 {
-    test_processor_lea();
-	test_processor_lea2();
-    test_processor_lods();
-    test_processor_lods2();
+    DIANA_TEST(test_processor_lea());
+	DIANA_TEST(test_processor_lea2());
+    DIANA_TEST(test_processor_lods());
+    DIANA_TEST(test_processor_lods2());
 	//FIXME test_processor_lfs();
 	//FIXME test_processor_lfs2();
 }

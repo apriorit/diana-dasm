@@ -248,14 +248,14 @@ void test_processor_cmpxchg8b2()
 
 void test_processor_c()
 {
-    test_processor_c_1();
-    test_processor_cmp();
-    test_processor_cmps();
-    test_processor_cmps2();
-    test_processor_cmpxchg();
-    test_processor_cmpxchg2();
-    test_processor_cwd();
-    test_processor_cwd2();
-    test_processor_cmpxchg8b();
-    test_processor_cmpxchg8b2();
+    DIANA_TEST(test_processor_c_1());
+    DIANA_TEST(test_processor_cmp());
+    DIANA_TEST(test_processor_cmps());
+    DIANA_TEST(test_processor_cmps2());
+    DIANA_TEST(test_processor_cmpxchg());
+    DIANA_TEST(test_processor_cmpxchg2());
+    DIANA_TEST(test_processor_cwd());
+    DIANA_TEST(test_processor_cwd2());
+    DIANA_TEST(test_processor_cmpxchg8b());
+    DIANA_TEST(test_processor_cmpxchg8b2());
 }

@@ -3,7 +3,7 @@
 #include "test_processor_impl.h"
 #include "vector"
 
-void test_processor_movs()
+static void test_processor_movs()
 {
     unsigned char code[1024] = 
     {
@@ -24,7 +24,7 @@ void test_processor_movs()
     TEST_ASSERT(memcmp(code+200, "hello!", 7) == 0);
 }
 
-void test_processor_movsxd64()
+static void test_processor_movsxd64()
 {
     unsigned char code[9] = 
     {
@@ -43,7 +43,7 @@ void test_processor_movsxd64()
 }
 
 
-void test_processor_movsxd64_2()
+static void test_processor_movsxd64_2()
 {
     unsigned char code[9] = 
     {
@@ -60,7 +60,7 @@ void test_processor_movsxd64_2()
 }
 
 
-void test_processor_mov64()
+static void test_processor_mov64()
 {
     unsigned char code[] = {0x48, 0xb8, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff}; 
     // 48b8ffffffffffffffff mov rax,0FFFFFFFFFFFFFFFFh
@@ -75,7 +75,7 @@ void test_processor_mov64()
 }
 
 
-void test_processor_mov64_2()
+static void test_processor_mov64_2()
 {
     unsigned char code[] = {0x48, 0xc7, 0xc0, 0xff, 0xff, 0xff, 0xff}; 
     // 48c7c0ffffffff      rax,0FFFFFFFFFFFFFFFFh
@@ -89,7 +89,7 @@ void test_processor_mov64_2()
     TEST_ASSERT(GET_REG_RAX == 0xFFFFFFFFFFFFFFFFULL);
 }
 
-void test_processor_mov64_3()
+static void test_processor_mov64_3()
 {
     unsigned char code[] = {0xc7, 0xc0, 0x55, 0x55, 0x55, 0x55}; 
     // mov eax,-1
@@ -105,7 +105,7 @@ void test_processor_mov64_3()
 }
 
 
-void test_processor_mov64_4()
+static void test_processor_mov64_4()
 {
 	unsigned char code[] = {0xb8, 0x55, 0x55, 0x55, 0x55}; 
 	// mov eax,-1
@@ -121,7 +121,7 @@ void test_processor_mov64_4()
 }
 
 
-void test_processor_mov()
+static void test_processor_mov()
 {
 	unsigned char code[] = {0xb8, 0x55, 0x55, 0x55, 0x55}; 
 	// mov eax,-1
@@ -216,7 +216,7 @@ static void test_processor_mul64_4()
 	TEST_ASSERT(GET_REG_RDX == 0x0000000000000001ULL);
 }
 
-void test_processor_mov64_5()
+static void test_processor_mov64_5()
 {
 	// mov b,[10],-1
 	// mov rbx,[10]
@@ -234,7 +234,7 @@ void test_processor_mov64_5()
 	TEST_ASSERT( 0x55555555555555FFULL == GET_REG_RBX );
 }
 
-void test_processor_mov64_6()
+static void test_processor_mov64_6()
 {
 	// mov d,[rsi],12345678h
 	unsigned char code[] = {0xc7, 0x06, 0x78, 0x56, 0x34, 0x12, 0xaa, 0xaa, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaa, 0xaa};
@@ -258,7 +258,7 @@ void test_processor_mov64_6()
 	TEST_ASSERT( 0xaa == code[ 0x10 ] );
 }
 
-void test_processor_mov64_7()
+static void test_processor_mov64_7()
 {
 	// mov q,[rsi],12345678h
 	unsigned char code[] = {0x48, 0xc7, 0x06, 0x78, 0x56, 0x34, 0x12, 0xaa, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaa};
@@ -282,7 +282,7 @@ void test_processor_mov64_7()
 	TEST_ASSERT( 0xaa == code[ 0x10 ] );
 }
 
-void test_processor_mov64_8()
+static void test_processor_mov64_8()
 {
 	// mov d,[rsi],12345678h
 	unsigned char code[] = {0xc7, 0x06, 0x78, 0x56, 0x34, 0x82, 0xaa, 0xaa, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaa, 0xaa};
@@ -306,7 +306,7 @@ void test_processor_mov64_8()
 	TEST_ASSERT( 0xaa == code[ 0x10 ] );
 }
 
-void test_processor_mov64_9()
+static void test_processor_mov64_9()
 {
 	// mov q,[rsi],82345678h
 	unsigned char code[] = {0x48, 0xc7, 0x06, 0x78, 0x56, 0x34, 0x82, 0xaa, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xaa};
@@ -330,7 +330,7 @@ void test_processor_mov64_9()
 	TEST_ASSERT( 0xaa == code[ 0x10 ] );
 }
 
-void test_processor_mov64_10()
+static void test_processor_mov64_10()
 {
 	// mov b,[4],-1
 	// mov rax,[4]
@@ -358,25 +358,25 @@ void test_processor_mov64_10()
 
 void test_processor_m()
 {
-    test_processor_movs();
-    test_processor_movsxd64();
-    test_processor_movsxd64_2();
-    test_processor_mov64();
-    test_processor_mov64_2();
-    test_processor_mov64_3();
-	test_processor_mov64_4();
-	test_processor_mov();
+    DIANA_TEST(test_processor_movs());
+    DIANA_TEST(test_processor_movsxd64());
+    DIANA_TEST(test_processor_movsxd64_2());
+    DIANA_TEST(test_processor_mov64());
+    DIANA_TEST(test_processor_mov64_2());
+    DIANA_TEST(test_processor_mov64_3());
+	DIANA_TEST(test_processor_mov64_4());
+	DIANA_TEST(test_processor_mov());
 
-	test_processor_mul64();
-	test_processor_mul64_2();
-	test_processor_mul64_3();
-	test_processor_mul64_4();
+	DIANA_TEST(test_processor_mul64());
+	DIANA_TEST(test_processor_mul64_2());
+	DIANA_TEST(test_processor_mul64_3());
+	DIANA_TEST(test_processor_mul64_4());
 
 	// "RIP-relative" addressing
-	test_processor_mov64_5();
-	test_processor_mov64_6();
-	test_processor_mov64_7();
-	test_processor_mov64_8();
-	test_processor_mov64_9();
-	test_processor_mov64_10();
+	DIANA_TEST(test_processor_mov64_5());
+	DIANA_TEST(test_processor_mov64_6());
+	DIANA_TEST(test_processor_mov64_7());
+	DIANA_TEST(test_processor_mov64_8());
+	DIANA_TEST(test_processor_mov64_9());
+	DIANA_TEST(test_processor_mov64_10());
 }

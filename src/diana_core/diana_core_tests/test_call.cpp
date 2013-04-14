@@ -21,7 +21,7 @@ static unsigned char call6[] = {0xFF, 0x18}; // call        fword ptr [eax]
 static unsigned char call7[] = {0x3E, 0xFF, 0x5C, 0xBE, 0x01}; // call        fword ptr ds:[esi+edi*4+1] 
 static unsigned char call8[] = {0xFF, 0xD0};     //          call        eax  
 
-void test_call()
+static void test_call_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -190,5 +190,8 @@ void test_call()
 
 }
 
-
+void test_call()
+{
+    DIANA_TEST(test_call_impl());
+}
 

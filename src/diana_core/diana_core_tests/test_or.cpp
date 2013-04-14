@@ -8,13 +8,11 @@ extern "C"
 #include "test_common.h"
 #include "string.h"
 
-
 static unsigned char or[]= {0x0C, 1};  // AL,imm8        2         OR immediate byte to AL
 static unsigned char or1[]= {0x0D, 1,0,0,0};  // EAX,imm32      2         OR immediate dword to EAX
 static unsigned char or2[]= {0x80, 0x08, 0x01};  // r/m8,imm8      2/7       OR immediate byte to r/m byte
 
-
-void test_or()
+static void test_or_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -61,4 +59,9 @@ void test_or()
         TEST_ASSERT(result.linkedOperands[1].value.imm == 1);
     }
     
+}
+
+void test_or()
+{
+    DIANA_TEST(test_or_impl());
 }

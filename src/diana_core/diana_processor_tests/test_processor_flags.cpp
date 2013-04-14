@@ -275,6 +275,6 @@ static void test_processor2()
 
 void test_processor_flags()
 {
-    test_processor1();
-    test_processor2();
+    DIANA_TEST(test_processor1());
+    DIANA_TEST(test_processor2());
 }
