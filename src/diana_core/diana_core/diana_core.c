@@ -22,15 +22,15 @@ typedef struct _dianaProxyReadStream
     int m_iReadSize;
 }DianaProxyReadStream;
 
-static int ProxyDianaReadFnc(void * pThisIn, void * pBuffer, int iBufferSize, int * readed)
+static int ProxyDianaReadFnc(void * pThisIn, void * pBuffer, int iBufferSize, int * readBytes)
 {
-    *readed = 0;
+    *readBytes = 0;
     {
         DianaProxyReadStream * pThis = pThisIn;
-        int iRes = pThis->m_pOriginalStream->pReadFnc(pThis->m_pOriginalStream, pBuffer, iBufferSize, readed);
+        int iRes = pThis->m_pOriginalStream->pReadFnc(pThis->m_pOriginalStream, pBuffer, iBufferSize, readBytes);
         if (!iRes)
         {
-            pThis->m_iReadSize += *readed;
+            pThis->m_iReadSize += *readBytes;
         }
         return iRes;
     }
@@ -494,4 +494,9 @@ void Diana_AllocatorInit(Diana_Allocator * pAllocator,
     pAllocator->m_alloc = alloc;
     pAllocator->m_free = free;
     pAllocator->m_patch = patch;
+}
+
+void Diana_OnError(int code)
+{
+    &code;
 }

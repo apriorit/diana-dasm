@@ -287,14 +287,19 @@ typedef struct _dianaParserResult
 
 #define DI_SUCCESS ((int)0)
 
-#define DI_CHECK_ALLOC(x) { if(!(x)) return DI_OUT_OF_MEMORY; }
+#define DI_CHECK_ALLOC(x) { if(!(x)) { Diana_OnError(DI_OUT_OF_MEMORY); return DI_OUT_OF_MEMORY; } }
+
+#ifdef _DEBUG
+#define DI_CHECK(x) { int di____code = (x); if (di____code != DI_SUCCESS) { Diana_OnError(di____code); return di____code; } }
+#else
 #define DI_CHECK(x) { int di____code = (x); if (di____code != DI_SUCCESS) { return di____code; } }
+#endif
 
 // serial streams
 typedef int (* DianaRead_fnc)(void * pThis,
                               void * pBuffer,
                               int iBufferSize,
-                              int * readed);
+                              int * readBytes);
 typedef int (* DianaWrite_fnc)(void * pThis,
                                void * pBuffer,
                                int iBufferSize,
@@ -434,6 +439,7 @@ void Diana_AllocatorInit(Diana_Allocator * pAllocator,
 
 void Diana_CacheEatOneSafe(DianaContext * pContext);
 
+void Diana_OnError(int code);
 #define DIANA_CONTAINING_RECORD(address, type, field) ((type *)( \
                                                   (char*)(address) - \
                                                   (size_t)(&((type *)0)->field)))

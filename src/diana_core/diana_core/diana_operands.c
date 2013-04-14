@@ -113,7 +113,7 @@ int DianaReadValueAsLong(DianaReadStream * readStream,
                          int iSigned)
 {
     char buffer[sizeof(DI_UINT64)];
-    int readed = 0;
+    int readBytes = 0;
     int iRes = 0;
     
     switch(iValueSize)
@@ -127,10 +127,10 @@ int DianaReadValueAsLong(DianaReadStream * readStream,
 		return DI_ERROR;
     };
 
-    iRes = readStream->pReadFnc(readStream, buffer, iValueSize, &readed);
+    iRes = readStream->pReadFnc(readStream, buffer, iValueSize, &readBytes);
     if (iRes)
         return iRes;
-    if (readed != iValueSize)
+    if (readBytes != iValueSize)
         return DI_ERROR;
 
 	switch(iValueSize)

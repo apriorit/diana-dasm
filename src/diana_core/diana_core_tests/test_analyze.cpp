@@ -57,10 +57,9 @@ int DianaConvertAddressToRelative(void * pThis,
                                   OPERAND_SIZE * pRelativeOffset,
                                   int * pbInvalidPointer)
 {
-	pbInvalidPointer;
-
     TestStream * pStream = (TestStream * )pThis;
-	pStream;
+	&pStream;
+	&pbInvalidPointer;
     *pRelativeOffset = address;
     return DI_SUCCESS;
 }
@@ -69,13 +68,22 @@ static
 int DianaAddSuspectedDataAddress(void * pThis, 
                                  OPERAND_SIZE address)
 {
-	address;
-
 	TestStream * pStream = (TestStream * )pThis;
-	pStream;
+	&pStream;
+    &address;
     return DI_SUCCESS;
 }
 
+static
+int DianaAnalyzeJumpAddress(void * pThis,
+                            OPERAND_SIZE address,
+                            DianaAnalyzeJumpFlags_type * pFlags)
+{
+    &pThis;
+    &address;
+    *pFlags = diaJumpNormal;
+    return DI_SUCCESS;
+}
 struct IntructionInfo
 {
     int offset;
@@ -182,7 +190,8 @@ void test_analyzer1()
     DianaAnalyzeObserver_Init(&observer, 
                               &stream,
                               DianaConvertAddressToRelative,
-                              DianaAddSuspectedDataAddress);
+                              DianaAddSuspectedDataAddress,
+                              DianaAnalyzeJumpAddress);
     Diana_InstructionsOwner owner;
 
     TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
@@ -253,7 +262,8 @@ void test_analyzer2()
     DianaAnalyzeObserver_Init(&observer, 
                               &stream,
                               DianaConvertAddressToRelative,
-                              DianaAddSuspectedDataAddress);
+                              DianaAddSuspectedDataAddress,
+                              DianaAnalyzeJumpAddress);
 
     Diana_InstructionsOwner owner;
 

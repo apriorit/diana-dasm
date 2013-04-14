@@ -18,6 +18,8 @@ typedef struct _diana_PeFile_impl
     OPERAND_SIZE sizeOfFile;
     OPERAND_SIZE sizeOfImpl;
     int optionalHeaderSize;
+    DI_UINT32  addressOfEntryPoint;
+    OPERAND_SIZE loadedBase;
 }Diana_PeFile_impl;
 
 typedef struct _diana_PeFile32_impl
@@ -41,9 +43,11 @@ typedef struct _diana_PeFile
 }
 Diana_PeFile;
 
-int Diana_InitPeFile(/* out */ Diana_PeFile * pPeFile,
+int DianaPeFile_Init(/* out */ Diana_PeFile * pPeFile,
                       /* in */ DianaMovableReadStream * pStream,
-                      /* in, optional */ OPERAND_SIZE sizeOfFile);
+                      /* in, optional */ OPERAND_SIZE sizeOfFile,
+                      /* in, optional */ OPERAND_SIZE loadedBase);
 
-void Diana_FreePeFile(Diana_PeFile * pPeFile);
+void DianaPeFile_Free(Diana_PeFile * pPeFile);
+
 #endif

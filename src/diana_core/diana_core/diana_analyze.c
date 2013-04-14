@@ -18,11 +18,13 @@ typedef struct _DianaAnalyzeSession
 void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
                                DianaMovableReadStream * pStream,
                                ConvertAddressToRelative_fnc pConvertAddress,
-                               AddSuspectedDataAddress_fnc pSuspectedDataAddress)
+                               AddSuspectedDataAddress_fnc pSuspectedDataAddress,
+                               AnalyzeJumpAddress_fnc pAnalyzeJumpAddress)
 {
     pThis->m_pStream = pStream;
     pThis->m_pConvertAddress = pConvertAddress;
     pThis->m_pSuspectedDataAddress = pSuspectedDataAddress;
+    pThis->m_pAnalyzeJumpAddress = pAnalyzeJumpAddress;
 }
 
 void Diana_Instruction_Init(Diana_Instruction * pInstruction,
@@ -120,7 +122,8 @@ Diana_Instruction * Diana_InstructionsOwner_GetInstruction(Diana_InstructionsOwn
 
 static int Diana_CreateXRef(Diana_InstructionsOwner * pOwner,
                             Diana_Instruction * pFromInstruction,
-                            Diana_Instruction * pToInstruction)
+                            Diana_Instruction * pToInstruction,
+                            Diana_XRef ** ppXref)
 {
     Diana_XRef * pXref = 0;
     Diana_XRef xref;
@@ -132,6 +135,10 @@ static int Diana_CreateXRef(Diana_InstructionsOwner * pOwner,
     pXref = (Diana_XRef *)Diana_Stack_GetTopPtr(&pOwner->m_xrefs);
     Diana_PushBack(&pToInstruction->m_refsFrom, &(pXref)->m_subrefs[0].m_instructionEntry);
     Diana_PushBack(&pFromInstruction->m_refsTo, &(pXref)->m_subrefs[1].m_instructionEntry);
+    if (ppXref)
+    {
+        *ppXref = pXref;
+    }
     return DI_SUCCESS;
 }
 
@@ -171,6 +178,22 @@ int AnalyzeJumps(DianaParserResult * pResult,
 }
 
 static
+int SaveNewExternalRoute(DianaAnalyzeSession * pSession,
+                         Diana_Instruction * pInstruction,
+                         OPERAND_SIZE newOffset)
+{
+    Diana_XRef * pXref = 0;
+    Diana_Instruction * pTargetInstruction = 0;
+    pTargetInstruction = malloc(sizeof(Diana_Instruction));
+    DI_CHECK_ALLOC(pTargetInstruction);
+    Diana_Instruction_Init(pTargetInstruction, newOffset, DI_INSTRUCTION_EXTERNAL);
+    Diana_PushBack(&pSession->pOwner->m_externalInstructionsList, &pTargetInstruction->m_routeEntry);
+    DI_CHECK(Diana_CreateXRef(pSession->pOwner, pInstruction, pTargetInstruction, &pXref));
+    pXref->m_flags |= DI_XREF_EXTERNAL;
+    return DI_SUCCESS;
+}
+
+static
 int SaveNewRoute(DianaAnalyzeSession * pSession,
                  Diana_Instruction * pInstruction,
                  OPERAND_SIZE newOffset,
@@ -202,7 +225,7 @@ int SaveNewRoute(DianaAnalyzeSession * pSession,
     }
 
     // register xref-from Instruction to Target
-    DI_CHECK(Diana_CreateXRef(pSession->pOwner, pInstruction, pTargetInstruction));
+    DI_CHECK(Diana_CreateXRef(pSession->pOwner, pInstruction, pTargetInstruction, 0));
 
     // do not push new route to stack twice
     if (pOldTargetInstruction)
@@ -368,6 +391,7 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
     Diana_LinkedAdditionalGroupInfo * pLinkedInfo = 0;
     int bIsNormalInstruction = 0;
     OPERAND_SIZE newOffset = 0;
+    DianaAnalyzeJumpFlags_type jumpFlags = diaJumpNormal;
 
     *pbNeedReset = 0;
 
@@ -436,11 +460,28 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
 
     DI_CHECK(iRes);
     
-    // save new route
-    DI_CHECK(SaveNewRoute(pSession,
-                          pInstruction,
-                          newOffset,
-                          pSession->curRouteInfo.flags));
+    // check new jump address
+    DI_CHECK(pSession->pObserver->m_pAnalyzeJumpAddress(pSession->pObserver, newOffset, &jumpFlags));
+    
+    switch(jumpFlags)
+    {
+    case diaJumpNormal:
+        // save new route
+        DI_CHECK(SaveNewRoute(pSession,
+                              pInstruction,
+                              newOffset,
+                              pSession->curRouteInfo.flags));
+        break;
+    case diaJumpExternal:
+        DI_CHECK(SaveNewExternalRoute(pSession,
+                                      pInstruction,
+                                      newOffset));
+        break;
+    default:
+        Diana_FatalBreak();
+    case diaJumpInvalid: ;
+    }
+
     return DI_SUCCESS;
 }
 
@@ -470,9 +511,7 @@ int XrefRouteMarker(Diana_ListNode * pNode,
 {
     Diana_XRef * pXRef = Diana_CastXREF(pNode, (int)(size_t)pContext);
     pXRef->m_flags |= DI_XREF_INVALID;
-
-	pbDone;
-
+	&pbDone;
     return DI_SUCCESS;
 }
 
@@ -617,8 +656,15 @@ int Diana_AnalyzeCode(Diana_InstructionsOwner * pOwner,
     
     DI_CHECK(Diana_Stack_Init(&session.stack, 4096, sizeof(Diana_RouteInfo)));
 
+    res = pObserver->m_pStream->pMoveTo(pObserver->m_pStream, initialOffset);
+    if (res)
+        goto clean;
     res = Diana_AnalyzeCodeImpl(&session,
                                 initialOffset);
+    if (res)
+        goto clean;
+
+clean:
     Diana_Stack_Free(&session.stack);
     return res;
 }

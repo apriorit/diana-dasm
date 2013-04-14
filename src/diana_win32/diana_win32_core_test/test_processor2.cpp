@@ -45,24 +45,3 @@ void test_processor2()
         }
     }
 }
-
-//
-//    void * newESP = g_stack + sizeof(g_stack);
-//    __asm xor eax, eax
-//    __asm xor ebx, ebx
-//    __asm xor ecx, ecx
-//    __asm xor edx, edx
-//    __asm xor edi, edi
-//    __asm xor esi, esi
-//
-//    __asm push ebp
-//    __asm mov g_oldESP, esp
-//
-//    __asm mov esp, newESP
-//    __asm mov ebp, esp
-//
-//    __asm call test_function_impl
-//
-//    __asm mov esp, g_oldESP
-//    __asm pop ebp
-//}
