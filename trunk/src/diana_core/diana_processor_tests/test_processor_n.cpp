@@ -82,9 +82,9 @@ static void test_processor_nop64_2()
 
 void test_processor_n()
 {
-    test_processor_neg();
-    test_processor_neg2();
-	test_processor_nop();
-	test_processor_nop64();
+    DIANA_TEST(test_processor_neg());
+    DIANA_TEST(test_processor_neg2());
+	DIANA_TEST(test_processor_nop());
+	DIANA_TEST(test_processor_nop64());
 	//test_processor_nop64_2();
 }

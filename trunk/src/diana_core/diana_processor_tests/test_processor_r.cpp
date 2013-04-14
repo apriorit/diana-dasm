@@ -3,7 +3,7 @@
 #include "test_processor_impl.h"
 #include "vector"
 
-void test_processor_rcl()
+static void test_processor_rcl()
 {
     // rcl eax, cl
     unsigned char code[] = {0xD3, 0xD0};
@@ -24,7 +24,7 @@ void test_processor_rcl()
     TEST_ASSERT(!GET_FLAG_OF);
 }
 
-void test_processor_rcl2()
+static void test_processor_rcl2()
 {
     // rcl eax, cl
     unsigned char code[] = {0xD3, 0xD0};
@@ -45,8 +45,7 @@ void test_processor_rcl2()
     TEST_ASSERT(GET_FLAG_OF);
 }
 
-
-void test_processor_rcl3()
+static void test_processor_rcl3()
 {
     // rcl eax, cl
     unsigned char code[] = {0xD3, 0xD0};
@@ -68,7 +67,7 @@ void test_processor_rcl3()
     TEST_ASSERT(!GET_FLAG_OF);
 }
 
-void test_processor_rcr()
+static void test_processor_rcr()
 {
     // rcr eax, 1
     unsigned char code[] = {0xD1, 0xD8};
@@ -89,8 +88,7 @@ void test_processor_rcr()
     TEST_ASSERT(!GET_FLAG_OF);
 }
 
-
-void test_processor_rol()
+static void test_processor_rol()
 {
     // rol eax, 1
     unsigned char code[] = {0xD1, 0xC0};
@@ -110,8 +108,7 @@ void test_processor_rol()
     TEST_ASSERT(GET_FLAG_OF);
 }
 
-   
-void test_processor_ror()
+static void test_processor_ror()
 {
     // ror eax, 1
     unsigned char code[] = {0xD1, 0xC8};
@@ -131,7 +128,7 @@ void test_processor_ror()
     TEST_ASSERT(!GET_FLAG_OF);
 }
 
-void test_processor_ror2()
+static void test_processor_ror2()
 {
     // ror eax, 1
     unsigned char code[] = {0xD1, 0xC8};
@@ -151,7 +148,7 @@ void test_processor_ror2()
     TEST_ASSERT(GET_FLAG_OF);
 }
 
-void test_processor_ret64()
+static void test_processor_ret64()
 {
     // ret
     unsigned char code[] = {0xC3, 0x01, 0x01, 0x01, 
@@ -168,7 +165,7 @@ void test_processor_ret64()
     TEST_ASSERT(GET_REG_RSP == 8);
 }
 
-void test_processor_retf()
+static void test_processor_retf()
 {
     // retf 
     unsigned char code[] = {0xca, 0x22, 0x00, 0, 0x23, 0,0,1};
@@ -185,7 +182,7 @@ void test_processor_retf()
     TEST_ASSERT(GET_REG_RSP == 0x2a);
 }
 
-void test_processor_rep_add()
+static void test_processor_rep_add()
 {
 	// rep add eax,eax
 	unsigned char code[] = {0xF3, 0x03, 0xC0};
@@ -204,18 +201,18 @@ void test_processor_rep_add()
 
 void test_processor_r()
 {
-    test_processor_rcl();
-    test_processor_rcl2();
-    test_processor_rcl3();
+    DIANA_TEST(test_processor_rcl());
+    DIANA_TEST(test_processor_rcl2());
+    DIANA_TEST(test_processor_rcl3());
     
-    test_processor_rcr();
-    test_processor_rol();
+    DIANA_TEST(test_processor_rcr());
+    DIANA_TEST(test_processor_rol());
 
-    test_processor_ror();
-    test_processor_ror2();
+    DIANA_TEST(test_processor_ror());
+    DIANA_TEST(test_processor_ror2());
 
-    test_processor_ret64();
-    test_processor_retf();
+    DIANA_TEST(test_processor_ret64());
+    DIANA_TEST(test_processor_retf());
     
-	test_processor_rep_add();
+	DIANA_TEST(test_processor_rep_add());
 }

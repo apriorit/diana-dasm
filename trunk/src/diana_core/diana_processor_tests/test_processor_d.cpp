@@ -102,10 +102,9 @@ static void test_processor_dec()
 }
 void test_processor_d()
 {
-    test_processor_div();
-    test_processor_div2();
-    test_processor_div3();
-    test_processor_div_fail();
-
-    test_processor_dec();
+    DIANA_TEST(test_processor_div());
+    DIANA_TEST(test_processor_div2());
+    DIANA_TEST(test_processor_div3());
+    DIANA_TEST(test_processor_div_fail());
+    DIANA_TEST(test_processor_dec());
 }

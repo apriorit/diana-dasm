@@ -71,8 +71,8 @@ static void test_processor_bswap64_2()
 
 void test_processor_b()
 {
-    test_processor_bswap();
-	test_processor_bswap_2();
-    test_processor_bswap64();
-    test_processor_bswap64_2();
+    DIANA_TEST(test_processor_bswap());
+	DIANA_TEST(test_processor_bswap_2());
+    DIANA_TEST(test_processor_bswap64());
+    DIANA_TEST(test_processor_bswap64_2());
 }

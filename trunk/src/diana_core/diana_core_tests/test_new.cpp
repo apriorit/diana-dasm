@@ -424,11 +424,11 @@ void test_nop_toobig()
 
 void test_new()
 {
-    test_nop_pause();
-    test_nop();
-    test_nops();
-    test_r32_64();
-    test_sal1();
-    test_ret();
-    test_nop_toobig();
+    DIANA_TEST(test_nop_pause());
+    DIANA_TEST(test_nop());
+    DIANA_TEST(test_nops());
+    DIANA_TEST(test_r32_64());
+    DIANA_TEST(test_sal1());
+    DIANA_TEST(test_ret());
+    DIANA_TEST(test_nop_toobig());
 }

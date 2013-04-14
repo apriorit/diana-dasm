@@ -17,7 +17,7 @@ static unsigned char mov1[] = {0x67, 0x3E, 0xA2, 0x34, 0x12, 0x00, 0x00}; // mov
 static unsigned char mov2[] = {0x67, 0x2E, 0xC6, 0x02, 0x34};         // mov         byte ptr cs:[bp+si],34h 
 static unsigned char mov3[] = {0x67, 0x3E, 0xC6, 0x44, 0xBE, 0x01}; // mov         byte ptr ds:[si-42h],1 
 
-void test_mov_as()
+static void test_mov_as_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -96,4 +96,9 @@ void test_mov_as()
         TEST_ASSERT(result.linkedOperands[1].value.imm == 0x1);
     }
 
+}
+
+void test_mov_as()
+{
+    DIANA_TEST(test_mov_as_impl());
 }

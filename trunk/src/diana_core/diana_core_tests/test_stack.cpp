@@ -66,5 +66,5 @@ void test_stack1()
 
 void test_stack()
 {
-    test_stack1();
+    DIANA_TEST(test_stack1());
 }

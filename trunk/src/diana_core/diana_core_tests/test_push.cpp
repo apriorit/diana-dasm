@@ -27,7 +27,7 @@ static unsigned char push13[]= {0x0F, 0xA8};//   PUSH GS       2        Push GS
 static unsigned char push14[]= {0x68,0x08,0xaf,0x98,0xbf};//   push    offset win32k!`string'+0x168 (bf98af08)
 
 
-int test_push()
+static int test_push_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -261,4 +261,9 @@ int test_push()
        TEST_ASSERT (result.linkedOperands[0].value.imm == 0xbf98af08);
    }
    return 0;
+}
+
+void test_push()
+{
+    DIANA_TEST(test_push_impl());
 }

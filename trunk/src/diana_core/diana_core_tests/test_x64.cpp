@@ -5,8 +5,7 @@ extern "C"
 #include "diana_gen.h"
 }
 
-
-void test_x64()
+static void test_x64_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -794,3 +793,8 @@ void test_x64()
         TEST_ASSERT(result.linkedOperands[1].value.rmIndex.reg == reg_EAX);
     }
 } 
+
+void test_x64()
+{
+    DIANA_TEST(test_x64_impl());
+}

@@ -17,7 +17,7 @@ static unsigned char jmp5[] = {0xff, 0x28};     //jmp         fword ptr [eax]
 static unsigned char jmp6[] = {0xea, 0x01, 0x02,0x03,0x04,0x05, 0x06};     //jmp         0605:04030201 
 
 
-void test_jmp()
+static void test_jmp_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -132,5 +132,8 @@ void test_jmp()
     }
 }
 
-
+void test_jmp()
+{
+    DIANA_TEST(test_jmp_impl());
+}
 

@@ -9,7 +9,7 @@ extern "C"
 #include "string.h"
 
 
-void test_fpu_mmx32()
+static void test_fpu_mmx32_impl()
 {
     int iRes = 0;
     DianaGroupInfo * pGroupInfo=0;
@@ -196,4 +196,8 @@ void test_fpu_mmx32()
         TEST_ASSERT(result.linkedOperands[0].type == diana_register);
         TEST_ASSERT(result.linkedOperands[0].value.recognizedRegister == reg_fpu_ST1);
     }
+}
+void test_fpu_mmx32()
+{
+    DIANA_TEST(test_fpu_mmx32_impl());
 }

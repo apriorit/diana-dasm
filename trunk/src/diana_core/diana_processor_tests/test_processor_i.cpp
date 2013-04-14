@@ -458,32 +458,31 @@ static void test_processor_invalid_lock()
 
 void test_processor_i()
 {
-    test_processor_idiv();
-    test_processor_idiv2();
-    test_processor_imul();
-    test_processor_imul2();
-    test_processor_imul3();
-    test_processor_imul4();
-    test_processor_imul5();
-    test_processor_imul6();
-    test_processor_imul7();
-    test_processor_imul8();
-    test_processor_imul9();
-    test_processor_imul10();
-    test_processor_inc();
+    DIANA_TEST(test_processor_idiv());
+    DIANA_TEST(test_processor_idiv2());
+    DIANA_TEST(test_processor_imul());
+    DIANA_TEST(test_processor_imul2());
+    DIANA_TEST(test_processor_imul3());
+    DIANA_TEST(test_processor_imul4());
+    DIANA_TEST(test_processor_imul5());
+    DIANA_TEST(test_processor_imul6());
+    DIANA_TEST(test_processor_imul7());
+    DIANA_TEST(test_processor_imul8());
+    DIANA_TEST(test_processor_imul9());
+    DIANA_TEST(test_processor_imul10());
+    DIANA_TEST(test_processor_inc());
 
-	test_processor_imul64();
-	test_processor_imul64_2();
-	test_processor_imul64_3();
-	test_processor_imul64_4();
-	test_processor_div64();
-	test_processor_div64_2();
-	test_processor_div64_3();
-	test_processor_div64_4();
-	test_processor_idiv64();
-	test_processor_idiv64_2();
-	test_processor_idiv64_3();
-	test_processor_idiv64_4();
-
-	test_processor_invalid_lock();
+	DIANA_TEST(test_processor_imul64());
+	DIANA_TEST(test_processor_imul64_2());
+	DIANA_TEST(test_processor_imul64_3());
+	DIANA_TEST(test_processor_imul64_4());
+	DIANA_TEST(test_processor_div64());
+	DIANA_TEST(test_processor_div64_2());
+	DIANA_TEST(test_processor_div64_3());
+	DIANA_TEST(test_processor_div64_4());
+	DIANA_TEST(test_processor_idiv64());
+	DIANA_TEST(test_processor_idiv64_2());
+	DIANA_TEST(test_processor_idiv64_3());
+	DIANA_TEST(test_processor_idiv64_4());
+	DIANA_TEST(test_processor_invalid_lock());
 }

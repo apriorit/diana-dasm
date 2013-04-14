@@ -6,7 +6,7 @@ extern "C"
 #include "test_common.h"
 #include "windows.h"
 
-void pe_analyze_test1()
+static void pe_analyze_test1()
 {
     void * pFile = GetModuleHandle(0);
     Diana_InstructionsOwner owner;
@@ -16,5 +16,5 @@ void pe_analyze_test1()
 }
 void pe_analyze_test()
 {
-    pe_analyze_test1();
+    DIANA_TEST(pe_analyze_test1());
 }

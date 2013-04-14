@@ -4,12 +4,10 @@ static void * g_oldESP = 0;
 
 void __cdecl test_function()
 {
- //   for(int i = 0; i< 100; ++i)
     std::cout<<"hello, world!";
 }
 
-
-void test_processor2()
+static void test_processor2_impl()
 {
     DianaWin32Processor proc;
 
@@ -44,4 +42,9 @@ void test_processor2()
             break;
         }
     }
+}
+
+void test_processor2()
+{
+    DIANA_TEST(test_processor2_impl());
 }

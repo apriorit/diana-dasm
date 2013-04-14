@@ -21,7 +21,7 @@ static unsigned char mov9[] = {0x0f, 0xb7, 0x00};// movzx eax, [word eax]
 static unsigned char mov10[] = {0x67, 0x45, 0xf, 0x43, 0x18}; // cmovnb r11d dword ptr ds:[r8d]
 static unsigned char mov11[] = {0x8E, 0xD6}; //    mov ss,si 
 
-void test_mov2()
+static void test_mov2_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -243,4 +243,9 @@ void test_mov2()
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_SI);
         TEST_ASSERT(result.linkedOperands[1].usedSize == 2);    
     }
+}
+
+void test_mov2()
+{
+    DIANA_TEST(test_mov2_impl());
 }

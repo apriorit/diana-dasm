@@ -102,10 +102,10 @@ static void test_processor_xor64_5()
 
 void test_processor_x()
 {
-    test_processor_xor();
-	test_processor_xor64();
-	test_processor_xor64_2();
-	test_processor_xor64_3();
-	test_processor_xor64_4();
-	test_processor_xor64_5();
+    DIANA_TEST(test_processor_xor());
+	DIANA_TEST(test_processor_xor64());
+	DIANA_TEST(test_processor_xor64_2());
+	DIANA_TEST(test_processor_xor64_3());
+	DIANA_TEST(test_processor_xor64_4());
+	DIANA_TEST(test_processor_xor64_5());
 }

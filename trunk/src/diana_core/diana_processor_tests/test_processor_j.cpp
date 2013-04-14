@@ -200,15 +200,15 @@ static void test_processor_jecxz5()
 
 void test_processor_j()
 {
-    test_processor_jmp();
-    test_processor_jmp2();
-    test_processor_jmp3();
-    test_processor_jmp4();
-	test_processor_je();
-	test_processor_jmp_middle();
-	test_processor_jecxz();
-	test_processor_jecxz2();
-	test_processor_jecxz3();
-	test_processor_jecxz4();
+    DIANA_TEST(test_processor_jmp());
+    DIANA_TEST(test_processor_jmp2());
+    DIANA_TEST(test_processor_jmp3());
+    DIANA_TEST(test_processor_jmp4());
+	DIANA_TEST(test_processor_je());
+	DIANA_TEST(test_processor_jmp_middle());
+	DIANA_TEST(test_processor_jecxz());
+	DIANA_TEST(test_processor_jecxz2());
+	DIANA_TEST(test_processor_jecxz3());
+	DIANA_TEST(test_processor_jecxz4());
 	// FIXME test_processor_jecxz5();
 }
