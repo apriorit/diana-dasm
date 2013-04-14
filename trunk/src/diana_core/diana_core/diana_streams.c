@@ -1,6 +1,6 @@
 #include "diana_streams.h"
 
-static int MemoryStream_Read(void * pThis, void * pBuffer, int iBufferSize, int * readed)
+static int MemoryStream_Read(void * pThis, void * pBuffer, int iBufferSize, int * readBytes)
 {
     DianaMemoryStream * pStream = pThis;
     int sizeToGive = (int)(pStream->bufferSize - pStream->curSize);
@@ -9,7 +9,7 @@ static int MemoryStream_Read(void * pThis, void * pBuffer, int iBufferSize, int 
 
     memcpy(pBuffer,(char*)pStream->pBuffer+pStream->curSize, sizeToGive);
     pStream->curSize += sizeToGive;
-    *readed = sizeToGive;
+    *readBytes = sizeToGive;
     return 0;
 }
 

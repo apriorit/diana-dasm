@@ -249,12 +249,12 @@ int Diana_ReadIndexStructure32(DianaContext * pContext,
         // check all
         {
             unsigned char sibByte = 0;
-            int readed = 0;
+            int readBytes = 0;
             int ss=0, index=0, base=0;
-            int iRes  = pStream->pReadFnc(pStream, &sibByte, 1, &readed);
+            int iRes  = pStream->pReadFnc(pStream, &sibByte, 1, &readBytes);
             if (iRes)
                 return iRes;
-            if(readed !=1)
+            if(readBytes !=1)
                 return DI_ERROR;
 
             Diana_DispatchSIB2(pContext, sibByte, &ss, &index, &base);

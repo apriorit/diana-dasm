@@ -329,6 +329,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_pe_analyzer.c"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_stack.c"
 				>
 			</File>
@@ -408,6 +412,10 @@
 			</File>
 			<File
 				RelativePath=".\diana_pe.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_pe_analyzer.h"
 				>
 			</File>
 			<File

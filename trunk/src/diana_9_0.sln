@@ -35,6 +35,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diana_win32_debugger", "dia
 		{D35CE6C4-6C8E-44BB-8CF7-63B520210233} = {D35CE6C4-6C8E-44BB-8CF7-63B520210233}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diana_win_test", "diana_win\diana_win_test\diana_win_test.vcproj", "{E7139B73-2CD4-42D0-B809-8CCE9AC154A9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DDEE4514-39A8-4303-B80C-74D83D71D91A} = {DDEE4514-39A8-4303-B80C-74D83D71D91A}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -93,6 +98,14 @@ Global
 		{BDF6AC00-51A6-412E-BFE9-818E0192462E}.Release|Win32.ActiveCfg = Release|Win32
 		{BDF6AC00-51A6-412E-BFE9-818E0192462E}.Release|Win32.Build.0 = Release|Win32
 		{BDF6AC00-51A6-412E-BFE9-818E0192462E}.Release|x64.ActiveCfg = Release|Win32
+		{E7139B73-2CD4-42D0-B809-8CCE9AC154A9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E7139B73-2CD4-42D0-B809-8CCE9AC154A9}.Debug|Win32.Build.0 = Debug|Win32
+		{E7139B73-2CD4-42D0-B809-8CCE9AC154A9}.Debug|x64.ActiveCfg = Debug|x64
+		{E7139B73-2CD4-42D0-B809-8CCE9AC154A9}.Debug|x64.Build.0 = Debug|x64
+		{E7139B73-2CD4-42D0-B809-8CCE9AC154A9}.Release|Win32.ActiveCfg = Release|Win32
+		{E7139B73-2CD4-42D0-B809-8CCE9AC154A9}.Release|Win32.Build.0 = Release|Win32
+		{E7139B73-2CD4-42D0-B809-8CCE9AC154A9}.Release|x64.ActiveCfg = Release|x64
+		{E7139B73-2CD4-42D0-B809-8CCE9AC154A9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

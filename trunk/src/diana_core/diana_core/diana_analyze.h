@@ -11,10 +11,13 @@
 #define DI_INSTRUCTION_USES_UNKNOWN_RIP   0x10
 #define DI_INSTRUCTION_INVALID            0x20
 #define DI_INSTRUCTION_ROOT               0x40
+#define DI_INSTRUCTION_EXTERNAL           0x80
 
 #define DI_ROUTE_QUESTIONABLE             0x1
 
 #define DI_XREF_INVALID                   0x1
+#define DI_XREF_EXTERNAL                  0x2
+
 typedef struct _Diana_Instruction
 {
     // used only in contructror time
@@ -46,17 +49,25 @@ typedef int (* ConvertAddressToRelative_fnc)(void * pThis,
                                              int * pbInvalidPointer);
 typedef int (* AddSuspectedDataAddress_fnc)(void * pThis, 
                                             OPERAND_SIZE address);
+
+typedef enum {diaJumpNormal, diaJumpInvalid, diaJumpExternal} DianaAnalyzeJumpFlags_type;
+typedef int (* AnalyzeJumpAddress_fnc)(void * pThis, 
+                                       OPERAND_SIZE address,
+                                       DianaAnalyzeJumpFlags_type * pFlags);
+
 typedef struct _dianaAnalyzeObserver
 {
     DianaMovableReadStream * m_pStream;
     ConvertAddressToRelative_fnc m_pConvertAddress;
     AddSuspectedDataAddress_fnc m_pSuspectedDataAddress;
+    AnalyzeJumpAddress_fnc m_pAnalyzeJumpAddress;
 }DianaAnalyzeObserver;
 
 void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
                                DianaMovableReadStream * pStream,
                                ConvertAddressToRelative_fnc pConvertAddress,
-                               AddSuspectedDataAddress_fnc pSuspectedDataAddress);
+                               AddSuspectedDataAddress_fnc pSuspectedDataAddress,
+                               AnalyzeJumpAddress_fnc pAnalyzeJumpAddress);
 
 void Diana_Instruction_Init(Diana_Instruction * pInstruction,
                             OPERAND_SIZE m_offset,
@@ -78,6 +89,7 @@ typedef struct _Diana_InstructionsOwner
     OPERAND_SIZE m_usedSize;
     OPERAND_SIZE m_actualSize;
     int m_stackInited;
+    Diana_List m_externalInstructionsList;
 }Diana_InstructionsOwner;
 
 typedef struct _diana_RouteInfo

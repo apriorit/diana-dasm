@@ -16,5 +16,5 @@ typedef struct _dianaStreamProxy
 void Diana_InitStreamProxy(DianaStreamProxy * pStream,  // this
                            DianaReadStream * pUsedStream,
                            unsigned char * pBuffer, 
-                           int readed);
+                           int readBytes);
 #endif

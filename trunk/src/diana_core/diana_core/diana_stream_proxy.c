@@ -1,6 +1,6 @@
 #include "diana_stream_proxy.h"
 
-static int StreamProxy_Read(void * pThis, void * pBuffer, int iBufferSize, int * readed)
+static int StreamProxy_Read(void * pThis, void * pBuffer, int iBufferSize, int * readBytes)
 {
     DianaStreamProxy * pStream = (DianaStreamProxy * )pThis;
     if (pStream->tail_size)
@@ -10,7 +10,7 @@ static int StreamProxy_Read(void * pThis, void * pBuffer, int iBufferSize, int *
             memcpy(pBuffer, pStream->pBuffer + pStream->begin, iBufferSize);
             pStream->tail_size -= iBufferSize;
             pStream->begin+=iBufferSize;
-            *readed = iBufferSize;
+            *readBytes = iBufferSize;
             return 0;
         }
         else
@@ -23,8 +23,8 @@ static int StreamProxy_Read(void * pThis, void * pBuffer, int iBufferSize, int *
             pStream->pUsedStream->pReadFnc(pStream->pUsedStream, 
                                            (char*)pBuffer + pStream->tail_size,
                                            iBufferSize - pStream->tail_size,
-                                           readed);
-            *readed += pStream->tail_size;
+                                           readBytes);
+            *readBytes += pStream->tail_size;
             pStream->tail_size = 0;
             return iRes;
         }
@@ -33,17 +33,17 @@ static int StreamProxy_Read(void * pThis, void * pBuffer, int iBufferSize, int *
     return pStream->pUsedStream->pReadFnc(pStream->pUsedStream, 
                                           pBuffer,
                                           iBufferSize,
-                                          readed);
+                                          readBytes);
 
 }
 
 void Diana_InitStreamProxy(DianaStreamProxy * pStream, 
                            DianaReadStream * pUsedStream,
                            unsigned char * pBuffer, 
-                           int readed)
+                           int readBytes)
 {
     pStream->pUsedStream = pUsedStream;
-    pStream->tail_size = readed; 
+    pStream->tail_size = readBytes; 
     pStream->begin = 0;
     pStream->parent.pReadFnc = StreamProxy_Read;
     pStream->pBuffer = pBuffer;
