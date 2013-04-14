@@ -23,7 +23,7 @@ struct DianaTestError:public std::runtime_error
 #define TEST_ASSERT_IMPL(X, Y)  if (!(X))   {   std::cout<<"[ERROR] \""<<#X<<"\" failed in \""<<__FILE__<<"\" at line "<<__LINE__<<"\n";  Y; }
 #endif
 
-#define DIANA_TEST(X) try{ X; }catch(DianaTestError & ){ std::cout<<"Test failed: "<<#X<<"\n\n"; }catch(const std::exception & e) {std::cout<<"Test failed: "<<#X<<": "<<e.what()<<"\n\n"; }
+#define DIANA_TEST(X) try{ X; }catch(DianaTestError & ){ std::cout<<"[ERROR] Test failed: "<<#X<<"\n\n"; }catch(const std::exception & e) {std::cout<<"[ERROR] Test failed: "<<#X<<", exception: \""<<e.what()<<"\"\n\n"; }
 #define TEST_ASSERT(X)  TEST_ASSERT_IMPL(X, throw DianaTestError());
 #define TEST_ASSERT_IF(X)  TEST_ASSERT_IMPL(X, ;) else
 
