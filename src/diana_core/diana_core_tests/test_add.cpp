@@ -15,7 +15,7 @@ static unsigned char code52[] = {0xf0, 0x2e, 0x66, 0x67, 0x81, 0x84, 0x18, 0x67,
 static unsigned char adc[]= {0x67, 0x45, 0x10, 0xe}; // adc byte ptr ds:[r14d] r9b
 static unsigned char add2[]= {0x00, 0x04, 0x25, 0x00, 0x00, 0x00, 0x00}; // add     [00000000],al
 
-int test_add()
+static int test_add_impl()
 {
     DianaGroupInfo * pGroupInfo=0;
     DianaParserResult result;
@@ -115,4 +115,9 @@ int test_add()
     }
     return 0;
 
+}
+
+void test_add()
+{
+    DIANA_TEST(test_add_impl());
 }
