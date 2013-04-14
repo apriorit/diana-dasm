@@ -67,8 +67,21 @@ int Diana_InstructionsOwner_Init(Diana_InstructionsOwner * pOwner,
     pOwner->m_usedSize = 0; 
     return DI_SUCCESS;
 }
+static
+int Diana_InstructionsOwner_ExternalInstructionsDeleter(Diana_ListNode * pNode,
+                                                        void * pContext,
+                                                        int * pbDone)
+{
+    Diana_Instruction * pInstruction = (Diana_Instruction * )pNode;
+    free(pInstruction);
+    &pContext;
+	*pbDone = 0;
+    return DI_SUCCESS;
+}
 void Diana_InstructionsOwner_Free(Diana_InstructionsOwner * pOwner)
 {
+    Diana_ListForEach(&pOwner->m_externalInstructionsList, Diana_InstructionsOwner_ExternalInstructionsDeleter, 0);
+    Diana_InitList(&pOwner->m_externalInstructionsList);
     if (pOwner->m_pInstructionsVec)
     {
         free(pOwner->m_pInstructionsVec);
@@ -522,9 +535,7 @@ int RouteMarker(Diana_ListNode * pNode,
 {
     Diana_Instruction * pInstruction = (Diana_Instruction * )pNode;
     DianaAnalyzeSession * pSession  = pContext;
-
-	pbDone;
-
+	&pbDone;
     pInstruction->m_flags |= DI_INSTRUCTION_INVALID;
 
     Diana_ListForEach(&pInstruction->m_refsFrom, 
@@ -602,13 +613,6 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
 
             continue;
         }
-
-        if (offset >= pSession->maxOffset)
-        {
-            bNeedReset = 1;
-            continue;
-        }
-
         // check if instruction is always registered
         {
             Diana_Instruction * pInstruction = Diana_InstructionsOwner_GetInstruction(pSession->pOwner, prevOffset);
@@ -635,6 +639,11 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
                                                 prevOffset,
                                                 offset,
                                                 &bNeedReset));
+        if (offset >= pSession->maxOffset)
+        {
+            bNeedReset = 1;
+            continue;
+        }
     }
     return DI_SUCCESS;
 }
