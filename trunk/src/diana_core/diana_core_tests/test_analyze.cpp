@@ -21,6 +21,15 @@ struct TestStream:public DianaMovableReadStream
     {
     }
 };
+struct TestAnalyzeEnvironment
+{
+    DianaAnalyzeObserver observer; // must be first
+    TestStream stream;
+
+    TestAnalyzeEnvironment(OPERAND_SIZE base,
+                           OPERAND_SIZE current,
+                           OPERAND_SIZE size);
+};
 
 static
 int DianaRead(void * pThis, 
@@ -57,8 +66,8 @@ int DianaConvertAddressToRelative(void * pThis,
                                   OPERAND_SIZE * pRelativeOffset,
                                   int * pbInvalidPointer)
 {
-    TestStream * pStream = (TestStream * )pThis;
-	&pStream;
+    TestAnalyzeEnvironment * pObserver = (TestAnalyzeEnvironment * )pThis;
+	&pObserver;
 	&pbInvalidPointer;
     *pRelativeOffset = address;
     return DI_SUCCESS;
@@ -68,8 +77,8 @@ static
 int DianaAddSuspectedDataAddress(void * pThis, 
                                  OPERAND_SIZE address)
 {
-	TestStream * pStream = (TestStream * )pThis;
-	&pStream;
+	TestAnalyzeEnvironment * pObserver = (TestAnalyzeEnvironment * )pThis;
+	&pObserver;
     &address;
     return DI_SUCCESS;
 }
@@ -79,9 +88,12 @@ int DianaAnalyzeJumpAddress(void * pThis,
                             OPERAND_SIZE address,
                             DianaAnalyzeJumpFlags_type * pFlags)
 {
-    &pThis;
-    &address;
+    TestAnalyzeEnvironment * pObserver = (TestAnalyzeEnvironment * )pThis;
     *pFlags = diaJumpNormal;
+    if (address >= pObserver->stream.m_size)
+    {
+        *pFlags = diaJumpExternal;
+    }
     return DI_SUCCESS;
 }
 struct IntructionInfo
@@ -141,6 +153,21 @@ void VerifyREF(const char * pTestRefs,
     
 }
 
+TestAnalyzeEnvironment::TestAnalyzeEnvironment(OPERAND_SIZE base,
+                                               OPERAND_SIZE current,
+                                               OPERAND_SIZE size)
+        :
+            stream(base, current, size)
+{
+    DianaMovableReadStream_Init(&stream,
+                                DianaRead,
+                                DianaAnalyzeMoveTo);
+    DianaAnalyzeObserver_Init(&observer, 
+                          &stream,
+                          DianaConvertAddressToRelative,
+                          DianaAddSuspectedDataAddress,
+                          DianaAnalyzeJumpAddress);
+}
 void test_analyzer1()
 {
     unsigned char code[] = { 0x48, 0x8b, 0xc4 //mov     rax,rsp :0
@@ -181,23 +208,11 @@ void test_analyzer1()
     size_t maxOffset = sizeof(code);
     size_t start = 0;
 
-    TestStream stream((OPERAND_SIZE)code, start, sizeof(code));
-    DianaMovableReadStream_Init(&stream,
-                                DianaRead,
-                                DianaAnalyzeMoveTo);
-    
-    DianaAnalyzeObserver observer;
-    DianaAnalyzeObserver_Init(&observer, 
-                              &stream,
-                              DianaConvertAddressToRelative,
-                              DianaAddSuspectedDataAddress,
-                              DianaAnalyzeJumpAddress);
+    TestAnalyzeEnvironment env((OPERAND_SIZE)code, start, sizeof(code));
     Diana_InstructionsOwner owner;
-
     TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
-
     TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
-                                                &observer,
+                                                &env.observer,
                                                 DIANA_MODE64,
                                                 start,
                                                 maxOffset));
@@ -253,24 +268,11 @@ void test_analyzer2()
     size_t maxOffset = sizeof(code);
     size_t start = 0;
 
-    TestStream stream((OPERAND_SIZE)code, start, sizeof(code));
-    DianaMovableReadStream_Init(&stream, 
-                              DianaRead, 
-                              DianaAnalyzeMoveTo);
-
-    DianaAnalyzeObserver observer;
-    DianaAnalyzeObserver_Init(&observer, 
-                              &stream,
-                              DianaConvertAddressToRelative,
-                              DianaAddSuspectedDataAddress,
-                              DianaAnalyzeJumpAddress);
-
+    TestAnalyzeEnvironment env((OPERAND_SIZE)code, start, sizeof(code));
     Diana_InstructionsOwner owner;
-
     TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
-
     TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
-                                                &observer,
+                                                &env.observer,
                                                 DIANA_MODE64,
                                                 start,
                                                 maxOffset));
@@ -291,8 +293,33 @@ void test_analyzer2()
     Diana_InstructionsOwner_Free(&owner);
 }
 
+
+void test_analyzer3()
+{
+    unsigned char code[] = {  0x75, 0x5 //    jne +0 - out of scope
+                            };
+    const int instructionsCount = 1;
+
+    size_t minOffset = 0;
+    size_t maxOffset = sizeof(code);
+    size_t start = 0;
+
+    TestAnalyzeEnvironment env((OPERAND_SIZE)code, start, sizeof(code));
+    Diana_InstructionsOwner owner;
+    TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
+    TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
+                                                &env.observer,
+                                                DIANA_MODE64,
+                                                start,
+                                                maxOffset));
+
+    TEST_ASSERT(owner.m_actualSize == 1);
+    TEST_ASSERT(owner.m_externalInstructionsList.m_size == 1);
+    Diana_InstructionsOwner_Free(&owner);
+}
 void test_analyze()
 {
     test_analyzer1();
     test_analyzer2();
+    test_analyzer3();
 }
