@@ -74,16 +74,6 @@ int DianaConvertAddressToRelative(void * pThis,
 }
  
 static
-int DianaAddSuspectedDataAddress(void * pThis, 
-                                 OPERAND_SIZE address)
-{
-	TestAnalyzeEnvironment * pObserver = (TestAnalyzeEnvironment * )pThis;
-	&pObserver;
-    &address;
-    return DI_SUCCESS;
-}
-
-static
 int DianaAnalyzeJumpAddress(void * pThis,
                             OPERAND_SIZE address,
                             DianaAnalyzeJumpFlags_type * pFlags)
@@ -165,7 +155,6 @@ TestAnalyzeEnvironment::TestAnalyzeEnvironment(OPERAND_SIZE base,
     DianaAnalyzeObserver_Init(&observer, 
                           &stream,
                           DianaConvertAddressToRelative,
-                          DianaAddSuspectedDataAddress,
                           DianaAnalyzeJumpAddress);
 }
 void test_analyzer1()

@@ -47,9 +47,6 @@ typedef int (* ConvertAddressToRelative_fnc)(void * pThis,
                                              OPERAND_SIZE address,
                                              OPERAND_SIZE * pRelativeOffset,
                                              int * pbInvalidPointer);
-typedef int (* AddSuspectedDataAddress_fnc)(void * pThis, 
-                                            OPERAND_SIZE address);
-
 typedef enum {diaJumpNormal, diaJumpInvalid, diaJumpExternal} DianaAnalyzeJumpFlags_type;
 typedef int (* AnalyzeJumpAddress_fnc)(void * pThis, 
                                        OPERAND_SIZE address,
@@ -59,14 +56,12 @@ typedef struct _dianaAnalyzeObserver
 {
     DianaMovableReadStream * m_pStream;
     ConvertAddressToRelative_fnc m_pConvertAddress;
-    AddSuspectedDataAddress_fnc m_pSuspectedDataAddress;
     AnalyzeJumpAddress_fnc m_pAnalyzeJumpAddress;
 }DianaAnalyzeObserver;
 
 void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
                                DianaMovableReadStream * pStream,
                                ConvertAddressToRelative_fnc pConvertAddress,
-                               AddSuspectedDataAddress_fnc pSuspectedDataAddress,
                                AnalyzeJumpAddress_fnc pAnalyzeJumpAddress);
 
 void Diana_Instruction_Init(Diana_Instruction * pInstruction,

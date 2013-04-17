@@ -1,4 +1,81 @@
 #include "diana_pe_analyzer.h"
+#include "stdlib.h"
+
+int DianaAnalyzeObserverOverMemory_ConvertAddressToRelative(void * pThis, 
+                                                            OPERAND_SIZE address,
+                                                            OPERAND_SIZE * pRelativeOffset,
+                                                            int * pbInvalidPointer);
+
+static
+int ScanPage(Diana_PeFile * pPeFile,
+                      DianaAnalyzeObserver * pObserver,
+                      Diana_InstructionsOwner * pOwner,
+                      void * pPage,
+                      int pageSize)
+{
+    char * p = pPage;
+    char * pEnd = p + pageSize - sizeof(size_t)+1;
+    if (pageSize < sizeof(size_t))
+        return DI_SUCCESS;
+
+    for(++p; p < pEnd; ++p)
+    {
+        size_t * pAddress = (size_t *)p;
+        OPERAND_SIZE relativeAddress = 0;
+        int invalid = 1;
+        DI_CHECK(pObserver->m_pConvertAddress(pObserver, *pAddress, &relativeAddress, &invalid));
+        if (!invalid)
+        {
+            DI_CHECK(Diana_AnalyzeCode(pOwner,
+                                        pObserver,
+                                        pPeFile->pImpl->dianaMode,
+                                        relativeAddress,
+                                        pPeFile->pImpl->sizeOfFile));
+        }
+    }
+    return DI_SUCCESS;
+}
+static
+int Diana_AnalyzeData(Diana_PeFile * pPeFile,
+                      DianaAnalyzeObserver * pObserver,
+                      Diana_InstructionsOwner * pOwner,
+                      void * pPage,
+                      int pageSize)
+{       
+    DIANA_IMAGE_SECTION_HEADER * pCurrentCapturedSection = pPeFile->pImpl->pCapturedSections;
+    DIANA_IMAGE_SECTION_HEADER * pCapturedSectionsEnd = pPeFile->pImpl->pCapturedSections + pPeFile->pImpl->capturedSectionCount;
+    int readBytes = 0;
+    size_t pageLastPointer = 0;
+    for(;
+        pCurrentCapturedSection != pCapturedSectionsEnd;
+        ++pCurrentCapturedSection)
+    {
+        int result = 0;
+        OPERAND_SIZE allReadBytes = 0;
+        DI_CHECK(pObserver->m_pStream->pMoveTo(pObserver->m_pStream, pCurrentCapturedSection->VirtualAddress));
+        for(;;)
+        {
+            readBytes = 0;
+            result = pObserver->m_pStream->parent.pReadFnc(pObserver->m_pStream, (char*)pPage+sizeof(size_t), pageSize, &readBytes);
+            if (result || !readBytes)
+                break;
+            allReadBytes += readBytes;
+            *(size_t*)pPage = pageLastPointer;
+            DI_CHECK(ScanPage(pPeFile,
+                              pObserver,
+                              pOwner,
+                              (char*)pPage,
+                              readBytes + sizeof(size_t)));
+            if (readBytes >= sizeof(size_t))
+            {
+                pageLastPointer = *(size_t*)((char*)pPage + readBytes);
+            }
+            if (allReadBytes >= pCurrentCapturedSection->Misc.VirtualSize)
+                break;
+        }
+    }
+    return DI_SUCCESS;
+}
 
 static 
 int Diana_PE_AnalyzePEImpl(Diana_PeFile * pPeFile,
@@ -14,9 +91,17 @@ int Diana_PE_AnalyzePEImpl(Diana_PeFile * pPeFile,
                                    pPeFile->pImpl->addressOfEntryPoint, 
                                    pPeFile->pImpl->sizeOfFile));
     }
+    {
+        int pageSize = 0x1000;
+        void * pPage = malloc(pageSize + sizeof(OPERAND_SIZE));
+        int status = 0;
+        DI_CHECK_ALLOC(pPage);
+        status = Diana_AnalyzeData(pPeFile, pObserver, pOwner, pPage, pageSize);
+        free(pPage);
+    }
+
     // scan exports
     // scan imports
-    // scan section pointers
     return DI_SUCCESS;
 }
 int Diana_PE_AnalyzePE(Diana_PeFile * pPeFile,
@@ -90,13 +175,6 @@ int DianaAnalyzeObserverOverMemory_ConvertAddressToRelative(void * pThis,
     }
     return DI_SUCCESS;
 }
-int DianaAnalyzeObserverOverMemory_AddSuspectedDataAddress(void * pThis, 
-                                                          OPERAND_SIZE address)
-{
-    &pThis;
-    &address;
-    return DI_SUCCESS;
-}
 
 int DianaAnalyzeObserverOverMemory_AnalyzeJumpAddress(void * pThis, 
                                                       OPERAND_SIZE address,
@@ -104,12 +182,11 @@ int DianaAnalyzeObserverOverMemory_AnalyzeJumpAddress(void * pThis,
 {
     DianaAnalyzeObserverOverMemory * pObserver = pThis;
     DianaMovableReadStreamOverMemory * pStream = &pObserver->stream;
-    *pFlags = diaJumpExternal;
+    *pFlags = diaJumpNormal;
 
-    if (address >= (OPERAND_SIZE)pStream->memoryStream.pBuffer &&
-        address <= (OPERAND_SIZE)pStream->memoryStream.pBuffer + pStream->memoryStream.bufferSize)
+    if (address >= pStream->memoryStream.bufferSize)
     {
-        *pFlags = diaJumpNormal;
+        *pFlags = diaJumpExternal;
     }
     return DI_SUCCESS;
 }
@@ -124,7 +201,6 @@ void DianaAnalyzeObserverOverMemory_Init(DianaAnalyzeObserverOverMemory * pThis,
     DianaAnalyzeObserver_Init(&pThis->parent,
                               &pThis->stream.stream,
                               DianaAnalyzeObserverOverMemory_ConvertAddressToRelative,
-                              DianaAnalyzeObserverOverMemory_AddSuspectedDataAddress,
                               DianaAnalyzeObserverOverMemory_AnalyzeJumpAddress
                               );
 }
