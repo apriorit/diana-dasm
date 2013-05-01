@@ -286,10 +286,10 @@ int Diana_Call_xlat(struct _dianaContext * pDianaContext,
 static
 void DianaProcessor_OnGroup(DianaGroupInfo * p)
 {
-	#pragma warning( suppress : 4127 ) // conditional expression is constant
-    if (0){}
-	#pragma warning( push )
-	#pragma warning( disable : 4152 ) // non standard extension, function/data ptr conversion in expression
+    #pragma warning( push )
+    #pragma warning( disable : 4152 ) // non standard extension, function/data ptr conversion in expression
+    switch (p->m_commandId)
+    {
     DI_PROC_REGISTER_COMMAND(aaa)
     DI_PROC_REGISTER_COMMAND(aad)
     DI_PROC_REGISTER_COMMAND(aam)
@@ -454,7 +454,10 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(movlps)
     DI_PROC_REGISTER_COMMAND(movsd)
     DI_PROC_REGISTER_COMMAND(movddup)
-	#pragma warning( pop )
+    default:
+        break;
+    }
+    #pragma warning( pop )
 }
 
 void DianaProcessor_LinkCommands()

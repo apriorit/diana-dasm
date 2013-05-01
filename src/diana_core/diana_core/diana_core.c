@@ -176,147 +176,53 @@ static void Diana_Normal(struct _dianaContext * pContext)
 
 static int InitJmps(DianaGroupInfo * pGroupInfo)
 {
+    switch (pGroupInfo->m_commandId)
+    {
     // RETS
-    if (!strcmp(pGroupInfo->m_pName,"ret"))
-    {
+    case diana_cmd_ret:
+    case diana_cmd_retf:
+    case diana_cmd_iret:
+    case diana_cmd_leave:
         pGroupInfo->m_pLinkedInfo = &g_infoForRets;
-        return 1;
-    } else
-    if (!strcmp(pGroupInfo->m_pName,"retf"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForRets;
-        return 1;
-    } else
-    if (!strcmp(pGroupInfo->m_pName,"iret"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForRets;
-        return 1;
-    } else
-    if (!strcmp(pGroupInfo->m_pName,"leave"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForRets;
-        return 1;
-    } else
-
+        break;
     // CALLS
-    if (!strcmp(pGroupInfo->m_pName,"call"))
-    {
+    case diana_cmd_call:
         pGroupInfo->m_pLinkedInfo = &g_infoForCalls;
-        return 1;
-    } else
-
+        break;
     // LOOPS
-    if (!strcmp(pGroupInfo->m_pName,"loop"))
-    {
+    case diana_cmd_loop:
+    case diana_cmd_loope:
+    case diana_cmd_loopne:
         pGroupInfo->m_pLinkedInfo = &g_infoForLoops;
-        return 1;
-    } else
-    if (!strcmp(pGroupInfo->m_pName,"loope"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForLoops;
-        return 1;
-    } else
-    if (!strcmp(pGroupInfo->m_pName,"loopn"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForLoops;
-        return 1;
-    } else
-
+        break;
     // JMPS
-    if (!strcmp(pGroupInfo->m_pName,"jmp"))
-    {
+    case diana_cmd_jmp:
         pGroupInfo->m_pLinkedInfo = &g_infoForJmps;
-        return 1;
-    } else
-    if (!strcmp(pGroupInfo->m_pName,"ja"))
-    {
+        break;
+    case diana_cmd_ja:
+    case diana_cmd_jae:
+    case diana_cmd_jb:
+    case diana_cmd_jbe:
+    case diana_cmd_je:
+    case diana_cmd_jg:
+    case diana_cmd_jge:
+    case diana_cmd_jl:
+    case diana_cmd_jle:
+    case diana_cmd_jne:
+    case diana_cmd_jno:
+    case diana_cmd_jnp:
+    case diana_cmd_jns:
+    case diana_cmd_jo:
+    case diana_cmd_jp:
         pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jae"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jb"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jbe"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"je"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jecxz"))
-    {
+        break;
+    case diana_cmd_jecxz:
         pGroupInfo->m_pLinkedInfo = &g_infoForJecxz;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jg"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jge"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jl"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jle"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jne"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jno"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jnp"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }else
-    if (!strcmp(pGroupInfo->m_pName,"jns"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
+        break;
+    default:
+        return 0;
     }
-    else
-    if (!strcmp(pGroupInfo->m_pName,"jo"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }
-    else
-    if (!strcmp(pGroupInfo->m_pName,"jp"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }
-    else
-    if (!strcmp(pGroupInfo->m_pName,"js"))
-    {
-        pGroupInfo->m_pLinkedInfo = &g_infoForJcc;
-        return 1;
-    }
-    return 0;
+    return 1;
 }
 
 void Diana_InitLine(DianaBaseGenObject_type * pRoot);
@@ -398,19 +304,19 @@ static void ProcessCmdInfo(DianaBaseGenObject_type * pCurrentLine,
         }
     }
     // b) pop and push should have def operand size 64
-    if (!strcmp(pGroupInfo->m_pName,"pop"))
+    if (diana_cmd_pop == pGroupInfo->m_commandId)
     {
         pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
     } else
-    if (!strcmp(pGroupInfo->m_pName,"popf"))
+    if (diana_cmd_popf == pGroupInfo->m_commandId)
     {
         pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
     } else
-    if (!strcmp(pGroupInfo->m_pName,"push"))
+    if (diana_cmd_push == pGroupInfo->m_commandId)
     {
         pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
     } else
-    if (!strcmp(pGroupInfo->m_pName,"pushf"))
+    if (diana_cmd_pushf == pGroupInfo->m_commandId)
     {
         pInfo->m_flags |= DI_FLAG_CMD_AMD_DEFAULT_OPSIZE_64;
     }
