@@ -6,7 +6,7 @@
 static void test_processor_jmp()
 {
     // jmp $+5
-    unsigned char code[] = {0xE9, 0x00, 0x00, 00, 0x00};      
+    unsigned char code[] = {0xE9, 0x00, 0x00, 0x00, 0x00};      
     CTestProcessor proc(code, sizeof(code));
     DianaProcessor * pCallContext = proc.GetSelf();
     
