@@ -383,6 +383,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_core_cpp.h"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_core_gen_tags.h"
 				>
 			</File>

@@ -2,11 +2,11 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="diana_core_tests"
-	ProjectGUID="{7B85969C-8760-44C7-B11D-2A2FDC6FFCDE}"
-	RootNamespace="diana_core_tests"
+	Name="orthia"
+	ProjectGUID="{29B18490-B415-433C-9AD7-ABA97EB3A1BF}"
+	RootNamespace="orthia"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="0"
+	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -23,8 +23,8 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)..\bin\$(ConfigurationName)\i386"
 			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)\i386"
-			ConfigurationType="1"
-			CharacterSet="2"
+			ConfigurationType="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -44,16 +44,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\diana_core;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIGENEXT_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				TreatWChar_tAsBuiltInType="true"
-				RuntimeTypeInfo="true"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -67,11 +64,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/diana_core_tests.exe"
 				LinkIncremental="2"
+				ModuleDefinitionFile="orthia.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/diana_core_tests.pdb"
-				SubSystem="1"
+				SubSystem="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -100,8 +96,8 @@
 			Name="Debug|x64"
 			OutputDirectory="$(SolutionDir)..\bin\$(ConfigurationName)\amd64"
 			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)\amd64"
-			ConfigurationType="1"
-			CharacterSet="2"
+			ConfigurationType="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -122,16 +118,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\diana_core;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIGENEXT_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				TreatWChar_tAsBuiltInType="true"
-				RuntimeTypeInfo="true"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -145,11 +138,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/diana_core_tests.exe"
 				LinkIncremental="2"
+				ModuleDefinitionFile="orthia.def"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/diana_core_tests.pdb"
-				SubSystem="1"
+				SubSystem="2"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -178,8 +170,9 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)..\bin\$(ConfigurationName)\i386"
 			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)\i386"
-			ConfigurationType="1"
-			CharacterSet="2"
+			ConfigurationType="2"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -198,14 +191,14 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\diana_core;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				RuntimeLibrary="0"
-				TreatWChar_tAsBuiltInType="true"
-				RuntimeTypeInfo="true"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIGENEXT_EXPORTS"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -219,10 +212,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/diana_core_tests.exe"
 				LinkIncremental="1"
+				ModuleDefinitionFile="orthia.def"
 				GenerateDebugInformation="true"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -253,8 +246,9 @@
 			Name="Release|x64"
 			OutputDirectory="$(SolutionDir)..\bin\$(ConfigurationName)\amd64"
 			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)\amd64"
-			ConfigurationType="1"
-			CharacterSet="2"
+			ConfigurationType="2"
+			CharacterSet="1"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -274,14 +268,14 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\diana_core;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
-				RuntimeLibrary="0"
-				TreatWChar_tAsBuiltInType="true"
-				RuntimeTypeInfo="true"
+				Optimization="2"
+				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIGENEXT_EXPORTS"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -295,10 +289,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/diana_core_tests.exe"
 				LinkIncremental="1"
+				ModuleDefinitionFile="orthia.def"
 				GenerateDebugInformation="true"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="17"
@@ -331,95 +325,79 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
+			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\main.cpp"
+				RelativePath=".\dllmain.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						CompileAsManaged="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						CompileAsManaged="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						CompileAsManaged="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+						CompileAsManaged="0"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\orthia.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\test_add.cpp"
+				RelativePath=".\orthia.def"
 				>
 			</File>
 			<File
-				RelativePath=".\test_analyze.cpp"
+				RelativePath=".\orthia_database_module.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\test_call.cpp"
+				RelativePath=".\orthia_database_saver.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\test_cmp.cpp"
+				RelativePath=".\orthia_diana_module.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\test_common.cpp"
+				RelativePath=".\orthia_memory_cache.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\test_fpu_mmx32.cpp"
+				RelativePath=".\orthia_module_manager.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\test_imul.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_integrated.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_jmp.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_lea.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_mov.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_mov2.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_mov_as.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_mov_spec.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_new.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_or.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_push.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_stack.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_suxx.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_x64.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\test_x64_integrated.cpp"
+				RelativePath=".\orthia_utils.cpp"
 				>
 			</File>
 		</Filter>
@@ -429,93 +407,41 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\test_add.h"
+				RelativePath=".\orthia.h"
 				>
 			</File>
 			<File
-				RelativePath=".\test_analyze.h"
+				RelativePath=".\orthia_database_module.h"
 				>
 			</File>
 			<File
-				RelativePath=".\test_call.h"
+				RelativePath=".\orthia_database_saver.h"
 				>
 			</File>
 			<File
-				RelativePath=".\test_cmp.h"
+				RelativePath=".\orthia_diana_module.h"
 				>
 			</File>
 			<File
-				RelativePath=".\test_common.h"
+				RelativePath=".\orthia_interfaces.h"
 				>
 			</File>
 			<File
-				RelativePath=".\test_fpu_mmx32.h"
+				RelativePath=".\orthia_memory_cache.h"
 				>
 			</File>
 			<File
-				RelativePath=".\test_imul.h"
+				RelativePath=".\orthia_module_manager.h"
 				>
 			</File>
 			<File
-				RelativePath=".\test_integrated.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_jmp.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_lea.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_mov.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_mov2.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_mov_as.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_mov_spec.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_new.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_or.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_push.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_stack.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_suxx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_x64.h"
-				>
-			</File>
-			<File
-				RelativePath=".\test_x64_integrated.h"
+				RelativePath=".\orthia_utils.h"
 				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
-			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
