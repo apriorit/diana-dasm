@@ -23,7 +23,15 @@ int ScanPage(Diana_PeFile * pPeFile,
         size_t * pAddress = (size_t *)p;
         OPERAND_SIZE relativeAddress = 0;
         int invalid = 1;
-        DI_CHECK(pObserver->m_pConvertAddress(pObserver, *pAddress, &relativeAddress, &invalid));
+        if (!pObserver->m_pConvertAddress)
+        {
+            invalid = 0;
+            relativeAddress = *pAddress;
+        }
+        else
+        {
+            DI_CHECK(pObserver->m_pConvertAddress(pObserver, *pAddress, &relativeAddress, &invalid));
+        }
         if (!invalid)
         {
             DI_CHECK(Diana_AnalyzeCode(pOwner,
