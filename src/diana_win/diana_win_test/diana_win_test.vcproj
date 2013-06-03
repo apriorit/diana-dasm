@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="orthia_lib"
-	ProjectGUID="{7E610324-3EC7-46EB-978F-C2C2698783CE}"
-	RootNamespace="orthia_lib"
+	Name="diana_win_test"
+	ProjectGUID="{E7139B73-2CD4-42D0-B809-8CCE9AC154A9}"
+	RootNamespace="diana_win_test"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -21,9 +21,9 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)..\lib\$(ConfigurationName)\i386"
+			OutputDirectory="$(SolutionDir)..\bin\$(ConfigurationName)\i386"
 			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)\i386"
-			ConfigurationType="4"
+			ConfigurationType="1"
 			CharacterSet="1"
 			>
 			<Tool
@@ -44,8 +44,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_core_tests&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -63,10 +63,17 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -78,14 +85,17 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)..\lib\$(ConfigurationName)\i386"
+			OutputDirectory="$(SolutionDir)..\bin\$(ConfigurationName)\i386"
 			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)\i386"
-			ConfigurationType="4"
+			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -108,8 +118,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_core_tests&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -126,10 +136,19 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
+				Name="VCLinkerTool"
+				LinkIncremental="1"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -141,14 +160,17 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)..\lib\$(ConfigurationName)\amd64"
+			OutputDirectory="$(SolutionDir)..\bin\$(ConfigurationName)\amd64"
 			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)\amd64"
-			ConfigurationType="4"
+			ConfigurationType="1"
 			CharacterSet="1"
 			>
 			<Tool
@@ -170,8 +192,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_core_tests&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -189,10 +211,17 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
+				Name="VCLinkerTool"
+				LinkIncremental="2"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -204,14 +233,17 @@
 				Name="VCFxCopTool"
 			/>
 			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)..\lib\$(ConfigurationName)\amd64"
+			OutputDirectory="$(SolutionDir)..\bin\$(ConfigurationName)\amd64"
 			IntermediateDirectory="$(SolutionDir)..\obj\$(ConfigurationName)\$(ProjectName)\amd64"
-			ConfigurationType="4"
+			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -235,8 +267,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_core_tests&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -253,10 +285,19 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
+				Name="VCLinkerTool"
+				LinkIncremental="1"
+				GenerateDebugInformation="true"
+				SubSystem="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -266,6 +307,9 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -281,27 +325,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\orthia_database_module.cpp"
+				RelativePath=".\main.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\orthia_database_saver.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_diana_module.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_memory_cache.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_module_manager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_utils.cpp"
+				RelativePath=".\pe_analyze_test.cpp"
 				>
 			</File>
 		</Filter>
@@ -310,34 +338,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\orthia_database_module.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_database_saver.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_diana_module.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_interfaces.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_memory_cache.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_module_manager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_utils.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -345,10 +345,6 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
-		<File
-			RelativePath=".\ReadMe.txt"
-			>
-		</File>
 	</Files>
 	<Globals>
 	</Globals>
