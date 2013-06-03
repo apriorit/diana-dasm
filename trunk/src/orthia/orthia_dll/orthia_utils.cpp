@@ -23,7 +23,7 @@ std::wstring ExpandVariable(const std::wstring & possibleVar)
         if (result.find_first_of(L'%') == result.npos)
             return result;
         if (prevResult == result)
-            return result;
+            return std::wstring();
         prevResult = result;
     }
     return prevResult;
