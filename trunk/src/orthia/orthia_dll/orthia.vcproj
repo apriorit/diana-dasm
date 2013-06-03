@@ -44,11 +44,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
+				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;;&quot;$(SolutionDir)orthia\orthia_lib&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIGENEXT_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -118,11 +118,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
+				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;;&quot;$(SolutionDir)orthia\orthia_lib&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;LIGENEXT_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
@@ -193,9 +193,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
+				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;;&quot;$(SolutionDir)orthia\orthia_lib&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIGENEXT_EXPORTS"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -270,9 +270,9 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;"
+				AdditionalIncludeDirectories="&quot;$(WINDBGSDKDIR)\inc&quot;;&quot;$(SolutionDir)diana_core\diana_core&quot;;&quot;$(SolutionDir)diana_core\diana_processor&quot;;&quot;$(SolutionDir)orthia\orthia_lib&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;LIGENEXT_EXPORTS"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -376,30 +376,6 @@
 				RelativePath=".\orthia.def"
 				>
 			</File>
-			<File
-				RelativePath=".\orthia_database_module.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_database_saver.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_diana_module.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_memory_cache.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_module_manager.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_utils.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -408,34 +384,6 @@
 			>
 			<File
 				RelativePath=".\orthia.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_database_module.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_database_saver.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_diana_module.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_interfaces.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_memory_cache.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_module_manager.h"
-				>
-			</File>
-			<File
-				RelativePath=".\orthia_utils.h"
 				>
 			</File>
 		</Filter>
