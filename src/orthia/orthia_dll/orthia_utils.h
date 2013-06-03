@@ -66,6 +66,9 @@ std::basic_string<CharType> Trim(const std::basic_string<CharType> & str)
         if (*it != CharTraits<CharType>::space)
             break;
     }
+    if (it == it_end)
+        return String_type(it, it_end);
+
     typename String_type::const_iterator it2 = it_end;
     --it2;
     for(; it2 != it; --it2)
@@ -73,7 +76,7 @@ std::basic_string<CharType> Trim(const std::basic_string<CharType> & str)
         if (*it2 != CharTraits<CharType>::space)
             break;
     }
-    return String_type(it, it2);
+    return String_type(it, ++it2);
 }
 
 template<class CharType>
