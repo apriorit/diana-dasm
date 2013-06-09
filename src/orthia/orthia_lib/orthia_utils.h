@@ -51,6 +51,7 @@ public:
 
 bool IsFileExist(const std::wstring & fullFileName);
 Address_type GetSizeOfFile(const std::wstring & fullFileName);
+void CreateAllDirectoriesForFile(const std::wstring & fullFileName);
 
 std::wstring ExpandVariable(const std::wstring & possibleVar);
 std::wstring ToString(const std::string & str, UINT codePage = CP_ACP);

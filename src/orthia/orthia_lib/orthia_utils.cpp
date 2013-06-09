@@ -172,4 +172,30 @@ Address_type GetSizeOfFile(const std::wstring & fullFileName)
     return size.QuadPart;
 }
 
+void CreateAllDirectoriesForFile(const std::wstring & fullFileName)
+{
+    if (fullFileName.size() > 3)
+    {
+        // skip UNC paths and 
+        if (wcsncmp(fullFileName.c_str(), L"\\\\", 2) == 0)
+        {
+            if (fullFileName[2] != L'?' &&
+                fullFileName[2] != L'.') 
+            {
+                return;
+            }
+        }
+    }
+    for(std::wstring::const_iterator it = fullFileName.begin(), it_end = fullFileName.end();
+        it != it_end;
+        ++it)
+    {
+        if (*it == L'/' || *it == L'\\')
+        {
+            std::wstring path(fullFileName.begin(), it+1);
+            CreateDirectory(path.c_str(), 0);
+        }
+    }
+}
+
 }
