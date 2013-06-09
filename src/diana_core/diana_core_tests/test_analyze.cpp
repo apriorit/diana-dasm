@@ -110,6 +110,12 @@ void VerifyREF(const char * pTestRefs,
                 bEnd = true;
             case ';':;
             }
+            bool bExtern = false;
+            if (pLast[0] == '$')
+            {
+                bExtern = true;
+                ++pLast;
+            }
             int value = atoi(pLast);
             
             TEST_ASSERT(pCurXRef);
@@ -175,7 +181,7 @@ void test_analyzer1()
                          {11,              "19",                        0},
                          {16,              "39",                        0},
                          {18,              0,                           0},
-                         {19,              0,                           "11"},
+                         {19,              "$192",                      "11"},
                          {28,              0,                           0},
                          {29,              0,                           "6"},
                          {33,              "39",                        0},

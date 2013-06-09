@@ -9,7 +9,7 @@ namespace orthia
 class CDianaModuleImpl;
 class CDianaModule
 {
-    std::wstring m_name;
+    Address_type m_offset;
     std::wstring m_uniqueName;
     IMemoryReader * m_pMemoryReader;
     std::auto_ptr<CDianaModuleImpl> m_impl;
@@ -19,6 +19,7 @@ public:
     void Init(Address_type offset,
               IMemoryReader * pMemoryReader);
 
+    void Analyze();
     std::wstring GetUniqueName() const;
     std::wstring GetName() const;
 };

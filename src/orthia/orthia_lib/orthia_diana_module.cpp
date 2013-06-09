@@ -1,5 +1,7 @@
 #include "orthia_diana_module.h"
 #include "orthia_memory_cache.h"
+#include <iomanip>
+#include "orthia_sha1.h"
 extern "C"
 {
 #include "diana_pe_analyzer.h"
@@ -176,14 +178,20 @@ public:
         m_peFileGuard.reset(&m_peFile);
         m_env.m_moduleSize = m_peFile.pImpl->sizeOfFile;
         m_env.m_stream.m_moduleSize = m_peFile.pImpl->sizeOfFile;
+    }
+
+    void Analyze()
+    {
         m_cache.Init(0, m_env.m_moduleSize);
         DI_CHECK_CPP(Diana_PE_AnalyzePE(&m_peFile, &m_env, &m_owner));
         m_instructionsOwnerGuard.reset(&m_owner);
     }
+    const Diana_PeFile * GetPeFile() const { return &m_peFile; }
 };
 CDianaModule::CDianaModule()
     :
-        m_pMemoryReader(0)
+        m_pMemoryReader(0),
+        m_offset(0)
 {
 }
 
@@ -194,12 +202,26 @@ CDianaModule::~CDianaModule()
 void CDianaModule::Init(Address_type offset,
                         IMemoryReader * pMemoryReader)
 {
+    m_offset = offset;
     m_pMemoryReader = pMemoryReader;
     m_impl.reset(new CDianaModuleImpl(offset, pMemoryReader));
-    m_name = L"test";
-    m_uniqueName = L"{62F8BBF9-79AC-481d-8FB4-46AB8CC10CD0}";
+
+    // calc unique hash
+    uint8_t hash[SHA1_HASH_SIZE];
+    memset(hash, 0, sizeof(hash));
+    SHA1Context shaContext;      
+    SHA1Reset(&shaContext);
+    SHA1Input2(&shaContext, &m_impl->GetPeFile()->pImpl->dosHeader);
+    SHA1Input2(&shaContext, &m_impl->GetPeFile()->pImpl->ntHeaders);
+    SHA1Input2(&shaContext, m_impl->GetPeFile()->pImpl->pCapturedSections, m_impl->GetPeFile()->pImpl->capturedSectionCount);
+    SHA1Result(&shaContext, hash);
+    m_uniqueName = orthia::ToHexString(hash);
 }
 
+void CDianaModule::Analyze()
+{
+    m_impl->Analyze();
+}
 std::wstring CDianaModule::GetUniqueName() const
 {
     if (m_uniqueName.empty())
@@ -209,9 +231,10 @@ std::wstring CDianaModule::GetUniqueName() const
 
 std::wstring CDianaModule::GetName() const
 {
-    if (m_name.empty())
-        throw std::runtime_error("Internal error: m_name is empty");
-    return m_name;
+    std::wstringstream str;
+    std::hex(str);
+    str<<std::setfill(L'0') << std::setw(m_impl->GetPeFile()->pImpl->dianaMode*2) <<m_offset;
+    return str.str();
 }
 
 }
