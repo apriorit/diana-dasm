@@ -21,19 +21,25 @@ int DianaEnvironment_ConvertAddressToRelative(void * pThis,
                                               OPERAND_SIZE * pRelativeOffset,
                                               int * pbInvalidPointer);
 
-int DianaEnvironment_AnalyzeJumpAddress(void * pThis,
-                                        OPERAND_SIZE address,
-                                        DianaAnalyzeJumpFlags_type * pFlags);
+int DianaEnvironment_AnalyzeJumpAddress(void * pThis, 
+                                       OPERAND_SIZE address,
+                                       int flags,
+                                       OPERAND_SIZE * pRelativeOffset,
+                                       DianaAnalyzeAddressResult_type * pResult);
 
 struct DianaMemoryStream:public DianaMovableReadStream
 {
     IMemoryReader * m_pMemoryReader;
     OPERAND_SIZE m_currentOffset;
+    OPERAND_SIZE m_moduleSize;
 
-    DianaMemoryStream(Address_type currentOffset, IMemoryReader * pMemoryReader)
+    DianaMemoryStream(Address_type currentOffset, 
+                      IMemoryReader * pMemoryReader,
+                      OPERAND_SIZE moduleSize)
          : 
             m_pMemoryReader(pMemoryReader),
-            m_currentOffset(currentOffset)
+            m_currentOffset(currentOffset),
+            m_moduleSize(moduleSize)
     {
 
         DianaMovableReadStream_Init(this,
@@ -46,6 +52,12 @@ int DianaAnalyzeMoveTo(void * pThis,
                        OPERAND_SIZE offset)
 {
     DianaMemoryStream * pStream = (DianaMemoryStream * )pThis;
+
+    if (pStream->m_moduleSize)
+    {
+        if (offset > pStream->m_moduleSize)
+            return DI_END_OF_STREAM;
+    }
     pStream->m_currentOffset = offset;
     return DI_SUCCESS;
 }
@@ -82,13 +94,12 @@ struct DianaEnvironment:public DianaAnalyzeObserver
 
     DianaEnvironment(Address_type moduleStart, IMemoryReader * pMemoryReader)
         :
-            m_stream(moduleStart, pMemoryReader),
+            m_stream(0, pMemoryReader, 0),
             m_moduleStart(moduleStart),
             m_moduleSize(0)
     {
         DianaAnalyzeObserver_Init(this, 
                                   &m_stream, 
-                                  DianaEnvironment_ConvertAddressToRelative, 
                                   DianaEnvironment_AnalyzeJumpAddress); 
     }
 };
@@ -99,26 +110,49 @@ int DianaEnvironment_ConvertAddressToRelative(void * pThis,
                                               OPERAND_SIZE * pRelativeOffset,
                                               int * pbInvalidPointer)
 {
+    DianaEnvironment * pEnv = (DianaEnvironment * )pThis;
+    *pbInvalidPointer = 1;
+    if (address < pEnv->m_moduleStart)
+        return DI_SUCCESS;
+
+    if (address > pEnv->m_moduleSize)
+        return DI_SUCCESS;
+
     *pbInvalidPointer = 0;
-    *pRelativeOffset = address;
+    *pRelativeOffset = address - pEnv->m_moduleStart; 
     return DI_SUCCESS;
 }
 
 static 
 int DianaEnvironment_AnalyzeJumpAddress(void * pThis, 
-                                        OPERAND_SIZE address,
-                                        DianaAnalyzeJumpFlags_type * pFlags)
+                                       OPERAND_SIZE address,
+                                       int flags,
+                                       OPERAND_SIZE * pRelativeOffset,
+                                       DianaAnalyzeAddressResult_type * pResult)
 {
     DianaEnvironment * pEnv = (DianaEnvironment * )pThis;
-    *pFlags = diaJumpNormal;
+    *pResult = diaJumpNormal;
+    *pRelativeOffset = address;
 
     if (!pEnv->m_moduleSize)
     {
         Diana_FatalBreak();
     }
-    if (address < pEnv->m_moduleStart || address > (pEnv->m_moduleStart + pEnv->m_moduleSize))
+    if (flags&DIANA_ANALYZE_ABSOLUTE_ADDRESS)
     {
-        *pFlags = diaJumpExternal;
+        int invalidPointer = 0;
+        DI_CHECK(DianaEnvironment_ConvertAddressToRelative(pThis, 
+                                                           address, 
+                                                           pRelativeOffset,
+                                                           &invalidPointer));
+        if (invalidPointer)
+        {
+            *pResult = diaJumpExternal;
+        }
+    }
+    if (address > pEnv->m_moduleSize)
+    {
+        *pResult = diaJumpExternal;
     }
     return DI_SUCCESS;
 }
@@ -141,7 +175,8 @@ public:
         DI_CHECK_CPP(DianaPeFile_Init(&m_peFile, &m_env.m_stream, 0, offset));
         m_peFileGuard.reset(&m_peFile);
         m_env.m_moduleSize = m_peFile.pImpl->sizeOfFile;
-        m_cache.Init(offset, m_env.m_moduleSize);
+        m_env.m_stream.m_moduleSize = m_peFile.pImpl->sizeOfFile;
+        m_cache.Init(0, m_env.m_moduleSize);
         DI_CHECK_CPP(Diana_PE_AnalyzePE(&m_peFile, &m_env, &m_owner));
         m_instructionsOwnerGuard.reset(&m_owner);
     }

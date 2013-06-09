@@ -26,6 +26,7 @@ struct DianaTestError:public std::runtime_error
 #define DIANA_TEST(X) try{ X; }catch(DianaTestError & ){ std::cout<<"[ERROR] Test failed: "<<#X<<"\n\n"; }catch(const std::exception & e) {std::cout<<"[ERROR] Test failed: "<<#X<<", exception: \""<<e.what()<<"\"\n\n"; }
 #define TEST_ASSERT(X)  TEST_ASSERT_IMPL(X, throw DianaTestError());
 #define TEST_ASSERT_IF(X)  TEST_ASSERT_IMPL(X, ;) else
+#define DIANA_TEST_VAR(X) try{ TEST_ASSERT(X) }catch(DianaTestError & ){ std::cout<<"[ERROR] Test failed: "<<#X<<"\n\n"; }catch(const std::exception & e) {std::cout<<"[ERROR] Test failed: "<<#X<<", exception: \""<<e.what()<<"\"\n\n"; }
 
 int Diana_ParseCmdOnBuffer_test(int iMode,
                            void * pBuffer,

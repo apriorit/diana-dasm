@@ -22,17 +22,13 @@ int ScanPage(Diana_PeFile * pPeFile,
     {
         size_t * pAddress = (size_t *)p;
         OPERAND_SIZE relativeAddress = 0;
-        int invalid = 1;
-        if (!pObserver->m_pConvertAddress)
-        {
-            invalid = 0;
-            relativeAddress = *pAddress;
-        }
-        else
-        {
-            DI_CHECK(pObserver->m_pConvertAddress(pObserver, *pAddress, &relativeAddress, &invalid));
-        }
-        if (!invalid)
+        DianaAnalyzeAddressResult_type result = diaJumpInvalid;
+        DI_CHECK(pObserver->m_pAnalyzeAddress(pObserver, 
+                                              *pAddress, 
+                                              DIANA_ANALYZE_ABSOLUTE_ADDRESS,
+                                              &relativeAddress, 
+                                              &result));
+        if (result == diaJumpNormal)
         {
             DI_CHECK(Diana_AnalyzeCode(pOwner,
                                         pObserver,
@@ -166,35 +162,34 @@ void DianaMovableReadStreamOverMemory_Init(DianaMovableReadStreamOverMemory * pT
     DianaMovableReadStream_Init(&pThis->stream, DianaMovableReadStreamOverMemory_Read, DianaMovableReadStreamOverMemory_MoveTo);
     Diana_InitMemoryStream(&pThis->memoryStream, pBuffer, bufferSize);
 }
-int DianaAnalyzeObserverOverMemory_ConvertAddressToRelative(void * pThis, 
-                                                            OPERAND_SIZE address,
-                                                            OPERAND_SIZE * pRelativeOffset,
-                                                            int * pbInvalidPointer)
-{
-    DianaAnalyzeObserverOverMemory * pObserver = pThis;
-    DianaMovableReadStreamOverMemory * pStream = &pObserver->stream;
-
-    *pbInvalidPointer = 1;
-    if (address >= (OPERAND_SIZE)pStream->memoryStream.pBuffer &&
-        address <= (OPERAND_SIZE)pStream->memoryStream.pBuffer + pStream->memoryStream.bufferSize)
-    {
-        *pbInvalidPointer = 0;
-        *pRelativeOffset = address - (OPERAND_SIZE)pStream->memoryStream.pBuffer;
-    }
-    return DI_SUCCESS;
-}
 
 int DianaAnalyzeObserverOverMemory_AnalyzeJumpAddress(void * pThis, 
-                                                      OPERAND_SIZE address,
-                                                      DianaAnalyzeJumpFlags_type * pFlags)
+                                                       OPERAND_SIZE address,
+                                                       int flags,
+                                                       OPERAND_SIZE * pRelativeOffset,
+                                                       DianaAnalyzeAddressResult_type * pResult)
 {
     DianaAnalyzeObserverOverMemory * pObserver = pThis;
     DianaMovableReadStreamOverMemory * pStream = &pObserver->stream;
-    *pFlags = diaJumpNormal;
+    *pResult = diaJumpNormal;
+    *pRelativeOffset = address;
 
+    if (flags&DIANA_ANALYZE_ABSOLUTE_ADDRESS)
+    { 
+        if (address >= (OPERAND_SIZE)pStream->memoryStream.pBuffer &&
+            address <= (OPERAND_SIZE)pStream->memoryStream.pBuffer + pStream->memoryStream.bufferSize)
+        {
+            *pRelativeOffset = address - (OPERAND_SIZE)pStream->memoryStream.pBuffer;
+            *pResult = diaJumpNormal;
+            return DI_SUCCESS;
+        }
+        *pResult = diaJumpExternal;
+        return DI_SUCCESS;
+    }
+        
     if (address >= pStream->memoryStream.bufferSize)
     {
-        *pFlags = diaJumpExternal;
+        *pResult = diaJumpExternal;
     }
     return DI_SUCCESS;
 }
@@ -208,7 +203,6 @@ void DianaAnalyzeObserverOverMemory_Init(DianaAnalyzeObserverOverMemory * pThis,
                                           fileSize);
     DianaAnalyzeObserver_Init(&pThis->parent,
                               &pThis->stream.stream,
-                              DianaAnalyzeObserverOverMemory_ConvertAddressToRelative,
                               DianaAnalyzeObserverOverMemory_AnalyzeJumpAddress
                               );
 }
