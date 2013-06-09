@@ -34,6 +34,7 @@ void CModuleManager::ReloadModule(Address_type offset,
     {
         module.Analyze();
 
+        orthia::CreateAllDirectoriesForFile(fullFileName);
         CDatabaseModule databaseModule;
         databaseModule.CreateNew(fullFileName);
 

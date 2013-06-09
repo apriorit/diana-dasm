@@ -161,6 +161,7 @@ int DianaEnvironment_AnalyzeJumpAddress(void * pThis,
 
 class CDianaModuleImpl
 {
+    friend class CDianaInstructionIterator;
     Diana_PeFile m_peFile;
     CMemoryCache m_cache;
     DianaEnvironment m_env;
@@ -188,6 +189,8 @@ public:
     }
     const Diana_PeFile * GetPeFile() const { return &m_peFile; }
 };
+
+
 CDianaModule::CDianaModule()
     :
         m_pMemoryReader(0),
@@ -235,6 +238,76 @@ std::wstring CDianaModule::GetName() const
     std::hex(str);
     str<<std::setfill(L'0') << std::setw(m_impl->GetPeFile()->pImpl->dianaMode*2) <<m_offset;
     return str.str();
+}
+void CDianaModule::QueryInstructionIterator(CDianaInstructionIterator * pIterator)
+{
+    pIterator->Init(this);
+}
+// Iterator
+CDianaInstructionIterator::CDianaInstructionIterator()
+    :
+        m_pModule(0),
+            m_currentInstruction(0)
+{
+}
+void CDianaInstructionIterator::Init(CDianaModule * pModule)
+{
+    m_pModule = pModule;
+    MoveToFirst();
+}
+void CDianaInstructionIterator::MoveToFirst()
+{
+    m_currentInstruction = 0;
+}
+void CDianaInstructionIterator::MoveToNext()
+{
+    ++m_currentInstruction;
+}
+bool CDianaInstructionIterator::IsEmpty() const
+{
+    if (m_currentInstruction >= m_pModule->m_impl->m_owner.m_actualSize)
+        return true;
+    return false;
+}
+Address_type CDianaInstructionIterator::GetInstructionOffset()
+{
+    if (IsEmpty())
+        throw std::runtime_error("Internal error");
+
+    return m_pModule->m_impl->m_owner.m_pInstructionsVec[m_currentInstruction].m_offset;
+}
+void CDianaInstructionIterator::QueryRefsToCurrentInstuction(std::vector<RefInfo> * pInfo)
+{
+    if (IsEmpty())
+        throw std::runtime_error("Internal error");
+
+    Diana_Instruction * pInstruction = &m_pModule->m_impl->m_owner.m_pInstructionsVec[m_currentInstruction];
+    Diana_SubXRef * pSubRef = (Diana_SubXRef * )pInstruction->m_refsTo.m_pFirst;
+    pInfo->clear();
+    while(pSubRef)
+    {
+        Diana_XRef * pCurXRef = Diana_CastXREF(&pSubRef->m_instructionEntry, 1);     
+        pInfo->push_back(RefInfo(pCurXRef->m_subrefs[0].m_pInstruction->m_offset, 
+                                (pCurXRef->m_flags & DI_XREF_EXTERNAL)?true:false));
+        pSubRef = (Diana_SubXRef *)pSubRef->m_instructionEntry.m_pNext;
+    }
+    
+}
+void CDianaInstructionIterator::QueryRefsFromCurrentInstruction(std::vector<RefInfo> * pInfo)
+{
+    if (IsEmpty())
+        throw std::runtime_error("Internal error");
+
+    Diana_Instruction * pInstruction = &m_pModule->m_impl->m_owner.m_pInstructionsVec[m_currentInstruction];
+    Diana_SubXRef * pSubRef = (Diana_SubXRef * )pInstruction->m_refsFrom.m_pFirst;
+    pInfo->clear();
+    while(pSubRef)
+    {
+        Diana_XRef * pCurXRef = Diana_CastXREF(&pSubRef->m_instructionEntry, 0);     
+        pInfo->push_back(RefInfo(pCurXRef->m_subrefs[1].m_pInstruction->m_offset, 
+                                (pCurXRef->m_flags & DI_XREF_EXTERNAL)?true:false));
+        pSubRef = (Diana_SubXRef *)pSubRef->m_instructionEntry.m_pNext;
+    }
 }
 
 }

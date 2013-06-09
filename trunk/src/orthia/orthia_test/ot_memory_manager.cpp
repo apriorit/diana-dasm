@@ -1,11 +1,12 @@
 #include "test_common.h"
 #include "orthia_module_manager.h"
 #include "orthia_interfaces.h"
-
+#pragma warning(disable:4996)
 static void test_mm1()
 {
     std::vector<wchar_t> buf(1024);
     GetTempPath((DWORD)buf.size(), &buf.front());
+    wcscat(&buf.front(), L"\\orthia_test\\");
 
     orthia::CModuleManager manager;
     manager.Reinit(&buf.front());
