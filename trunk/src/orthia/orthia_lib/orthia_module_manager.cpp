@@ -26,15 +26,21 @@ void CModuleManager::ReloadModule(Address_type offset,
     CDianaModule module;
     module.Init(offset, pMemoryReader);
 
+    // build full path name
     std::wstring fullFileName;
-    fullFileName = m_path + module.GetUniqueName();
-    std::wstring moduleName = module.GetName();
-    CDatabaseModule databaseModule;
-    databaseModule.CreateNew(fullFileName);
+    fullFileName = m_path + L"\\" + module.GetUniqueName();
 
-    CDatabaseSaver fileSaver;
-    fileSaver.Save(module, databaseModule);
-    m_modules[offset] = ModuleInfoInternal(moduleName, fullFileName);
+    if ((!orthia::IsFileExist(fullFileName)) || !orthia::GetSizeOfFile(fullFileName))
+    {
+        module.Analyze();
+
+        CDatabaseModule databaseModule;
+        databaseModule.CreateNew(fullFileName);
+
+        CDatabaseSaver fileSaver;
+        fileSaver.Save(module, databaseModule);
+    }
+    m_modules[offset] = ModuleInfoInternal(module.GetName(), fullFileName);
 }
 
 // module info

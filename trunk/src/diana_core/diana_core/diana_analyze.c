@@ -367,13 +367,28 @@ int AnalyzeAndConstructNormalInstruction(DianaAnalyzeSession * pSession,
 
         if (bFound)
         {
-            // TODO: add analyze 
-            // this is not realy valid command
-            DI_CHECK(SaveNewRoute(pSession, 
-                                  pInstruction,
-                                  suspectedOp,
-                                  DI_ROUTE_QUESTIONABLE));
-            
+            DianaAnalyzeAddressResult_type result = diaJumpInvalid;
+            DI_CHECK(pSession->pObserver->m_pAnalyzeAddress(pSession->pObserver, 
+                                                        suspectedOp,
+                                                        DIANA_ANALYZE_ABSOLUTE_ADDRESS,
+                                                        &suspectedOp,
+                                                        &result
+                                                        ));
+            if (result == diaJumpExternal)
+            {                        
+                DI_CHECK(SaveNewExternalRoute(pSession,
+                                              pInstruction,
+                                              suspectedOp));
+            }
+            else
+            if (result == diaJumpNormal)
+            {
+                // this is not realy valid command
+                DI_CHECK(SaveNewRoute(pSession, 
+                                    pInstruction,
+                                    suspectedOp,
+                                    DI_ROUTE_QUESTIONABLE));
+            }
         }
     }
     return DI_SUCCESS;

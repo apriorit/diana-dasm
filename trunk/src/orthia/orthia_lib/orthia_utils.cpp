@@ -85,7 +85,8 @@ std::wstring ToString(const std::string & str, UINT codePage)
     }
 }
 
-std::string ToAnsiString_Silent(const std::wstring & str)
+std::string ToAnsiString_Silent(const std::wstring & str,
+                                ULONG codePage)
 {
     if(str.empty())
     {
@@ -95,7 +96,7 @@ std::string ToAnsiString_Silent(const std::wstring & str)
     tmp.resize(str.size() + 1);
     for(;;)
     {
-        int size = WideCharToMultiByte(CP_ACP,
+        int size = WideCharToMultiByte(codePage,
                                        0,
                                        str.c_str(),
                                        (int)str.size(), 
@@ -112,7 +113,7 @@ std::string ToAnsiString_Silent(const std::wstring & str)
         {
             return std::string();
         }
-        size = WideCharToMultiByte(CP_ACP, 
+        size = WideCharToMultiByte(codePage, 
                                    0, 
                                    str.c_str(), 
                                    (int)str.size(), 
@@ -126,6 +127,49 @@ std::string ToAnsiString_Silent(const std::wstring & str)
         }
         tmp.resize(size*2);
     }
+}
+
+static wchar_t g_hexChars[] = L"0123456789abcdef";
+
+std::wstring ToHexString(const char * pArray, 
+                         size_t size)
+{
+    std::wstring res;
+    res.reserve(size*2);
+    for(size_t i = 0; i < size; ++i)
+    {
+        unsigned char item = (unsigned char )(pArray[i]);
+        res.push_back(g_hexChars[item >> 4]);
+        res.push_back(g_hexChars[item &0xF]);
+    }
+    return res;
+}
+
+bool IsFileExist(const std::wstring & fullFileName)
+{
+    return ::GetFileAttributes(fullFileName.c_str()) != INVALID_FILE_ATTRIBUTES;
+}
+Address_type GetSizeOfFile(const std::wstring & fullFileName)
+{
+    HANDLE hFile = CreateFile(fullFileName.c_str(), 
+                              GENERIC_READ, 
+                              FILE_SHARE_READ|FILE_SHARE_WRITE|FILE_SHARE_DELETE, 
+                              0, 
+                              OPEN_EXISTING, 
+                              0, 
+                              0);
+    if (hFile == INVALID_HANDLE_VALUE)
+        ORTHIA_THROW_WIN32("Can't open file: "<<orthia::ToAnsiString_Silent(fullFileName));
+
+    CHandleGuard guard(hFile);
+
+    LARGE_INTEGER size;
+    size.QuadPart = 0;
+    if (!::GetFileSizeEx(hFile, &size))
+    {
+        ORTHIA_THROW_WIN32("Can't get file size: "<<orthia::ToAnsiString_Silent(fullFileName));
+    }
+    return size.QuadPart;
 }
 
 }

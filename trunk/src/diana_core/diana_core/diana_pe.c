@@ -150,6 +150,7 @@ int Diana_InitPeFileImpl(Diana_PeFile * pPeFile,
     
         pSectionHeader = malloc(pImpl->ntHeaders.FileHeader.NumberOfSections * sizeof(DIANA_IMAGE_SECTION_HEADER));
         DI_CHECK_ALLOC(pSectionHeader);
+        memset(pSectionHeader, 0, pImpl->ntHeaders.FileHeader.NumberOfSections * sizeof(DIANA_IMAGE_SECTION_HEADER));
         pImpl->pCapturedSections = pSectionHeader;
 
         DI_CHECK(DianaExactRead(&pStream->parent, pSectionHeader, pImpl->ntHeaders.FileHeader.NumberOfSections * sizeof(DIANA_IMAGE_SECTION_HEADER)));

@@ -29,16 +29,36 @@ public:
             m_errorCode(errorCode)
     {
     }
-
-
 };
+
+class CHandleGuard
+{
+    CHandleGuard(const CHandleGuard&);
+    CHandleGuard & operator = (const CHandleGuard&);
+    HANDLE m_hFile;
+public:
+    CHandleGuard(HANDLE hFile)
+        : m_hFile(hFile)
+    {
+    }
+    ~CHandleGuard()
+    {
+        CloseHandle(m_hFile);
+    }
+};
+#define ORTHIA_THROW_WIN32(Text) { ULONG orthia____code = ::GetLastError(); std::stringstream orthia____stream; orthia____stream<<Text; throw orthia::CWin32Exception(orthia____stream.str(), orthia____code);} 
+
+
+bool IsFileExist(const std::wstring & fullFileName);
+Address_type GetSizeOfFile(const std::wstring & fullFileName);
 
 std::wstring ExpandVariable(const std::wstring & possibleVar);
 std::wstring ToString(const std::string & str, UINT codePage = CP_ACP);
 std::wstring ToString(Address_type address);
 
 Address_type ToAddress(const std::wstring & sourceStr);
-std::string ToAnsiString_Silent(const std::wstring & sourceStr);
+std::string ToAnsiString_Silent(const std::wstring & sourceStr,
+                                ULONG codePage = CP_ACP);
 
 template<class CharType>
 struct CharTraits
@@ -86,6 +106,19 @@ std::basic_string<CharType> Trim(const CharType * str)
     return Trim(arg);
 }
 
+std::wstring ToHexString(const char * pArray, 
+                         size_t size);
+template<class Type>
+std::wstring ToHexString(const Type & obj)
+{
+    return ToHexString((const char * )&obj, sizeof(obj));
+}
+template<class Type>
+std::wstring ToHexString(Type * pArray, 
+                         size_t count)
+{
+    return ToHexString((const char * )pArray, sizeof(obj)*count);
+}
 template<class CharType>
 void Split(const std::basic_string<CharType> & sourceString, 
            std::vector<std::basic_string<CharType> > * pArgs,   

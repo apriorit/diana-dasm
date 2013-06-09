@@ -13,6 +13,9 @@ static void test_mm1()
     void * pFile = GetModuleHandle(0);
     orthia::CMemoryReader reader((orthia::Address_type)pFile);
     manager.ReloadModule((orthia::Address_type)pFile, &reader);
+
+    std::vector<orthia::CModuleManager::ReferenceInfo> references;
+    manager.QueryReferences((orthia::Address_type)&test_mm1, &references);
 }
 
 void test_memory_manager()
