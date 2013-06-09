@@ -88,7 +88,7 @@ std::basic_string<CharType> Trim(const CharType * str)
 
 template<class CharType>
 void Split(const std::basic_string<CharType> & sourceString, 
-           std::vector<std::basic_string<CharType> > * pArgs, 
+           std::vector<std::basic_string<CharType> > * pArgs,   
            CharType splitChar = CharTraits<CharType>::space)
 {
     typedef typename std::basic_string<CharType> String_type;
@@ -111,6 +111,8 @@ void Split(const std::basic_string<CharType> & sourceString,
                 break;
         }
         pArgs->push_back(String_type(wordStart, it));
+        if (it == it_end)
+            break;
     }
 }
 

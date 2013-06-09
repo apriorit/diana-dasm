@@ -399,6 +399,11 @@ static void ApplyPrefixes(DianaContext * pContext,
     {
         if (i != iToExclude)
         {
+            if (!pContext->prefixes[i].linkedPrefixFnc)
+            {
+                // ERROR: Diana_Init() is not called!
+                Diana_FatalBreak();
+            }
             pContext->prefixes[i].linkedPrefixFnc(pContext);
         }
     }

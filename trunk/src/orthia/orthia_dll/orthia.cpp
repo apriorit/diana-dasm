@@ -182,7 +182,9 @@ DECLARE_API (reload)
         }
         if (offsetInited)
             throw std::runtime_error("Unexpected argument: " + orthia::ToAnsiString_Silent(*it));
-        offset = orthia::ToAddress(*it);
+        PCSTR tail = 0;
+        std::string strOffset = orthia::ToAnsiString_Silent(*it);
+        GetExpressionEx(strOffset.c_str(), &offset, &tail);
         offsetInited = true;
     }
     

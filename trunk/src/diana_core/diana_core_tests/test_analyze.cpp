@@ -60,29 +60,22 @@ int DianaAnalyzeMoveTo(void * pThis,
     pStream->m_current = offset;
     return DI_SUCCESS;
 }
-static 
-int DianaConvertAddressToRelative(void * pThis, 
-                                  OPERAND_SIZE address,
-                                  OPERAND_SIZE * pRelativeOffset,
-                                  int * pbInvalidPointer)
-{
-    TestAnalyzeEnvironment * pObserver = (TestAnalyzeEnvironment * )pThis;
-	&pObserver;
-	&pbInvalidPointer;
-    *pRelativeOffset = address;
-    return DI_SUCCESS;
-}
+
  
 static
-int DianaAnalyzeJumpAddress(void * pThis,
-                            OPERAND_SIZE address,
-                            DianaAnalyzeJumpFlags_type * pFlags)
+int DianaAnalyzeJumpAddress(void * pThis, 
+                           OPERAND_SIZE address,
+                           int flags,
+                           OPERAND_SIZE * pRelativeOffset,
+                           DianaAnalyzeAddressResult_type * pResult)
 {
     TestAnalyzeEnvironment * pObserver = (TestAnalyzeEnvironment * )pThis;
-    *pFlags = diaJumpNormal;
+
+    *pRelativeOffset = address;
+    *pResult = diaJumpNormal;
     if (address >= pObserver->stream.m_size)
     {
-        *pFlags = diaJumpExternal;
+        *pResult = diaJumpExternal;
     }
     return DI_SUCCESS;
 }
@@ -154,7 +147,6 @@ TestAnalyzeEnvironment::TestAnalyzeEnvironment(OPERAND_SIZE base,
                                 DianaAnalyzeMoveTo);
     DianaAnalyzeObserver_Init(&observer, 
                           &stream,
-                          DianaConvertAddressToRelative,
                           DianaAnalyzeJumpAddress);
 }
 void test_analyzer1()

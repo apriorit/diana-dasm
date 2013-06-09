@@ -17,12 +17,10 @@ typedef struct _DianaAnalyzeSession
 
 void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
                                DianaMovableReadStream * pStream,
-                               ConvertAddressToRelative_fnc pConvertAddress,
-                               AnalyzeJumpAddress_fnc pAnalyzeJumpAddress)
+                               DianaAnalyzeAddress_type pAnalyzeJumpAddress)
 {
     pThis->m_pStream = pStream;
-    pThis->m_pConvertAddress = pConvertAddress;
-    pThis->m_pAnalyzeJumpAddress = pAnalyzeJumpAddress;
+    pThis->m_pAnalyzeAddress = pAnalyzeJumpAddress;
 }
 
 void Diana_Instruction_Init(Diana_Instruction * pInstruction,
@@ -158,12 +156,11 @@ int AnalyzeJumps(DianaParserResult * pResult,
                  Diana_LinkedAdditionalGroupInfo * pLinkedInfo,
                  OPERAND_SIZE * pNewOffset,
                  OPERAND_SIZE offset,
-                 DianaAnalyzeObserver * pObserver)
+                 int * pAbsoluteAddress)
 {
     const DianaLinkedOperand * pOp = pResult->linkedOperands + pLinkedInfo->relArgrumentNumber;
-    OPERAND_SIZE tmp = 0;
-    int tmpInited = 0;
     *pNewOffset = 0;
+    *pAbsoluteAddress = 0;
 
     switch(pOp->type)
     {
@@ -173,27 +170,16 @@ int AnalyzeJumps(DianaParserResult * pResult,
         break;
     // crazy call for really crazy guys
     case diana_call_ptr:
-        tmpInited = 1;
-        tmp = pOp->value.ptr.m_address;
+        *pAbsoluteAddress = 1;
+        *pNewOffset = pOp->value.ptr.m_address;
         break;
     // call [rbx+0x5435345] 
     case diana_index:
-        tmpInited = 1;
-        tmp = pOp->value.rmIndex.dispValue;
+        *pAbsoluteAddress = 1;
+        *pNewOffset = pOp->value.rmIndex.dispValue;
         break;
     case diana_register:
         return DI_UNSUPPORTED_COMMAND;
-    }
-    if (tmpInited)
-    {
-        int bInvalidPointer = 0;
-        DI_CHECK(pObserver->m_pConvertAddress(pObserver, 
-                                              tmp,
-                                              pNewOffset,
-                                              &bInvalidPointer));
-        if (bInvalidPointer)
-            return DI_UNSUPPORTED_COMMAND;
-
     }
     return DI_SUCCESS;
 }
@@ -217,26 +203,13 @@ int SaveNewExternalRoute(DianaAnalyzeSession * pSession,
 static
 int SaveNewRoute(DianaAnalyzeSession * pSession,
                  Diana_Instruction * pInstruction,
-                 OPERAND_SIZE newOffset_in,
-                 int newRouteFlags,
-                 int needConvert)
+                 OPERAND_SIZE newOffset,
+                 int newRouteFlags)
 {
     Diana_Instruction * pTargetInstruction = 0;
     Diana_Instruction * pOldTargetInstruction = 0;
-
     Diana_RouteInfo newRouteInfo;
 
-    OPERAND_SIZE newOffset = newOffset_in;
-    if (needConvert)
-    {
-        int bInvalidPointer = 0;
-        DI_CHECK(pSession->pObserver->m_pConvertAddress(pSession->pObserver, 
-                                                        newOffset_in,
-                                                        &newOffset,
-                                                        &bInvalidPointer));
-        if (bInvalidPointer)
-            return DI_SUCCESS;
-    }
     if (newOffset >= pSession->maxOffset)
         return DI_SUCCESS;
 
@@ -336,8 +309,7 @@ int DispatchMode64(DianaAnalyzeSession * pSession,
                 DI_CHECK(SaveNewRoute(pSession, 
                                       pInstruction,
                                       nextInstructionOffset + pOp->value.rmIndex.dispValue,
-                                      DI_ROUTE_QUESTIONABLE,
-                                      0)); 
+                                      DI_ROUTE_QUESTIONABLE)); 
 
                 pInstruction->m_flags |= DI_INSTRUCTION_USES_RIP;
                 break;
@@ -395,12 +367,12 @@ int AnalyzeAndConstructNormalInstruction(DianaAnalyzeSession * pSession,
 
         if (bFound)
         {
+            // TODO: add analyze 
             // this is not realy valid command
             DI_CHECK(SaveNewRoute(pSession, 
                                   pInstruction,
                                   suspectedOp,
-                                  DI_ROUTE_QUESTIONABLE,
-                                  1));
+                                  DI_ROUTE_QUESTIONABLE));
             
         }
     }
@@ -413,12 +385,13 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
                                    OPERAND_SIZE nextInstructionOffset,
                                    int * pbNeedReset)
 {
+    int bAbsoluteAddress = 0;
     int iRes = 0;
     Diana_Instruction * pInstruction = 0;
     Diana_LinkedAdditionalGroupInfo * pLinkedInfo = 0;
     int bIsNormalInstruction = 0;
     OPERAND_SIZE newOffset = 0;
-    DianaAnalyzeJumpFlags_type jumpFlags = diaJumpNormal;
+    DianaAnalyzeAddressResult_type jumpFlags = diaJumpNormal;
 
     *pbNeedReset = 0;
 
@@ -480,7 +453,7 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
                         pLinkedInfo, 
                         &newOffset,
                         nextInstructionOffset,
-                        pSession->pObserver);
+                        &bAbsoluteAddress);
     
     if (iRes == DI_UNSUPPORTED_COMMAND)
         return DI_SUCCESS;
@@ -488,7 +461,12 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
     DI_CHECK(iRes);
     
     // check new jump address
-    DI_CHECK(pSession->pObserver->m_pAnalyzeJumpAddress(pSession->pObserver, newOffset, &jumpFlags));
+    DI_CHECK(pSession->pObserver->m_pAnalyzeAddress(pSession->pObserver, 
+                                                        newOffset,
+                                                        bAbsoluteAddress?DIANA_ANALYZE_ABSOLUTE_ADDRESS:0,
+                                                        &newOffset,
+                                                        &jumpFlags
+                                                        ));
     
     switch(jumpFlags)
     {
@@ -497,8 +475,7 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
         DI_CHECK(SaveNewRoute(pSession,
                               pInstruction,
                               newOffset,
-                              pSession->curRouteInfo.flags,
-                              0));
+                              pSession->curRouteInfo.flags));
         break;
     case diaJumpExternal:
         DI_CHECK(SaveNewExternalRoute(pSession,

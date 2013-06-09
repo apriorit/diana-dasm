@@ -43,26 +43,26 @@ typedef struct _Diana_XRef
 }Diana_XRef;
 
 typedef int (* DianaAnalyzeMoveTo_fnc)(void * pThis, OPERAND_SIZE offset);
-typedef int (* ConvertAddressToRelative_fnc)(void * pThis, 
-                                             OPERAND_SIZE address,
-                                             OPERAND_SIZE * pRelativeOffset,
-                                             int * pbInvalidPointer);
-typedef enum {diaJumpNormal, diaJumpInvalid, diaJumpExternal} DianaAnalyzeJumpFlags_type;
-typedef int (* AnalyzeJumpAddress_fnc)(void * pThis, 
-                                       OPERAND_SIZE address,
-                                       DianaAnalyzeJumpFlags_type * pFlags);
+// possible in flags
+#define DIANA_ANALYZE_ABSOLUTE_ADDRESS  1
+
+// possuble result:
+typedef enum {diaJumpInvalid, diaJumpNormal, diaJumpExternal} DianaAnalyzeAddressResult_type;
+typedef int (* DianaAnalyzeAddress_type)(void * pThis, 
+                                   OPERAND_SIZE address,
+                                   int flags,
+                                   OPERAND_SIZE * pRelativeOffset,
+                                   DianaAnalyzeAddressResult_type * pResult);
 
 typedef struct _dianaAnalyzeObserver
 {
     DianaMovableReadStream * m_pStream;
-    ConvertAddressToRelative_fnc m_pConvertAddress;
-    AnalyzeJumpAddress_fnc m_pAnalyzeJumpAddress;
+    DianaAnalyzeAddress_type m_pAnalyzeAddress;
 }DianaAnalyzeObserver;
 
 void DianaAnalyzeObserver_Init(DianaAnalyzeObserver * pThis,
                                DianaMovableReadStream * pStream,
-                               ConvertAddressToRelative_fnc pConvertAddress,
-                               AnalyzeJumpAddress_fnc pAnalyzeJumpAddress);
+                               DianaAnalyzeAddress_type pAnalyzeJumpAddress);
 
 void Diana_Instruction_Init(Diana_Instruction * pInstruction,
                             OPERAND_SIZE m_offset,
