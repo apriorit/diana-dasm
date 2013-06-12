@@ -276,7 +276,7 @@ Address_type CDianaInstructionIterator::GetInstructionOffset()
 
     return m_pModule->m_impl->m_owner.m_pInstructionsVec[m_currentInstruction].m_offset;
 }
-void CDianaInstructionIterator::QueryRefsToCurrentInstuction(std::vector<RefInfo> * pInfo)
+void CDianaInstructionIterator::QueryRefsToCurrentInstuction(std::vector<CommonReferenceInfo> * pInfo)
 {
     if (IsEmpty())
         throw std::runtime_error("Internal error");
@@ -287,13 +287,13 @@ void CDianaInstructionIterator::QueryRefsToCurrentInstuction(std::vector<RefInfo
     while(pSubRef)
     {
         Diana_XRef * pCurXRef = Diana_CastXREF(&pSubRef->m_instructionEntry, 1);     
-        pInfo->push_back(RefInfo(pCurXRef->m_subrefs[0].m_pInstruction->m_offset, 
+        pInfo->push_back(CommonReferenceInfo(pCurXRef->m_subrefs[0].m_pInstruction->m_offset, 
                                 (pCurXRef->m_flags & DI_XREF_EXTERNAL)?true:false));
         pSubRef = (Diana_SubXRef *)pSubRef->m_instructionEntry.m_pNext;
     }
     
 }
-void CDianaInstructionIterator::QueryRefsFromCurrentInstruction(std::vector<RefInfo> * pInfo)
+void CDianaInstructionIterator::QueryRefsFromCurrentInstruction(std::vector<CommonReferenceInfo> * pInfo)
 {
     if (IsEmpty())
         throw std::runtime_error("Internal error");
@@ -304,7 +304,7 @@ void CDianaInstructionIterator::QueryRefsFromCurrentInstruction(std::vector<RefI
     while(pSubRef)
     {
         Diana_XRef * pCurXRef = Diana_CastXREF(&pSubRef->m_instructionEntry, 0);     
-        pInfo->push_back(RefInfo(pCurXRef->m_subrefs[1].m_pInstruction->m_offset, 
+        pInfo->push_back(CommonReferenceInfo(pCurXRef->m_subrefs[1].m_pInstruction->m_offset, 
                                 (pCurXRef->m_flags & DI_XREF_EXTERNAL)?true:false));
         pSubRef = (Diana_SubXRef *)pSubRef->m_instructionEntry.m_pNext;
     }

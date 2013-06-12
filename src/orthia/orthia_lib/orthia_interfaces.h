@@ -35,6 +35,18 @@ public:
     }
 };
 
+struct CommonReferenceInfo
+{
+    Address_type address;
+    bool external;
+    CommonReferenceInfo(Address_type address_in,
+                       bool external_in)
+      :
+        address(address_in),
+        external(external_in)
+    {
+    }
+};
 
 }
 

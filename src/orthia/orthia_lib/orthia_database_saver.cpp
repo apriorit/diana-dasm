@@ -10,15 +10,35 @@ CDatabaseSaver::CDatabaseSaver()
 void CDatabaseSaver::Save(CDianaModule & dianaModule,
                           CDatabaseModule & databaseModule)
 {
-    std::vector<CDianaInstructionIterator::RefInfo> references;
+    std::vector<CommonReferenceInfo> references;
     CDianaInstructionIterator iterator;
     dianaModule.QueryInstructionIterator(&iterator);
+    databaseModule.StartSave();
+    CDatabaseModuleCleaner cleaner(&databaseModule);
+
     while(!iterator.IsEmpty())
     {
+        Address_type offset = iterator.GetInstructionOffset();
         iterator.QueryRefsToCurrentInstuction(&references);
+        bool bInstructionAdded = false;
+        if (!references.empty())
+        {
+            databaseModule.InsertInstruction(offset);
+            bInstructionAdded = true;
+            databaseModule.InsertReferencesToInstruction(offset, references);
+        }
         iterator.QueryRefsFromCurrentInstruction(&references);
+        if (!references.empty())
+        {
+            if (!bInstructionAdded)
+            {
+                databaseModule.InsertInstruction(offset);
+            }
+            databaseModule.InsertReferencesFromInstruction(offset, references);    
+        }
         iterator.MoveToNext();
     }
+    databaseModule.DoneSave();
 }
 
 }
