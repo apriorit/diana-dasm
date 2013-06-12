@@ -184,7 +184,7 @@ DECLARE_API (reload)
             throw std::runtime_error("Unexpected argument: " + orthia::ToAnsiString_Silent(*it));
         PCSTR tail = 0;
         std::string strOffset = orthia::ToAnsiString_Silent(*it);
-        GetExpressionEx(strOffset.c_str(), &offset, &tail);
+        GetExpressionEx(strOffsetc_str(), &offset, &tail);
         offsetInited = true;
     }
     

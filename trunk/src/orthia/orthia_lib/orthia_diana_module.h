@@ -13,26 +13,14 @@ class CDianaInstructionIterator
     int m_currentInstruction;
     CDianaModule * m_pModule;
 public:
-    struct RefInfo
-    {
-        Address_type address;
-        bool external;
-        RefInfo(Address_type address_in,
-                bool external_in)
-          :
-            address(address_in),
-            external(external_in)
-        {
-        }
-    };
     CDianaInstructionIterator();
     void Init(CDianaModule * pModule);
     void MoveToFirst();
     void MoveToNext();
     bool IsEmpty() const;
     Address_type GetInstructionOffset();
-    void QueryRefsToCurrentInstuction(std::vector<RefInfo> * pInfo);
-    void QueryRefsFromCurrentInstruction(std::vector<RefInfo> * pInfo);
+    void QueryRefsToCurrentInstuction(std::vector<CommonReferenceInfo> * pInfo);
+    void QueryRefsFromCurrentInstruction(std::vector<CommonReferenceInfo> * pInfo);
 };
 
 class CDianaModuleImpl;
