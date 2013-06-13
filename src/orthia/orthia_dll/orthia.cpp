@@ -171,6 +171,7 @@ DECLARE_API (reload)
     bool bUnload = false;
     orthia::Address_type offset = 0;
     bool offsetInited = false;
+    bool bForce = false;
     for(std::vector<std::wstring>::iterator it = words.begin(), it_end = words.end();
         it != it_end;
         ++it)
@@ -180,11 +181,16 @@ DECLARE_API (reload)
             bUnload = true;
             continue;
         }
+        if (*it== L"/f")
+        {
+            bForce = true;
+            continue;
+        }
         if (offsetInited)
             throw std::runtime_error("Unexpected argument: " + orthia::ToAnsiString_Silent(*it));
         PCSTR tail = 0;
         std::string strOffset = orthia::ToAnsiString_Silent(*it);
-        GetExpressionEx(strOffsetc_str(), &offset, &tail);
+        GetExpressionEx(strOffset.c_str(), &offset, &tail);
         offsetInited = true;
     }
     
@@ -194,7 +200,7 @@ DECLARE_API (reload)
         pModuleManager->UnloadModule(offset);
         return;
     }
-    pModuleManager->ReloadModule(offset, orthia::QueryReader());
+    pModuleManager->ReloadModule(offset, orthia::QueryReader(), bForce);
 
     ORTHIA_CATCH
 }
@@ -213,10 +219,10 @@ DECLARE_API (x)
 
     orthia::CModuleManager * pModuleManager = orthia::QueryModuleManager();
 
-    std::vector<orthia::CModuleManager::ReferenceInfo> references;
-    pModuleManager->QueryReferences(address, &references);
+    std::vector<orthia::CommonReferenceInfo> references;
+    pModuleManager->QueryReferencesToInstruction(address, &references);
 
-    for(std::vector<orthia::CModuleManager::ReferenceInfo>::iterator it = references.begin(), it_end = references.end();
+    for(std::vector<orthia::CommonReferenceInfo>::iterator it = references.begin(), it_end = references.end();
         it != it_end;
         ++it)
     {

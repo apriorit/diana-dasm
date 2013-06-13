@@ -24,8 +24,8 @@ typedef struct _Diana_Instruction
     Diana_ListNode m_routeEntry;
 
     OPERAND_SIZE m_offset;
-    Diana_List m_refsTo;
-    Diana_List m_refsFrom;
+    Diana_List m_referencesFromThisInstruction;
+    Diana_List m_referencesToThisInstruction;
     int m_flags;
 }Diana_Instruction;
 

@@ -9,6 +9,7 @@
 #include "map"
 #include "windows.h"
 
+#include "orthia_pointers.h"
 namespace orthia
 {
 typedef ULONG64 Address_type;
@@ -48,6 +49,7 @@ public:
     }
 };
 #define ORTHIA_THROW_WIN32(Text) { ULONG orthia____code = ::GetLastError(); std::stringstream orthia____stream; orthia____stream<<Text; throw orthia::CWin32Exception(orthia____stream.str(), orthia____code);} 
+#define ORTHIA_THROW_STD(Text) { std::stringstream orthia____stream; orthia____stream<<Text; throw std::runtime_error(orthia____stream.str());} 
 
 
 bool IsFileExist(const std::wstring & fullFileName);

@@ -203,6 +203,10 @@ CDianaModule::~CDianaModule()
 {
 }
 
+Address_type CDianaModule::GetModuleSize() const
+{
+    return m_impl->GetPeFile()->pImpl->sizeOfFile;
+}
 void CDianaModule::Init(Address_type offset,
                         IMemoryReader * pMemoryReader)
 {
@@ -295,7 +299,7 @@ void CDianaInstructionIterator::QueryRefsToCurrentInstuction(std::vector<CommonR
         throw std::runtime_error("Internal error");
 
     Diana_Instruction * pInstruction = &m_pModule->m_impl->m_owner.m_pInstructionsVec[m_currentInstruction];
-    Diana_SubXRef * pSubRef = (Diana_SubXRef * )pInstruction->m_refsFrom.m_pFirst;
+    Diana_SubXRef * pSubRef = (Diana_SubXRef * )pInstruction->m_referencesToThisInstruction.m_pFirst;
     pInfo->clear();
     while(pSubRef)
     {
@@ -311,7 +315,7 @@ void CDianaInstructionIterator::QueryRefsFromCurrentInstruction(std::vector<Comm
         throw std::runtime_error("Internal error");
 
     Diana_Instruction * pInstruction = &m_pModule->m_impl->m_owner.m_pInstructionsVec[m_currentInstruction];
-    Diana_SubXRef * pSubRef = (Diana_SubXRef * )pInstruction->m_refsTo.m_pFirst;
+    Diana_SubXRef * pSubRef = (Diana_SubXRef * )pInstruction->m_referencesFromThisInstruction.m_pFirst;
     pInfo->clear();
     while(pSubRef)
     {

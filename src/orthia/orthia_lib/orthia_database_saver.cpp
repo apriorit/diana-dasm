@@ -7,14 +7,16 @@ namespace orthia
 CDatabaseSaver::CDatabaseSaver()
 {
 }
+
 void CDatabaseSaver::Save(CDianaModule & dianaModule,
                           CDatabaseModule & databaseModule)
 {
     std::vector<CommonReferenceInfo> references;
     CDianaInstructionIterator iterator;
     dianaModule.QueryInstructionIterator(&iterator);
-    databaseModule.StartSave();
+
     CDatabaseModuleCleaner cleaner(&databaseModule);
+    databaseModule.StartSave();
 
     while(!iterator.IsEmpty())
     {

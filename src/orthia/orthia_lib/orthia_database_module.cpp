@@ -18,13 +18,22 @@ CDatabaseModule::CDatabaseModule()
 }
 CDatabaseModule::~CDatabaseModule()
 {
+    if (m_stmtSelectReferencesTo)
+    {
+        sqlite3_finalize(m_stmtSelectReferencesTo);
+    }
     if (m_database)
     {
         sqlite3_close(m_database);
     }
 }
+void CDatabaseModule::OpenExisting(const std::wstring & fullFileName)
+{
+    ORTHIA_CHECK_SQLITE(sqlite3_open16(fullFileName.c_str(), &m_database), L"Can't create database");
+}
 void CDatabaseModule::CreateNew(const std::wstring & fullFileName)
 {
+    DeleteFile(fullFileName.c_str());
     ORTHIA_CHECK_SQLITE(sqlite3_open16(fullFileName.c_str(), &m_database), L"Can't create database");
 
     ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database,"CREATE TABLE IF NOT EXISTS tbl_instructions (inst_address INTEGER PRIMARY KEY)",
@@ -56,7 +65,7 @@ void CDatabaseModule::InsertReference(sqlite3_stmt * stmt, Address_type from, Ad
     {
         throw std::runtime_error("sqlite3_step failed");
     }
-    sqlite3_reset(stmt);    
+    sqlite3_reset(stmt);
 }
 void CDatabaseModule::StartSave()
 {
@@ -67,9 +76,12 @@ void CDatabaseModule::StartSave()
     ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database, buffer, strlen(buffer), &m_stmtInsertReferences, NULL));
     buffer = "INSERT INTO tbl_external_references VALUES(?1, ?2)";
     ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database, buffer, strlen(buffer), &m_stmtInsertExternalReferences, NULL));
+    buffer = "SELECT ref_address_from FROM tbl_references WHERE ref_address_to = ?1";
+    ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database, buffer, strlen(buffer), &m_stmtSelectReferencesTo, NULL));
 }
 void CDatabaseModule::DoneSave()
 {
+    m_cache.clear();
     ORTHIA_CHECK_SQLITE2(sqlite3_exec(m_database, "COMMIT TRANSACTION", NULL, NULL, NULL));
 }
 void CDatabaseModule::CleanupResources()
@@ -114,6 +126,32 @@ void CDatabaseModule::InsertReferencesFromInstruction(Address_type offset, const
         }
         InsertReference(m_stmtInsertExternalReferences, offset, it->address); 
     }
+}
+void CDatabaseModule::QueryReferencesToInstruction(Address_type offset, std::vector<CommonReferenceInfo> * pReferences)
+{
+    sqlite3_bind_int64(m_stmtSelectReferencesTo, 1, offset);
+    pReferences->reserve(10);
+    pReferences->clear();
+    for(;;)
+    {
+        int stepResult = sqlite3_step(m_stmtSelectReferencesTo);
+        if (stepResult == SQLITE_DONE)
+        {
+            break;
+        }
+        else
+        if (stepResult == SQLITE_ROW)
+        {
+            Address_type ref = sqlite3_column_int64(m_stmtSelectReferencesTo, 0);
+            pReferences->push_back(CommonReferenceInfo(ref, false));
+            continue;
+        }
+        throw std::runtime_error("sqlite3_step failed");
+    }
+    sqlite3_reset(m_stmtSelectReferencesTo);
+}
+void CDatabaseModule::QueryReferencesFromInstruction(Address_type offset, std::vector<CommonReferenceInfo> * pReferences)
+{
 }
 
 
