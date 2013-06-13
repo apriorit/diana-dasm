@@ -320,12 +320,11 @@ void CDianaInstructionIterator::QueryRefsFromCurrentInstruction(std::vector<Comm
     while(pSubRef)
     {
         Diana_XRef * pCurXRef = Diana_CastXREF(&pSubRef->m_instructionEntry, 1);     
-        bool bExternal = false;
         if (pCurXRef->m_flags & DI_XREF_EXTERNAL)
         {
-            bExternal = true;
+            // save only externals to avoid duplicate with save_refs_to
+            pInfo->push_back(CommonReferenceInfo(pCurXRef->m_subrefs[1].m_pInstruction->m_offset, true));
         }
-        pInfo->push_back(CommonReferenceInfo(pCurXRef->m_subrefs[1].m_pInstruction->m_offset, bExternal));
         pSubRef = (Diana_SubXRef *)pSubRef->m_instructionEntry.m_pNext;
     }
 
