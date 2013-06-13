@@ -12,6 +12,7 @@ class CDianaInstructionIterator
 {
     int m_currentInstruction;
     CDianaModule * m_pModule;
+    void SkipExternals();
 public:
     CDianaInstructionIterator();
     void Init(CDianaModule * pModule);

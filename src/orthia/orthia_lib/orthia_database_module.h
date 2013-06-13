@@ -11,10 +11,16 @@ namespace orthia
 struct CommonReferenceInfo;
 class CDatabaseModule
 {
+    std::set<Address_type> m_cache;
     CDatabaseModule(const CDatabaseModule &);
     CDatabaseModule & operator =(const CDatabaseModule &);
     sqlite3 * m_database;
     sqlite3_stmt * m_stmtInsertInstructions;
+    sqlite3_stmt * m_stmtInsertReferences;
+    sqlite3_stmt * m_stmtInsertExternalReferences;
+
+    void InsertReference(sqlite3_stmt * stmt, Address_type from, Address_type to);
+
 public:
     CDatabaseModule();
     ~CDatabaseModule();

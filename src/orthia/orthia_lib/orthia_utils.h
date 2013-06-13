@@ -2,6 +2,7 @@
 #define ORTHIA_UTILS_H
 
 #include "vector"
+#include "set"
 #include "stdexcept"
 #include "sstream"
 #include "algorithm"
