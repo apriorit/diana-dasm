@@ -343,6 +343,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\orthia_pointers.h"
+				>
+			</File>
+			<File
 				RelativePath=".\orthia_sha1.h"
 				>
 			</File>

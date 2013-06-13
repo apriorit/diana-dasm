@@ -38,6 +38,7 @@ public:
     void Init(Address_type offset,
               IMemoryReader * pMemoryReader);
 
+    Address_type GetModuleSize() const;
     void Analyze();
     std::wstring GetUniqueName() const;
     std::wstring GetName() const;

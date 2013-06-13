@@ -31,8 +31,8 @@ void Diana_Instruction_Init(Diana_Instruction * pInstruction,
     
     pInstruction->m_offset = offset;
     pInstruction->m_flags = flags;
-    Diana_InitList(&pInstruction->m_refsTo);
-    Diana_InitList(&pInstruction->m_refsFrom);
+    Diana_InitList(&pInstruction->m_referencesFromThisInstruction);
+    Diana_InitList(&pInstruction->m_referencesToThisInstruction);
 }
 int Diana_InstructionsOwner_Init(Diana_InstructionsOwner * pOwner,
                                  OPERAND_SIZE maxOffsetSize)
@@ -142,8 +142,8 @@ static int Diana_CreateXRef(Diana_InstructionsOwner * pOwner,
     DI_CHECK(Diana_Stack_Push(&pOwner->m_xrefs, &xref));
 
     pXref = (Diana_XRef *)Diana_Stack_GetTopPtr(&pOwner->m_xrefs);
-    Diana_PushBack(&pToInstruction->m_refsFrom, &(pXref)->m_subrefs[0].m_instructionEntry);
-    Diana_PushBack(&pFromInstruction->m_refsTo, &(pXref)->m_subrefs[1].m_instructionEntry);
+    Diana_PushBack(&pToInstruction->m_referencesToThisInstruction, &(pXref)->m_subrefs[0].m_instructionEntry);
+    Diana_PushBack(&pFromInstruction->m_referencesFromThisInstruction, &(pXref)->m_subrefs[1].m_instructionEntry);
     if (ppXref)
     {
         *ppXref = pXref;
@@ -545,11 +545,11 @@ int RouteMarker(Diana_ListNode * pNode,
 	&pbDone;
     pInstruction->m_flags |= DI_INSTRUCTION_INVALID;
 
-    Diana_ListForEach(&pInstruction->m_refsFrom, 
+    Diana_ListForEach(&pInstruction->m_referencesToThisInstruction, 
                       XrefRouteMarker, 
                       (void*)0);
 
-    Diana_ListForEach(&pInstruction->m_refsTo, 
+    Diana_ListForEach(&pInstruction->m_referencesFromThisInstruction, 
                       XrefRouteMarker, 
                       #pragma warning( suppress : 4306 ) // conversion from ' type1 ' to ' type2 ' of greater size
                       (void*)1);

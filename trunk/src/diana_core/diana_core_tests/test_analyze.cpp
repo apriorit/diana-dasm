@@ -213,8 +213,8 @@ void test_analyzer1()
         TEST_ASSERT(pInstruction);
         TEST_ASSERT(pInstruction->m_offset == pInfo->offset);
 
-        VerifyREF(pInfo->pXrefsFrom, &pInstruction->m_refsFrom, 0);
-        VerifyREF(pInfo->pXrefsTo, &pInstruction->m_refsTo, 1);
+        VerifyREF(pInfo->pXrefsFrom, &pInstruction->m_referencesToThisInstruction, 0);
+        VerifyREF(pInfo->pXrefsTo, &pInstruction->m_referencesFromThisInstruction, 1);
     }
 
     Diana_InstructionsOwner_Free(&owner);
@@ -273,8 +273,8 @@ void test_analyzer2()
         TEST_ASSERT(pInstruction);
         TEST_ASSERT(pInstruction->m_offset == pInfo->offset);
 
-        VerifyREF(pInfo->pXrefsFrom, &pInstruction->m_refsFrom, 0);
-        VerifyREF(pInfo->pXrefsTo, &pInstruction->m_refsTo, 1);
+        VerifyREF(pInfo->pXrefsFrom, &pInstruction->m_referencesToThisInstruction, 0);
+        VerifyREF(pInfo->pXrefsTo, &pInstruction->m_referencesFromThisInstruction, 1);
     }
 
     Diana_InstructionsOwner_Free(&owner);
