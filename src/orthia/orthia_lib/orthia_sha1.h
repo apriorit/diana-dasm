@@ -81,7 +81,7 @@ int __stdcall SHA1Input2(SHA1Context    *context,
                         Type * pObject,
                         size_t size)
 {
-    return SHA1Input(context, (uint8_t*)pObject, sizeof(Type)*size);
+    return SHA1Input(context, (uint8_t*)pObject, (unsigned int)(sizeof(Type)*size));
 }
 
 #endif

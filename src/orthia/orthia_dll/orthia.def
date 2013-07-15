@@ -3,7 +3,7 @@ LIBRARY	"orthia"
 EXPORTS
     _WinDbgExtensionDllInit=WinDbgExtensionDllInit
     _ExtensionApiVersion=ExtensionApiVersion
-    setup_path
+    profile
     lm
     reload
     x

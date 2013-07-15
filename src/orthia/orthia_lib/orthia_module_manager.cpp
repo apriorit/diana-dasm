@@ -4,41 +4,32 @@
 namespace orthia
 {
 
-CModuleManager::ModuleInfoInternal::ModuleInfoInternal()
-:
-m_moduleAddress(0),
-m_moduleSize(0)
-{
-}
-CModuleManager::ModuleInfoInternal::ModuleInfoInternal(const std::wstring & name,
-                   const std::wstring & fullDatabaseName,
-                   orthia::intrusive_ptr<CDatabaseModule> pDatabaseModule,
-                   Address_type moduleAddress,
-                   Address_type moduleSize)
-    :
-        m_name(name),
-        m_fullDatabaseName(fullDatabaseName),
-        m_pDatabaseModule(pDatabaseModule),
-        m_moduleAddress(moduleAddress),
-        m_moduleSize(moduleSize)
-{
-}
-
 CModuleManager::CModuleManager()
 {
 }
-void CModuleManager::Reinit(const std::wstring & path)
+void CModuleManager::Reinit(const std::wstring & fullFileName,
+                            bool bForce)
 {
-    m_path = path;
+    orthia::intrusive_ptr<CDatabaseManager> pDatabaseManager(new CDatabaseManager());
+    if (bForce || (!orthia::IsFileExist(fullFileName)) || !orthia::GetSizeOfFile(fullFileName))
+    {
+        pDatabaseManager->CreateNew(fullFileName);
+    }
+    else
+    {
+        pDatabaseManager->OpenExisting(fullFileName);
+    }
+    m_pDatabaseManager = pDatabaseManager;
+    m_fullFileName = fullFileName;
 }
-std::wstring CModuleManager::GetPath()
+std::wstring CModuleManager::GetDatabaseName()
 {
-    return m_path;
+    return m_fullFileName;
 }
 
 void CModuleManager::UnloadModule(Address_type offset)
 {
-    m_modules.erase(offset);
+    m_pDatabaseManager->GetDatabase()->UnloadModule(offset);
 }
 void CModuleManager::ReloadModule(Address_type offset,
                                   IMemoryReader * pMemoryReader,
@@ -47,63 +38,30 @@ void CModuleManager::ReloadModule(Address_type offset,
     CDianaModule module;
     module.Init(offset, pMemoryReader);
 
+    if (!m_pDatabaseManager)
+        throw std::runtime_error("The profile is not initialized");
+    
     // build full path name
-    std::wstring fullFileName;
-    fullFileName = m_path + L"\\" + module.GetUniqueName();
-
-    orthia::intrusive_ptr<CDatabaseModule> pDatabaseModule(new CDatabaseModule());
-    if (bForce || (!orthia::IsFileExist(fullFileName)) || !orthia::GetSizeOfFile(fullFileName))
+    if (bForce || !m_pDatabaseManager->GetDatabase()->IsModuleExists(offset))
     {
         module.Analyze();
-
-        m_modules.erase(offset);
-        orthia::CreateAllDirectoriesForFile(fullFileName);
-        pDatabaseModule->CreateNew(fullFileName);
-
+        m_pDatabaseManager->GetDatabase()->UnloadModule(offset);
+        
         CDatabaseSaver fileSaver;
-        fileSaver.Save(module, *pDatabaseModule);
+        fileSaver.Save(module, *m_pDatabaseManager);
     }
-    else
-    {
-        pDatabaseModule->OpenExisting(fullFileName);
-    }
-    m_modules[offset] = ModuleInfoInternal(module.GetName(), fullFileName, pDatabaseModule, offset, module.GetModuleSize());
 }
 
 // module info
-void CModuleManager::QueryLoadedModules(std::vector<ModuleInfo> * pResult)
+void CModuleManager::QueryLoadedModules(std::vector<CommonModuleInfo> * pResult)
 {
+    m_pDatabaseManager->GetDatabase()->QueryModules(pResult);
 }
 // references
 void CModuleManager::QueryReferencesToInstruction(Address_type offset, 
                                                  std::vector<CommonReferenceInfo> * pResult)
 {
-    ModuleInfoInternal * pInfo = QueryModuleInfo(offset);
-    pInfo->m_pDatabaseModule->QueryReferencesToInstruction(offset - pInfo->m_moduleAddress, pResult);
-    for(std::vector<CommonReferenceInfo>::iterator it = pResult->begin(), it_end = pResult->end();
-        it != it_end;
-        ++it)
-    {
-        it->address += pInfo->m_moduleAddress;
-    }
-}
-CModuleManager::ModuleInfoInternal * CModuleManager::QueryModuleInfo(Address_type offset)
-{
-    ModuleMap_type::iterator it, it_end;
-    for(it = m_modules.begin(), it_end = m_modules.end();
-        it != it_end;
-        ++it)
-    {
-        if (it->first <= offset && offset <= it->first + it->second.m_moduleSize)
-        {
-            break;
-        }
-    }
-    if (it == m_modules.end())
-    {
-        ORTHIA_THROW_STD("Module with address ["<<offset<<"] not found");
-    }
-    return &it->second;
+    m_pDatabaseManager->GetDatabase()->QueryReferencesToInstruction(offset, pResult);
 }
 
 }

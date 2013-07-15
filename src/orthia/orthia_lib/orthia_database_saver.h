@@ -12,7 +12,7 @@ class CDatabaseSaver
 public:
     CDatabaseSaver();
     void Save(CDianaModule & dianaModule,
-              CDatabaseModule & databaseModule);
+              CDatabaseManager & databaseManager);
 };
 
 }

@@ -203,6 +203,10 @@ CDianaModule::~CDianaModule()
 {
 }
 
+Address_type CDianaModule::GetModuleAddress() const
+{
+    return m_offset;
+}
 Address_type CDianaModule::GetModuleSize() const
 {
     return m_impl->GetPeFile()->pImpl->sizeOfFile;

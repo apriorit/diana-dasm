@@ -9,38 +9,42 @@ CDatabaseSaver::CDatabaseSaver()
 }
 
 void CDatabaseSaver::Save(CDianaModule & dianaModule,
-                          CDatabaseModule & databaseModule)
+                          CDatabaseManager & databaseManager)
 {
+    orthia::intrusive_ptr<CDatabase> databaseModule = databaseManager.GetDatabase();
+    Address_type baseAddress = dianaModule.GetModuleAddress();
     std::vector<CommonReferenceInfo> references;
     CDianaInstructionIterator iterator;
     dianaModule.QueryInstructionIterator(&iterator);
 
-    CDatabaseModuleCleaner cleaner(&databaseModule);
-    databaseModule.StartSave();
+    CDatabaseModuleCleaner cleaner(databaseModule.get());
+    databaseModule->StartSaveModule(baseAddress, dianaModule.GetModuleSize());
 
     while(!iterator.IsEmpty())
     {
         Address_type offset = iterator.GetInstructionOffset();
         iterator.QueryRefsToCurrentInstuction(&references);
-        bool bInstructionAdded = false;
         if (!references.empty())
         {
-            databaseModule.InsertInstruction(offset);
-            bInstructionAdded = true;
-            databaseModule.InsertReferencesToInstruction(offset, references);
+            // diana returns relative offsets, convert it to the absolute ones
+            for(std::vector<CommonReferenceInfo>::iterator it = references.begin(), it_end = references.end();
+                it != it_end; ++it)
+            {
+                if (!it->external)
+                {
+                    it->address += baseAddress;
+                }
+            }
+            databaseModule->InsertReferencesToInstruction(offset+baseAddress, references);
         }
         iterator.QueryRefsFromCurrentInstruction(&references);
         if (!references.empty())
         {
-            if (!bInstructionAdded)
-            {
-                databaseModule.InsertInstruction(offset);
-            }
-            databaseModule.InsertReferencesFromInstruction(offset, references);    
+            databaseModule->InsertReferencesFromInstruction(offset+baseAddress, references);    
         }
         iterator.MoveToNext();
     }
-    databaseModule.DoneSave();
+    databaseModule->DoneSave();
 }
 
 }
