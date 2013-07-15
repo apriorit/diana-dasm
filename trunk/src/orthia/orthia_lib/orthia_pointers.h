@@ -126,6 +126,20 @@ public:
     {
         return *m_pObject;
     }
+
+    bool operator ! () const
+    {
+        return !m_pObject;
+    }
+    ObjectType * get()
+    {
+        return m_pObject;
+    }
+    const ObjectType * get() const 
+    {
+        return m_pObject;
+    }
+
 };
 
 }

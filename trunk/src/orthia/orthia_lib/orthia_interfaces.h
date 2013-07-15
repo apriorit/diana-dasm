@@ -48,6 +48,23 @@ struct CommonReferenceInfo
     }
 };
 
+// module info
+struct CommonModuleInfo
+{
+    Address_type address;
+    std::wstring name;
+    CommonModuleInfo()
+    {
+    }
+    CommonModuleInfo(Address_type address_in,
+                     const std::wstring & name_in)
+                     :
+        address(address_in),
+        name(name_in)
+    {
+    }
+};
+
 }
 
 #endif

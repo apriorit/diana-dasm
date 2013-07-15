@@ -39,7 +39,6 @@ struct ModuleManagerObjects
         return &reader;
     }
 };
-static std::wstring g_path;
 static std::auto_ptr<ModuleManagerObjects> g_globals;
 
 static WINDBG_EXTENSION_APIS ExtensionApis = {0};
@@ -68,20 +67,13 @@ VOID WDBGAPI WinDbgExtensionDllInit (PWINDBG_EXTENSION_APIS lpExtensionApis, USH
 namespace orthia
 {
 
-static void SetupPath(const std::wstring & path)
+static void SetupPath(const std::wstring & path, bool bForce)
 {
-    if (path.empty())
-    {
-        std::stringstream res;
-        res<<"Orthia path not found, setup "<<GLOBAL_ORTHIA_PATH_ANSI<<" or use !setup_path command";
-        throw std::runtime_error(res.str());
-    }
     if (!g_globals.get())
     {
         g_globals.reset(new ModuleManagerObjects);
     }
-    g_globals->moduleManager.Reinit(path);
-    g_path = path;
+    g_globals->moduleManager.Reinit(path, bForce);
 }
 
 orthia::IMemoryReader * QueryReader()
@@ -94,33 +86,25 @@ orthia::CModuleManager * QueryModuleManager()
     ModuleManagerObjects * pGlobal = g_globals.get();
     if (!pGlobal) 
     {
-        SetupPath(g_path);
-        return &g_globals->moduleManager;
-    }
-    
-    if (pGlobal->moduleManager.GetPath() != g_path)
-    {
-        SetupPath(g_path);
+        throw std::runtime_error("Profile not inited");
     }
     return &pGlobal->moduleManager;
 }
 static void PrintUsage()
 {
     dprintf("!help - display this text\n");
-    dprintf("!setup_path <path> - init path\n");
+    dprintf("!profile [/f] <full_name> - use/create profile\n");
     dprintf("!lm - displays module list\n");
     dprintf("!reload [/u] <module_address> - reloads module\n");
     dprintf("!x <address> - prints xrefs\n");
-    dprintf("!t - trace (into)\n");
-    dprintf("!p - step (over)\n");
 }
 
 void InitLib()
 {
     try
     {
-        std::wstring path = orthia::ExpandVariable(orthia::Trim(orthia::ToString(GLOBAL_ORTHIA_PATH_ANSI)));
-        SetupPath(path);
+        // TODO: add initialization code here
+
     }
     catch(const std::exception & e)
     {
@@ -137,11 +121,21 @@ DECLARE_API (help)
     orthia::PrintUsage();
 }
 
-DECLARE_API (setup_path)
+DECLARE_API (profile)
 {
     ORTHIA_TRY
-    std::wstring path = orthia::ExpandVariable(orthia::ToString(orthia::Trim(args)));
-    orthia::SetupPath(path);
+
+        bool bForce = false;
+        std::wstring wargs = orthia::ToString(orthia::Trim(args));
+        if (wcscmp(wargs.c_str(), L"/f ") == 0)
+        {
+            bForce = true;
+            wargs.erase(0, 3);
+            wargs = orthia::Trim(wargs);
+        }
+        std::wstring path = orthia::ExpandVariable(wargs);
+        orthia::SetupPath(path, bForce);
+
     ORTHIA_CATCH
 }
 
@@ -150,9 +144,9 @@ DECLARE_API (lm)
     ORTHIA_TRY
         
     orthia::CModuleManager * pModuleManager = orthia::QueryModuleManager();
-    std::vector<orthia::CModuleManager::ModuleInfo> modules;
+    std::vector<orthia::CommonModuleInfo> modules;
     pModuleManager->QueryLoadedModules(&modules);
-    for(std::vector<orthia::CModuleManager::ModuleInfo>::iterator it = modules.begin(), it_end = modules.end();
+    for(std::vector<orthia::CommonModuleInfo>::iterator it = modules.begin(), it_end = modules.end();
         it != it_end;
         ++it)
     {
