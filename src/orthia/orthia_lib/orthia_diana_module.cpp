@@ -117,7 +117,7 @@ int DianaEnvironment_ConvertAddressToRelative(void * pThis,
     if (address < pEnv->m_moduleStart)
         return DI_SUCCESS;
 
-    if (address > pEnv->m_moduleSize)
+    if (address - pEnv->m_moduleStart >= pEnv->m_moduleSize)
         return DI_SUCCESS;
 
     *pbInvalidPointer = 0;
@@ -150,6 +150,7 @@ int DianaEnvironment_AnalyzeJumpAddress(void * pThis,
         if (invalidPointer)
         {
             *pResult = diaJumpExternal;
+            return DI_SUCCESS;
         }
     }
     if (address >= pEnv->m_moduleSize)
