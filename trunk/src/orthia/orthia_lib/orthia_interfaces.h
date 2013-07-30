@@ -17,11 +17,8 @@ struct IMemoryReader
 
 class CMemoryReader:public IMemoryReader
 {
-    Address_type m_base;
 public:
-    CMemoryReader(Address_type base)
-        :
-            m_base(base)
+    CMemoryReader()
     {
     }
     virtual void Read(Address_type offset, 
@@ -29,7 +26,7 @@ public:
                       void * pBuffer,
                       Address_type * pBytesRead)
     {
-        void * realAddress = (void *)(m_base + offset);
+        void * realAddress = (void *)(offset);
         memcpy(pBuffer, realAddress, (size_t)bytesToRead);
         *pBytesRead = (size_t)bytesToRead;
     }
@@ -53,14 +50,17 @@ struct CommonModuleInfo
 {
     Address_type address;
     std::wstring name;
+    Address_type size;
     CommonModuleInfo()
     {
     }
     CommonModuleInfo(Address_type address_in,
+                     Address_type size_in,
                      const std::wstring & name_in)
                      :
         address(address_in),
-        name(name_in)
+        name(name_in),
+        size(size_in)
     {
     }
 };

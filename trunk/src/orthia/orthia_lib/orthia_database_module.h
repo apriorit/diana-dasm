@@ -72,8 +72,8 @@ public:
     void QueryReferencesToInstruction(Address_type offset, std::vector<CommonReferenceInfo> * pReferences);
     
     // modules api
-    void UnloadModule(Address_type offset);
-    bool IsModuleExists(Address_type offset);
+    void UnloadModule(Address_type address, bool bSilent);
+    bool IsModuleExists(Address_type address);
     void QueryModules(std::vector<CommonModuleInfo> * pResult);
 };
 

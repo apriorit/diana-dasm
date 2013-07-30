@@ -15,12 +15,25 @@ static void test_mm1()
     manager.Reinit(&buf.front(), true);
 
     void * pFile = GetModuleHandle(0);
-    orthia::CMemoryReader reader((orthia::Address_type)pFile);
+    orthia::CMemoryReader reader;
     manager.ReloadModule((orthia::Address_type)pFile, &reader, true);
 
     std::vector<orthia::CommonReferenceInfo> references;
     manager.QueryReferencesToInstruction((orthia::Address_type)&test_mm1, &references);
     TEST_ASSERT(!references.empty());
+
+    std::vector<orthia::CommonModuleInfo> modules;
+    manager.QueryLoadedModules(&modules);
+    TEST_ASSERT(modules.size() == 1);
+    TEST_ASSERT(modules[0].address == (orthia::Address_type)pFile);
+
+    manager.UnloadModule((orthia::Address_type)pFile);
+    manager.QueryLoadedModules(&modules);
+    TEST_ASSERT(modules.size() == 0);
+
+    manager.QueryReferencesToInstruction((orthia::Address_type)&test_mm1, &references);
+    TEST_ASSERT(references.empty());
+
 }
 
 void test_memory_manager()

@@ -173,7 +173,7 @@ public:
     CDianaModuleImpl(Address_type offset,
                      IMemoryReader * pMemoryReader)
     :
-        m_cache(pMemoryReader),
+        m_cache(pMemoryReader, offset),
         m_env(offset, &m_cache)
     {
         DI_CHECK_CPP(DianaPeFile_Init(&m_peFile, &m_env.m_stream, 0, offset));
@@ -184,7 +184,7 @@ public:
 
     void Analyze()
     {
-        m_cache.Init(0, m_env.m_moduleSize);
+        m_cache.Init(m_env.m_moduleStart, m_env.m_moduleSize); 
         DI_CHECK_CPP(Diana_PE_AnalyzePE(&m_peFile, &m_env, &m_owner));
         m_instructionsOwnerGuard.reset(&m_owner);
     }

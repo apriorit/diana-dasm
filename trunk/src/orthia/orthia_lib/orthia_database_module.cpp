@@ -91,6 +91,8 @@ void CDatabase::Init()
     ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database.Get(), buffer, (int)strlen(buffer), m_stmtSelectReferencesTo.Get2(), NULL));
     buffer = "SELECT * FROM tbl_modules WHERE mod_address = ?1";
     ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database.Get(), buffer, (int)strlen(buffer), m_stmtSelectModule.Get2(), NULL));
+    buffer = "SELECT * FROM tbl_modules";
+    ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database.Get(), buffer, (int)strlen(buffer), m_stmtQueryModules.Get2(), NULL));
 }
 void CDatabase::OpenExisting(const std::wstring & fullFileName)
 {
@@ -190,18 +192,57 @@ void CDatabase::QueryReferencesToInstruction(Address_type offset, std::vector<Co
     }
 }
 
-void CDatabase::UnloadModule(Address_type offset)
+void CDatabase::UnloadModule(Address_type address, bool bSilent)
 {
-    std::stringstream sql;
-    sql<<"DELETE FROM tbl_modules WHERE mod_address = "<<offset;
-    std::string sqlString = sql.str();
-    ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(), sqlString.c_str(),
-                0,0,0), L"Can't unload module");
+    try
+    {
+        Address_type size = 0;
+        std::vector<CommonModuleInfo> allModules;
+        QueryModules(&allModules);
+        for(std::vector<CommonModuleInfo>::iterator it = allModules.begin(), it_end = allModules.end();
+            it != it_end;
+            ++it)
+        {
+            if (it->address == address)
+            {
+                size = it->size;
+                break;
+            }
+        }
+        if (!size)
+        {
+            std::stringstream res;
+            res<<"Module not found: "<<address;
+            throw std::runtime_error(res.str());
+        }
+    
+        {
+            std::stringstream sql;
+            sql<<"DELETE FROM tbl_references WHERE ref_address_from >= "<<address<<" and ref_address_from <= "<<address+size;
+            std::string sqlString = sql.str();
+            ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(), sqlString.c_str(),
+                        0,0,0), L"Can't unload module");
+        }
+
+        {
+            std::stringstream sql;
+            sql<<"DELETE FROM tbl_modules WHERE mod_address = "<<address;
+            std::string sqlString = sql.str();
+            ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(), sqlString.c_str(),
+                        0,0,0), L"Can't unload module");
+        }
+    }
+    catch(const std::exception & e)
+    {
+        &e;
+        if (!bSilent)
+            throw;
+    }
 }
-bool CDatabase::IsModuleExists(Address_type offset)
+bool CDatabase::IsModuleExists(Address_type address)
 {
     CSQLAutoReset autoStatement(m_stmtSelectModule.Get());
-    sqlite3_bind_int64(m_stmtSelectModule.Get(), 1, offset);
+    sqlite3_bind_int64(m_stmtSelectModule.Get(), 1, address);
     int stepResult = sqlite3_step(m_stmtSelectModule.Get());
     if (stepResult == SQLITE_ROW)
     {
@@ -225,7 +266,8 @@ void CDatabase::QueryModules(std::vector<CommonModuleInfo> * pResult)
         if (stepResult == SQLITE_ROW)
         {
             Address_type address = sqlite3_column_int64(m_stmtQueryModules.Get(), 0);
-            pResult->push_back(CommonModuleInfo(address, L""));
+            Address_type size = sqlite3_column_int64(m_stmtQueryModules.Get(), 1);
+            pResult->push_back(CommonModuleInfo(address, size, L""));
             continue;
         }
         throw std::runtime_error("sqlite3_step failed");

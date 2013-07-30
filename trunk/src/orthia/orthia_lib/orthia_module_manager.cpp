@@ -29,7 +29,7 @@ std::wstring CModuleManager::GetDatabaseName()
 
 void CModuleManager::UnloadModule(Address_type offset)
 {
-    m_pDatabaseManager->GetDatabase()->UnloadModule(offset);
+    m_pDatabaseManager->GetDatabase()->UnloadModule(offset, false);
 }
 void CModuleManager::ReloadModule(Address_type offset,
                                   IMemoryReader * pMemoryReader,
@@ -45,7 +45,7 @@ void CModuleManager::ReloadModule(Address_type offset,
     if (bForce || !m_pDatabaseManager->GetDatabase()->IsModuleExists(offset))
     {
         module.Analyze();
-        m_pDatabaseManager->GetDatabase()->UnloadModule(offset);
+        m_pDatabaseManager->GetDatabase()->UnloadModule(offset, true);
         
         CDatabaseSaver fileSaver;
         fileSaver.Save(module, *m_pDatabaseManager);

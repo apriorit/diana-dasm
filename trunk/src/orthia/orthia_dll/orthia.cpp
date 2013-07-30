@@ -1,6 +1,7 @@
 #include "orthia.h"
 #include "orthia_module_manager.h"
 #include "orthia_memory_cache.h"
+#include "diana_core_cpp.h"
 
 #define GLOBAL_ORTHIA_PATH_ANSI "%ORTHIA_PATH%"
 
@@ -101,6 +102,7 @@ static void PrintUsage()
 
 void InitLib()
 {
+    Diana_Init();
     try
     {
         // TODO: add initialization code here
