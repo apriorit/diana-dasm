@@ -20,6 +20,7 @@ typedef struct _diana_PeFile_impl
     int optionalHeaderSize;
     DI_UINT32  addressOfEntryPoint;
     OPERAND_SIZE loadedBase;
+    DIANA_IMAGE_DATA_DIRECTORY * pImageDataDirectoryArray;
 }Diana_PeFile_impl;
 
 typedef struct _diana_PeFile32_impl

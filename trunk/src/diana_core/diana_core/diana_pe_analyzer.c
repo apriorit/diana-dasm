@@ -35,6 +35,45 @@ int ScanPage(Diana_PeFile * pPeFile,
                                         pPeFile->pImpl->dianaMode,
                                         relativeAddress,
                                         pPeFile->pImpl->sizeOfFile));
+            continue;
+        }
+        // check relative parts
+        {
+            DI_CHECK(pObserver->m_pAnalyzeAddress(pObserver, 
+                                                  (DI_UINT32)*pAddress, 
+                                                  0,
+                                                  &relativeAddress, 
+                                                  &result));
+            if (result == diaJumpNormal && relativeAddress)
+            {
+                DI_CHECK(Diana_AnalyzeCode(pOwner,
+                                            pObserver,
+                                            pPeFile->pImpl->dianaMode,
+                                            relativeAddress,
+                                            pPeFile->pImpl->sizeOfFile));
+            }
+        }
+        // check relative parts
+        {
+            OPERAND_SIZE address = *pAddress;
+            address>>=16;
+            address>>=16;
+            if (address)
+            {
+                DI_CHECK(pObserver->m_pAnalyzeAddress(pObserver, 
+                                                      (DI_UINT32)address, 
+                                                      0,
+                                                      &relativeAddress, 
+                                                      &result));
+                if (result == diaJumpNormal && relativeAddress)
+                {
+                    DI_CHECK(Diana_AnalyzeCode(pOwner,
+                                                pObserver,
+                                                pPeFile->pImpl->dianaMode,
+                                                relativeAddress,
+                                                pPeFile->pImpl->sizeOfFile));
+                }
+            }
         }
     }
     return DI_SUCCESS;
@@ -81,10 +120,24 @@ int Diana_AnalyzeData(Diana_PeFile * pPeFile,
     return DI_SUCCESS;
 }
 
+/*
 static 
-int Diana_PE_AnalyzePEImpl(Diana_PeFile * pPeFile,
-                           DianaAnalyzeObserver * pObserver,
-                           Diana_InstructionsOwner * pOwner)
+int Diana_AnalyzeExports(Diana_PeFile * pPeFile,
+                         DianaAnalyzeObserver * pObserver,
+                         Diana_InstructionsOwner * pOwner,
+                         void * pPage,
+                         int pageSize)
+{
+    OPERAND_SIZE exportsRaw = pPeFile->pImpl->loadedBase + pPeFile->pImpl->pImageDataDirectoryArray[DIANA_IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress;
+}*/
+
+
+static 
+int Diana_PE_AnalyzePEImplUsingBuffer(Diana_PeFile * pPeFile,
+                                      DianaAnalyzeObserver * pObserver,
+                                      Diana_InstructionsOwner * pOwner,
+                                      void * pPage,
+                                      int pageSize)
 {
     // scan from entry point
     if (pPeFile->pImpl->addressOfEntryPoint)
@@ -96,18 +149,31 @@ int Diana_PE_AnalyzePEImpl(Diana_PeFile * pPeFile,
                                    pPeFile->pImpl->sizeOfFile));
     }
     {
-        int pageSize = 0x1000;
-        void * pPage = malloc(pageSize + sizeof(OPERAND_SIZE));
-        int status = 0;
-        DI_CHECK_ALLOC(pPage);
-        status = Diana_AnalyzeData(pPeFile, pObserver, pOwner, pPage, pageSize);
-        free(pPage);
+        // scan raw pages
+        DI_CHECK(Diana_AnalyzeData(pPeFile, pObserver, pOwner, pPage, pageSize));
     }
-
     // scan exports
+   // DI_CHECK(Diana_AnalyzeExports(pPeFile, pObserver, pOwner, pPage, pageSize));
+
     // scan imports
     return DI_SUCCESS;
 }
+
+static 
+int Diana_PE_AnalyzePEImpl(Diana_PeFile * pPeFile,
+                           DianaAnalyzeObserver * pObserver,
+                           Diana_InstructionsOwner * pOwner)
+{
+    // scan raw pages
+    int pageSize = 0x1000;
+    void * pPage = malloc(pageSize + sizeof(OPERAND_SIZE));
+    int status = 0;
+    DI_CHECK_ALLOC(pPage);
+    status = Diana_PE_AnalyzePEImplUsingBuffer(pPeFile, pObserver, pOwner, pPage, pageSize);
+    free(pPage);
+    return status;
+}
+
 int Diana_PE_AnalyzePE(Diana_PeFile * pPeFile,
                        DianaAnalyzeObserver * pObserver,
                        Diana_InstructionsOwner * pOwner)

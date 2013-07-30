@@ -18,9 +18,11 @@ void Diana_PeFile_impl_CommonInit(Diana_PeFile_impl  * pImpl,
 }
 static
 void Diana_InitCustomFields(Diana_PeFile_impl * pImpl,
-                            DI_UINT32  addressOfEntryPoint)
+                            DI_UINT32  addressOfEntryPoint,
+                            DIANA_IMAGE_DATA_DIRECTORY * pImageDataDirectoryArray)
 {
     pImpl->addressOfEntryPoint = addressOfEntryPoint;
+    pImpl->pImageDataDirectoryArray = pImageDataDirectoryArray;
 }
 
 static 
@@ -32,7 +34,7 @@ int DI_Init386(Diana_PeFile_impl * pImpl_in,
 
     DI_CHECK(DianaExactRead(pStream, pOpt, sizeof(DIANA_IMAGE_OPTIONAL_HEADER32)));
     pImpl->pOptionalHeader = pOpt;
-    Diana_InitCustomFields(pImpl_in, pOpt->AddressOfEntryPoint);
+    Diana_InitCustomFields(pImpl_in, pOpt->AddressOfEntryPoint, pOpt->DataDirectory);
     return DI_SUCCESS;
 }
 static 
@@ -44,7 +46,7 @@ int DI_InitAmd64(Diana_PeFile_impl * pImpl_in,
 
     DI_CHECK(DianaExactRead(pStream, pOpt, sizeof(DIANA_IMAGE_OPTIONAL_HEADER64)));
     pImpl->pOptionalHeader = pOpt;
-    Diana_InitCustomFields(pImpl_in, pOpt->AddressOfEntryPoint);
+    Diana_InitCustomFields(pImpl_in, pOpt->AddressOfEntryPoint, pOpt->DataDirectory);
     return DI_SUCCESS;
 }
 

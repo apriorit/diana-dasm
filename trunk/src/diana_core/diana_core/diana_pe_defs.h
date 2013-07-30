@@ -161,6 +161,22 @@ typedef struct _DIANA_IMAGE_DATA_DIRECTORY {
     DI_UINT32   Size;
 } DIANA_IMAGE_DATA_DIRECTORY, *PDIANA_IMAGE_DATA_DIRECTORY;
 
+#define DIANA_IMAGE_DIRECTORY_ENTRY_EXPORT          0   // Export Directory
+#define DIANA_IMAGE_DIRECTORY_ENTRY_IMPORT          1   // Import Directory
+#define DIANA_IMAGE_DIRECTORY_ENTRY_RESOURCE        2   // Resource Directory
+#define DIANA_IMAGE_DIRECTORY_ENTRY_EXCEPTION       3   // Exception Directory
+#define DIANA_IMAGE_DIRECTORY_ENTRY_SECURITY        4   // Security Directory
+#define DIANA_IMAGE_DIRECTORY_ENTRY_BASERELOC       5   // Base Relocation Table
+#define DIANA_IMAGE_DIRECTORY_ENTRY_DEBUG           6   // Debug Directory
+#define DIANA_IMAGE_DIRECTORY_ENTRY_ARCHITECTURE    7   // Architecture Specific Data
+#define DIANA_IMAGE_DIRECTORY_ENTRY_GLOBALPTR       8   // RVA of GP
+#define DIANA_IMAGE_DIRECTORY_ENTRY_TLS             9   // TLS Directory
+#define DIANA_IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG    10   // Load Configuration Directory
+#define DIANA_IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT   11   // Bound Import Directory in headers
+#define DIANA_IMAGE_DIRECTORY_ENTRY_IAT            12   // Import Address Table
+#define DIANA_IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT   13   // Delay Load Import Descriptors
+#define DIANA_IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR 14   // COM Runtime descriptor
+
 #define DIANA_IMAGE_NUMBEROF_DIRECTORY_ENTRIES    16
 
 
@@ -206,7 +222,6 @@ typedef struct _DIANA_IMAGE_OPTIONAL_HEADER32 {
     DI_UINT32   NumberOfRvaAndSizes;
     DIANA_IMAGE_DATA_DIRECTORY DataDirectory[DIANA_IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 } DIANA_IMAGE_OPTIONAL_HEADER32, *PDIANA_IMAGE_OPTIONAL_HEADER32;
-
 
 
 typedef struct DIANA_IMAGE_OPTIONAL_HEADER64 {
