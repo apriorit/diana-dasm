@@ -3,10 +3,11 @@
 namespace orthia
 {
 
-CMemoryCache::CMemoryCache(IMemoryReader * pReader)
+CMemoryCache::CMemoryCache(IMemoryReader * pReader,
+                           Address_type regionAddress)
     :
         m_pReader(pReader),
-        m_regionAddress(0),
+        m_regionAddress(regionAddress),
         m_regionSize(0)
 {
 }
@@ -22,26 +23,20 @@ void CMemoryCache::Init(Address_type regionAddress,
         throw std::runtime_error("Internal error: size too big");
     m_regionData.resize((size_t)size);
     
+    m_regionAddress = regionAddress;
     Address_type bytesRead = 0;
-    m_pReader->Read(regionAddress, size, &m_regionData.front(), &bytesRead);
+    m_pReader->Read(m_regionAddress, size, &m_regionData.front(), &bytesRead);
     m_regionData.resize((size_t)bytesRead);
     m_regionSize = bytesRead;
-    m_regionAddress = regionAddress;
 }
     
-void CMemoryCache::Init(Address_type regionAddress,
-                          std::vector<char> * pData)
-{
-    m_regionAddress = regionAddress;
-    m_regionSize = m_regionData.size();
-    pData->swap(m_regionData);
-}
-
 void CMemoryCache::Read(Address_type offset, 
                         Address_type bytesToRead,
                         void * pBuffer,
                         Address_type * pBytesRead)
 {
+    // it gets relative addresses!!!!
+    offset += m_regionAddress;
     if (!m_regionSize)
     {
         m_pReader->Read(offset, bytesToRead, pBuffer, pBytesRead);

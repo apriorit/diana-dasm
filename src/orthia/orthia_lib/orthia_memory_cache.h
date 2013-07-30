@@ -15,10 +15,8 @@ class CMemoryCache:public IMemoryReader
 
     IMemoryReader * m_pReader;
 public:
-    CMemoryCache(IMemoryReader * pReader);
-
-    void Init(Address_type regionAddress,
-              std::vector<char> * pData);
+    CMemoryCache(IMemoryReader * pReader,
+                 Address_type regionAddress);
 
     void Init(Address_type regionAddress,
               Address_type size);
