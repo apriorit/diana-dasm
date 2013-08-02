@@ -30,4 +30,11 @@ int Diana_ParseCmdOnBuffer_testmode(int iMode,
                                     DianaParserResult * pResult,  //OUT
                                     size_t * sizeRead);    // OUT
 
+int DianaMemoryStream_RandomRead(void * pThis, 
+                                   OPERAND_SIZE offset,
+                                   void * pBuffer, 
+                                   int iBufferSize, 
+                                   OPERAND_SIZE * readBytes);
+
+
 #endif

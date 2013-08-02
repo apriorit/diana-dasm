@@ -8,7 +8,7 @@ typedef struct _DianaAnalyzeSession
     DianaAnalyzeObserver * pObserver;
     int mode;
 
-    Diana_Stack stack;
+    Diana_Stack * pStack;
     DianaContext context;
     DianaParserResult result;
     OPERAND_SIZE maxOffset;
@@ -35,10 +35,12 @@ void Diana_Instruction_Init(Diana_Instruction * pInstruction,
     Diana_InitList(&pInstruction->m_referencesToThisInstruction);
 }
 int Diana_InstructionsOwner_Init(Diana_InstructionsOwner * pOwner,
-                                 OPERAND_SIZE maxOffsetSize)
+                                 OPERAND_SIZE maxOffsetSize,
+                                 OPERAND_SIZE minimalExternalAddress)
 {
     int res = 0;
     memset(pOwner, 0, sizeof(*pOwner));
+    pOwner->m_minimalExternalAddress = minimalExternalAddress;
 
     pOwner->m_pInstructionsVec = malloc(sizeof(Diana_Instruction) * (size_t)maxOffsetSize);
     if (!pOwner->m_pInstructionsVec)
@@ -156,11 +158,13 @@ int AnalyzeJumps(DianaParserResult * pResult,
                  Diana_LinkedAdditionalGroupInfo * pLinkedInfo,
                  OPERAND_SIZE * pNewOffset,
                  OPERAND_SIZE offset,
-                 int * pAbsoluteAddress)
+                 int * pAbsoluteAddress,
+                 int * pLinksToData)
 {
     const DianaLinkedOperand * pOp = pResult->linkedOperands + pLinkedInfo->relArgrumentNumber;
     *pNewOffset = 0;
     *pAbsoluteAddress = 0;
+    *pLinksToData = 0;
 
     switch(pOp->type)
     {
@@ -175,8 +179,13 @@ int AnalyzeJumps(DianaParserResult * pResult,
         break;
     // call [rbx+0x5435345] 
     case diana_index:
-        *pAbsoluteAddress = 1;
+        *pAbsoluteAddress = 0;
         *pNewOffset = pOp->value.rmIndex.dispValue;
+        if (pOp->value.rmIndex.reg == reg_RIP)
+        {
+            *pNewOffset += offset; 
+        }
+        *pLinksToData = 1;
         break;
     case diana_register:
         return DI_UNSUPPORTED_COMMAND;
@@ -187,13 +196,25 @@ int AnalyzeJumps(DianaParserResult * pResult,
 static
 int SaveNewExternalRoute(DianaAnalyzeSession * pSession,
                          Diana_Instruction * pInstruction,
-                         OPERAND_SIZE newOffset)
+                         OPERAND_SIZE newOffset,
+                         int bLinksToData)
 {
+    int flags = 0;
     Diana_XRef * pXref = 0;
     Diana_Instruction * pTargetInstruction = 0;
+    if (pSession->pOwner->m_minimalExternalAddress && newOffset < pSession->pOwner->m_minimalExternalAddress)
+    {
+        // skip first region
+        return DI_SUCCESS;
+    }
     pTargetInstruction = malloc(sizeof(Diana_Instruction));
     DI_CHECK_ALLOC(pTargetInstruction);
-    Diana_Instruction_Init(pTargetInstruction, newOffset, DI_INSTRUCTION_EXTERNAL);
+    flags = DI_INSTRUCTION_EXTERNAL;
+    if (bLinksToData)
+    {
+        flags |= DI_INSTRUCTION_DATA;
+    }
+    Diana_Instruction_Init(pTargetInstruction, newOffset, flags);
     Diana_PushBack(&pSession->pOwner->m_externalInstructionsList, &pTargetInstruction->m_routeEntry);
     DI_CHECK(Diana_CreateXRef(pSession->pOwner, pInstruction, pTargetInstruction, &pXref));
     pXref->m_flags |= DI_XREF_EXTERNAL;
@@ -225,7 +246,7 @@ int SaveNewRoute(DianaAnalyzeSession * pSession,
                                                                 &pTargetInstruction,
                                                                 DI_INSTRUCTION_IS_LOADING)); 
 
-    if (!newRouteFlags & DI_ROUTE_QUESTIONABLE)
+    if (!(newRouteFlags & DI_ROUTE_QUESTIONABLE))
     {
         pTargetInstruction->m_flags |= DI_INSTRUCTION_ROOT;
     }
@@ -238,7 +259,7 @@ int SaveNewRoute(DianaAnalyzeSession * pSession,
         return DI_SUCCESS;
 
     // push to stack
-    DI_CHECK(Diana_Stack_Push(&pSession->stack, &newRouteInfo));
+    DI_CHECK(Diana_Stack_Push(pSession->pStack, &newRouteInfo));
 
     return DI_SUCCESS;
 }
@@ -378,7 +399,8 @@ int AnalyzeAndConstructNormalInstruction(DianaAnalyzeSession * pSession,
             {                        
                 DI_CHECK(SaveNewExternalRoute(pSession,
                                               pInstruction,
-                                              suspectedOp));
+                                              suspectedOp,
+                                              0));
             }
             else
             if (result == diaJumpNormal)
@@ -400,6 +422,7 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
                                    OPERAND_SIZE nextInstructionOffset,
                                    int * pbNeedReset)
 {
+    int bLinksToData = 0;
     int bAbsoluteAddress = 0;
     int iRes = 0;
     Diana_Instruction * pInstruction = 0;
@@ -468,13 +491,15 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
                         pLinkedInfo, 
                         &newOffset,
                         nextInstructionOffset,
-                        &bAbsoluteAddress);
+                        &bAbsoluteAddress,
+                        &bLinksToData);
     
     if (iRes == DI_UNSUPPORTED_COMMAND)
         return DI_SUCCESS;
 
     DI_CHECK(iRes);
     
+
     // check new jump address
     DI_CHECK(pSession->pObserver->m_pAnalyzeAddress(pSession->pObserver, 
                                                         newOffset,
@@ -483,6 +508,29 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
                                                         &jumpFlags
                                                         ));
     
+    if (bLinksToData && jumpFlags == diaJumpNormal)
+    {
+        // need to get value
+        OPERAND_SIZE address = 0;
+        OPERAND_SIZE readBytes = 0;
+        int status = pSession->pObserver->m_pStream->pRandomRead(pSession->pObserver->m_pStream, 
+                                                                 newOffset,
+                                                                 (char*)&address,
+                                                                 pSession->mode,
+                                                                 &readBytes);
+        if (status == DI_SUCCESS && readBytes == pSession->mode)
+        {
+            bLinksToData = 0;
+            newOffset = address;
+
+            DI_CHECK(pSession->pObserver->m_pAnalyzeAddress(pSession->pObserver, 
+                                                            newOffset,
+                                                            DIANA_ANALYZE_ABSOLUTE_ADDRESS,
+                                                            &newOffset,
+                                                            &jumpFlags
+                                                            ));
+        }
+    }
     switch(jumpFlags)
     {
     case diaJumpNormal:
@@ -495,7 +543,8 @@ int AnalyzeAndConstructInstruction(DianaAnalyzeSession * pSession,
     case diaJumpExternal:
         DI_CHECK(SaveNewExternalRoute(pSession,
                                       pInstruction,
-                                      newOffset));
+                                      newOffset,
+                                      bLinksToData));
         break;
     default:
         Diana_FatalBreak();
@@ -510,7 +559,7 @@ int SwitchToLastState(DianaAnalyzeSession * pSession,
                       Diana_RouteInfo * pCurRouteInfo,
                       OPERAND_SIZE * pOffset)
 {
-    DI_CHECK(Diana_Stack_Pop(&pSession->stack, pCurRouteInfo));
+    DI_CHECK(Diana_Stack_Pop(pSession->pStack, pCurRouteInfo));
     *pOffset = pCurRouteInfo->startOffset;
     DI_CHECK(pSession->pObserver->m_pStream->pMoveTo(pSession->pObserver->m_pStream, pCurRouteInfo->startOffset));
     Diana_ClearCache(&pSession->context);
@@ -586,7 +635,7 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
         if (offset >= pSession->maxOffset || bNeedReset)
         {
             // just go out
-            if (!pSession->stack.m_count)
+            if (!pSession->pStack->m_count)
                 break;
 
             DI_CHECK(SwitchToLastState(pSession, 
@@ -655,13 +704,13 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
     return DI_SUCCESS;
 }
 
-int Diana_AnalyzeCode(Diana_InstructionsOwner * pOwner,
-                      DianaAnalyzeObserver * pObserver,
-                      int mode,
-                      OPERAND_SIZE initialOffset,
-                      OPERAND_SIZE maxOffset)
+int Diana_AnalyzeCodeEx(Diana_InstructionsOwner * pOwner,
+                        DianaAnalyzeObserver * pObserver,
+                        int mode,
+                        OPERAND_SIZE initialOffset,
+                        OPERAND_SIZE maxOffset,
+                        Diana_Stack * pStack)
 {
-    int res = 0;
     DianaAnalyzeSession session;
     memset(&session, 0, sizeof(session));
 
@@ -669,18 +718,41 @@ int Diana_AnalyzeCode(Diana_InstructionsOwner * pOwner,
     session.pOwner = pOwner;
     session.pObserver = pObserver;
     session.mode = mode;
+    session.pStack = pStack;
     
-    DI_CHECK(Diana_Stack_Init(&session.stack, 4096, sizeof(Diana_RouteInfo)));
+    {
+        Diana_Instruction * pInstruction = Diana_InstructionsOwner_GetInstruction(pOwner, initialOffset);
+        if (pInstruction)
+        {
+            return DI_SUCCESS;
+        }
+    }
 
-    res = pObserver->m_pStream->pMoveTo(pObserver->m_pStream, initialOffset);
-    if (res)
-        goto clean;
-    res = Diana_AnalyzeCodeImpl(&session,
-                                initialOffset);
-    if (res)
-        goto clean;
+    DI_CHECK(pObserver->m_pStream->pMoveTo(pObserver->m_pStream, initialOffset));
+    DI_CHECK(Diana_AnalyzeCodeImpl(&session,
+                                    initialOffset));
 
-clean:
-    Diana_Stack_Free(&session.stack);
-    return res;
+    return DI_SUCCESS;
+}
+
+int Diana_AnalyzeCode(Diana_InstructionsOwner * pOwner,
+                      DianaAnalyzeObserver * pObserver,
+                      int mode,
+                      OPERAND_SIZE initialOffset,
+                      OPERAND_SIZE maxOffset)
+{
+    int status = 0;
+    Diana_Stack stack;
+    DI_CHECK(Diana_Stack_Init(&stack, 4096, sizeof(Diana_RouteInfo)));
+    status = Diana_AnalyzeCodeEx(pOwner,
+                               pObserver,
+                               mode,
+                               initialOffset,
+                               maxOffset,
+                               &stack);
+
+
+    Diana_Stack_Free(&stack);
+    return status;
+
 }

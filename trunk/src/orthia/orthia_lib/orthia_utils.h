@@ -39,7 +39,7 @@ class CHandleGuard
     CHandleGuard & operator = (const CHandleGuard&);
     HANDLE m_hFile;
 public:
-    CHandleGuard(HANDLE hFile)
+    explicit CHandleGuard(HANDLE hFile)
         : m_hFile(hFile)
     {
     }
@@ -153,6 +153,28 @@ void Split(const std::basic_string<CharType> & sourceString,
     }
 }
 
+
+class CDll
+{
+    CDll(const CDll&);
+    CDll&operator = (const CDll&);
+    HMODULE m_hLib;
+public:
+    explicit CDll(const std::wstring & dllName);
+    ~CDll();
+    HMODULE GetBase();
+    void Reset(const std::wstring & dllName);
+    void Reset(const wchar_t * pDllName);
+    FARPROC QueryFunctionRaw(const char * pFunctionName, 
+                            bool bSilent);
+    template<class Type>
+    void QueryFunction(const char * pFunctionName, 
+                       Type * ppFnc,
+                       bool bSilent)
+    {
+        *ppFnc = (Type)QueryFunctionRaw(pFunctionName, bSilent);
+    }
+};
 
 }
 #endif 

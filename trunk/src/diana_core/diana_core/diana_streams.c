@@ -13,6 +13,29 @@ static int MemoryStream_Read(void * pThis, void * pBuffer, int iBufferSize, int 
     return 0;
 }
 
+int DianaMemoryStream_RandomRead(void * pThis, 
+                                   OPERAND_SIZE offset,
+                                   void * pBuffer, 
+                                   int iBufferSize, 
+                                   OPERAND_SIZE * readBytes)
+{
+    DianaMemoryStream * pStream = pThis;
+    int sizeToGive = 0;
+    
+    if (offset >= pStream->bufferSize)
+    {
+        return DI_END_OF_STREAM;
+    }
+
+    sizeToGive = (int)(pStream->bufferSize - offset);
+    if (sizeToGive > iBufferSize)
+        sizeToGive = iBufferSize;
+
+    memcpy(pBuffer,(char*)pStream->pBuffer+offset, sizeToGive);
+    *readBytes = sizeToGive;
+    return 0;
+}
+
 void Diana_InitMemoryStream(DianaMemoryStream * pStream,
                             void * pBuffer,
                             size_t bufferSize)

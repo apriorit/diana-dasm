@@ -60,7 +60,29 @@ int DianaAnalyzeMoveTo(void * pThis,
     pStream->m_current = offset;
     return DI_SUCCESS;
 }
+static 
+int DianaAnalyzeRandomRead(void * pThis, 
+                       OPERAND_SIZE offset,
+                       void * pBuffer, 
+                       int iBufferSize, 
+                       OPERAND_SIZE * readBytes)
+{
+    TestStream * pStream = (TestStream * )pThis;
+    int sizeToGive = 0;
+    
+    if (offset >= pStream->m_size)
+    {
+        return DI_END_OF_STREAM;
+    }
 
+    sizeToGive = (int)(pStream->m_size - offset);
+    if (sizeToGive > iBufferSize)
+        sizeToGive = iBufferSize;
+
+    memcpy(pBuffer,(char*)pStream->m_base+offset, sizeToGive);
+    *readBytes = sizeToGive;
+    return 0;
+}
  
 static
 int DianaAnalyzeJumpAddress(void * pThis, 
@@ -99,6 +121,7 @@ void VerifyREF(const char * pTestRefs,
     {
         for(int u = 0; !bEnd; ++u)
         {
+            TEST_ASSERT(pSubRef);
             pCurXRef = Diana_CastXREF(&pSubRef->m_instructionEntry, index);
 
             char ch = pTestRefs[u];
@@ -150,7 +173,8 @@ TestAnalyzeEnvironment::TestAnalyzeEnvironment(OPERAND_SIZE base,
 {
     DianaMovableReadStream_Init(&stream,
                                 DianaRead,
-                                DianaAnalyzeMoveTo);
+                                DianaAnalyzeMoveTo,
+                                DianaAnalyzeRandomRead);
     DianaAnalyzeObserver_Init(&observer, 
                           &stream,
                           DianaAnalyzeJumpAddress);
@@ -197,7 +221,7 @@ void test_analyzer1()
 
     TestAnalyzeEnvironment env((OPERAND_SIZE)code, start, sizeof(code));
     Diana_InstructionsOwner owner;
-    TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
+    TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset, 0));
     TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
                                                 &env.observer,
                                                 DIANA_MODE64,
@@ -257,7 +281,7 @@ void test_analyzer2()
 
     TestAnalyzeEnvironment env((OPERAND_SIZE)code, start, sizeof(code));
     Diana_InstructionsOwner owner;
-    TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
+    TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset, 0));
     TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
                                                 &env.observer,
                                                 DIANA_MODE64,
@@ -293,7 +317,7 @@ void test_analyzer3()
 
     TestAnalyzeEnvironment env((OPERAND_SIZE)code, start, sizeof(code));
     Diana_InstructionsOwner owner;
-    TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset));
+    TEST_ASSERT(DI_SUCCESS == Diana_InstructionsOwner_Init(&owner, maxOffset- minOffset, 0));
     TEST_ASSERT(DI_SUCCESS == Diana_AnalyzeCode(&owner,
                                                 &env.observer,
                                                 DIANA_MODE64,

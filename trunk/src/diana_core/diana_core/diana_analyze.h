@@ -12,6 +12,7 @@
 #define DI_INSTRUCTION_INVALID            0x20
 #define DI_INSTRUCTION_ROOT               0x40
 #define DI_INSTRUCTION_EXTERNAL           0x80
+#define DI_INSTRUCTION_DATA               0x100
 
 #define DI_ROUTE_QUESTIONABLE             0x1
 
@@ -85,6 +86,7 @@ typedef struct _Diana_InstructionsOwner
     OPERAND_SIZE m_actualSize;
     int m_stackInited;
     Diana_List m_externalInstructionsList;
+    OPERAND_SIZE m_minimalExternalAddress;
 }Diana_InstructionsOwner;
 
 typedef struct _diana_RouteInfo
@@ -95,7 +97,8 @@ typedef struct _diana_RouteInfo
 }Diana_RouteInfo;
 
 int Diana_InstructionsOwner_Init(Diana_InstructionsOwner * pOwner,
-                                 OPERAND_SIZE maxOffsetSize);
+                                 OPERAND_SIZE maxOffsetSize,
+                                 OPERAND_SIZE minimalExternalAddress);
 void Diana_InstructionsOwner_Free(Diana_InstructionsOwner * pOwner);
 Diana_Instruction * Diana_InstructionsOwner_AllocateInstruction(Diana_InstructionsOwner * pOwner);
 
@@ -108,4 +111,10 @@ int Diana_AnalyzeCode(Diana_InstructionsOwner * pOwner,
 Diana_XRef * Diana_CastXREF(Diana_ListNode * pNode,
                             int index);
 
+int Diana_AnalyzeCodeEx(Diana_InstructionsOwner * pOwner,
+                        DianaAnalyzeObserver * pObserver,
+                        int mode,
+                        OPERAND_SIZE initialOffset,
+                        OPERAND_SIZE maxOffset,
+                        Diana_Stack * pStack);
 #endif
