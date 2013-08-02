@@ -256,6 +256,22 @@ typedef struct DIANA_IMAGE_OPTIONAL_HEADER64 {
     DI_UINT32       NumberOfRvaAndSizes;
     DIANA_IMAGE_DATA_DIRECTORY DataDirectory[DIANA_IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 } DIANA_IMAGE_OPTIONAL_HEADER64, *PDIANA_IMAGE_OPTIONAL_HEADER64;
+
+
+typedef struct _DIANA_IMAGE_EXPORT_DIRECTORY {
+    DI_UINT32   Characteristics;
+    DI_UINT32   TimeDateStamp;
+    DI_UINT16   MajorVersion;
+    DI_UINT16   MinorVersion;
+    DI_UINT32   Name;
+    DI_UINT32   Base;
+    DI_UINT32   NumberOfFunctions;
+    DI_UINT32   NumberOfNames;
+    DI_UINT32   AddressOfFunctions;// RVA 
+    DI_UINT32   AddressOfNames;// RVA
+    DI_UINT32   AddressOfNameOrdinals;// RVA
+} DIANA_IMAGE_EXPORT_DIRECTORY, *PDIANA_IMAGE_EXPORT_DIRECTORY;
+
 #pragma pack(pop)
 #pragma pack(pop)
 #endif

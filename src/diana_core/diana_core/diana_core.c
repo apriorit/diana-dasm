@@ -49,10 +49,12 @@ int DianaExactRead(DianaReadStream * pThis,
 
 void DianaMovableReadStream_Init(DianaMovableReadStream * pStream,
                                  DianaRead_fnc pReadFnc, 
-                                 DianaAnalyzeMoveTo_fnc pMoveTo)
+                                 DianaAnalyzeMoveTo_fnc pMoveTo,
+                                 DianaAnalyzeRandomRead_fnc pRandomRead)
 {
     pStream->parent.pReadFnc = pReadFnc;
     pStream->pMoveTo = pMoveTo;
+    pStream->pRandomRead = pRandomRead;
 }
 int Diana_ParseCmd(DianaContext * pContext, //IN
                    DianaBaseGenObject_type * pInitialLine,  // IN

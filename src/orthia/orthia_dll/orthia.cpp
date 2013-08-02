@@ -96,7 +96,7 @@ static void PrintUsage()
     dprintf("!help - display this text\n");
     dprintf("!profile [/f] <full_name> - use/create profile\n");
     dprintf("!lm - displays module list\n");
-    dprintf("!reload [/u] <module_address> - reloads module\n");
+    dprintf("!reload [/u] [/v] [/f] <module_address> - reloads module (u - unload, v - verbose, f - force)\n");
     dprintf("!x <address> - prints xrefs\n");
 }
 
@@ -129,7 +129,7 @@ DECLARE_API (profile)
 
         bool bForce = false;
         std::wstring wargs = orthia::ToString(orthia::Trim(args));
-        if (wcscmp(wargs.c_str(), L"/f ") == 0)
+        if (wcsncmp(wargs.c_str(), L"/f ", 3) == 0)
         {
             bForce = true;
             wargs.erase(0, 3);
@@ -168,6 +168,7 @@ DECLARE_API (reload)
     orthia::Address_type offset = 0;
     bool offsetInited = false;
     bool bForce = false;
+    bool bVerbose = false;
     for(std::vector<std::wstring>::iterator it = words.begin(), it_end = words.end();
         it != it_end;
         ++it)
@@ -182,6 +183,11 @@ DECLARE_API (reload)
             bForce = true;
             continue;
         }
+        if (*it== L"/v")
+        {
+            bVerbose = true;
+            continue;
+        }
         if (offsetInited)
             throw std::runtime_error("Unexpected argument: " + orthia::ToAnsiString_Silent(*it));
         PCSTR tail = 0;
@@ -194,10 +200,17 @@ DECLARE_API (reload)
     if (bUnload)
     {
         pModuleManager->UnloadModule(offset);
+        if (bVerbose)
+        {
+            dprintf("%s %I64lx\n", "Module unloaded: ", offset);
+        }
         return;
     }
     pModuleManager->ReloadModule(offset, orthia::QueryReader(), bForce);
-
+    if (bVerbose)    
+    {    
+        dprintf("%s %I64lx\n", "Module loaded: ", offset);     
+    }
     ORTHIA_CATCH
 }
 

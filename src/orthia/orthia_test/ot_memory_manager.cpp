@@ -5,38 +5,52 @@
 // wcscat
 #pragma warning(disable:4996)
 
+struct OT_TestEnv
+{
+    orthia::CModuleManager manager;
+    orthia::CMemoryReader reader;
+
+    OT_TestEnv()
+    {
+        std::vector<wchar_t> buf(1024);
+        GetTempPath((DWORD)buf.size(), &buf.front());
+        wcscat(&buf.front(), L"\\orthia_test\\test.db");
+        manager.Reinit(&buf.front(), true);
+    }
+};
 static void test_mm1()
 {
-    std::vector<wchar_t> buf(1024);
-    GetTempPath((DWORD)buf.size(), &buf.front());
-    wcscat(&buf.front(), L"\\orthia_test\\test.db");
-
-    orthia::CModuleManager manager;
-    manager.Reinit(&buf.front(), true);
-
+    OT_TestEnv testEnv;
+    
     void * pFile = GetModuleHandle(0);
-    orthia::CMemoryReader reader;
-    manager.ReloadModule((orthia::Address_type)pFile, &reader, true);
+    testEnv.manager.ReloadModule((orthia::Address_type)pFile, &testEnv.reader, true);
 
     std::vector<orthia::CommonReferenceInfo> references;
-    manager.QueryReferencesToInstruction((orthia::Address_type)&test_mm1, &references);
+    testEnv.manager.QueryReferencesToInstruction((orthia::Address_type)&test_mm1, &references);
     TEST_ASSERT(!references.empty());
 
     std::vector<orthia::CommonModuleInfo> modules;
-    manager.QueryLoadedModules(&modules);
+    testEnv.manager.QueryLoadedModules(&modules);
     TEST_ASSERT(modules.size() == 1);
     TEST_ASSERT(modules[0].address == (orthia::Address_type)pFile);
 
-    manager.UnloadModule((orthia::Address_type)pFile);
-    manager.QueryLoadedModules(&modules);
+    testEnv.manager.UnloadModule((orthia::Address_type)pFile);
+    testEnv.manager.QueryLoadedModules(&modules);
     TEST_ASSERT(modules.size() == 0);
 
-    manager.QueryReferencesToInstruction((orthia::Address_type)&test_mm1, &references);
+    testEnv.manager.QueryReferencesToInstruction((orthia::Address_type)&test_mm1, &references);
     TEST_ASSERT(references.empty());
+}
 
+static void test_performance1()
+{
+    OT_TestEnv testEnv;
+    orthia::CDll dll(L"shell32.dll");
+    testEnv.manager.ReloadModule((orthia::Address_type)dll.GetBase(), &testEnv.reader, true);
 }
 
 void test_memory_manager()
 {
     DIANA_TEST(test_mm1())
+    DIANA_TEST(test_performance1())
 }

@@ -295,6 +295,12 @@ typedef struct _dianaParserResult
 #define DI_CHECK(x) { int di____code = (x); if (di____code != DI_SUCCESS) { return di____code; } }
 #endif
 
+#ifdef _DEBUG
+#define DI_CHECK_GOTO(x) { int di____code = (x); if (di____code != DI_SUCCESS) { Diana_OnError(di____code); status = di____code; goto cleanup; } }
+#else
+#define DI_CHECK_GOTO(x) { int di____code = (x); if (di____code != DI_SUCCESS) { status = di____code;  goto cleanup; } }
+#endif
+
 // serial streams
 typedef int (* DianaRead_fnc)(void * pThis,
                               void * pBuffer,
@@ -317,15 +323,23 @@ int DianaExactRead(DianaReadStream * pThis,
 // pseudo random streams
 typedef int (* DianaAnalyzeMoveTo_fnc)(void * pThis, OPERAND_SIZE offset);
 
+typedef int (* DianaAnalyzeRandomRead_fnc)(void * pThis, 
+                                           OPERAND_SIZE offset,
+                                           void * pBuffer, 
+                                           int iBufferSize, 
+                                           OPERAND_SIZE * readed);
+
 typedef struct _dianaMovableReadStream
 {
     DianaReadStream parent;
     DianaAnalyzeMoveTo_fnc pMoveTo;
+    DianaAnalyzeRandomRead_fnc pRandomRead;
 }DianaMovableReadStream;
 
 void DianaMovableReadStream_Init(DianaMovableReadStream * pStream,
                                  DianaRead_fnc pReadFnc, 
-                                 DianaAnalyzeMoveTo_fnc pMoveTo);
+                                 DianaAnalyzeMoveTo_fnc pMoveTo,
+                                 DianaAnalyzeRandomRead_fnc pRandomRead);
 // Allocators
 #define DI_REX_PREFIX_START    0x40
 #define DI_REX_PREFIX_END      0x4F

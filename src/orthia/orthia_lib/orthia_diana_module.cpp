@@ -17,7 +17,11 @@ int DianaRead(void * pThis,
               void * pBuffer, 
               int iBufferSize, 
               int * readed);
-
+int DianaRandomRead(void * pThis, 
+                       OPERAND_SIZE offset,
+                       void * pBuffer, 
+                       int iBufferSize, 
+                       OPERAND_SIZE * readBytes);
 int DianaEnvironment_ConvertAddressToRelative(void * pThis, 
                                               OPERAND_SIZE address,              
                                               OPERAND_SIZE * pRelativeOffset,
@@ -46,7 +50,8 @@ struct DianaMemoryStream:public DianaMovableReadStream
 
         DianaMovableReadStream_Init(this,
                                     DianaRead,
-                                    DianaAnalyzeMoveTo);
+                                    DianaAnalyzeMoveTo,
+                                    DianaRandomRead);
     }
 };
 static
@@ -87,7 +92,30 @@ int DianaRead(void * pThis,
         return DI_ERROR;
     }
 }
-
+static 
+int DianaRandomRead(void * pThis, 
+                       OPERAND_SIZE offset,
+                       void * pBuffer, 
+                       int iBufferSize, 
+                       OPERAND_SIZE * readBytes)
+{
+    try
+    {
+        Address_type bytesRead2 = 0;
+        DianaMemoryStream * pStream = (DianaMemoryStream * )pThis;
+        pStream->m_pMemoryReader->Read(offset, 
+                                    iBufferSize,
+                                    pBuffer,
+                                    &bytesRead2);
+        *readBytes = (int)bytesRead2;
+        return DI_SUCCESS;
+    }
+    catch(std::exception & ex)
+    {
+        &ex;
+        return DI_ERROR;
+    }
+}
 struct DianaEnvironment:public DianaAnalyzeObserver
 {
     Address_type m_moduleStart;

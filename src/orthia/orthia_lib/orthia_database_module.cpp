@@ -96,19 +96,27 @@ void CDatabase::Init()
 }
 void CDatabase::OpenExisting(const std::wstring & fullFileName)
 {
-    ORTHIA_CHECK_SQLITE(sqlite3_open16(fullFileName.c_str(), m_database.Get2()), L"Can't create database");
+    ORTHIA_CHECK_SQLITE(sqlite3_open16(fullFileName.c_str(), m_database.Get2()), "Can't open the database: "<<orthia::ToAnsiString_Silent(fullFileName));
     Init();
 }
 void CDatabase::CreateNew(const std::wstring & fullFileName)
 {
-    DeleteFile(fullFileName.c_str());
-    ORTHIA_CHECK_SQLITE(sqlite3_open16(fullFileName.c_str(), m_database.Get2()), L"Can't create database");
+    BOOL res = DeleteFile(fullFileName.c_str());
+    if (!res)
+    {
+        ULONG error = GetLastError();
+        if (error != ERROR_FILE_NOT_FOUND)
+        {
+            ORTHIA_THROW_WIN32("Can't access the database: "<<orthia::ToAnsiString_Silent(fullFileName)<<", code: "<<orthia____code);
+        }
+    }
+    ORTHIA_CHECK_SQLITE(sqlite3_open16(fullFileName.c_str(), m_database.Get2()), "Can't create the database: "<<orthia::ToAnsiString_Silent(fullFileName));
 
     ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(),"CREATE TABLE IF NOT EXISTS tbl_references (ref_address_from INTEGER, ref_address_to INTEGER)",
-                        0,0,0), L"Can't create database");
+                        0,0,0), "Can't create database");
 
     ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(),"CREATE TABLE IF NOT EXISTS tbl_modules (mod_address INTEGER, mod_size INTEGER)",
-                        0,0,0), L"Can't create database");
+                        0,0,0), "Can't create database");
     Init();
 }
 void CDatabase::InsertReference(sqlite3_stmt * stmt, Address_type from, Address_type to)

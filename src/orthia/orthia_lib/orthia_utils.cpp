@@ -198,4 +198,53 @@ void CreateAllDirectoriesForFile(const std::wstring & fullFileName)
     }
 }
 
+
+CDll::CDll(const std::wstring & name)
+    :
+        m_hLib(0)
+{
+    Reset(name);
+}
+CDll::~CDll()
+{
+    Reset(0);
+}
+HMODULE CDll::GetBase()
+{
+    return m_hLib;
+}
+void CDll::Reset(const std::wstring & name)
+{
+    Reset(name.empty()?0:name.c_str());
+}
+
+void CDll::Reset(const wchar_t * pName)
+{
+    if (m_hLib)
+    {
+        FreeLibrary(m_hLib);
+        m_hLib = 0;
+    }
+    if (!pName)
+        return;
+
+    m_hLib = LoadLibraryW(pName);
+    if (!m_hLib)
+    {
+        ORTHIA_THROW_WIN32("Can't load: "<<orthia::ToAnsiString_Silent(pName)<<", code: "<<orthia____code);
+    }
+}
+FARPROC CDll::QueryFunctionRaw(const char * pFunctionName, 
+                              bool bSilent)
+{
+    FARPROC pProc = GetProcAddress(m_hLib, pFunctionName);
+    if (bSilent)
+        return pProc;
+    if (!pProc)
+    {
+        ORTHIA_THROW_WIN32("Can't find: "<<pFunctionName<<", code: "<<orthia____code);
+    }
+    return pProc;
+}
+
 }
