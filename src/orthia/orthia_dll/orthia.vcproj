@@ -64,6 +64,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dbgeng.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="orthia.def"
 				GenerateDebugInformation="true"
@@ -138,6 +139,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dbgeng.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="orthia.def"
 				GenerateDebugInformation="true"
@@ -212,6 +214,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dbgeng.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="orthia.def"
 				GenerateDebugInformation="true"
@@ -289,6 +292,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="dbgeng.lib"
 				LinkIncremental="1"
 				ModuleDefinitionFile="orthia.def"
 				GenerateDebugInformation="true"
@@ -376,6 +380,10 @@
 				RelativePath=".\orthia.def"
 				>
 			</File>
+			<File
+				RelativePath=".\orthia_dbgext.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -384,6 +392,10 @@
 			>
 			<File
 				RelativePath=".\orthia.h"
+				>
+			</File>
+			<File
+				RelativePath=".\orthia_dbgext.h"
 				>
 			</File>
 		</Filter>
