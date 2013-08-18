@@ -3,7 +3,6 @@
 #include "orthia_memory_cache.h"
 #include "diana_core_cpp.h"
 
-#define GLOBAL_ORTHIA_PATH_ANSI "%ORTHIA_PATH%"
 
 class ÑWindbgMemoryReader:public orthia::IMemoryReader
 {
@@ -42,32 +41,18 @@ struct ModuleManagerObjects
 };
 static std::auto_ptr<ModuleManagerObjects> g_globals;
 
-static WINDBG_EXTENSION_APIS ExtensionApis = {0};
-static EXT_API_VERSION g_ExtApiVersion = 
-    {
-         5,
-         5,
-         EXT_API_VERSION_NUMBER64,
-         0
-    };
-
-EXT_EXPORT 
-LPEXT_API_VERSION WDBGAPI ExtensionApiVersion (void)
-{
-    return &g_ExtApiVersion;
-}
-
-
-// WinDbgExtensionDllInit
-EXT_EXPORT
-VOID WDBGAPI WinDbgExtensionDllInit (PWINDBG_EXTENSION_APIS lpExtensionApis, USHORT usMajorVersion, USHORT usMinorVersion)
-{
-     ExtensionApis = *lpExtensionApis;
-}
 
 namespace orthia
 {
 
+static void PrintUsage()
+{
+    dprintf("!help - display this text\n");
+    dprintf("!profile [/f] <full_name> - use/create profile\n");
+    dprintf("!lm - displays module list\n");
+    dprintf("!reload [/u] [/v] [/f] <module_address> - reloads module (u - unload, v - verbose, f - force)\n");
+    dprintf("!x <address> - prints xrefs\n");
+}
 static void SetupPath(const std::wstring & path, bool bForce)
 {
     if (!g_globals.get())
@@ -91,14 +76,6 @@ orthia::CModuleManager * QueryModuleManager()
     }
     return &pGlobal->moduleManager;
 }
-static void PrintUsage()
-{
-    dprintf("!help - display this text\n");
-    dprintf("!profile [/f] <full_name> - use/create profile\n");
-    dprintf("!lm - displays module list\n");
-    dprintf("!reload [/u] [/v] [/f] <module_address> - reloads module (u - unload, v - verbose, f - force)\n");
-    dprintf("!x <address> - prints xrefs\n");
-}
 
 void InitLib()
 {
@@ -115,17 +92,19 @@ void InitLib()
     }
 }
 
-}
-// !help
-DECLARE_API (help)
+} // orthia namespace
+
+// commands
+ORTHIA_DECLARE_API(help)
 {
     dprintf("Orthia interface:\n\n");
     orthia::PrintUsage();
+    return S_OK;
 }
 
-DECLARE_API (profile)
+ORTHIA_DECLARE_API(profile)
 {
-    ORTHIA_TRY
+    ORTHIA_CMD_START
 
         bool bForce = false;
         std::wstring wargs = orthia::ToString(orthia::Trim(args));
@@ -138,12 +117,12 @@ DECLARE_API (profile)
         std::wstring path = orthia::ExpandVariable(wargs);
         orthia::SetupPath(path, bForce);
 
-    ORTHIA_CATCH
+    ORTHIA_CMD_END
 }
 
-DECLARE_API (lm)
+ORTHIA_DECLARE_API(lm)
 {
-    ORTHIA_TRY
+    ORTHIA_CMD_START
         
     orthia::CModuleManager * pModuleManager = orthia::QueryModuleManager();
     std::vector<orthia::CommonModuleInfo> modules;
@@ -155,12 +134,12 @@ DECLARE_API (lm)
         dprintf("%I64lx %s\n", it->address, it->name.c_str());
     }   
 
-    ORTHIA_CATCH
+    ORTHIA_CMD_END
 }
 
-DECLARE_API (reload)
+ORTHIA_DECLARE_API(reload)
 {
-    ORTHIA_TRY
+    ORTHIA_CMD_START
         
     std::vector<std::wstring> words;
     orthia::Split(orthia::ToString(args), &words);
@@ -204,19 +183,19 @@ DECLARE_API (reload)
         {
             dprintf("%s %I64lx\n", "Module unloaded: ", offset);
         }
-        return;
+        return S_OK;
     }
     pModuleManager->ReloadModule(offset, orthia::QueryReader(), bForce);
     if (bVerbose)    
     {    
         dprintf("%s %I64lx\n", "Module loaded: ", offset);     
     }
-    ORTHIA_CATCH
+    ORTHIA_CMD_END
 }
 
-DECLARE_API (x)
+ORTHIA_DECLARE_API(x)
 {
-    ORTHIA_TRY
+    ORTHIA_CMD_START
 
     // read parameters
     ULONG64 address = 0;
@@ -237,6 +216,5 @@ DECLARE_API (x)
     {
         dprintf("%I64lx\n", it->address);
     }   
-    ORTHIA_CATCH
+    ORTHIA_CMD_END
 }
-

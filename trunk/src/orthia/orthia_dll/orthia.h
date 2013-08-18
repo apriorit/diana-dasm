@@ -1,35 +1,23 @@
 #ifndef ORTHIA_H
 #define ORTHIA_H
 
+#include "orthia_dbgext.h"
 
-#define KDEXT_64BIT
-
-#include "windows.h"
-#include "imagehlp.h"
-#include "wdbgexts.h"
-
-
-#define EXT_EXPORT CPPMOD _declspec(dllexport)
-
-#define SIGN_EXTEND(_x_) (ULONG64)(LONG)(_x_)
-
-#define READ_VALUE(node, address, return_0) \
-{\
-    ULONG bytes = 0;\
-    ReadMemory(SIGN_EXTEND(address), \
-               &node, \
-               sizeof(node), \
-               &bytes);\
-    if (bytes != sizeof(node))\
-    {\
-        dprintf("Inaccessible memory %I64lx\n", address);\
-        return_0;\
-    }\
-}
-
-
+class ApiGuard
+{
+    ApiGuard(const ApiGuard&);
+    ApiGuard&operator =(const ApiGuard&);
+public:
+    ApiGuard(){}
+    ~ApiGuard(){ EXIT_API(); }
+};
 #define ORTHIA_TRY try {
 #define ORTHIA_CATCH } catch(const std::exception & e) { dprintf("Error: %s\n", e.what()); } 
+
+#define ORTHIA_CMD_START INIT_API(); ApiGuard orthia_____api_guard; ORTHIA_TRY
+#define ORTHIA_CMD_END  ORTHIA_CATCH return S_OK;
+
+#define ORTHIA_DECLARE_API(Name) HRESULT CALLBACK Name(PDEBUG_CLIENT4 Client, PCSTR args)
 
 namespace orthia
 {

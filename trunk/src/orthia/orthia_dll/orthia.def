@@ -1,8 +1,11 @@
 LIBRARY	"orthia"
 
 EXPORTS
-    _WinDbgExtensionDllInit=WinDbgExtensionDllInit
-    _ExtensionApiVersion=ExtensionApiVersion
+; plugin interface
+     DebugExtensionNotify
+     DebugExtensionInitialize
+     DebugExtensionUninitialize
+; commands
     profile
     lm
     reload
