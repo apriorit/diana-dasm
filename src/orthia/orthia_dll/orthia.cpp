@@ -47,11 +47,11 @@ namespace orthia
 
 static void PrintUsage()
 {
-    dprintf("!help - display this text\n");
-    dprintf("!profile [/f] <full_name> - use/create profile\n");
+    dprintf("!help - displays this text\n");
+    dprintf("!profile [/f] <full_name> - uses/creates profile (f - force creation)\n");
     dprintf("!lm - displays module list\n");
     dprintf("!reload [/u] [/v] [/f] <module_address> - reloads module (u - unload, v - verbose, f - force)\n");
-    dprintf("!x <address> - prints xrefs\n");
+    dprintf("!x [/a] <address> - prints who calls to this address (a - print only addresses)\n");
 }
 static void SetupPath(const std::wstring & path, bool bForce)
 {
@@ -123,7 +123,9 @@ ORTHIA_DECLARE_API(profile)
 ORTHIA_DECLARE_API(lm)
 {
     ORTHIA_CMD_START
-        
+           
+    std::vector<std::string> args;
+    std::vector<char> nameBuffer;
     orthia::CModuleManager * pModuleManager = orthia::QueryModuleManager();
     std::vector<orthia::CommonModuleInfo> modules;
     pModuleManager->QueryLoadedModules(&modules);
@@ -131,9 +133,22 @@ ORTHIA_DECLARE_API(lm)
         it != it_end;
         ++it)
     {
-        dprintf("%I64lx %s\n", it->address, it->name.c_str());
-    }   
 
+            ULONG64 displacement = 0;
+            ULONG nameBufferSize = 0;
+            nameBuffer.resize(4096);
+            DbgExt_GetNameByOffset(it->address,
+                                   &nameBuffer.front(),
+                                   (ULONG)nameBuffer.size(),
+                                   &nameBufferSize,
+                                   &displacement);
+            
+            args.clear();
+            orthia::Split<char>(&nameBuffer.front(), &args, '!');
+
+            std::string moduleName = args.empty()?"<unknown>":args[0];
+            dprintf("%I64lx     %s\n", it->address, moduleName.c_str());
+    }
     ORTHIA_CMD_END
 }
 
@@ -197,12 +212,30 @@ ORTHIA_DECLARE_API(x)
 {
     ORTHIA_CMD_START
 
-    // read parameters
-    ULONG64 address = 0;
-    
-    if (!GetExpressionEx(args, &address, &args)) 
+    std::vector<std::wstring> words;
+    orthia::Split(orthia::ToString(args), &words);
+
+    orthia::Address_type address = 0;
+    bool addressInited = false;
+    bool bDisplaySymbols = true;
+    for(std::vector<std::wstring>::iterator it = words.begin(), it_end = words.end();
+        it != it_end;
+        ++it)
     {
-        throw std::runtime_error("Address expression expected");
+        if (*it== L"/a")
+        {
+            bDisplaySymbols = false;
+            continue;
+        }
+        if (addressInited)
+            throw std::runtime_error("Unexpected argument: " + orthia::ToAnsiString_Silent(*it));
+        PCSTR tail = 0;
+        std::string strOffset = orthia::ToAnsiString_Silent(*it);
+        if (!GetExpressionEx(strOffset.c_str(), &address, &tail))
+        {
+            throw std::runtime_error("Address expression expected");
+        }
+        addressInited = true;
     }
 
     orthia::CModuleManager * pModuleManager = orthia::QueryModuleManager();
@@ -210,11 +243,35 @@ ORTHIA_DECLARE_API(x)
     std::vector<orthia::CommonReferenceInfo> references;
     pModuleManager->QueryReferencesToInstruction(address, &references);
 
+    std::vector<char> nameBuffer;
     for(std::vector<orthia::CommonReferenceInfo>::iterator it = references.begin(), it_end = references.end();
         it != it_end;
         ++it)
     {
-        dprintf("%I64lx\n", it->address);
+        if (bDisplaySymbols)
+        {
+            ULONG64 displacement = 0;
+            ULONG nameBufferSize = 0;
+            nameBuffer.resize(4096);
+            DbgExt_GetNameByOffset(it->address,
+                                   &nameBuffer.front(),
+                                   (ULONG)nameBuffer.size(),
+                                   &nameBufferSize,
+                                   &displacement);
+
+            if (displacement)
+            {
+                dprintf("%I64lx     %s+%I64lx\n", it->address, &nameBuffer.front(), displacement);
+            }
+            else
+            {
+                dprintf("%I64lx     %s\n", it->address, &nameBuffer.front());
+            }
+        }
+        else
+        {
+            dprintf("%I64lx\n", it->address);
+        }
     }   
     ORTHIA_CMD_END
 }
