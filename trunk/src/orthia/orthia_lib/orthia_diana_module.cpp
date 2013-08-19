@@ -213,7 +213,10 @@ public:
 
     void Analyze()
     {
-        m_cache.Init(m_env.m_moduleStart, m_env.m_moduleSize); 
+        m_cache.Init(m_env.m_moduleStart, 
+                     m_env.m_moduleSize,
+                     m_peFile.pImpl->pCapturedSections,
+                     m_peFile.pImpl->capturedSectionCount); 
         DI_CHECK_CPP(Diana_PE_AnalyzePE(&m_peFile, &m_env, &m_owner));
         m_instructionsOwnerGuard.reset(&m_owner);
     }
@@ -298,6 +301,8 @@ void CDianaInstructionIterator::SkipExternals()
 {
     for(;;++m_currentInstruction)
     {
+        if (IsEmpty())
+            break;
         Diana_Instruction * pInstruction = &m_pModule->m_impl->m_owner.m_pInstructionsVec[m_currentInstruction];
         if (!(pInstruction->m_flags & DI_INSTRUCTION_EXTERNAL))
             break;

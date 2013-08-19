@@ -1,4 +1,5 @@
 #include "orthia_memory_cache.h"
+#include "diana_pe.h"
 
 namespace orthia
 {
@@ -14,7 +15,9 @@ CMemoryCache::CMemoryCache(IMemoryReader * pReader,
     
 
 void CMemoryCache::Init(Address_type regionAddress,
-                        Address_type size)
+                          Address_type size,
+                          DIANA_IMAGE_SECTION_HEADER * pCapturedSections,
+                          int capturedSectionCount)
 {
     if (!size)
         return;
@@ -24,10 +27,20 @@ void CMemoryCache::Init(Address_type regionAddress,
     m_regionData.resize((size_t)size);
     
     m_regionAddress = regionAddress;
-    Address_type bytesRead = 0;
-    m_pReader->Read(m_regionAddress, size, &m_regionData.front(), &bytesRead);
-    m_regionData.resize((size_t)bytesRead);
-    m_regionSize = bytesRead;
+    m_regionSize = m_regionData.size();
+    for(int i = 0; i < capturedSectionCount; ++i)
+    {
+        DIANA_IMAGE_SECTION_HEADER & section = pCapturedSections[i];
+        if (section.Misc.VirtualSize > m_regionData.size())
+            continue;
+        if (section.VirtualAddress > m_regionData.size() - section.Misc.VirtualSize)
+            continue;
+        Address_type bytesRead = 0;
+        m_pReader->Read(m_regionAddress + section.VirtualAddress, 
+                        section.Misc.VirtualSize, 
+                        section.VirtualAddress + &m_regionData.front(), 
+                        &bytesRead);
+    }
 }
     
 void CMemoryCache::Read(Address_type offset, 
