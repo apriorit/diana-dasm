@@ -35,7 +35,11 @@
     ((Unk) != NULL ? ((Unk)->Release(), (Unk) = NULL) : NULL)
 
 ULONG DbgExt_GetTargetMachine();
-
+bool DbgExt_GetNameByOffset(ULONG64 offset,
+                            PSTR nameBuffer,
+                            ULONG nameBufferSize,
+                            PULONG pResultNameSize,
+                            ULONG64 * pDisplacement);
 
 void
 ExtRelease(void);

@@ -1,5 +1,7 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "orthia_dbgext.h"
-
+#include "algorithm"
+#undef min
 
 WINDBG_EXTENSION_APIS   ExtensionApis = {};
 static PDEBUG_CLIENT4        g_ExtClient = 0;
@@ -147,5 +149,23 @@ ULONG DbgExt_GetTargetMachine()
     return g_TargetMachine;
 }
 
-
-  
+bool DbgExt_GetNameByOffset(ULONG64 offset,
+                            PSTR nameBuffer,
+                            ULONG nameBufferSize,
+                            PULONG pResultNameSize,
+                            ULONG64 * pDisplacement)
+{
+    *pDisplacement = 0;
+    *pResultNameSize = 0;
+    if (!SUCCEEDED(g_ExtSymbols->GetNameByOffset(offset, 
+                                                    nameBuffer, 
+                                                    nameBufferSize, 
+                                                    pResultNameSize, 
+                                                    pDisplacement)))
+    {
+        char defaultValue[] = "<unknown>";
+        strncat(nameBuffer, defaultValue, std::min<ULONG>(sizeof(defaultValue)/sizeof(defaultValue[0])-1, nameBufferSize));
+        return false;
+    }
+    return true;
+}
