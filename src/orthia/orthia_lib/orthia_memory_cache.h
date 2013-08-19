@@ -3,6 +3,7 @@
 
 #include "orthia_interfaces.h"
 
+struct _DIANA_IMAGE_SECTION_HEADER;
 namespace orthia
 {
 
@@ -19,7 +20,9 @@ public:
                  Address_type regionAddress);
 
     void Init(Address_type regionAddress,
-              Address_type size);
+              Address_type size,
+              _DIANA_IMAGE_SECTION_HEADER * pCapturedSections,
+              int capturedSectionCount);
 
     virtual void Read(Address_type offset, 
                       Address_type bytesToRead,
