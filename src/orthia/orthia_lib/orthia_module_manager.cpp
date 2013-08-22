@@ -33,7 +33,8 @@ void CModuleManager::UnloadModule(Address_type offset)
 }
 void CModuleManager::ReloadModule(Address_type offset,
                                   IMemoryReader * pMemoryReader,
-                                  bool bForce)
+                                  bool bForce,
+                                  const std::wstring & name)
 {
     CDianaModule module;
     module.Init(offset, pMemoryReader);
@@ -48,7 +49,7 @@ void CModuleManager::ReloadModule(Address_type offset,
         m_pDatabaseManager->GetDatabase()->UnloadModule(offset, true);
         
         CDatabaseSaver fileSaver;
-        fileSaver.Save(module, *m_pDatabaseManager);
+        fileSaver.Save(module, *m_pDatabaseManager, name);
     }
 }
 
@@ -62,6 +63,11 @@ void CModuleManager::QueryReferencesToInstruction(Address_type offset,
                                                  std::vector<CommonReferenceInfo> * pResult)
 {
     m_pDatabaseManager->GetDatabase()->QueryReferencesToInstruction(offset, pResult);
+}
+    
+void CModuleManager::QueryReferencesToInstructionsRange(Address_type address1, Address_type address2, std::vector<CommonRangeInfo> * pResult)
+{
+    m_pDatabaseManager->GetDatabase()->QueryReferencesToInstructionsRange(address1, address2, pResult);
 }
 
 }

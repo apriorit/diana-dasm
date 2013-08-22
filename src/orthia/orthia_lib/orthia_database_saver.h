@@ -12,7 +12,8 @@ class CDatabaseSaver
 public:
     CDatabaseSaver();
     void Save(CDianaModule & dianaModule,
-              CDatabaseManager & databaseManager);
+              CDatabaseManager & databaseManager,
+              const std::wstring & moduleName);
 };
 
 }

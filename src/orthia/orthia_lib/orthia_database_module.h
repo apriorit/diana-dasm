@@ -36,7 +36,16 @@ public:
     sqlite3 * Get() { return m_database; }
     sqlite3 ** Get2();
 };
-
+class CDatabase;
+class CAutoRollback
+{
+    CDatabase * m_pDatabase;
+public:
+    CAutoRollback();
+    void Init(CDatabase * pDatabase);
+    void Reset();
+    ~CAutoRollback();
+};
 class CDatabase:public orthia::RefCountedBase
 {
     std::set<Address_type> m_cache;
@@ -48,9 +57,10 @@ class CDatabase:public orthia::RefCountedBase
     CSQLStatement m_stmtSelectReferencesTo;
     CSQLStatement m_stmtSelectModule;
     CSQLStatement m_stmtQueryModules;
+    CSQLStatement m_stmtSelectReferencesToRange;
 
     void InsertReference(sqlite3_stmt * stmt, Address_type from, Address_type to);
-    void InsertModule(Address_type baseAddress, Address_type size);
+    void InsertModule(Address_type baseAddress, Address_type size, const std::wstring & moduleName);
 
     void Init();
 public:
@@ -61,7 +71,10 @@ public:
     void OpenExisting(const std::wstring & fullFileName);
 
     // module loading process:
-    void StartSaveModule(Address_type baseAddress, Address_type size);
+    void StartSaveModule(Address_type baseAddress, 
+                         Address_type size, 
+                         const std::wstring & moduleName,
+                         CAutoRollback * pRollback);
     void DoneSave();
     void CleanupResources();
 
@@ -70,11 +83,13 @@ public:
 
     // queries
     void QueryReferencesToInstruction(Address_type offset, std::vector<CommonReferenceInfo> * pReferences);
-    
+    void QueryReferencesToInstructionsRange(Address_type address1, Address_type address2, std::vector<CommonRangeInfo> * pResult);
+
     // modules api
     void UnloadModule(Address_type address, bool bSilent);
     bool IsModuleExists(Address_type address);
     void QueryModules(std::vector<CommonModuleInfo> * pResult);
+    void RollbackTransactionSilent();
 };
 
 class CDatabaseModuleCleaner

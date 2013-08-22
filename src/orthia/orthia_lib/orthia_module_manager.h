@@ -25,11 +25,13 @@ public:
     void UnloadModule(Address_type offset);
     void ReloadModule(Address_type offset,
                       IMemoryReader * pMemoryReader,
-                      bool bForce);
+                      bool bForce,
+                      const std::wstring & name);
 
     void QueryLoadedModules(std::vector<CommonModuleInfo> * pResult);
     // references
     void QueryReferencesToInstruction(Address_type offset, std::vector<CommonReferenceInfo> * pResult);
+    void QueryReferencesToInstructionsRange(Address_type address1, Address_type address2, std::vector<CommonRangeInfo> * pResult);
 };
 
 }
