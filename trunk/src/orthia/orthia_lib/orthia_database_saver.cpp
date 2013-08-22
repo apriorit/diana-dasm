@@ -9,7 +9,8 @@ CDatabaseSaver::CDatabaseSaver()
 }
 
 void CDatabaseSaver::Save(CDianaModule & dianaModule,
-                          CDatabaseManager & databaseManager)
+                          CDatabaseManager & databaseManager,
+                          const std::wstring & moduleName)
 {
     orthia::intrusive_ptr<CDatabase> databaseModule = databaseManager.GetDatabase();
     Address_type baseAddress = dianaModule.GetModuleAddress();
@@ -18,7 +19,8 @@ void CDatabaseSaver::Save(CDianaModule & dianaModule,
     dianaModule.QueryInstructionIterator(&iterator);
 
     CDatabaseModuleCleaner cleaner(databaseModule.get());
-    databaseModule->StartSaveModule(baseAddress, dianaModule.GetModuleSize());
+    CAutoRollback rollback;
+    databaseModule->StartSaveModule(baseAddress, dianaModule.GetModuleSize(), moduleName, &rollback);
 
     while(!iterator.IsEmpty())
     {
@@ -45,6 +47,7 @@ void CDatabaseSaver::Save(CDianaModule & dianaModule,
         iterator.MoveToNext();
     }
     databaseModule->DoneSave();
+    rollback.Reset();
 }
 
 }

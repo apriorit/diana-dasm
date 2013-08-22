@@ -8,6 +8,27 @@ namespace orthia
 #define ORTHIA_CHECK_SQLITE(Expression, Text) { int orthia____code = (Expression); if (orthia____code != SQLITE_OK) { std::stringstream orthia____stream; orthia____stream<<"[SQLITE] "<<Text<<", code: "<<orthia____code; throw std::runtime_error(orthia____stream.str()); }} 
 #define ORTHIA_CHECK_SQLITE2(Expression) ORTHIA_CHECK_SQLITE(Expression, "Error")
 
+
+CAutoRollback::CAutoRollback()
+    :
+        m_pDatabase(0)
+{
+}
+void CAutoRollback::Init(CDatabase * pDatabase)
+{
+    m_pDatabase = pDatabase;
+}
+void CAutoRollback::Reset()
+{
+    m_pDatabase = 0;
+}
+CAutoRollback::~CAutoRollback()
+{
+    if (m_pDatabase)
+    {
+        m_pDatabase->RollbackTransactionSilent();
+    }
+}
 CSQLStatement::CSQLStatement(sqlite3_stmt * statement)
     : m_statement(statement)
 {
@@ -93,6 +114,8 @@ void CDatabase::Init()
     ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database.Get(), buffer, (int)strlen(buffer), m_stmtSelectModule.Get2(), NULL));
     buffer = "SELECT * FROM tbl_modules";
     ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database.Get(), buffer, (int)strlen(buffer), m_stmtQueryModules.Get2(), NULL));
+    buffer = "SELECT ref_address_to, ref_address_from FROM tbl_references WHERE (ref_address_to >= ?1) AND (ref_address_to <= ?2)";
+    ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database.Get(), buffer, (int)strlen(buffer), m_stmtSelectReferencesToRange.Get2(), NULL));
 }
 void CDatabase::OpenExisting(const std::wstring & fullFileName)
 {
@@ -115,7 +138,7 @@ void CDatabase::CreateNew(const std::wstring & fullFileName)
     ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(),"CREATE TABLE IF NOT EXISTS tbl_references (ref_address_from INTEGER, ref_address_to INTEGER)",
                         0,0,0), "Can't create database");
 
-    ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(),"CREATE TABLE IF NOT EXISTS tbl_modules (mod_address INTEGER, mod_size INTEGER)",
+    ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(),"CREATE TABLE IF NOT EXISTS tbl_modules (mod_address INTEGER, mod_size INTEGER, mod_name TEXT)",
                         0,0,0), "Can't create database");
     Init();
 }
@@ -129,21 +152,48 @@ void CDatabase::InsertReference(sqlite3_stmt * stmt, Address_type from, Address_
     }
     sqlite3_reset(stmt);
 }
-void CDatabase::InsertModule(Address_type baseAddress, Address_type size)
+
+static std::wstring Escape(const std::wstring & moduleName)
+{
+    std::wstring copy = moduleName;
+    for(std::wstring::iterator it = copy.begin(), it_end = copy.end();
+        it != it_end;
+        ++it)
+    {
+        switch(*it)
+        {
+        case L'\"':
+        case L'\'':
+        case L'\\':
+        case 10:
+        case 13:
+            *it = L'_';
+        }
+    }
+    return copy;
+}
+
+void CDatabase::InsertModule(Address_type baseAddress, 
+                             Address_type size, 
+                             const std::wstring & moduleName)
 {
     std::stringstream sql;
-    sql<<"INSERT INTO tbl_modules VALUES("<<baseAddress<<","<<size<<")";
+    sql<<"INSERT INTO tbl_modules VALUES("<<baseAddress<<","<<size<<",\""<<orthia::ToAnsiString_Silent(orthia::Escape(moduleName))<<"\")";
     std::string sqlString = sql.str();
     ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(),sqlString.c_str(),
                 0,0,0), L"Can't insert module");
 }
-void CDatabase::StartSaveModule(Address_type baseAddress, Address_type size)
+void CDatabase::StartSaveModule(Address_type baseAddress, 
+                                Address_type size, 
+                                const std::wstring & moduleName,
+                                CAutoRollback * pRollback)
 {
     ORTHIA_CHECK_SQLITE2(sqlite3_exec(m_database.Get(), "BEGIN TRANSACTION", NULL, NULL, NULL));
+    pRollback->Init(this);
     char * buffer = 0;
     buffer = "INSERT INTO tbl_references VALUES(?1, ?2)";
     ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database.Get(), buffer, (int)strlen(buffer), m_stmtInsertReferences.Get2(), NULL));
-    InsertModule(baseAddress, size);
+    InsertModule(baseAddress, size, moduleName);
 }
 void CDatabase::DoneSave()
 {
@@ -174,6 +224,36 @@ void CDatabase::InsertReferencesFromInstruction(Address_type offset, const std::
         ++it)
     {
         InsertReference(m_stmtInsertReferences.Get(), offset, it->address);
+    }
+}
+void CDatabase::QueryReferencesToInstructionsRange(Address_type address1, Address_type address2, std::vector<CommonRangeInfo> * pResult)
+{
+    CSQLAutoReset autoStatement(m_stmtSelectReferencesToRange.Get());
+    sqlite3_bind_int64(m_stmtSelectReferencesToRange.Get(), 1, address1);
+    sqlite3_bind_int64(m_stmtSelectReferencesToRange.Get(), 2, address2);
+    pResult->reserve(10);
+    pResult->clear();
+    for(;;)
+    {
+        int stepResult = sqlite3_step(m_stmtSelectReferencesToRange.Get());
+        if (stepResult == SQLITE_DONE)
+        {
+            break;
+        }
+        else
+        if (stepResult == SQLITE_ROW)
+        {
+            Address_type refTo = sqlite3_column_int64(m_stmtSelectReferencesToRange.Get(), 0);
+            Address_type refFrom = sqlite3_column_int64(m_stmtSelectReferencesToRange.Get(), 1);
+
+            if (pResult->empty() || pResult->back().address != refTo)
+            {
+                pResult->push_back(CommonRangeInfo(refTo));
+            }
+            pResult->back().references.push_back(CommonReferenceInfo(refFrom, false));
+            continue;
+        }
+        throw std::runtime_error("sqlite3_step failed");
     }
 }
 void CDatabase::QueryReferencesToInstruction(Address_type offset, std::vector<CommonReferenceInfo> * pReferences)
@@ -275,13 +355,18 @@ void CDatabase::QueryModules(std::vector<CommonModuleInfo> * pResult)
         {
             Address_type address = sqlite3_column_int64(m_stmtQueryModules.Get(), 0);
             Address_type size = sqlite3_column_int64(m_stmtQueryModules.Get(), 1);
-            pResult->push_back(CommonModuleInfo(address, size, L""));
+            std::string name = (char*)sqlite3_column_text(m_stmtQueryModules.Get(), 2);
+            pResult->push_back(CommonModuleInfo(address, size, orthia::ToString(name)));
             continue;
         }
         throw std::runtime_error("sqlite3_step failed");
     }
 }
-
+void CDatabase::RollbackTransactionSilent()
+{
+    m_cache.clear();
+    sqlite3_exec(m_database.Get(), "ROLLBACK TRANSACTION", NULL, NULL, NULL);
+}
 CDatabaseManager::CDatabaseManager()
 {
 }

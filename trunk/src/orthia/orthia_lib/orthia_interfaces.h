@@ -45,6 +45,17 @@ struct CommonReferenceInfo
     }
 };
 
+typedef std::vector<orthia::CommonReferenceInfo> CommonReferenceInfoArray_type;
+
+struct CommonRangeInfo
+{
+    Address_type address;
+    CommonReferenceInfoArray_type references;
+    CommonRangeInfo(Address_type address_in = 0)
+        : address(address_in)
+    {
+    }
+};
 // module info
 struct CommonModuleInfo
 {
