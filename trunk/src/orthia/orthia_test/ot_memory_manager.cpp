@@ -23,7 +23,7 @@ static void test_mm1()
     OT_TestEnv testEnv;
     
     void * pFile = GetModuleHandle(0);
-    testEnv.manager.ReloadModule((orthia::Address_type)pFile, &testEnv.reader, true);
+    testEnv.manager.ReloadModule((orthia::Address_type)pFile, &testEnv.reader, true, L"test");
 
     std::vector<orthia::CommonReferenceInfo> references;
     testEnv.manager.QueryReferencesToInstruction((orthia::Address_type)&test_mm1, &references);
@@ -46,7 +46,7 @@ static void test_performance1()
 {
     OT_TestEnv testEnv;
     orthia::CDll dll(L"shell32.dll");
-    testEnv.manager.ReloadModule((orthia::Address_type)dll.GetBase(), &testEnv.reader, true);
+    testEnv.manager.ReloadModule((orthia::Address_type)dll.GetBase(), &testEnv.reader, true, L"test");
 }
 
 void test_memory_manager()
