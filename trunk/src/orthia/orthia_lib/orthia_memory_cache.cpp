@@ -48,6 +48,7 @@ void CMemoryCache::Read(Address_type offset,
                         void * pBuffer,
                         Address_type * pBytesRead)
 {
+    *pBytesRead = 0;
     // it gets relative addresses!!!!
     offset += m_regionAddress;
     if (!m_regionSize)
@@ -80,38 +81,6 @@ void CMemoryCache::Read(Address_type offset,
     if (offset < m_regionAddress)
     {
         // 1,2,3
-        if (end <= m_regionAddress)
-        {
-            // 1
-            m_pReader->Read(offset, bytesToRead, pBuffer, pBytesRead);
-            return;
-        }
-        Address_type firstChunkSize = m_regionAddress - offset;
-        m_pReader->Read(offset, firstChunkSize, pBuffer, pBytesRead);
-        if (*pBytesRead != firstChunkSize)
-            return;
-        Address_type sizeToRead2 = m_regionSize;
-        if (end <= m_regionAddress + m_regionSize)
-        {
-            // 2
-            sizeToRead2 = end - m_regionAddress;
-        }
-        memcpy((char*)pBuffer + *pBytesRead, &m_regionData.front(), (size_t)sizeToRead2);
-        *pBytesRead += sizeToRead2;
-        // check the tail
-        if (*pBytesRead > bytesToRead)
-        {
-            __debugbreak();
-        }
-        if (*pBytesRead == bytesToRead)
-            return;
-
-        Address_type tailReadBytes = 0;
-        m_pReader->Read(offset + *pBytesRead, 
-                        bytesToRead - *pBytesRead, 
-                        (char*)pBuffer + *pBytesRead, 
-                        &tailReadBytes);        
-        *pBytesRead += tailReadBytes;
         return;
     }
     // 4, 5, 6
@@ -119,7 +88,6 @@ void CMemoryCache::Read(Address_type offset,
     if (offset >= regionEnd)
     {
         // 6
-        m_pReader->Read(offset, bytesToRead, pBuffer, pBytesRead);
         return;
     }
     if (end < regionEnd)
@@ -138,10 +106,6 @@ void CMemoryCache::Read(Address_type offset,
            &m_regionData.front() + skipSize,
            (size_t)sizeToRead);    
     
-    m_pReader->Read(regionEnd, 
-                    bytesToRead-sizeToRead, 
-                    (char*)pBuffer+sizeToRead, 
-                    pBytesRead);
     *pBytesRead += sizeToRead;
 }
 

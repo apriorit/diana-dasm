@@ -332,7 +332,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             pLinkedOp->usedSize = pOperInfo->m_size;
             opSizeUsed = pOperInfo->m_size;
 			// no break!
-
+        case diana_orReg32mem16:
         case diana_orReg16_32_64_mem16:
         case diana_orMemoryMMX:
         case diana_orMemoryXMM:
@@ -348,7 +348,8 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             
             if (pLinkedOp->type == diana_index)
             {
-                if (diana_orReg16_32_64_mem16 == pOperInfo->m_type)
+                if (diana_orReg16_32_64_mem16 == pOperInfo->m_type ||
+                    diana_orReg32mem16 == pOperInfo->m_type)
                 {
                     // special for glorious reg16/32/64/mem16 8C opcode 
                     pLinkedOp->usedSize = 2;
