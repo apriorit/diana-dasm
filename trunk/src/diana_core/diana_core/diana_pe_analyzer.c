@@ -140,11 +140,14 @@ int Diana_AnalyzeExports(Diana_PeAnalyzerCommonParams_type * pParams)
                                 numberOfFunctionsToRead * sizeof(DI_UINT32)));
         for(i = 0; i < numberOfFunctionsToRead; ++i)
         {
-            DI_CHECK(Diana_AnalyzeCode(pParams->pOwner,
-                                        pParams->pObserver,
-                                        pParams->pPeFile->pImpl->dianaMode,
-                                        pCapturedFunctions[i],
-                                        pParams->pPeFile->pImpl->sizeOfFile));
+            if (pCapturedFunctions[i] < pParams->pPeFile->pImpl->sizeOfFile)
+            {
+                DI_CHECK(Diana_AnalyzeCode(pParams->pOwner,
+                                            pParams->pObserver,
+                                            pParams->pPeFile->pImpl->dianaMode,
+                                            pCapturedFunctions[i],
+                                            pParams->pPeFile->pImpl->sizeOfFile));
+            }
         }
         theRestNumberOfFunctions -= numberOfFunctionsToRead;
     }
