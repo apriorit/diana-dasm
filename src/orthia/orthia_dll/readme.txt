@@ -17,15 +17,15 @@ Step2. Setup the profile specifying the database file
 or
     !orthia.profile /f <full-path>\<profilename>.db
 /f option allows the command to rewrite the existing file.
-
+Note: profile command supports environment variables like %temp%, for example you can setup the profile like that:
+    !orthia.profile /f %temp%\test.db
 The initial setup is done.
 
 Now you can:
 1) reload the module by address:
     !orthia.reload <module_start_address>
 Orthia analyses all the references inside the module and puts the into the database. 
-Note: in some cases module reloading can take some time, for example when working with live debug session. Orthia caches the module sections but initial data acquiring could be slow.
-
+Note: module reloading could take some time, for example when working with live debug session. Orthia caches the module sections but initial data acquiring could be slow.
 2) reload all modules
     !for_each_module !orthia.reload /v @#Base
 3) show the references to the instruction
@@ -37,3 +37,5 @@ Note: in some cases module reloading can take some time, for example when workin
  
 If you have any questions or proposals feel free to ask me with ligen.work@gmail.com.
 Enjoy!
+
+P.S uese \src\start.bat and \src\start_with_kit.cmd to build the solution
