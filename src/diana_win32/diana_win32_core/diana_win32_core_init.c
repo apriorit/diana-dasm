@@ -13,8 +13,10 @@ int Diana_Call_sysenter(struct _dianaContext * pDianaContext,
 static
 void DianaWin32Processor_OnGroup(DianaGroupInfo * p)
 {
-    if (0){}
-    DI_PROC_REGISTER_COMMAND(sysenter)
+    switch (p->m_commandId)
+    {    
+        DI_PROC_REGISTER_COMMAND(sysenter)
+    }
 }
 
 void DianaWin32Processor_LinkCommands()

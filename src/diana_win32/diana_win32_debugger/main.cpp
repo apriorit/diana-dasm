@@ -178,7 +178,8 @@ int Diana_Call_fcompp(struct _dianaContext * pDianaContext,
 static
 void DianaWin32Processor_OnGroup(DianaGroupInfo * p)
 {
-    if (0){}
+    switch (p->m_commandId)
+    {
     DI_PROC_REGISTER_COMMAND(sysenter)
     DI_PROC_REGISTER_COMMAND(int)
     DI_PROC_REGISTER_COMMAND(wait)
@@ -202,7 +203,7 @@ void DianaWin32Processor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(fcom)
     DI_PROC_REGISTER_COMMAND(fsubr)
     DI_PROC_REGISTER_COMMAND(fcompp)
-
+    }
 }
 
 static void DianaWin32Processor_LinkCommands()
