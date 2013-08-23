@@ -38,4 +38,4 @@ Note: module reloading could take some time, for example when working with live 
 If you have any questions or proposals feel free to ask me with ligen.work@gmail.com.
 Enjoy!
 
-P.S uese \src\start.bat and \src\start_with_kit.cmd to build the solution
+P.S use \src\start.bat and \src\start_with_kit.cmd to build the solution
