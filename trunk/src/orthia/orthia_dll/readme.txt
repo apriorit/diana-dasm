@@ -3,8 +3,14 @@ How to use orthia plugin in windbg session.
 Step 1. Load the dll
 Load the dll using the load command:
     .load <full-path>\orthia.dll
+
 Note: 32-bit windbg on my win8-64 computer didn't want to load orthia.dll until I put it to the 
     C:\Program Files (x86)\Debugging Tools for Windows\winext
+so the best way is to put the dll there
+
+Note2: debugger could be also located in windows kit folder:
+    C:\Program Files (x86)\Windows Kits\8.0\Debuggers\
+
 
 Step2. Setup the profile specifying the database file
     !orthia.profile <full-path>\<profilename>.db
@@ -23,9 +29,9 @@ Note: in some cases module reloading can take some time, for example when workin
 2) reload all modules
     !for_each_module !orthia.reload /v @#Base
 3) show the references to the instruction
-	!orthia.x <address_expression>
+    !orthia.x <address_expression>
 4) show the references to the instruction range
-	!orthia.xr <address_expression1> <address_expression2>
+    !orthia.xr <address_expression1> <address_expression2>
 5) show all loaded modules
     !orthia.lm
  

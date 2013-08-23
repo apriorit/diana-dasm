@@ -14,7 +14,9 @@ struct OT_TestEnv
     {
         std::vector<wchar_t> buf(1024);
         GetTempPath((DWORD)buf.size(), &buf.front());
-        wcscat(&buf.front(), L"\\orthia_test\\test.db");
+        wcscat(&buf.front(), L"\\orthia_test");
+        CreateDirectory(&buf.front(), 0);
+        wcscat(&buf.front(), L"\\test.db");
         manager.Reinit(&buf.front(), true);
     }
 };
