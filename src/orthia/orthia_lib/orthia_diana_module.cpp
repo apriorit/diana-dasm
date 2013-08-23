@@ -180,6 +180,7 @@ int DianaEnvironment_AnalyzeJumpAddress(void * pThis,
             *pResult = diaJumpExternal;
             return DI_SUCCESS;
         }
+        address = *pRelativeOffset;
     }
     if (address >= pEnv->m_moduleSize)
     {

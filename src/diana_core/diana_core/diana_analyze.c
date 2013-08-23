@@ -179,11 +179,12 @@ int AnalyzeJumps(DianaParserResult * pResult,
         break;
     // call [rbx+0x5435345] 
     case diana_index:
-        *pAbsoluteAddress = 0;
+        *pAbsoluteAddress = 1;
         *pNewOffset = pOp->value.rmIndex.dispValue;
         if (pOp->value.rmIndex.reg == reg_RIP)
         {
             *pNewOffset += offset; 
+            *pAbsoluteAddress = 0;
         }
         *pLinksToData = 1;
         break;
