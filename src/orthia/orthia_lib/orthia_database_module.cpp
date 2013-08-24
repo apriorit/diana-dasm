@@ -29,6 +29,19 @@ CAutoRollback::~CAutoRollback()
         m_pDatabase->RollbackTransactionSilent();
     }
 }
+
+void sql_less_or_equal( sqlite3_context* ctx, int argc, sqlite3_value** argv )
+{
+    if (argc !=2 )
+    {    
+        sqlite3_result_null(ctx);
+        return;
+    }
+    Address_type value1 = (Address_type)( sqlite3_value_int64( argv[ 0 ] ) );
+    Address_type value2 = (Address_type)( sqlite3_value_int64( argv[ 1 ] ) );
+    sqlite3_result_int( ctx, value1 <= value2 );
+}
+
 CSQLStatement::CSQLStatement(sqlite3_stmt * statement)
     : m_statement(statement)
 {
@@ -106,6 +119,7 @@ CDatabase::~CDatabase()
 }
 void CDatabase::Init()
 {
+    ORTHIA_CHECK_SQLITE2(sqlite3_create_function(m_database.Get(), "UINT_LESSOE", 2, SQLITE_ANY, NULL, sql_less_or_equal, NULL, NULL ));
     // prepare references
     char * buffer = 0;
     buffer = "SELECT ref_address_from FROM tbl_references WHERE ref_address_to = ?1";
@@ -114,7 +128,7 @@ void CDatabase::Init()
     ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database.Get(), buffer, (int)strlen(buffer), m_stmtSelectModule.Get2(), NULL));
     buffer = "SELECT * FROM tbl_modules";
     ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database.Get(), buffer, (int)strlen(buffer), m_stmtQueryModules.Get2(), NULL));
-    buffer = "SELECT ref_address_to, ref_address_from FROM tbl_references WHERE (ref_address_to >= ?1) AND (ref_address_to <= ?2)";
+    buffer = "SELECT ref_address_to, ref_address_from FROM tbl_references WHERE UINT_LESSOE(?1, ref_address_to) AND UINT_LESSOE(ref_address_to, ?2)";
     ORTHIA_CHECK_SQLITE2(sqlite3_prepare_v2(m_database.Get(), buffer, (int)strlen(buffer), m_stmtSelectReferencesToRange.Get2(), NULL));
 }
 void CDatabase::OpenExisting(const std::wstring & fullFileName)
@@ -178,7 +192,7 @@ void CDatabase::InsertModule(Address_type baseAddress,
                              const std::wstring & moduleName)
 {
     std::stringstream sql;
-    sql<<"INSERT INTO tbl_modules VALUES("<<baseAddress<<","<<size<<",\""<<orthia::ToAnsiString_Silent(orthia::Escape(moduleName))<<"\")";
+    sql<<"INSERT INTO tbl_modules VALUES("<<(long long)baseAddress<<","<<size<<",\""<<orthia::ToAnsiString_Silent(orthia::Escape(moduleName))<<"\")";
     std::string sqlString = sql.str();
     ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(),sqlString.c_str(),
                 0,0,0), L"Can't insert module");
@@ -300,13 +314,15 @@ void CDatabase::UnloadModule(Address_type address, bool bSilent)
         if (!size)
         {
             std::stringstream res;
-            res<<"Module not found: "<<address;
+            res<<"Module not found: ";
+            std::hex(res);
+            res<<address;
             throw std::runtime_error(res.str());
         }
     
         {
             std::stringstream sql;
-            sql<<"DELETE FROM tbl_references WHERE ref_address_from >= "<<address<<" and ref_address_from <= "<<address+size;
+            sql<<"DELETE FROM tbl_references WHERE UINT_LESSOE("<<(long long)address<<", ref_address_from) and UINT_LESSOE(ref_address_from, "<<(long long)(address+size)<<")";
             std::string sqlString = sql.str();
             ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(), sqlString.c_str(),
                         0,0,0), L"Can't unload module");
@@ -314,7 +330,7 @@ void CDatabase::UnloadModule(Address_type address, bool bSilent)
 
         {
             std::stringstream sql;
-            sql<<"DELETE FROM tbl_modules WHERE mod_address = "<<address;
+            sql<<"DELETE FROM tbl_modules WHERE mod_address = "<<(long long)address;
             std::string sqlString = sql.str();
             ORTHIA_CHECK_SQLITE(sqlite3_exec(m_database.Get(), sqlString.c_str(),
                         0,0,0), L"Can't unload module");
