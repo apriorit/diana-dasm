@@ -34,6 +34,8 @@ Note: module reloading could take some time, for example when working with live 
     !orthia.xr <address_expression1> <address_expression2>
 5) show all loaded modules
     !orthia.lm
+6) analyze custom region
+    !orthia.a <address> 
  
 If you have any questions or proposals feel free to ask me with ligen.work@gmail.com.
 Enjoy!
