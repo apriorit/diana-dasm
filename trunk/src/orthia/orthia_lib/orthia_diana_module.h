@@ -29,7 +29,6 @@ class CDianaModule
 {
     friend class CDianaInstructionIterator;
     Address_type m_offset;
-    std::wstring m_uniqueName;
     IMemoryReader * m_pMemoryReader;
     std::auto_ptr<CDianaModuleImpl> m_impl;
 public:
@@ -38,10 +37,14 @@ public:
     void Init(Address_type offset,
               IMemoryReader * pMemoryReader);
 
+    void InitRaw(Address_type offset,
+                 Address_type size,
+                 IMemoryReader * pMemoryReader,
+                 int mode);
+
     Address_type GetModuleAddress() const;
     Address_type GetModuleSize() const;
     void Analyze();
-    std::wstring GetUniqueName() const;
     std::wstring GetName() const;
 
     void QueryInstructionIterator(CDianaInstructionIterator * pIterator);

@@ -21,7 +21,8 @@ int DianaRandomRead(void * pThis,
                        OPERAND_SIZE offset,
                        void * pBuffer, 
                        int iBufferSize, 
-                       OPERAND_SIZE * readBytes);
+                       OPERAND_SIZE * readBytes,
+                       int flags);
 int DianaEnvironment_ConvertAddressToRelative(void * pThis, 
                                               OPERAND_SIZE address,              
                                               OPERAND_SIZE * pRelativeOffset,
@@ -81,7 +82,8 @@ int DianaRead(void * pThis,
         pStream->m_pMemoryReader->Read(pStream->m_currentOffset, 
                                     iBufferSize,
                                     pBuffer,
-                                    &bytesRead2);
+                                    &bytesRead2,
+                                    0);
         *bytesRead = (int)bytesRead2;
         pStream->m_currentOffset += (Address_type)*bytesRead;
         return DI_SUCCESS;
@@ -97,16 +99,24 @@ int DianaRandomRead(void * pThis,
                        OPERAND_SIZE offset,
                        void * pBuffer, 
                        int iBufferSize, 
-                       OPERAND_SIZE * readBytes)
+                       OPERAND_SIZE * readBytes,
+                       int flags)
 {
     try
     {
+        int orthiaFlags = 0;
+        if (flags & DIANA_ANALYZE_RANDOM_READ_ABSOLUTE)
+        {
+            orthiaFlags |= ORTHIA_MR_FLAG_READ_ABSOLUTE;
+        }
+
         Address_type bytesRead2 = 0;
         DianaMemoryStream * pStream = (DianaMemoryStream * )pThis;
         pStream->m_pMemoryReader->Read(offset, 
                                     iBufferSize,
                                     pBuffer,
-                                    &bytesRead2);
+                                    &bytesRead2,
+                                    orthiaFlags);
         *readBytes = (int)bytesRead2;
         return DI_SUCCESS;
     }
@@ -120,13 +130,15 @@ struct DianaEnvironment:public DianaAnalyzeObserver
 {
     Address_type m_moduleStart;
     Address_type m_moduleSize;
+    int m_dianaMode;
     DianaMemoryStream m_stream;
 
     DianaEnvironment(Address_type moduleStart, IMemoryReader * pMemoryReader)
         :
             m_stream(0, pMemoryReader, 0),
             m_moduleStart(moduleStart),
-            m_moduleSize(0)
+            m_moduleSize(0),
+            m_dianaMode(0)
     {
         DianaAnalyzeObserver_Init(this, 
                                   &m_stream, 
@@ -142,6 +154,21 @@ int DianaEnvironment_ConvertAddressToRelative(void * pThis,
 {
     DianaEnvironment * pEnv = (DianaEnvironment * )pThis;
     *pbInvalidPointer = 1;
+    
+    // windbg-plugin-related behavior
+    if ((long long)pEnv->m_moduleStart < 0 && pEnv->m_dianaMode == DIANA_MODE32)
+    {
+        if ((long long)address > 0 && address & 0x80000000)
+        {
+            // sign extend the address
+            ULARGE_INTEGER temp;
+            temp.QuadPart = address;
+            temp.HighPart = (ULONG)-1;
+            address = temp.QuadPart;
+            *pRelativeOffset = address; 
+        }
+    }
+
     if (address < pEnv->m_moduleStart)
         return DI_SUCCESS;
 
@@ -192,13 +219,19 @@ int DianaEnvironment_AnalyzeJumpAddress(void * pThis,
 
 class CDianaModuleImpl
 {
+protected:
     friend class CDianaInstructionIterator;
-    Diana_PeFile m_peFile;
     CMemoryCache m_cache;
     DianaEnvironment m_env;
-    diana::Guard<diana::PeFile> m_peFileGuard;
     Diana_InstructionsOwner m_owner;
     diana::Guard<diana::InstructionsOwner> m_instructionsOwnerGuard;
+    void InitEnv(OPERAND_SIZE size, int mode)
+    {
+        m_env.m_dianaMode = mode;
+        m_env.m_moduleSize = size;
+        m_env.m_stream.m_moduleSize = size;
+    }
+    virtual void AnalyzeImpl()=0;
 public:
     CDianaModuleImpl(Address_type offset,
                      IMemoryReader * pMemoryReader)
@@ -206,13 +239,21 @@ public:
         m_cache(pMemoryReader, offset),
         m_env(offset, &m_cache)
     {
-        DI_CHECK_CPP(DianaPeFile_Init(&m_peFile, &m_env.m_stream, 0, offset));
-        m_peFileGuard.reset(&m_peFile);
-        m_env.m_moduleSize = m_peFile.pImpl->sizeOfFile;
-        m_env.m_stream.m_moduleSize = m_peFile.pImpl->sizeOfFile;
     }
-
     void Analyze()
+    {
+        AnalyzeImpl();
+    }
+    orthia::Address_type GetModuleSize() { return m_env.m_moduleSize; }
+    virtual int GetDianaMode() const =0; 
+};
+
+class CDianaModuleImpl_PE:public CDianaModuleImpl
+{
+    Diana_PeFile m_peFile;
+    diana::Guard<diana::PeFile> m_peFileGuard;
+protected:
+    void AnalyzeImpl()
     {
         m_cache.Init(m_env.m_moduleStart, 
                      m_env.m_moduleSize,
@@ -221,9 +262,48 @@ public:
         DI_CHECK_CPP(Diana_PE_AnalyzePE(&m_peFile, &m_env, &m_owner));
         m_instructionsOwnerGuard.reset(&m_owner);
     }
+public:
+    CDianaModuleImpl_PE(Address_type offset,
+                       IMemoryReader * pMemoryReader)
+           :
+            CDianaModuleImpl(offset, pMemoryReader)
+    {
+        DI_CHECK_CPP(DianaPeFile_Init(&m_peFile, &m_env.m_stream, 0, offset));
+        m_peFileGuard.reset(&m_peFile);
+        InitEnv(m_peFile.pImpl->sizeOfFile, GetPeFile()->pImpl->dianaMode);
+    }
+
     const Diana_PeFile * GetPeFile() const { return &m_peFile; }
+    int GetDianaMode() const { return GetPeFile()->pImpl->dianaMode; }
 };
 
+class CDianaModuleImpl_Range:public CDianaModuleImpl
+{
+    int m_dianaMode;
+protected:
+    void AnalyzeImpl()
+    {
+        m_cache.Init(m_env.m_moduleStart, 
+                     m_env.m_moduleSize); 
+        DI_CHECK_CPP(Diana_InstructionsOwner_Init(&m_owner, 
+                                              m_env.m_moduleSize, 
+                                              0x10000));
+        m_instructionsOwnerGuard.reset(&m_owner);
+        DI_CHECK_CPP(Diana_AnalyzeCode(&m_owner, &m_env, m_dianaMode, 0, m_env.m_moduleSize));
+    }
+public:
+    CDianaModuleImpl_Range(Address_type offset,
+                           Address_type size,
+                           IMemoryReader * pMemoryReader,
+                           int dianaMode)
+           :
+            CDianaModuleImpl(offset, pMemoryReader),
+            m_dianaMode(dianaMode)
+    {
+        InitEnv(size, dianaMode);
+    }
+    int GetDianaMode() const { return m_dianaMode; }
+};
 
 CDianaModule::CDianaModule()
     :
@@ -242,44 +322,35 @@ Address_type CDianaModule::GetModuleAddress() const
 }
 Address_type CDianaModule::GetModuleSize() const
 {
-    return m_impl->GetPeFile()->pImpl->sizeOfFile;
+    return m_impl->GetModuleSize();
+}
+void CDianaModule::InitRaw(Address_type offset,
+                           Address_type size,
+                           IMemoryReader * pMemoryReader,
+                           int mode)
+{
+    m_offset = offset;
+    m_pMemoryReader = pMemoryReader;
+    m_impl.reset(new CDianaModuleImpl_Range(offset, size, pMemoryReader, mode));
 }
 void CDianaModule::Init(Address_type offset,
                         IMemoryReader * pMemoryReader)
 {
     m_offset = offset;
     m_pMemoryReader = pMemoryReader;
-    m_impl.reset(new CDianaModuleImpl(offset, pMemoryReader));
-
-    // calc unique hash
-    uint8_t hash[SHA1_HASH_SIZE];
-    memset(hash, 0, sizeof(hash));
-    SHA1Context shaContext;      
-    SHA1Reset(&shaContext);
-    SHA1Input2(&shaContext, &m_impl->GetPeFile()->pImpl->dosHeader);
-    SHA1Input2(&shaContext, &m_impl->GetPeFile()->pImpl->ntHeaders);
-    SHA1Input2(&shaContext, m_impl->GetPeFile()->pImpl->pCapturedSections, m_impl->GetPeFile()->pImpl->capturedSectionCount);
-    SHA1Result(&shaContext, hash);
-    
-    m_uniqueName = orthia::ToString(m_impl->GetPeFile()->pImpl->loadedBase) + L"-" + orthia::ToHexString(hash);
+    m_impl.reset(new CDianaModuleImpl_PE(offset, pMemoryReader));
 }
 
 void CDianaModule::Analyze()
 {
     m_impl->Analyze();
 }
-std::wstring CDianaModule::GetUniqueName() const
-{
-    if (m_uniqueName.empty())
-        throw std::runtime_error("Internal error: m_uniqueName is empty");
-    return m_uniqueName;
-}
 
 std::wstring CDianaModule::GetName() const
 {
     std::wstringstream str;
     std::hex(str);
-    str<<std::setfill(L'0') << std::setw(m_impl->GetPeFile()->pImpl->dianaMode*2) <<m_offset;
+    str<<std::setfill(L'0') << std::setw(m_impl->GetDianaMode()*2) <<m_offset;
     return str.str();
 }
 void CDianaModule::QueryInstructionIterator(CDianaInstructionIterator * pIterator)
@@ -290,7 +361,7 @@ void CDianaModule::QueryInstructionIterator(CDianaInstructionIterator * pIterato
 CDianaInstructionIterator::CDianaInstructionIterator()
     :
         m_pModule(0),
-            m_currentInstruction(0)
+        m_currentInstruction(0)
 {
 }
 void CDianaInstructionIterator::Init(CDianaModule * pModule)

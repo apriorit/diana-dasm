@@ -27,6 +27,10 @@ public:
                       IMemoryReader * pMemoryReader,
                       bool bForce,
                       const std::wstring & name);
+    void ReloadRange(Address_type offset,
+                     Address_type size,
+                     IMemoryReader * pMemoryReader,
+                     int mode);
 
     void QueryLoadedModules(std::vector<CommonModuleInfo> * pResult);
     // references

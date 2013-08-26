@@ -10,7 +10,8 @@ public:
     virtual void Read(orthia::Address_type offset, 
                       orthia::Address_type bytesToRead,
                       void * pBuffer,
-                      orthia::Address_type * pBytesRead)
+                      orthia::Address_type * pBytesRead,
+                      int flags)
     {
         if (bytesToRead >= (orthia::Address_type)ULONG_MAX)
         {
@@ -18,12 +19,21 @@ public:
             text<<"Range size is too big: "<<bytesToRead;
             throw std::runtime_error(text.str());
         }
-        ULONG bytes = 0;
-        ReadMemory(offset, 
-                   pBuffer, 
-                   (ULONG)bytesToRead,
-                   &bytes);
-        *pBytesRead = bytes;
+        if (!(flags & ORTHIA_MR_FLAG_READ_THROUGH))
+        {
+            ULONG bytes = 0;
+            ReadMemory(offset, 
+                       pBuffer, 
+                       (ULONG)bytesToRead,
+                        &bytes);
+            *pBytesRead = bytes;
+            return;
+        }
+        // read through all valid pages 
+        DbgExt_ReadThrough(offset, 
+                           bytesToRead,
+                           pBuffer);
+        *pBytesRead = bytesToRead;
     }
 };
 
@@ -53,6 +63,7 @@ static void PrintUsage()
     dprintf("!reload [/u] [/v] [/f] <module_address> - reloads module (u - unload, v - verbose, f - force)\n");
     dprintf("!x [/a] <address> - prints who calls to this address (a - print only addresses)\n");
     dprintf("!xr <address1> <address2> - prints who calls/jumps into this range \n");
+    dprintf("!a <address> - analyzes the region\n");
 }
 static void SetupPath(const std::wstring & path, bool bForce)
 {
@@ -348,5 +359,54 @@ ORTHIA_DECLARE_API(x)
             dprintf("%I64lx\n", it->address);
         }
     }   
+    ORTHIA_CMD_END
+}
+
+
+ORTHIA_DECLARE_API(a)
+{
+    ORTHIA_CMD_START
+
+    std::vector<std::string> words;
+    orthia::Split<char>(args, &words);
+
+    if (words.size() != 1)
+    {
+        throw std::runtime_error("One argument expected");
+    }
+
+    orthia::Address_type address = 0;
+    PCSTR tail = 0;
+    if (!GetExpressionEx(words[0].c_str(), &address, &tail))
+    {
+        throw std::runtime_error("Invalid argument: " + words[0]);
+    }
+
+    orthia::CModuleManager * pModuleManager = orthia::QueryModuleManager();
+    
+    orthia::Address_type size = DbgExt_GetRegionSize(address);
+    if (!size)
+    {
+        throw std::runtime_error("Invalid region: " + words[0]);
+    }
+    ULONG machine = DbgExt_GetTargetMachine();
+    int mode = 0;
+    switch(machine)
+    {
+    case IMAGE_FILE_MACHINE_I386:
+        mode = DIANA_MODE32;
+        break;
+    case IMAGE_FILE_MACHINE_AMD64:
+        mode = DIANA_MODE64;
+        break;
+    default:
+        {
+            std::stringstream errorStream;
+            errorStream<<"Unsupported target: "<<machine;
+            throw std::runtime_error(errorStream.str());
+        }
+    }
+    pModuleManager->ReloadRange(address, size, orthia::QueryReader(), mode);
+
     ORTHIA_CMD_END
 }

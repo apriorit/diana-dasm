@@ -30,6 +30,10 @@ int ScanPage(Diana_PeAnalyzerCommonParams_type * pParams,
         size_t * pAddress = (size_t *)p;
         OPERAND_SIZE relativeAddress = 0;
         DianaAnalyzeAddressResult_type result = diaJumpInvalid;
+        if (pParams->pPeFile->pImpl->dianaMode == 4)
+        {
+            *pAddress = (unsigned __int32)*pAddress;
+        }
         DI_CHECK(pParams->pObserver->m_pAnalyzeAddress(pParams->pObserver, 
                                               *pAddress, 
                                               DIANA_ANALYZE_ABSOLUTE_ADDRESS,
@@ -37,11 +41,13 @@ int ScanPage(Diana_PeAnalyzerCommonParams_type * pParams,
                                               &result));
         if (result == diaJumpNormal)
         {
-            DI_CHECK(Diana_AnalyzeCode(pParams->pOwner,
+            DI_CHECK(Diana_AnalyzeCodeEx(pParams->pOwner,
                                         pParams->pObserver,
                                         pParams->pPeFile->pImpl->dianaMode,
                                         relativeAddress,
-                                        pParams->pPeFile->pImpl->sizeOfFile));
+                                        pParams->pPeFile->pImpl->sizeOfFile,
+                                        pParams->pStack,
+                                        DI_ANALYSE_BREAK_ON_INVALID_CMD));
             continue;
         }
     }
@@ -165,7 +171,8 @@ int Diana_PE_AnalyzePEImplUsingBuffer(Diana_PeAnalyzerCommonParams_type * pParam
                                      pParams->pPeFile->pImpl->dianaMode, 
                                      pParams->pPeFile->pImpl->addressOfEntryPoint, 
                                      pParams->pPeFile->pImpl->sizeOfFile,
-                                     pParams->pStack));
+                                     pParams->pStack,
+                                     0));
     }
     {
         // scan raw pages
@@ -174,7 +181,20 @@ int Diana_PE_AnalyzePEImplUsingBuffer(Diana_PeAnalyzerCommonParams_type * pParam
     // scan exports
     DI_CHECK(Diana_AnalyzeExports(pParams));
 
-    // scan imports
+    // scan all
+    {
+        OPERAND_SIZE i = 0;
+        for(; i < pParams->pPeFile->pImpl->sizeOfFile; i+=4ULL)
+        {
+            DI_CHECK(Diana_AnalyzeCodeEx(pParams->pOwner,
+                                         pParams->pObserver, 
+                                         pParams->pPeFile->pImpl->dianaMode, 
+                                         i, 
+                                         pParams->pPeFile->pImpl->sizeOfFile,
+                                         pParams->pStack,
+                                         DI_ANALYSE_BREAK_ON_INVALID_CMD));
+        }
+    }
     return DI_SUCCESS;
 }
 
@@ -232,19 +252,6 @@ int Diana_PE_AnalyzePE(Diana_PeFile * pPeFile,
 }
 
 
-typedef struct _DianaMovableReadStreamOverMemory
-{
-    DianaMovableReadStream stream;
-    DianaMemoryStream memoryStream;
-}DianaMovableReadStreamOverMemory;
-
-typedef struct _DianaAnalyzeObserverOverMemory
-{
-    DianaAnalyzeObserver parent;
-    DianaMovableReadStreamOverMemory stream;
-}DianaAnalyzeObserverOverMemory;
-
-
 int DianaMovableReadStreamOverMemory_MoveTo(void * pThis, OPERAND_SIZE offset)
 {
     DianaMovableReadStreamOverMemory * pStream = pThis;
@@ -266,10 +273,19 @@ int DianaMovableReadStreamOverMemory_RandomRead(void * pThis,
                                                 OPERAND_SIZE offset,
                                                 void * pBuffer, 
                                                 int iBufferSize, 
-                                                OPERAND_SIZE * readBytes)
+                                                OPERAND_SIZE * readBytes,
+                                                int flags)
 {
     DianaMovableReadStreamOverMemory * pStream = pThis;
-    return DianaMemoryStream_RandomRead(&pStream->memoryStream.parent, offset, pBuffer, iBufferSize, readBytes);
+    if (flags & DIANA_ANALYZE_RANDOM_READ_ABSOLUTE)
+    {
+        return DI_END_OF_STREAM;
+    }
+    return DianaMemoryStream_RandomRead(&pStream->memoryStream.parent, 
+                                        offset, 
+                                        pBuffer, 
+                                        iBufferSize, 
+                                        readBytes);
 }
                                            
 void DianaMovableReadStreamOverMemory_Init(DianaMovableReadStreamOverMemory * pThis,

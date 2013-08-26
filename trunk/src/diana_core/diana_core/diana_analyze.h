@@ -111,10 +111,13 @@ int Diana_AnalyzeCode(Diana_InstructionsOwner * pOwner,
 Diana_XRef * Diana_CastXREF(Diana_ListNode * pNode,
                             int index);
 
+#define DI_ANALYSE_BREAK_ON_INVALID_CMD   1
+
 int Diana_AnalyzeCodeEx(Diana_InstructionsOwner * pOwner,
                         DianaAnalyzeObserver * pObserver,
                         int mode,
                         OPERAND_SIZE initialOffset,
                         OPERAND_SIZE maxOffset,
-                        Diana_Stack * pStack);
+                        Diana_Stack * pStack,
+                        int flags);
 #endif

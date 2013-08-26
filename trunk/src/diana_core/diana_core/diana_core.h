@@ -323,11 +323,13 @@ int DianaExactRead(DianaReadStream * pThis,
 // pseudo random streams
 typedef int (* DianaAnalyzeMoveTo_fnc)(void * pThis, OPERAND_SIZE offset);
 
+#define DIANA_ANALYZE_RANDOM_READ_ABSOLUTE  1
 typedef int (* DianaAnalyzeRandomRead_fnc)(void * pThis, 
                                            OPERAND_SIZE offset,
                                            void * pBuffer, 
                                            int iBufferSize, 
-                                           OPERAND_SIZE * readed);
+                                           OPERAND_SIZE * readBytes,
+                                           int flags);
 
 typedef struct _dianaMovableReadStream
 {
