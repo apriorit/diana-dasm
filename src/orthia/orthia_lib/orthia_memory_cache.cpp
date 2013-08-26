@@ -15,6 +15,26 @@ CMemoryCache::CMemoryCache(IMemoryReader * pReader,
     
 
 void CMemoryCache::Init(Address_type regionAddress,
+                          Address_type size)
+{
+   if (!size)
+        return;
+
+    if (size >= SIZE_MAX)
+        throw std::runtime_error("Internal error: size too big");
+    m_regionData.resize((size_t)size);
+    
+    m_regionAddress = regionAddress;
+    m_regionSize = m_regionData.size();
+    
+    Address_type bytesRead = 0;
+    m_pReader->Read(m_regionAddress, 
+                    m_regionSize, 
+                    &m_regionData.front(), 
+                    &bytesRead,
+                    ORTHIA_MR_FLAG_READ_THROUGH);
+}
+void CMemoryCache::Init(Address_type regionAddress,
                           Address_type size,
                           DIANA_IMAGE_SECTION_HEADER * pCapturedSections,
                           int capturedSectionCount)
@@ -39,21 +59,28 @@ void CMemoryCache::Init(Address_type regionAddress,
         m_pReader->Read(m_regionAddress + section.VirtualAddress, 
                         section.Misc.VirtualSize, 
                         section.VirtualAddress + &m_regionData.front(), 
-                        &bytesRead);
+                        &bytesRead,
+                        ORTHIA_MR_FLAG_READ_THROUGH);
     }
 }
     
 void CMemoryCache::Read(Address_type offset, 
                         Address_type bytesToRead,
                         void * pBuffer,
-                        Address_type * pBytesRead)
+                        Address_type * pBytesRead,
+                        int flags)
 {
     *pBytesRead = 0;
+    if (flags & ORTHIA_MR_FLAG_READ_ABSOLUTE)
+    {
+        m_pReader->Read(offset, bytesToRead, pBuffer, pBytesRead, flags);
+        return;
+    }
     // it gets relative addresses!!!!
     offset += m_regionAddress;
     if (!m_regionSize)
     {
-        m_pReader->Read(offset, bytesToRead, pBuffer, pBytesRead);
+        m_pReader->Read(offset, bytesToRead, pBuffer, pBytesRead, flags);
         return;
     }
 

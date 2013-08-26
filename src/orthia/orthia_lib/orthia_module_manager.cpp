@@ -31,6 +31,33 @@ void CModuleManager::UnloadModule(Address_type offset)
 {
     m_pDatabaseManager->GetDatabase()->UnloadModule(offset, false);
 }
+
+void CModuleManager::ReloadRange(Address_type offset,
+                                 Address_type size,
+                                 IMemoryReader * pMemoryReader,
+                                 int mode)
+{
+    std::wstringstream regionName;
+    std::hex(regionName);
+    regionName<<L"region_"<<offset<<"_"<<size;
+
+    CDianaModule module;
+    module.InitRaw(offset, size, pMemoryReader, mode);
+
+    if (m_pDatabaseManager->GetDatabase()->IsModuleExists(offset))
+    {
+        std::stringstream errorStream;
+        std::hex(errorStream);
+        errorStream<<"The region already exists: "<<offset;
+        throw std::runtime_error(errorStream.str());
+    }
+
+    module.Analyze();
+
+    CDatabaseSaver fileSaver;
+    fileSaver.Save(module, *m_pDatabaseManager, regionName.str());
+}
+
 void CModuleManager::ReloadModule(Address_type offset,
                                   IMemoryReader * pMemoryReader,
                                   bool bForce,

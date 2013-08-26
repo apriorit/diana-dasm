@@ -65,11 +65,16 @@ int DianaAnalyzeRandomRead(void * pThis,
                        OPERAND_SIZE offset,
                        void * pBuffer, 
                        int iBufferSize, 
-                       OPERAND_SIZE * readBytes)
+                       OPERAND_SIZE * readBytes,
+                       int flags)
 {
     TestStream * pStream = (TestStream * )pThis;
     int sizeToGive = 0;
     
+    if (flags & DIANA_ANALYZE_RANDOM_READ_ABSOLUTE)
+    {
+        return DI_END_OF_STREAM;
+    }
     if (offset >= pStream->m_size)
     {
         return DI_END_OF_STREAM;

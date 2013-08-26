@@ -35,6 +35,8 @@ int Diana_Stack_Pop(Diana_Stack * pStack,
                     void * pData
                     );
 
+void Diana_Stack_Clear(Diana_Stack * pStack);
+
 void * Diana_Stack_GetTopPtr(Diana_Stack * pStack);
 
 #endif

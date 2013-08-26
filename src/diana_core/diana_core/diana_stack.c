@@ -88,6 +88,18 @@ int Diana_Stack_Pop(Diana_Stack * pStack,
     return DI_SUCCESS;
 
 }
+void Diana_Stack_Clear(Diana_Stack * pStack)
+{
+    for(;;)
+    {
+        char * pDataPlace = Diana_Stack_GetTopPtr(pStack);
+        if (!pDataPlace)
+            return;
+
+        pStack->m_pCurrentBlock->m_curSizeInBytes -= pStack->m_dataSize;
+        --pStack->m_count;
+    }
+}
 void * Diana_Stack_GetTopPtr(Diana_Stack * pStack)
 {
     char * pDataPlace = 0;

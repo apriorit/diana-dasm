@@ -6,13 +6,16 @@
 namespace orthia
 {
 
+#define ORTHIA_MR_FLAG_READ_THROUGH   1
+#define ORTHIA_MR_FLAG_READ_ABSOLUTE   2
 struct IMemoryReader
 {
     virtual ~IMemoryReader(){}
     virtual void Read(Address_type offset, 
                       Address_type bytesToRead,
                       void * pBuffer,
-                      Address_type * pBytesRead)=0;
+                      Address_type * pBytesRead,
+                      int flags)=0;
 };
 
 class CMemoryReader:public IMemoryReader
@@ -24,8 +27,14 @@ public:
     virtual void Read(Address_type offset, 
                       Address_type bytesToRead,
                       void * pBuffer,
-                      Address_type * pBytesRead)
+                      Address_type * pBytesRead,
+                      int flags)
     {
+        *pBytesRead = 0;
+        if (flags & ORTHIA_MR_FLAG_READ_ABSOLUTE)
+        {
+            return;
+        }
         void * realAddress = (void *)(offset);
         memcpy(pBuffer, realAddress, (size_t)bytesToRead);
         *pBytesRead = (size_t)bytesToRead;

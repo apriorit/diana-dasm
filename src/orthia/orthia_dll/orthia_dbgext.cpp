@@ -169,3 +169,91 @@ bool DbgExt_GetNameByOffset(ULONG64 offset,
     }
     return true;
 }
+
+void DbgExt_ReadThrough(ULONG64 offset, 
+                        ULONG64 bytesToRead,
+                        void * pBuffer)
+{
+    ULONG bytes = 0; 
+    IDebugDataSpaces4 * pSpaces = 0;
+    HRESULT status = g_ExtClient->QueryInterface(__uuidof(IDebugDataSpaces4), (PVOID*)&pSpaces);
+    if (!SUCCEEDED(status))
+    {
+        ReadMemory(offset, 
+                       pBuffer, 
+                       (ULONG)bytesToRead,
+                        &bytes);
+        return;
+    }
+
+    ULONG64 base = offset;
+    ULONG64 lastBytesToRead = bytesToRead;
+    while(lastBytesToRead)
+    {
+        ULONG size =0;
+        if (!SUCCEEDED(pSpaces->GetValidRegionVirtual(base,
+                                        (ULONG)lastBytesToRead,
+                                        &base,
+                                        &size)))
+        {
+            break;
+        }
+        ULONG64 validSize = size;
+        if (base < offset)
+        {
+            validSize = size - (offset-base);
+            base = offset;
+        }
+        if (base - offset >= bytesToRead)
+        {
+            break;
+        }
+        if (validSize > offset - base + bytesToRead)
+        {
+            validSize = offset - base + bytesToRead;
+        }
+        bytes = 0;
+        if (!validSize)
+        {
+            break;
+        }
+        if (!ReadMemory(base, 
+                       (char*)pBuffer+base-offset, 
+                       (ULONG)validSize,
+                        &bytes))
+        {
+            break;
+        }
+        if (bytes != validSize)
+            break;
+        base += validSize;
+        lastBytesToRead = offset - base + bytesToRead;
+    }
+
+    pSpaces->Release();
+}
+
+
+ULONG64 DbgExt_GetRegionSize(ULONG64 offset)
+{
+    ULONG bytes = 0; 
+    IDebugDataSpaces4 * pSpaces = 0;
+    HRESULT status = g_ExtClient->QueryInterface(__uuidof(IDebugDataSpaces4), (PVOID*)&pSpaces);
+    if (!SUCCEEDED(status))
+    {
+        return 0;
+    }
+
+    ULONG64 base = offset;
+    ULONG size =0;
+    pSpaces->GetValidRegionVirtual(offset,
+                                    0x1000000,
+                                    &base,
+                                    &size);
+    if (base != offset)
+    {
+        return 0;
+    }
+    pSpaces->Release();
+    return size;
+}

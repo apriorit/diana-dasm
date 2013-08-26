@@ -41,6 +41,12 @@ bool DbgExt_GetNameByOffset(ULONG64 offset,
                             PULONG pResultNameSize,
                             ULONG64 * pDisplacement);
 
+void DbgExt_ReadThrough(ULONG64 offset, 
+                        ULONG64 bytesToRead,
+                        void * pBuffer);
+
+ULONG64 DbgExt_GetRegionSize(ULONG64 offset);
+
 void
 ExtRelease(void);
 

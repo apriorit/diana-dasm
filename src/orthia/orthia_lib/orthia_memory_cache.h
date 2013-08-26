@@ -23,11 +23,13 @@ public:
               Address_type size,
               _DIANA_IMAGE_SECTION_HEADER * pCapturedSections,
               int capturedSectionCount);
-
+    void Init(Address_type regionAddress,
+              Address_type size);
     virtual void Read(Address_type offset, 
                       Address_type bytesToRead,
                       void * pBuffer,
-                      Address_type * pBytesRead);
+                      Address_type * pBytesRead,
+                      int flags);
 
 };
 
