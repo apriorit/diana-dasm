@@ -8,6 +8,7 @@ extern "C"
 #include "test_common.h"
 #include "string.h"
 
+#include "diana_core_cpp.h"
 static unsigned char mov[] = {0x66, 0x8C, 0xCC};          // mov         sp,cs 
 static unsigned char mov1[] = {0x66, 0x8C, 0xD3};         // mov         bx,ss 
 static unsigned char mov2[] = {0x3E, 0xA2, 0x34, 0x12, 0x00, 0x00}; // mov         byte ptr ds:[00001234h],al 
@@ -76,7 +77,6 @@ static void test_mov2_impl()
         TEST_ASSERT(result.linkedOperands[1].type == diana_register);
         TEST_ASSERT(result.linkedOperands[1].value.recognizedRegister == reg_AL);
     }
-
     //static unsigned char mov3[] = {0x36, 0xA3, 0x34, 0x12, 0x00, 0x00}; // mov         dword ptr ss:[00001234h],eax 
     iRes = Diana_ParseCmdOnBuffer_test(DIANA_MODE32,mov3, sizeof(mov3), Diana_GetRootLine(), &result, &read);
     TEST_ASSERT_IF(!iRes)

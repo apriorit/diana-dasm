@@ -357,6 +357,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_text_output_masm.c"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_uids.c"
 				>
 			</File>
@@ -448,6 +452,10 @@
 			</File>
 			<File
 				RelativePath=".\diana_tables_common.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_text_output_masm.h"
 				>
 			</File>
 			<File

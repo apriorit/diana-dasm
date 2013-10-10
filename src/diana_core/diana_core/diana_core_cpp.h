@@ -5,13 +5,13 @@ extern "C"
 {
 #include "diana_core.h"
 #include "diana_pe.h"
-
+#include "diana_text_output_masm.h"
 }
 #include "stdexcept"
 #include "sstream"
 #include "string"
 #include "algorithm"
-
+#include "vector"
 namespace diana
 {
 
@@ -94,6 +94,38 @@ struct InstructionsOwner
 #define DIANA_DEF_ERR_STRING    "DiException"
 #define DI_CHECK_CPP2(di____Expression, di____ErrorString) { int di____status = (di____Expression); if (di____status) { throw diana::CException(di____status, di____ErrorString); } }
 #define DI_CHECK_CPP(di____Expression) DI_CHECK_CPP2(di____Expression, DIANA_DEF_ERR_STRING)
+
+
+class CMasmString
+{
+    std::vector<char> m_buffer;
+    DianaStringOutputContext m_context;
+    CMasmString(const CMasmString&);
+    CMasmString&operator = (const CMasmString&);
+public:
+    CMasmString(int maxSize = 1024, 
+                int spacesCount = 1)
+        :
+            m_buffer(maxSize)
+    {
+        DianaStringOutputContext_Init(&m_context, 
+                                      DianaTextOutput_String, 
+                                      DianaOpOutput_String, 
+                                      spacesCount,
+                                      &m_buffer.front(), 
+                                      m_buffer.size());
+    }
+    ~CMasmString()
+    {
+    }
+    const char * Assign(DianaParserResult * pResult, 
+                        OPERAND_SIZE instructionRIP)
+    {
+        DI_CHECK_CPP(DianaTextOutputContext_TextOut(&m_context.parent, pResult, instructionRIP));
+        return &m_buffer.front();
+    }
+};
+
 }
 
 #endif
