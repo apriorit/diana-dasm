@@ -152,6 +152,9 @@
 				RelativePath=".\test_lea.cpp">
 			</File>
 			<File
+				RelativePath=".\test_masm1.cpp">
+			</File>
+			<File
 				RelativePath=".\test_mov.cpp">
 			</File>
 			<File

@@ -2,6 +2,8 @@ extern "C"
 {
 #include "diana_streams.h"
 #include "diana_gen.h"
+#include "diana_c_runtime.inc"
+
 }
 #include "test_push.h"
 #include "test_mov.h"
@@ -24,7 +26,7 @@ extern "C"
 #include "test_stack.h"
 #include "test_new.h"
 
-
+void test_masm1();
 int main()
 {
     Diana_Init();    
@@ -49,5 +51,6 @@ int main()
     test_or();
     test_suxx();
     test_integrated();
+    test_masm1();
     return 0;
 }

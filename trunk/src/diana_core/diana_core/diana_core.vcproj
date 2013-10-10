@@ -135,6 +135,9 @@
 				RelativePath=".\diana_pe.c">
 			</File>
 			<File
+				RelativePath=".\diana_pe_analyzer.c">
+			</File>
+			<File
 				RelativePath=".\diana_stack.c">
 			</File>
 			<File
@@ -153,6 +156,9 @@
 				RelativePath=".\diana_tables_common.c">
 			</File>
 			<File
+				RelativePath=".\diana_text_output_masm.c">
+			</File>
+			<File
 				RelativePath=".\diana_uids.c">
 			</File>
 		</Filter>
@@ -167,7 +173,19 @@
 				RelativePath=".\diana_analyze.h">
 			</File>
 			<File
+				RelativePath=".\diana_c_runtime.inc">
+			</File>
+			<File
+				RelativePath=".\diana_commands.h">
+			</File>
+			<File
+				RelativePath=".\diana_config.h">
+			</File>
+			<File
 				RelativePath=".\diana_core.h">
+			</File>
+			<File
+				RelativePath=".\diana_core_cpp.h">
 			</File>
 			<File
 				RelativePath=".\diana_core_gen_tags.h">
@@ -194,6 +212,9 @@
 				RelativePath=".\diana_pe.h">
 			</File>
 			<File
+				RelativePath=".\diana_pe_analyzer.h">
+			</File>
+			<File
 				RelativePath=".\diana_pe_defs.h">
 			</File>
 			<File
@@ -213,6 +234,9 @@
 			</File>
 			<File
 				RelativePath=".\diana_tables_common.h">
+			</File>
+			<File
+				RelativePath=".\diana_text_output_masm.h">
 			</File>
 			<File
 				RelativePath=".\diana_uids.h">
