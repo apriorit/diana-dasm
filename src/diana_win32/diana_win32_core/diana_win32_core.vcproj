@@ -163,6 +163,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_win32_ehook.c"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_win32_exceptions.c"
 				>
 			</File>
@@ -198,6 +202,10 @@
 			</File>
 			<File
 				RelativePath=".\diana_win32_core_init.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_win32_ehook.h"
 				>
 			</File>
 			<File
