@@ -7,6 +7,7 @@ void test_streams();
 void test_processor1();
 void test_processor2();
 void test_processor3();
+void test_processor4();
 void test_patchers();
 
 #include "iostream"
@@ -35,6 +36,7 @@ int main()
     test_patchers();
     test_streams();
 
+    test_processor4();
     if(!IsWow64())
     {
         // TEMPORARY FIX: emulator conflicts with MS emulator

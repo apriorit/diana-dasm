@@ -198,6 +198,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\test_processor4.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\test_streams.cpp"
 				>
 			</File>
