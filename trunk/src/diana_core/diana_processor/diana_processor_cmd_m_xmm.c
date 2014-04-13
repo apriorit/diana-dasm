@@ -3,6 +3,84 @@
 #include "diana_gen.h"
 #include "diana_processor_cmd_internal_xmm.h"
 
+
+int Diana_Call_pandn(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    DI_DEF_LOCAL_XMM(dest)
+    DI_DEF_LOCAL_XMM(src)
+    DI_MEM_GET_DEST_XMM(dest)
+    DI_MEM_GET_SRC_XMM(src)
+
+    {
+        int i;
+        for(i = 0; i < dest_size; ++i)
+        {
+            dest.u8[i] &= ~(src.u8[i]);
+        }
+    }
+
+    DI_MEM_SET_DEST_XMM(dest)
+    DI_PROC_END
+}
+int Diana_Call_pand(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    DI_DEF_LOCAL_XMM(dest)
+    DI_DEF_LOCAL_XMM(src)
+    DI_MEM_GET_DEST_XMM(dest)
+    DI_MEM_GET_SRC_XMM(src)
+
+    {
+        int i;
+        for(i = 0; i < dest_size; ++i)
+        {
+            dest.u8[i] &= src.u8[i];
+        }
+    }
+
+    DI_MEM_SET_DEST_XMM(dest)
+    DI_PROC_END
+}
+int Diana_Call_por(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    DI_DEF_LOCAL_XMM(dest)
+    DI_DEF_LOCAL_XMM(src)
+    DI_MEM_GET_DEST_XMM(dest)
+    DI_MEM_GET_SRC_XMM(src)
+
+    {
+        int i;
+        for(i = 0; i < dest_size; ++i)
+        {
+            dest.u8[i] |= src.u8[i];
+        }
+    }
+
+    DI_MEM_SET_DEST_XMM(dest)
+    DI_PROC_END
+}
+int Diana_Call_pxor(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext)
+{
+    DI_DEF_LOCAL_XMM(dest)
+    DI_DEF_LOCAL_XMM(src)
+    DI_MEM_GET_DEST_XMM(dest)
+    DI_MEM_GET_SRC_XMM(src)
+
+    {
+        int i;
+        for(i = 0; i < dest_size; ++i)
+        {
+            dest.u8[i] ^= src.u8[i];
+        }
+    }
+
+    DI_MEM_SET_DEST_XMM(dest)
+    DI_PROC_END
+}
+
 int Diana_Call_movups(struct _dianaContext * pDianaContext,
                       DianaProcessor * pCallContext)
 {

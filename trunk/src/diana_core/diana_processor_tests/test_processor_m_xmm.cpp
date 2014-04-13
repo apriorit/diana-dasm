@@ -364,6 +364,28 @@ static void test_processor_movddup_2()
     TEST_ASSERT(0x0807060504030201ULL == xmm0.u64[1]);
 }
 
+
+static void test_processor_pxor()
+{
+    // pxor    xmm0,xmm0
+    unsigned char code[] = {0x66, 0x0f, 0xef, 0xc0};
+
+    CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE32);
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    DianaRegisterXMM_type xmm0 = {0};
+    xmm0.u64[0] = 0x1111111111111111ULL;
+    xmm0.u64[1] = 0x1111111111111111ULL;
+
+    SET_REG_XMM0(xmm0);
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+
+    xmm0 = GET_REG_XMM0;
+    TEST_ASSERT(xmm0.u64[0] == 0);
+    TEST_ASSERT(xmm0.u64[1] == 0);
+}
+
 void test_processor_m_xmm()
 {
     DIANA_TEST(test_processor_movups());
@@ -387,4 +409,6 @@ void test_processor_m_xmm()
 
     DIANA_TEST(test_processor_movddup());
     DIANA_TEST(test_processor_movddup_2());
+
+    DIANA_TEST(test_processor_pxor());
 }

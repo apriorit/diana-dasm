@@ -7,6 +7,22 @@
 #include "diana_processor_impl_init.h"
 #include "diana_processor_specific.h"
 
+DianaRegInfo * DianaProcessor_FPU_QueryReg(DianaProcessor * pThis, 
+                                           DianaUnifiedRegister reg)
+{
+    int index = 0;
+    DianaUnifiedRegister realRegister;
+    if (reg < reg_fpu_ST0 || reg > reg_fpu_ST7)
+    {
+        Diana_FatalBreak();
+        return 0;
+    }
+
+    index = reg - reg_fpu_ST0;
+    realRegister = reg_fpu_ST0 + ((pThis->m_fpu.stackTop + index) & 7);
+    return pThis->m_registers + realRegister;
+}
+
 DianaRegInfo * DianaProcessor_QueryReg(DianaProcessor * pThis, 
                                        DianaUnifiedRegister reg)
 {
@@ -393,10 +409,16 @@ int DianaProcessor_SetGetOperand(struct _dianaContext * pDianaContext,
             break;
         case diana_rel:
             break;
-
+        case diana_memory:
+            return Diana_ProcessorSetGetOperand_index(pDianaContext,
+                                                      pCallContext,
+                                                      pLinkedOp->usedSize,
+                                                      pResult,
+                                                      bSet,
+                                                      &pLinkedOp->value.memory.m_index,
+                                                      flags);
             // this is command-specific stuff
         case diana_none:
-        case diana_memory:
         case diana_reserved_reg:
         default:
             Diana_FatalBreak();
@@ -718,3 +740,136 @@ int DianaProcessor_QueryRcxRegister(int size,
     }
     return DI_SUCCESS;
 }
+
+
+int Diana_QueryAddress(struct _dianaContext * pDianaContext,
+                           DianaProcessor * pCallContext, 
+                           int argument,
+                           OPERAND_SIZE * pSelector,
+                           OPERAND_SIZE * pAddress,
+                           DianaUnifiedRegister * pSeg_reg)
+{
+    DianaRmIndex * pIndex = 0;
+    if (pCallContext->m_result.iLinkedOpCount <= argument)
+    {
+        Diana_FatalBreak();
+        return DI_ERROR;
+    }
+
+    if (pCallContext->m_result.linkedOperands[argument].type == diana_index)
+    {
+        pIndex = &pCallContext->m_result.linkedOperands[argument].value.rmIndex;
+    }
+    else
+    if (pCallContext->m_result.linkedOperands[argument].type == diana_memory)
+    {
+        pIndex = &pCallContext->m_result.linkedOperands[argument].value.memory.m_index;
+    }
+    else
+    {
+        return DI_ERROR;
+    }    
+
+    DI_CHECK(DianaProcessor_CalcIndex(pDianaContext,
+                                      pCallContext,
+                                      pIndex,
+                                      pSelector,
+                                      pAddress));
+    *pSeg_reg = pIndex->seg_reg;
+    return DI_SUCCESS;
+}
+
+int Diana_WriteRawBufferToArgMem(struct _dianaContext * pDianaContext,
+                           DianaProcessor * pCallContext, 
+                           int argument,
+                           void * pBuffer,
+                           OPERAND_SIZE size,
+                           OPERAND_SIZE * doneBytes,
+                           int flags)
+{
+
+    DianaUnifiedRegister segReg = reg_DS;
+    OPERAND_SIZE selector = 0;
+    OPERAND_SIZE address = 0;
+
+    DI_CHECK(Diana_QueryAddress(pDianaContext, 
+                           pCallContext,
+                           argument,
+                           &selector,
+                           &address,
+                           &segReg));
+                    
+    DI_CHECK(DianaProcessor_WriteMemory(pCallContext, 
+                               selector,
+                               address,
+                               pBuffer,
+                               size,
+                               doneBytes,
+                               flags,
+                               segReg));
+
+    if (*doneBytes != size)
+        return DI_PARTIAL_READ_WRITE;
+
+    return DI_SUCCESS;
+}
+
+int Diana_ReadRawBufferFromArgMem(struct _dianaContext * pDianaContext,
+                           DianaProcessor * pCallContext, 
+                           int argument,
+                           void * pBuffer,
+                           OPERAND_SIZE size,
+                           OPERAND_SIZE * doneBytes,
+                           int flags)
+{
+
+    DianaUnifiedRegister segReg = reg_DS;
+    OPERAND_SIZE selector = 0;
+    OPERAND_SIZE address = 0;
+
+    DI_CHECK(Diana_QueryAddress(pDianaContext, 
+                           pCallContext,
+                           argument,
+                           &selector,
+                           &address,
+                           &segReg));
+                    
+    DI_CHECK(DianaProcessor_ReadMemory(pCallContext, 
+                               selector,
+                               address,
+                               pBuffer,
+                               size,
+                               doneBytes,
+                               flags,
+                               segReg));
+
+    if (*doneBytes != size)
+        return DI_PARTIAL_READ_WRITE;
+
+    return DI_SUCCESS;
+}
+
+/// FPU
+int Diana_FPU_CheckExceptions(DianaProcessor * pCallContext)
+{
+    if(pCallContext->m_fpu.statusWord & DI_FPU_SW_SUMMARY)
+    {
+        return DI_INTERRUPT;
+    }
+    return DI_SUCCESS;
+}
+
+DI_UINT16 Diana_FPU_QueryStatusWord(DianaProcessor * pCallContext) 
+{
+    return ((pCallContext->m_fpu.stackTop << 11) & DI_FPU_SW_TOP)|(pCallContext->m_fpu.statusWord & DI_FPU_SW_NO_TOP);
+}
+
+int Diana_FPU_CheckFPU(DianaProcessor * pCallContext, int bIgnoreExceptions)
+{
+    if (!bIgnoreExceptions)
+    {
+        DI_CHECK(Diana_FPU_CheckExceptions(pCallContext));
+    }
+    return DI_SUCCESS;
+}
+

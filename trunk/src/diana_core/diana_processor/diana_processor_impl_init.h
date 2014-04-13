@@ -296,11 +296,17 @@ void DianaProcessor_SetResetDefaultFlags(DianaProcessor * pThis)
     DianaProcessor_ClearFlag(pThis, flag_15);
 }
 
+void DianaProcessor_ResetFPU(DianaProcessor * pThis)
+{
+    memset(&pThis->m_fpu, 0, sizeof(pThis->m_fpu));
+    pThis->m_fpu.controlWord = 0x037F;
+}
 int DianaProcessor_InitProcessorImpl(DianaProcessor * pThis)
 {
     // tune rflags
     DianaProcessor_SetResetDefaultFlags(pThis);
 
+    DianaProcessor_ResetFPU(pThis);
     pThis->m_registersVectorSize = DI_REG_INIT_VALUE;
     pThis->m_pRegistersVector = pThis->m_pAllocator->m_alloc(pThis->m_pAllocator, DI_REG_INIT_VALUE);
     DI_CHECK_ALLOC(pThis->m_pRegistersVector);

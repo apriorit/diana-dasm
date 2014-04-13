@@ -9,6 +9,7 @@ void test_processor2();
 void test_processor3();
 void test_processor4();
 void test_patchers();
+void test_processor_fpu();
 
 #include "iostream"
 
@@ -36,6 +37,7 @@ int main()
     test_patchers();
     test_streams();
 
+    test_processor_fpu();
     test_processor4();
     if(!IsWow64())
     {

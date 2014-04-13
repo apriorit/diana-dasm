@@ -404,7 +404,7 @@ void Diana_AllocatorInit(Diana_Allocator * pAllocator,
     pAllocator->m_patch = patch;
 }
 
-void Diana_OnError(int code)
+int Diana_OnError(int code)
 {
-    &code;
+    return code;
 }

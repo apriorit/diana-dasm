@@ -202,6 +202,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\test_processor_fpu.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\test_streams.cpp"
 				>
 			</File>

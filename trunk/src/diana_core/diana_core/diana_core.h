@@ -70,18 +70,25 @@ typedef enum
 #define DI_FLAG_CMD_MUST_BE_ALIGNED         0x00020000
 
 // index fields
-#define DI_UINT16         unsigned short
+#define DI_INT8           signed char
 #define DI_INT16          short
 #define DI_INT32          int
 #define DI_INT64          long long
+
+#define DI_UINT8          unsigned char
+#define DI_UINT16         unsigned short
 #define DI_UINT32         unsigned int
 #define DI_UINT64         unsigned long long
+
 #define DI_CHAR           unsigned char
 #define DI_SIGNED_CHAR    char
 #define DI_CHAR_NULL      ((unsigned char)(-1))
 
 #define OPERAND_SIZE         unsigned long long
 #define OPERAND_SIZE_SIGNED  long long
+
+#define DI_OPERAND_SIZE         unsigned long long
+#define DI_OPERAND_SIZE_SIGNED  long long
 
 #define DI_FULL_CHAR           unsigned int
 #define DI_FULL_CHAR_NULL      ((unsigned int)(-1))
@@ -94,6 +101,7 @@ typedef enum
 #define DI_MAX_INSTRUCTION_SIZE 15
 #define DI_MAX_PREFIXES_COUNT DI_MAX_INSTRUCTION_SIZE-1
 
+#define DI_CONST64(x)  (x##LL)
 // common
 void Diana_DispatchSIB(unsigned char sib, int * pSS, int *pIndex, int *pBase);
 DI_CHAR Diana_GetReg(unsigned char postbyte);
@@ -284,6 +292,8 @@ typedef struct _dianaParserResult
 #define DI_INVALID_OPCODE           ((int)-10)
 #define DI_END_OF_STREAM            ((int)-11)
 #define DI_GP                       ((int)-12)
+#define DI_INTERRUPT                ((int)-13)
+#define DI_PARTIAL_READ_WRITE       ((int)-14)
 
 #define DI_SUCCESS ((int)0)
 
@@ -455,7 +465,7 @@ void Diana_AllocatorInit(Diana_Allocator * pAllocator,
 
 void Diana_CacheEatOneSafe(DianaContext * pContext);
 
-void Diana_OnError(int code);
+int Diana_OnError(int code);
 #define DIANA_CONTAINING_RECORD(address, type, field) ((type *)( \
                                                   (char*)(address) - \
                                                   (size_t)(&((type *)0)->field)))
