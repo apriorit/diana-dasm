@@ -23,7 +23,6 @@ extern "C"
 #include "test_processor_m_xmm.h"
 
 void di_gen();
-
 int main()
 {
     Diana_Init();

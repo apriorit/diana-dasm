@@ -36,7 +36,55 @@ typedef struct _DianaRegInfo
 #define flag_VIF        0x080000
 #define flag_VIP        0x100000
 #define flag_ID         0x200000
+
+// FPU flags
+#define DI_FPU_SW_BACKWARD		0x8000  //  backward compatibility 
+#define DI_FPU_SW_C3	 	    0x4000  //  condition bit 3 
+#define DI_FPU_SW_TOP		    0x3800  //  top of stack 
+#define DI_FPU_SW_C2		    0x0400  //  condition bit 2 
+#define DI_FPU_SW_C1		    0x0200  //  condition bit 1 
+#define DI_FPU_SW_C0		    0x0100  //  condition bit 0 
+#define DI_FPU_SW_SUMMARY   	0x0080  //  exception summary 
+#define DI_FPU_SW_STACK_FAULT	0x0040  //  stack fault 
+#define DI_FPU_SW_PRECISION  	0x0020  //  loss of precision 
+#define DI_FPU_SW_UNDERDLOW   	0x0010  //  underflow 
+#define DI_FPU_SW_OVERDLOW    	0x0008  //  overflow 
+#define DI_FPU_SW_ZERO_DIV    	0x0004  //  divide by zero 
+#define DI_FPU_SW_DENORMAL_OP   0x0002  //  denormalized operand 
+#define DI_FPU_SW_INVALID    	0x0001  //  invalid operation 
+#define DI_FPU_SW_CC            (DI_FPU_SW_C0|DI_FPU_SW_C1|DI_FPU_SW_C2|DI_FPU_SW_C3)
+
+#define DI_FPU_SW_NO_TOP		   (~DI_FPU_SW_TOP)
+#define DI_FPU_SW_ALL_EXCEPTIONS     0x027f
+
+
+#define DI_FPU_CW_RESERVED_BITS      0xe0c0  // reserved bits 
+#define DI_FPU_CW_INF                0x1000  // infinity control, legacy 
+#define DI_FPU_CW_ROUNDING_CONTROL	 0x0C00  // rounding control 
+#define DI_FPU_CW_PRECISION_CONTROL  0x0300  // precision control 
+#define DI_FPU_CW_RESERVED_40        0x0040  // reserved as 1
+#define DI_FPU_CW_PRECISION          0x0020  // loss of precision mask 
+#define DI_FPU_CW_UNDERFLOW          0x0010  // underflow mask 
+#define DI_FPU_CW_OVERFLOW	         0x0008  // overflow mask 
+#define DI_FPU_CW_ZERO_DIV	         0x0004  // divide by zero mask 
+#define DI_FPU_CW_DENORMAL	         0x0002  // denormalized operand mask 
+#define DI_FPU_CW_INVALID	         0x0001  // invalid operation mask 
+#define DI_FPU_CW_ALL_EXCEPTIONS     0x003f  
+
+
+#define DI_FPU_EX_PRECISION	        0x0020  // loss of precision
+#define DI_FPU_EX_UNDERFLOW         0x0010  // underflow
+#define DI_FPU_EX_OVERFLOW          0x0008  // overflow
+#define DI_FPU_EX_ZERO_DIV          0x0004  // divide by zero
+#define DI_FPU_EX_DENORMAL          0x0002  // denormalized operand
+#define DI_FPU_EX_INVALID           0x0001  // invalid operation
+#define DI_FPU_EX_STACK_OVERFLOW    (0x0041|DI_FPU_SW_C1) 	// stack overflow
+#define DI_FPU_EX_STACK_UNDERFLOW   0x0041		// stack underflow
+
+
+
 //RFLAGS
+
 
 #pragma warning( push )
 #pragma warning( disable : 4201 ) // nonstandard extension used : nameless struct/union
@@ -124,6 +172,16 @@ typedef struct _dianaProcessorFirePoint
     FireAction_type action;
 }DianaProcessorFirePoint;
 
+
+#define DI_PROCESSOR_FPU_REGISTER_BUSY    1
+typedef struct _dianaFPU
+{
+    DI_UINT16 controlWord; // control word
+    DI_UINT16 statusWord; // status word
+    DI_CHAR stackTop;
+    DI_CHAR registerFlags[8];
+}DianaFPU;
+
 #define DIANA_PROCESSOR_MAX_FIRE_POINTS     10
 typedef struct _dianaProcessor
 {
@@ -148,6 +206,8 @@ typedef struct _dianaProcessor
 
     DianaProcessorFirePoint m_firePoints[DIANA_PROCESSOR_MAX_FIRE_POINTS];
     int m_firePointsCount;
+
+    DianaFPU m_fpu;
 }DianaProcessor;
 
 #define UPDATE_PSZ(X, highMask) \
@@ -363,6 +423,10 @@ int DianaProcessor_QueryRcxRegister(int size,
 
 //----
 // MEMORY ACCESS MACROSES
+#define DI_DEF_LOCAL_1(X) \
+    OPERAND_SIZE X = 0; \
+    int X##_size = 0;
+//---
 #define DI_DEF_LOCAL(X) \
     OPERAND_SIZE oldDestValue = 0;\
     OPERAND_SIZE X = 0; \
@@ -503,5 +567,36 @@ int DianaProcessor_QueryRcxRegister(int size,
 
 #define DI_SIGN_EXTEND(variable, newSize) \
     DI_CHECK(DianaProcessor_SignExtend(&variable, DI_VAR_SIZE(variable), newSize));
+
+
+
+int Diana_QueryAddress(struct _dianaContext * pDianaContext,
+                           DianaProcessor * pCallContext, 
+                           int argument,
+                           OPERAND_SIZE * pSelector,
+                           OPERAND_SIZE * pAddress,
+                           DianaUnifiedRegister * pSeg_reg);
+
+int Diana_WriteRawBufferToArgMem(struct _dianaContext * pDianaContext,
+                           DianaProcessor * pCallContext, 
+                           int argumentNumber,
+                           void * pBuffer,
+                           OPERAND_SIZE size,
+                           OPERAND_SIZE * doneBytes,
+                           int flags);
+
+int Diana_ReadRawBufferFromArgMem(struct _dianaContext * pDianaContext,
+                           DianaProcessor * pCallContext, 
+                           int argument,
+                           void * pBuffer,
+                           OPERAND_SIZE size,
+                           OPERAND_SIZE * doneBytes,
+                           int flags);
+
+int Diana_FPU_CheckExceptions(DianaProcessor * pCallContext);
+DI_UINT16 Diana_FPU_QueryStatusWord(DianaProcessor * pCallContext);
+int Diana_FPU_CheckFPU(DianaProcessor * pCallContext, int bIgnoreExceptions);
+DianaRegInfo * DianaProcessor_FPU_QueryReg(DianaProcessor * pThis, 
+                                           DianaUnifiedRegister reg);
 
 #endif

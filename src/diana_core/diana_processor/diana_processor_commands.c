@@ -15,6 +15,7 @@
 #include "diana_processor_cmd_r.h"
 #include "diana_processor_cmd_s.h"
 #include "diana_processor_cmd_s2.h"
+#include "diana_processor_cmd_fpu.h"
 
 #include "diana_proc_gen.h"
 #include "diana_gen.h"
@@ -282,6 +283,15 @@ int Diana_Call_xlat(struct _dianaContext * pDianaContext,
 
     DI_PROC_END
 }
+
+static
+int Diana_Call_do_nothing(struct _dianaContext * pDianaContext,
+                          DianaProcessor * pCallContext)
+{
+    &pDianaContext;
+    &pCallContext;
+    DI_PROC_END
+}
 // ---------------  DONE ------------------------------
 static
 void DianaProcessor_OnGroup(DianaGroupInfo * p)
@@ -454,6 +464,47 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     DI_PROC_REGISTER_COMMAND(movlps)
     DI_PROC_REGISTER_COMMAND(movsd)
     DI_PROC_REGISTER_COMMAND(movddup)
+
+    DI_PROC_REGISTER_COMMAND(pxor)
+    DI_PROC_REGISTER_COMMAND(por)
+    DI_PROC_REGISTER_COMMAND(pand)
+    DI_PROC_REGISTER_COMMAND(pandn)
+
+    DI_PROC_REGISTER_COMMAND(wait)
+    DI_PROC_REGISTER_COMMAND(fnstcw)
+    DI_PROC_REGISTER_COMMAND(fnclex)
+    DI_PROC_REGISTER_COMMAND(fldcw)
+    DI_PROC_REGISTER_COMMAND(fild)
+    DI_PROC_REGISTER_COMMAND(fmul)
+    DI_PROC_REGISTER_COMMAND(fstp)
+    DI_PROC_REGISTER_COMMAND(fst)
+    DI_PROC_REGISTER_COMMAND(fld)
+    DI_PROC_REGISTER_COMMAND(fcomp)
+    DI_PROC_REGISTER_COMMAND(fnstsw)
+    DI_PROC_REGISTER_COMMAND(fsqrt)
+    DI_PROC_REGISTER_COMMAND(fcom)
+    
+    DI_PROC_REGISTER_COMMAND(fsub)
+    DI_PROC_REGISTER_COMMAND(fsubp)
+    DI_PROC_REGISTER_COMMAND(fsubr)
+    DI_PROC_REGISTER_COMMAND(fsubrp)
+    DI_PROC_REGISTER_COMMAND(fisub)
+    DI_PROC_REGISTER_COMMAND(fisubr)
+
+    DI_PROC_REGISTER_COMMAND(fadd)
+    DI_PROC_REGISTER_COMMAND(faddp)
+    DI_PROC_REGISTER_COMMAND(fiadd)
+
+    DI_PROC_REGISTER_COMMAND(fcompp)
+    DI_PROC_REGISTER_COMMAND(fist)
+    DI_PROC_REGISTER_COMMAND(fistp)
+
+    DI_PROC_REGISTER_COMMAND_EX(prefetchnta, Diana_Call_do_nothing)
+    DI_PROC_REGISTER_COMMAND_EX(prefetcht0, Diana_Call_do_nothing)
+    DI_PROC_REGISTER_COMMAND_EX(prefetcht1, Diana_Call_do_nothing)
+    DI_PROC_REGISTER_COMMAND_EX(prefetcht2, Diana_Call_do_nothing)
+    DI_PROC_REGISTER_COMMAND_EX(prefetch, Diana_Call_do_nothing)
+    DI_PROC_REGISTER_COMMAND_EX(prefetchw, Diana_Call_do_nothing)
     default:
         break;
     }

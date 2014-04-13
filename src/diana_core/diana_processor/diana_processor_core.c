@@ -2,11 +2,12 @@
 #include "diana_proc_gen.h"
 #include "diana_core_gen_tags.h"
 #include "diana_processor_commands.h"
-
+#include "diana_processor_cmd_fpu.h"
 void DianaProcessor_GlobalInit()
 {
     DianaProcessor_LinkCommands();
     DianaProcessor_ProcImplInit();
+    Diana_GlobalInitFPU();
 }
 
 static int ProcessorReadStream(void * pThis, 
@@ -192,15 +193,14 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
                          &pThis->m_readStream,    // IN
                          &pThis->m_result);
 
-    if (res != DI_SUCCESS)
-        return res;
+    DI_CHECK(res);
     
     // query context 
 	#pragma warning( suppress : 4055 ) // 'conversion' : from data pointer 'type1' to function pointer 'type2'
     pCommand = DIANA_QUERY_PROCESSOR_TAG(pThis->m_result.pInfo->m_pGroupInfo);
     if (!pCommand)
     {
-        return DI_UNSUPPORTED_COMMAND;
+        return Diana_OnError(DI_UNSUPPORTED_COMMAND);
     }
     // execute command
     switch(pThis->m_result.iPrefix)
@@ -220,7 +220,7 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
 				}
 			}
 		}
-		return DI_INVALID_OPCODE;
+		return Diana_OnError(DI_INVALID_OPCODE);
     default:
         res = Call(pCommand, pCallContext);
     }
@@ -237,13 +237,11 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
         // clear cache
         Diana_ClearCache(&pThis->m_context);
 
-        if (res != DI_SUCCESS)
-            return res;
+        DI_CHECK(res);
     }
     else
     {
-        if (res != DI_SUCCESS)
-            return res;
+        DI_CHECK(res);
 
         // shift RIP, usual command
         rip += pThis->m_result.iFullCmdSize;

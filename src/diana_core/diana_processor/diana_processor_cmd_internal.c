@@ -7,7 +7,7 @@ int IsParity(unsigned char value)
     return g_parityBuffer[value];
 }
 
-void add128(DI_UINT64 *plow, DI_UINT64 *phigh, DI_UINT64 a, DI_UINT64 b)
+static void add128(DI_UINT64 *plow, DI_UINT64 *phigh, DI_UINT64 a, DI_UINT64 b)
 {
     *plow += a;
     // carry test

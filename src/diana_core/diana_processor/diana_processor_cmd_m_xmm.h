@@ -3,6 +3,15 @@
 
 #include "diana_processor_core_impl_xmm.h"
 
+int Diana_Call_pxor(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext);
+int Diana_Call_pandn(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext);
+int Diana_Call_pand(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext);
+int Diana_Call_por(struct _dianaContext * pDianaContext,
+                        DianaProcessor * pCallContext);
+
 int Diana_Call_movups(struct _dianaContext * pDianaContext,
                       DianaProcessor * pCallContext);
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="diana_processor"
 	ProjectGUID="{D35CE6C4-6C8E-44BB-8CF7-63B520210233}"
 	RootNamespace="diana_processor"
@@ -298,6 +298,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_processor_cmd_fpu.c"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_processor_cmd_i.c"
 				>
 			</File>
@@ -373,6 +377,34 @@
 				RelativePath=".\diana_processor_streams.c"
 				>
 			</File>
+			<Filter
+				Name="fpu"
+				>
+				<File
+					RelativePath=".\softfloat\softfloat-muladd.c"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloat-round-pack.c"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloat-specialize.c"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloat.c"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloat16.c"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloatx80.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -397,6 +429,10 @@
 			</File>
 			<File
 				RelativePath=".\diana_processor_cmd_d.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_processor_cmd_fpu.h"
 				>
 			</File>
 			<File
@@ -484,6 +520,42 @@
 				</File>
 				<File
 					RelativePath=".\diana_processor_specific_xmm.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="fpu"
+				>
+				<File
+					RelativePath=".\softfloat\softfloat-compare.h"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloat-macros.h"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloat-round-pack.h"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloat-specialize.h"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloat.h"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloat_end.h"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloat_start.h"
+					>
+				</File>
+				<File
+					RelativePath=".\softfloat\softfloatx80.h"
 					>
 				</File>
 			</Filter>

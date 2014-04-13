@@ -4,6 +4,12 @@
 #include "diana_processor_core_impl.h"
 
 
+typedef union _DianaRegisterFPU
+{
+    DI_CHAR u8[10];
+}DianaRegisterFPU_type;
+
+
 typedef union _DianaRegisterXMM
 {
     DI_CHAR             u8[ 16 ];
@@ -93,5 +99,13 @@ int Diana_ProcessorSetGetOperand_XMM_index(struct _dianaContext * pDianaContext,
 #define DI_MEM_SET_SRC_XMM(variable)    DI_MEM_SET_XMM(variable, 1)
 #define DI_MEM_GET_DEST_XMM(variable)   DI_MEM_GET_XMM(variable, 0)
 #define DI_MEM_SET_DEST_XMM(variable)   DI_MEM_SET_XMM(variable, 0)
+
+
+void DianaProcessor_FPU_SetValueEx(DianaProcessor * pCallContext,
+                                   DianaRegInfo * pReg,
+                                   const void * value);
+void DianaProcessor_FPU_GetValueEx(DianaProcessor * pCallContext,
+                                   DianaRegInfo * pReg,
+                                   void * pValue);
 
 #endif

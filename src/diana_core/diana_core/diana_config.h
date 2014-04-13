@@ -15,4 +15,15 @@
 #endif
 
 
+#define DIANA_PROCESSOR_USE_SOFTFLOAT_FPU
+
+
+#ifndef DIANA_INLINE_C
+# if __GNUC__ && !__GNUC_STDC_INLINE__
+#  define DIANA_INLINE_C extern inline
+# else
+#  define DIANA_INLINE_C __forceinline
+# endif
+#endif
+
 #endif
