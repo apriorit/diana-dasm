@@ -126,6 +126,15 @@ public:
     }
 };
 
+
 }
+
+
+#ifdef DI_LINK_C_RUNTIME_CPP 
+extern "C"
+{
+#include "diana_c_runtime.inc"
+}
+#endif
 
 #endif

@@ -189,7 +189,7 @@ static int PrintCallPtr(DianaTextOutputContext * pContext, DianaLinkedOperand * 
 }
 static int PrintRelative(DianaTextOutputContext * pContext, DianaLinkedOperand * pLinkedOp)
 {
-    OPERAND_SIZE res = pLinkedOp->value.rel.m_value + pContext->instructionRIP + pContext->pResult->iFullCmdSize + pContext->instructionRIP;
+    OPERAND_SIZE res = pLinkedOp->value.rel.m_value + pContext->instructionRIP + pContext->pResult->iFullCmdSize;
     DI_CHECK(DianaOpOutput(pContext, res, pLinkedOp->usedSize));
     return DI_SUCCESS;
 }
