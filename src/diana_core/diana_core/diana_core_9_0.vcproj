@@ -293,6 +293,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\diana_analyze2.c"
+				>
+			</File>
+			<File
 				RelativePath=".\diana_core.c"
 				>
 			</File>
@@ -376,6 +380,10 @@
 			</File>
 			<File
 				RelativePath=".\diana_analyze.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_analyze2.h"
 				>
 			</File>
 			<File
