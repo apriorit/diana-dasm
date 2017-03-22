@@ -31,15 +31,15 @@ static int MemoryRandomStream_ReadWrite(void * pThis,
 
     if (bWrite)
     {
-        memcpy((char*)pStream->pBuffer+offset,
+        DIANA_MEMCPY((char*)pStream->pBuffer+offset,
                pBuffer,
-               (size_t)sizeToGive);
+               (DIANA_SIZE_T)sizeToGive);
     }
     else
     {
-        memcpy(pBuffer,
+        DIANA_MEMCPY(pBuffer,
             (char*)pStream->pBuffer+offset, 
-            (size_t)sizeToGive);
+            (DIANA_SIZE_T)sizeToGive);
     }
 
     *readed = sizeToGive;

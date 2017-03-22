@@ -49,10 +49,10 @@ OPERAND_SIZE DianaProcessor_CutValue(OPERAND_SIZE value,
 void DianaProcessor_ProcImplInit()
 {
     int i = 1;
-    g_parityBuffer[0] = 1; // WTF?
+    g_diana_parityBuffer[0] = 1; // WTF?
     for(; i<256; ++i)
     {
-        g_parityBuffer[i] = (GetSetBitsCount(i)%2)?0:1;
+        g_diana_parityBuffer[i] = (GetSetBitsCount(i)%2)?0:1;
     }
     // init masks
     g_maskBuffer[0] = 0x80ULL;
@@ -270,7 +270,7 @@ int Diana_RegisterRegister(DianaProcessor * pThis,
         // set new vector
         pOldRegistersVector = pThis->m_pRegistersVector;
 
-        memcpy(pRegistersVector, pThis->m_pRegistersVector, pThis->m_registersVectorSize);
+        DIANA_MEMCPY(pRegistersVector, pThis->m_pRegistersVector, pThis->m_registersVectorSize);
         pThis->m_pAllocator->m_free(pThis->m_pAllocator, pThis->m_pRegistersVector);
         pThis->m_pRegistersVector = pRegistersVector;
         pThis->m_registersVectorSize = newSize;

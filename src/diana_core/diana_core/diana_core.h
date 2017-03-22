@@ -294,6 +294,7 @@ typedef struct _dianaParserResult
 #define DI_GP                       ((int)-12)
 #define DI_INTERRUPT                ((int)-13)
 #define DI_PARTIAL_READ_WRITE       ((int)-14)
+#define DI_ERROR_NOT_IMPLEMENTED    ((int)-15)
 
 #define DI_SUCCESS ((int)0)
 
@@ -341,6 +342,13 @@ typedef int (* DianaAnalyzeRandomRead_fnc)(void * pThis,
                                            OPERAND_SIZE * readBytes,
                                            int flags);
 
+typedef int (* DianaAnalyzeRandomWrite_fnc)(void * pThis, 
+                                           OPERAND_SIZE offset,
+                                           void * pBuffer, 
+                                           int iBufferSize, 
+                                           OPERAND_SIZE * writeBytes,
+                                           int flags);
+
 typedef struct _dianaMovableReadStream
 {
     DianaReadStream parent;
@@ -352,9 +360,22 @@ void DianaMovableReadStream_Init(DianaMovableReadStream * pStream,
                                  DianaRead_fnc pReadFnc, 
                                  DianaAnalyzeMoveTo_fnc pMoveTo,
                                  DianaAnalyzeRandomRead_fnc pRandomRead);
+
+
+typedef struct _dianaReadWriteRandomStream
+{
+    DianaReadStream parent;
+    DianaAnalyzeRandomRead_fnc pRandomRead;
+    DianaAnalyzeRandomWrite_fnc pRandomWrite;
+}DianaReadWriteRandomStream;
+
+void DianaReadWriteRandomStream_Init(DianaReadWriteRandomStream * pStream,
+                                     DianaRead_fnc pReadFnc, 
+                                     DianaAnalyzeRandomRead_fnc pRandomRead,
+                                     DianaAnalyzeRandomWrite_fnc pRandomWrite);
 // Allocators
-#define DI_REX_PREFIX_START    0x40
-#define DI_REX_PREFIX_END      0x4F
+#define DI_REX_PREFIX_START       0x40
+#define DI_REX_PREFIX_END         0x4F
 #define DI_REX_HAS_FLAG_W(X)          (X&0x8)
 #define DI_REX_HAS_FLAG_R(X)          (X&0x4)
 #define DI_REX_HAS_FLAG_X(X)          (X&0x2)
@@ -446,9 +467,9 @@ DianaGroupInfo * Diana_GetGroupInfo(long lId);
 void Diana_Init();
 void Diana_ResetPrefixes(DianaContext * pContext);
 
-typedef void * ( *Diana_Alloc_type)(void * pThis, size_t size);
+typedef void * ( *Diana_Alloc_type)(void * pThis, DIANA_SIZE_T size);
 typedef void ( *Diana_Free_type)(void * pThis, void * memory);
-typedef int ( *Diana_Patcher_type)(void * pThis, void * pDest, const void * pSource, size_t size);
+typedef int ( *Diana_Patcher_type)(void * pThis, void * pDest, const void * pSource, DIANA_SIZE_T size);
 
 typedef struct _Diana_Allocator
 {
@@ -468,7 +489,8 @@ void Diana_CacheEatOneSafe(DianaContext * pContext);
 int Diana_OnError(int code);
 #define DIANA_CONTAINING_RECORD(address, type, field) ((type *)( \
                                                   (char*)(address) - \
-                                                  (size_t)(&((type *)0)->field)))
+                                                  (DIANA_SIZE_T)(&((type *)0)->field)))
 
 
+int Diana_ConvertOpSizeToSizeT(const OPERAND_SIZE * pOpSize, DIANA_SIZE_T * pSizeT);
 #endif

@@ -2,7 +2,7 @@ extern "C"
 {
 #include "diana_streams.h"
 #include "diana_gen.h"
-#include "diana_processor_core.h"
+#include "diana_processor.h"
 }
 #include "test_processor.h"
 #include "test_processor_flags.h"

@@ -3,6 +3,8 @@
 #include "diana_core_gen_tags.h"
 #include "diana_processor_commands.h"
 #include "diana_processor_cmd_fpu.h"
+#include "diana_disable_warnings.h"
+
 void DianaProcessor_GlobalInit()
 {
     DianaProcessor_LinkCommands();
@@ -21,7 +23,7 @@ static int ProcessorReadStream(void * pThis,
 
     OPERAND_SIZE readedOp = 0;
 
-    pCallContext= (DianaProcessor *)((char*)pStream - (size_t)&pCallContext->m_readStream);
+    pCallContext= (DianaProcessor *)((char*)pStream - (DIANA_SIZE_T)&pCallContext->m_readStream);
     
     res = DianaProcessor_ReadMemory(pCallContext, 
                                     GET_REG_CS,
@@ -125,8 +127,7 @@ int CallWithRep(DianaProcessorCommand_type pCommand,
         return DI_ERROR;
     }
 
-	#pragma warning( suppress : 4127 ) // conditional expression is constant
-    while(1)
+    for(;;)
     {
         if (!DianaProcessor_GetValue(pCallContext, DianaProcessor_QueryReg(pCallContext, usedReg)))
             return DI_SUCCESS;
@@ -196,7 +197,6 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
     DI_CHECK(res);
     
     // query context 
-	#pragma warning( suppress : 4055 ) // 'conversion' : from data pointer 'type1' to function pointer 'type2'
     pCommand = DIANA_QUERY_PROCESSOR_TAG(pThis->m_result.pInfo->m_pGroupInfo);
     if (!pCommand)
     {

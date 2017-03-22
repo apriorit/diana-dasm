@@ -4,7 +4,7 @@ void DianaProcessor_FPU_SetValueEx(DianaProcessor * pCallContext,
                                    const void * value)
 {
     char * pStart = (pCallContext->m_pRegistersVector + pReg->m_offset);
-    memcpy(pStart, value, 10);
+    DIANA_MEMCPY(pStart, value, 10);
     pCallContext->m_fpu.registerFlags[pReg - pCallContext->m_registers - reg_fpu_ST0] |= DI_PROCESSOR_FPU_REGISTER_BUSY;
 }
 
@@ -13,7 +13,7 @@ void DianaProcessor_FPU_GetValueEx(DianaProcessor * pCallContext,
                                    void * pValue)
 {
     char * pStart = (pCallContext->m_pRegistersVector + pReg->m_offset);
-    memcpy(pValue, pStart, 10);
+    DIANA_MEMCPY(pValue, pStart, 10);
 }
 
 
@@ -85,7 +85,7 @@ void DianaProcessor_XMM_SetValueEx(DianaProcessor * pCallContext,
                                    int size)
 {
     char * pStart = (pCallContext->m_pRegistersVector + pReg->m_offset);
-    memcpy(pStart, value, size);
+    DIANA_MEMCPY(pStart, value, size);
 
     regId;
 }
@@ -96,7 +96,7 @@ DianaRegisterXMM_type DianaProcessor_XMM_GetValueEx(DianaProcessor * pCallContex
 {
     DianaRegisterXMM_type r = {0};
     char * pStart = (pCallContext->m_pRegistersVector + pReg->m_offset);
-    memcpy(r.u8, pStart, size);
+    DIANA_MEMCPY(r.u8, pStart, size);
     return r;
 }
 

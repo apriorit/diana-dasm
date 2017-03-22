@@ -1,7 +1,7 @@
 #include "diana_text_output_masm.h"
 #include "stdio.h"
-#include "cstdio"
 #include "string.h"
+#include "search.h"
 
 #ifdef _MSC_VER
 #define snprintf _snprintf
@@ -22,6 +22,7 @@ static int GetRealSize(OPERAND_SIZE operand)
 int DianaTextOutput_Console(struct _DianaTextOutputContext * pContext, 
                                     const char * pText)
 {
+	&pContext;
     printf("%s", pText);
     return DI_SUCCESS;
 }
@@ -29,6 +30,7 @@ int DianaOpOutput_Console(struct _DianaTextOutputContext * pContext,
                                   OPERAND_SIZE operand, 
                                   int size)
 {
+	&pContext;
 	if (size == 0)
 	{
 	    size = GetRealSize(operand);

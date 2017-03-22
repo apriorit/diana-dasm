@@ -1,7 +1,7 @@
 #ifndef DIANA_WIN32_STREAMS_H
 #define DIANA_WIN32_STREAMS_H
 
-#include "diana_processor_streams.h"
+#include "diana_processor/diana_processor_streams.h"
 #include "windows.h"
 
 

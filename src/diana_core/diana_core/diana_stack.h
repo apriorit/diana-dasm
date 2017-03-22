@@ -5,7 +5,7 @@
 
 
 // Chunk structure:
-// [data][size:size_t]
+// [data][size:DIANA_SIZE_T]
 
 typedef struct _Diana_StackBlock
 {

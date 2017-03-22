@@ -6,7 +6,7 @@
 extern "C"
 {
 #include "diana_win32_processor.h"
-#include "diana_processor_cmd_internal.h"
+#include "diana_processor/diana_processor_cmd_internal.h"
 #include "diana_patchers.h"
 #include "diana_win32_ehook.h"
 }

@@ -8,7 +8,7 @@ int Diana_Call_sahf(struct _dianaContext * pDianaContext,
 {
 	pDianaContext;
 
-    pCallContext->m_flags.l.l.l = (DI_CHAR)GET_REG_AH;
+    pCallContext->m_flags.impl.l.impl.l.impl.l = (DI_CHAR)GET_REG_AH;
     DianaProcessor_SetResetDefaultFlags(pCallContext);
     DI_PROC_END
 }

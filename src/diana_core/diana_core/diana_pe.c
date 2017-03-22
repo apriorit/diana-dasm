@@ -1,6 +1,4 @@
 #include "diana_pe.h"
-#include "string.h"
-#include "stdlib.h"
 
 static
 void Diana_PeFile_impl_CommonInit(Diana_PeFile_impl  * pImpl,
@@ -84,7 +82,7 @@ int ReadOptionalHeader(Diana_PeFile_impl * pImpl,
                        int * pDisasmMode,
                        int * pOptionalHeaderSize)
 {
-    if (strncmp(pImpl->ntHeaders.Signature, "PE", 3))
+    if (DIAND_STRNCMP(pImpl->ntHeaders.Signature, "PE", 3))
     {
         return DI_INVALID_INPUT;
     }
@@ -104,7 +102,7 @@ int ReadOptionalHeader(Diana_PeFile_impl * pImpl,
 }
 
 static
-size_t Diana_GetMaxSize(size_t size1, size_t size2)
+DIANA_SIZE_T Diana_GetMaxSize(DIANA_SIZE_T size1, DIANA_SIZE_T size2)
 {
     if (size1 > size2)
         return size1;
@@ -127,7 +125,7 @@ int Diana_InitPeFileImpl(Diana_PeFile * pPeFile,
     // allocate impl header
     sizeOfImpl = (int)Diana_GetMaxSize(sizeof(Diana_PeFile64_impl), sizeof(Diana_PeFile32_impl)) + 
                  (int)Diana_GetMaxSize(sizeof(DIANA_IMAGE_OPTIONAL_HEADER64), sizeof(DIANA_IMAGE_OPTIONAL_HEADER32));
-    pImpl = malloc(sizeOfImpl);
+    pImpl = DIANA_MALLOC(sizeOfImpl);
     DI_CHECK_ALLOC(pImpl);
     pPeFile->pImpl = pImpl;
     memset(pImpl, 0, sizeof(*pImpl));
@@ -150,7 +148,7 @@ int Diana_InitPeFileImpl(Diana_PeFile * pPeFile,
         int sectionOffset = pImpl->dosHeader.e_lfanew + sizeof(DIANA_IMAGE_NT_HEADERS) + optionalHeaderSize;
         DI_CHECK(pStream->pMoveTo(pStream, sectionOffset));
     
-        pSectionHeader = malloc(pImpl->ntHeaders.FileHeader.NumberOfSections * sizeof(DIANA_IMAGE_SECTION_HEADER));
+        pSectionHeader = DIANA_MALLOC(pImpl->ntHeaders.FileHeader.NumberOfSections * sizeof(DIANA_IMAGE_SECTION_HEADER));
         DI_CHECK_ALLOC(pSectionHeader);
         memset(pSectionHeader, 0, pImpl->ntHeaders.FileHeader.NumberOfSections * sizeof(DIANA_IMAGE_SECTION_HEADER));
         pImpl->pCapturedSections = pSectionHeader;
@@ -198,10 +196,10 @@ void DianaPeFile_Free(Diana_PeFile * pPeFile)
     {
         if (pPeFile->pImpl->pCapturedSections)
         {
-            free(pPeFile->pImpl->pCapturedSections);
+            DIANA_FREE(pPeFile->pImpl->pCapturedSections);
             pPeFile->pImpl->pCapturedSections = 0;
         }
-        free(pPeFile->pImpl);
+        DIANA_FREE(pPeFile->pImpl);
         pPeFile->pImpl = 0;
     }
 }

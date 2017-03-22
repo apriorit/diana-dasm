@@ -9,12 +9,12 @@ static void test_processor_and()
     CTestProcessor proc(buff, sizeof(buff));
     DianaProcessor * pCallContext = proc.GetSelf();
 
-    pCallContext->m_flags.l.value = 0x256;
+    pCallContext->m_flags.impl.l.value = 0x256;
 
     int res = proc.ExecOnce();
     TEST_ASSERT(res == DI_SUCCESS);
 
-    TEST_ASSERT(pCallContext->m_flags.l.value == 0x246);
+    TEST_ASSERT(pCallContext->m_flags.impl.l.value == 0x246);
 }
 
 
@@ -28,12 +28,12 @@ static void test_processor_and2()
     DianaProcessor * pCallContext = proc.GetSelf();
 
     SET_REG_ESI(4);
-    pCallContext->m_flags.l.value = 0x206;
+    pCallContext->m_flags.impl.l.value = 0x206;
 
     int res = proc.ExecOnce();
     TEST_ASSERT(res == DI_SUCCESS);
 
-    TEST_ASSERT(pCallContext->m_flags.l.value == 0x246);
+    TEST_ASSERT(pCallContext->m_flags.impl.l.value == 0x246);
 }
 
 

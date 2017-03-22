@@ -168,8 +168,8 @@ int Diana_Call_div16(struct _dianaContext * pDianaContext,
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;
 
-    src.h       = (DI_UINT16)GET_REG_DX;
-    src.l.value = (DI_UINT16)GET_REG_AX;
+    src.impl.h       = (DI_UINT16)GET_REG_DX;
+    src.impl.l.value = (DI_UINT16)GET_REG_AX;
 
     quotient = src.value / divisor;
     remainder = src.value % divisor;
@@ -198,8 +198,8 @@ int Diana_Call_div32(struct _dianaContext * pDianaContext,
     if (divisor == 0)
         return DI_DIVISION_BY_ZERO;
 
-    src.h       = (DI_UINT32)GET_REG_EDX;
-    src.l.value = (DI_UINT32)GET_REG_EAX;
+    src.impl.h       = (DI_UINT32)GET_REG_EDX;
+    src.impl.l.value = (DI_UINT32)GET_REG_EAX;
 
 
     quotient = src.value / divisor;

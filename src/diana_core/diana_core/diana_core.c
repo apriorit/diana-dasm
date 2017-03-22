@@ -1,10 +1,13 @@
 #include "diana_core.h"
-#include "search.h"
-#include "string.h"
+
 #include "diana_operands.h"
 #include "diana_stream_proxy.h"
 #include "diana_core_utils.h"
 #include "diana_core_parsers.h"
+
+#ifdef DIANA_USE_CRUNTIME
+#include "diana_c_runtime.inc"
+#endif
 
 
 static Diana_LinkedAdditionalGroupInfo g_infoForRets =  {DIANA_GT_CAN_CHANGE_RIP|DIANA_GT_RET, 0};
@@ -55,6 +58,16 @@ void DianaMovableReadStream_Init(DianaMovableReadStream * pStream,
     pStream->parent.pReadFnc = pReadFnc;
     pStream->pMoveTo = pMoveTo;
     pStream->pRandomRead = pRandomRead;
+}
+
+void DianaReadWriteRandomStream_Init(DianaReadWriteRandomStream * pStream,
+                                     DianaRead_fnc pReadFnc, 
+                                     DianaAnalyzeRandomRead_fnc pRandomRead,
+                                     DianaAnalyzeRandomWrite_fnc pRandomWrite)
+{
+    pStream->parent.pReadFnc = pReadFnc;
+    pStream->pRandomRead = pRandomRead;
+    pStream->pRandomWrite = pRandomWrite;
 }
 int Diana_ParseCmd(DianaContext * pContext, //IN
                    DianaBaseGenObject_type * pInitialLine,  // IN
@@ -407,4 +420,17 @@ void Diana_AllocatorInit(Diana_Allocator * pAllocator,
 int Diana_OnError(int code)
 {
     return code;
+}
+
+int Diana_ConvertOpSizeToSizeT(const OPERAND_SIZE * pOpSize, DIANA_SIZE_T * pSizeT)
+{
+     *pSizeT = 0;
+#ifdef DIANA_CFG_I386 
+    if (*pOpSize > 0xFFFFFFFFULL)
+    {
+        return DI_ERROR;
+    }
+#endif
+    *pSizeT = (DIANA_SIZE_T)*pOpSize;
+    return DI_SUCCESS;
 }

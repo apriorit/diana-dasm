@@ -11,7 +11,7 @@ int diana_mov_xmm(struct _dianaContext * pDianaContext,
     DI_MEM_GET_DEST_XMM(dest)
     DI_MEM_GET_SRC_XMM(src)
 
-    memcpy(dest.u8, src.u8, dest_size);
+    DIANA_MEMCPY(dest.u8, src.u8, dest_size);
 
     DI_MEM_SET_DEST_XMM(dest)
     DI_PROC_END;
@@ -29,7 +29,7 @@ int diana_mov_xmm8(struct _dianaContext * pDianaContext,
     src_size = 8;
     DI_MEM_GET_SRC_XMM(src)
     
-    memcpy(dest.u8, src.u8, dest_size);
+    DIANA_MEMCPY(dest.u8, src.u8, dest_size);
 
     DI_MEM_SET_DEST_XMM(dest)
     DI_PROC_END;

@@ -1,10 +1,11 @@
 #include "diana_processor_cmd_internal.h"
+#include "diana_disable_warnings.h"
 
-char g_parityBuffer[256];
+char g_diana_parityBuffer[256];
 
 int IsParity(unsigned char value)
 {
-    return g_parityBuffer[value];
+    return g_diana_parityBuffer[value];
 }
 
 static void add128(DI_UINT64 *plow, DI_UINT64 *phigh, DI_UINT64 a, DI_UINT64 b)
@@ -110,15 +111,15 @@ int idiv64(DI_UINT64 *plow, DI_UINT64 *phigh, DI_INT64 b)
     if (sa ^ sb) {
         if (*plow > (1ULL << 63))
             return 1;
-        #pragma warning( suppress : 4146 ) // warning C4146: unary minus operator applied to unsigned type, result still unsigned
         *plow = - *plow;
     } else {
         if (*plow >= (1ULL << 63))
             return 1;
     }
     if (sa)
-        #pragma warning( suppress : 4146 ) // warning C4146: unary minus operator applied to unsigned type, result still unsigned
+    {
         *phigh = - *phigh;
+    }
     return 0;
 }
 

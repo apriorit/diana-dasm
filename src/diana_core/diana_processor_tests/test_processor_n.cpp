@@ -16,7 +16,7 @@ static void test_processor_neg()
     
     TEST_ASSERT(res == DI_SUCCESS);
     TEST_ASSERT(GET_REG_RBX == 0xFFFFFF01);
-    TEST_ASSERT(pCallContext->m_flags.l.l.value == 0x00000293);
+    TEST_ASSERT(pCallContext->m_flags.impl.l.impl.l.value == 0x00000293);
 }
 
 static void test_processor_neg2()
@@ -32,7 +32,7 @@ static void test_processor_neg2()
     
     TEST_ASSERT(res == DI_SUCCESS);
     TEST_ASSERT(GET_REG_RBX == 0x80000000);
-    TEST_ASSERT(pCallContext->m_flags.l.l.value == 0x00000A87);
+    TEST_ASSERT(pCallContext->m_flags.impl.l.impl.l.value == 0x00000A87);
 }
 
 static void test_processor_nop()

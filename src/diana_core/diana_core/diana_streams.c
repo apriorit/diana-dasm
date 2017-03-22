@@ -7,7 +7,7 @@ static int MemoryStream_Read(void * pThis, void * pBuffer, int iBufferSize, int 
     if (sizeToGive > iBufferSize)
         sizeToGive = iBufferSize;
 
-    memcpy(pBuffer,(char*)pStream->pBuffer+pStream->curSize, sizeToGive);
+    DIANA_MEMCPY(pBuffer,(char*)pStream->pBuffer+pStream->curSize, sizeToGive);
     pStream->curSize += sizeToGive;
     *readBytes = sizeToGive;
     return 0;
@@ -31,14 +31,14 @@ int DianaMemoryStream_RandomRead(void * pThis,
     if (sizeToGive > iBufferSize)
         sizeToGive = iBufferSize;
 
-    memcpy(pBuffer,(char*)pStream->pBuffer+offset, sizeToGive);
+    DIANA_MEMCPY(pBuffer,(char*)pStream->pBuffer+offset, sizeToGive);
     *readBytes = sizeToGive;
     return 0;
 }
 
 void Diana_InitMemoryStream(DianaMemoryStream * pStream,
                             void * pBuffer,
-                            size_t bufferSize)
+                            DIANA_SIZE_T bufferSize)
 {
     pStream->pBuffer = pBuffer;
     pStream->bufferSize = bufferSize;
@@ -49,10 +49,10 @@ void Diana_InitMemoryStream(DianaMemoryStream * pStream,
 
 int Diana_ParseCmdOnBuffer(int iMode,
                            void * pBuffer,
-                           size_t size,
+                           DIANA_SIZE_T size,
                            DianaBaseGenObject_type * pInitialLine,  // IN
                            DianaParserResult * pResult,  //OUT
-                           size_t * sizeRead)    // OUT
+                           DIANA_SIZE_T * sizeRead)    // OUT
 {
     DianaMemoryStream stream;
     DianaContext context;
@@ -68,10 +68,10 @@ int Diana_ParseCmdOnBuffer(int iMode,
 
 int Diana_ParseCmdOnBuffer_testmode(int iMode,
                                     void * pBuffer,
-                                    size_t size,
+                                    DIANA_SIZE_T size,
                                     DianaBaseGenObject_type * pInitialLine,  // IN
                                     DianaParserResult * pResult,  //OUT
-                                    size_t * sizeRead)    // OUT
+                                    DIANA_SIZE_T * sizeRead)    // OUT
 {
     DianaMemoryStream stream;
     DianaContext context;

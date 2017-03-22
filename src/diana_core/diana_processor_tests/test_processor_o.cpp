@@ -13,11 +13,11 @@ static void test_processor_or()
 
     SET_REG_EBP(8);
 
-    pCallContext->m_flags.l.value = 0x202;
+    pCallContext->m_flags.impl.l.value = 0x202;
     int res = proc.ExecOnce();
     TEST_ASSERT(res == DI_SUCCESS);
     
-    TEST_ASSERT(pCallContext->m_flags.l.value == 0x286);
+    TEST_ASSERT(pCallContext->m_flags.impl.l.value == 0x286);
 }
 
 

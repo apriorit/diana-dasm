@@ -651,18 +651,18 @@ int Diana_Call_cmpxchg8b_impl(struct _dianaContext * pDianaContext,
                                         0,
                                         pCallContext->m_result.linkedOperands[0].value.rmIndex.seg_reg));
 
-    if (mem.l.value != GET_REG_EAX || mem.h != GET_REG_EDX)
+    if (mem.impl.l.value != GET_REG_EAX || mem.impl.h != GET_REG_EDX)
     {
         CLEAR_FLAG_ZF;
-        SET_REG_EDX(mem.h);
-        SET_REG_EAX(mem.l.value);
+        SET_REG_EDX(mem.impl.h);
+        SET_REG_EAX(mem.impl.l.value);
         DI_PROC_END
     }
 
     // equal
     SET_FLAG_ZF;
-    mem.l.value = (DI_UINT32)GET_REG_EBX;
-    mem.h = (DI_UINT32)GET_REG_ECX;
+    mem.impl.l.value = (DI_UINT32)GET_REG_EBX;
+    mem.impl.h = (DI_UINT32)GET_REG_ECX;
 
     DI_CHECK(DianaProcessor_SetMemValue(pCallContext,
                                         selector,

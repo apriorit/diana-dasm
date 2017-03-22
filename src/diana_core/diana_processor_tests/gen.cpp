@@ -2,11 +2,8 @@
 #include "cctype"
 #include "iostream"
 #include "algorithm"
+#include "diana_processor_cpp.h"
 
-extern "C"
-{
-#include "diana_processor_core.h"
-}
 const char * g_pData = 
 "reg_AL,    reg_CL,    reg_DL,    reg_BL,    reg_AH,    reg_CH,    reg_DH,    reg_BH,"
 "reg_AX,    reg_CX,    reg_DX,    reg_BX,    reg_SP,    reg_BP,    reg_SI,    reg_DI,"

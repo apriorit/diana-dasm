@@ -11,7 +11,7 @@ int Diana_Call_lahf(struct _dianaContext * pDianaContext,
 
 	pDianaContext;
 
-    ah = pCallContext->m_flags.l.l.l;
+    ah = pCallContext->m_flags.impl.l.impl.l.impl.l;
 
     SET_REG_AH(ah);
     DI_PROC_END;

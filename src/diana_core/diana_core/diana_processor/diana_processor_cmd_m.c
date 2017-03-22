@@ -130,7 +130,7 @@ int Diana_Call_mul8(struct _dianaContext * pDianaContext,
 
     result.value = arg1 * arg2;
 
-    if (result.h)
+    if (result.impl.h)
     {
        SET_FLAG_CF;
        SET_FLAG_OF;
@@ -153,14 +153,14 @@ int Diana_Call_mul16(struct _dianaContext * pDianaContext,
 
     result.value = arg1 * arg2;
 
-    if (result.h)
+    if (result.impl.h)
     {
        SET_FLAG_CF;
        SET_FLAG_OF;
     }
 
-    SET_REG_AX(result.l.value);
-    SET_REG_DX(result.h);
+    SET_REG_AX(result.impl.l.value);
+    SET_REG_DX(result.impl.h);
     return DI_SUCCESS;
 }
 
@@ -177,14 +177,14 @@ int Diana_Call_mul32(struct _dianaContext * pDianaContext,
 
     result.value = arg1 * arg2;
 
-    if (result.h) 
+    if (result.impl.h) 
     {
        SET_FLAG_CF;
        SET_FLAG_OF;
     }
 
-    SET_REG_EAX(result.l.value);
-    SET_REG_EDX(result.h);
+    SET_REG_EAX(result.impl.l.value);
+    SET_REG_EDX(result.impl.h);
     return DI_SUCCESS;
 }
 

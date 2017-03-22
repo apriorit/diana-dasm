@@ -1,5 +1,4 @@
 #include "diana_stack.h"
-#include "stdlib.h"
 
 int Diana_Stack_Init(Diana_Stack * pStack,
                      int minBlockSize,
@@ -17,7 +16,7 @@ static int deleter(Diana_ListNode * pNode,
                    int * pbDone)
 {
     Diana_StackBlock * pBlock = (Diana_StackBlock*)pNode;
-    free(pBlock);
+    DIANA_FREE(pBlock);
 
 	pContext;
 	pbDone;
@@ -36,14 +35,13 @@ int Diana_Stack_Push(Diana_Stack * pStack,
     char * pDataPlace = 0;
     if (pStack->m_pCurrentBlock)
     {
-		#pragma warning( suppress : 4127 ) // conditional expression is constant
-        while(1)
+		for(;;)
         {
             if (pStack->m_minBlockSize - 
                 pStack->m_pCurrentBlock->m_curSizeInBytes >= pStack->m_dataSize)
             {
                 pDataPlace = (char*)pStack->m_pCurrentBlock + sizeof(Diana_StackBlock) + pStack->m_pCurrentBlock->m_curSizeInBytes;
-                memcpy(pDataPlace, pData, pStack->m_dataSize);
+                DIANA_MEMCPY(pDataPlace, pData, pStack->m_dataSize);
                 
                 pStack->m_pCurrentBlock->m_curSizeInBytes += pStack->m_dataSize;
                 ++pStack->m_count;
@@ -59,14 +57,14 @@ int Diana_Stack_Push(Diana_Stack * pStack,
     }
     // need insert
     {
-        Diana_StackBlock * pBlock = malloc(sizeof(Diana_StackBlock)+pStack->m_minBlockSize);
+        Diana_StackBlock * pBlock = DIANA_MALLOC(sizeof(Diana_StackBlock)+pStack->m_minBlockSize);
         if (!pBlock)
             return DI_OUT_OF_MEMORY;
 
         memset(pBlock, 0, sizeof(*pBlock));
 
         pDataPlace = (char*)pBlock + sizeof(Diana_StackBlock);
-        memcpy(pDataPlace, pData, pStack->m_dataSize);
+        DIANA_MEMCPY(pDataPlace, pData, pStack->m_dataSize);
         pBlock->m_curSizeInBytes = pStack->m_dataSize;
 
         Diana_PushBack(&pStack->m_blockList, &pBlock->m_entry);
@@ -82,7 +80,7 @@ int Diana_Stack_Pop(Diana_Stack * pStack,
     if (!pDataPlace)
         return DI_ERROR;
 
-    memcpy(pData, pDataPlace, pStack->m_dataSize);
+    DIANA_MEMCPY(pData, pDataPlace, pStack->m_dataSize);
     pStack->m_pCurrentBlock->m_curSizeInBytes -= pStack->m_dataSize;
     --pStack->m_count;
     return DI_SUCCESS;

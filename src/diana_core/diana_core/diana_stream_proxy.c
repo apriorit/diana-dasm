@@ -7,7 +7,7 @@ static int StreamProxy_Read(void * pThis, void * pBuffer, int iBufferSize, int *
     {
         if (pStream->tail_size >= iBufferSize)
         {
-            memcpy(pBuffer, pStream->pBuffer + pStream->begin, iBufferSize);
+            DIANA_MEMCPY(pBuffer, pStream->pBuffer + pStream->begin, iBufferSize);
             pStream->tail_size -= iBufferSize;
             pStream->begin+=iBufferSize;
             *readBytes = iBufferSize;
@@ -16,7 +16,7 @@ static int StreamProxy_Read(void * pThis, void * pBuffer, int iBufferSize, int *
         else
         {
             int iRes = 0;
-            memcpy(pBuffer, pStream->pBuffer + pStream->begin, pStream->tail_size);
+            DIANA_MEMCPY(pBuffer, pStream->pBuffer + pStream->begin, pStream->tail_size);
 
             // read from stream
             iRes = 

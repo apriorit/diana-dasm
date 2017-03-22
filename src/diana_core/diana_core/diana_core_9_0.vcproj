@@ -44,10 +44,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="."
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
+				DisableLanguageExtensions="false"
 				TreatWChar_tAsBuiltInType="true"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
@@ -110,10 +112,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="."
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
+				DisableLanguageExtensions="false"
 				TreatWChar_tAsBuiltInType="true"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
@@ -174,12 +178,14 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="."
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
+				DisableLanguageExtensions="false"
 				TreatWChar_tAsBuiltInType="true"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
@@ -237,12 +243,14 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="."
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="0"
+				DisableLanguageExtensions="false"
 				TreatWChar_tAsBuiltInType="true"
 				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="3"
+				WarningLevel="4"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
@@ -368,6 +376,146 @@
 				RelativePath=".\diana_uids.c"
 				>
 			</File>
+			<Filter
+				Name="processor"
+				>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_a.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_b.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_c.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_d.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_fpu.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_i.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_imul.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_internal.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_internal_xmm.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_j.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_l.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_l_xmm.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_m.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_m_xmm.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_n.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_p.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_r.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_s.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_s2.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_commands.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_core.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_core_impl.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_core_impl_xmm.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_streams.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat-muladd.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat-round-pack.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat-specialize.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat16.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloatx80.c"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="patcher"
+				>
+				<File
+					RelativePath=".\diana_patchers\diana_ultimate_patcher.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_patchers\diana_ultimate_patcher_32.c"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_patchers\diana_ultimate_patcher_64.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -384,6 +532,10 @@
 			</File>
 			<File
 				RelativePath=".\diana_analyze2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_apply_config_rules.h"
 				>
 			</File>
 			<File
@@ -408,6 +560,14 @@
 			</File>
 			<File
 				RelativePath=".\diana_core_utils.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_custom_config.inc"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_disable_warnings.h"
 				>
 			</File>
 			<File
@@ -436,6 +596,14 @@
 			</File>
 			<File
 				RelativePath=".\diana_pe_defs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_processor\diana_proc_gen.h"
+				>
+			</File>
+			<File
+				RelativePath=".\diana_processor_cpp.h"
 				>
 			</File>
 			<File
@@ -470,6 +638,154 @@
 				RelativePath=".\diana_uids.h"
 				>
 			</File>
+			<Filter
+				Name="processor"
+				>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_a.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_b.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_c.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_d.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_fpu.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_i.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_internal.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_internal_xmm.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_j.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_l.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_l_xmm.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_m.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_m_xmm.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_n.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_p.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_r.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_s.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_cmd_s2.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_commands.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_core.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_core_impl.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_core_impl_xmm.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_impl_init.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_specific.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_specific_xmm.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\diana_processor_streams.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat-compare.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat-macros.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat-round-pack.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat-specialize.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat_end.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloat_start.h"
+					>
+				</File>
+				<File
+					RelativePath=".\diana_processor\softfloat\softfloatx80.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="patcher"
+				>
+				<File
+					RelativePath=".\diana_patchers\diana_ultimate_patcher.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"
@@ -477,6 +793,10 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
+		<File
+			RelativePath=".\diana_processor\ReadMe.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
