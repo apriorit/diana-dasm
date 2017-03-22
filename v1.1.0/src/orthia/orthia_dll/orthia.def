@@ -1,0 +1,15 @@
+LIBRARY	"orthia"
+
+EXPORTS
+; plugin interface
+     DebugExtensionNotify
+     DebugExtensionInitialize
+     DebugExtensionUninitialize
+; commands
+    profile
+    lm
+    reload
+    x
+    help
+    xr
+    a
