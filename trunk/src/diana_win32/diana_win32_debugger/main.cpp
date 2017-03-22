@@ -5,8 +5,8 @@
 extern "C"
 {
 #include "diana_win32_core_init.h"
-#include "diana_processor_commands.h"
-#include "diana_processor_core_impl.h"
+#include "diana_processor/diana_processor_commands.h"
+#include "diana_processor/diana_processor_core_impl.h"
 #include "diana_core_gen_tags.h"
 }
 

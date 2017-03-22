@@ -1,12 +1,14 @@
 #include "diana_patchers.h"
 #include "diana_streams.h"
+#include "diana_disable_warnings.h"
 
-#ifdef DIANA_CFG_I386
+#ifdef DIANA_CFG_I386 
+#ifdef DIANA_CFG_USE_INLINE_ASSEMBLER
 
 #pragma warning(disable:4311)
 #pragma warning(disable:4267)
 
-int Diana_GetCmdSizeToMove(const DianaParserResult * pResult, size_t cmdSize, size_t * pNewSize)
+int Diana_GetCmdSizeToMove(const DianaParserResult * pResult, DIANA_SIZE_T cmdSize, DIANA_SIZE_T * pNewSize)
 {
     int i = 0;
     // get group info
@@ -40,14 +42,14 @@ int Diana_GetCmdSizeToMove(const DianaParserResult * pResult, size_t cmdSize, si
 }
 
 int Diana_CalculateSizeToMove(void * pPlaceToHook, 
-                              size_t summSize,
-                              size_t * pSizeAfterMove)
+                              DIANA_SIZE_T summSize,
+                              DIANA_SIZE_T * pSizeAfterMove)
 {
     int status = DI_ERROR;
     char * pBegin = (char * )pPlaceToHook;
-    size_t cmdSize = 0;
+    DIANA_SIZE_T cmdSize = 0;
     long tailSize = summSize;
-    size_t resultSize = 0;
+    DIANA_SIZE_T resultSize = 0;
 
     *pSizeAfterMove = 0;
 
@@ -65,7 +67,7 @@ int Diana_CalculateSizeToMove(void * pPlaceToHook,
            return status;
 
         {
-            size_t newCmnSize;
+            DIANA_SIZE_T newCmnSize;
             status = Diana_GetCmdSizeToMove(&result, cmdSize, &newCmnSize);
             if (status)
                 return status;
@@ -80,15 +82,15 @@ int Diana_CalculateSizeToMove(void * pPlaceToHook,
 int
 Diana_MoveSequence(void * pDestination, 
                    void * pSource,
-                   size_t summSize,
-                   size_t * pResSize)
+                   DIANA_SIZE_T summSize,
+                   DIANA_SIZE_T * pResSize)
 {
     int status = DI_ERROR;
     char * pBegin = (char * )pSource;
-    size_t cmdSize = 0;
-    size_t realCmdSize = 0;
+    DIANA_SIZE_T cmdSize = 0;
+    DIANA_SIZE_T realCmdSize = 0;
     
-    size_t targetCmdOffset = 0;
+    DIANA_SIZE_T targetCmdOffset = 0;
     long tailSize = summSize;
 
     for(;tailSize>0; pBegin+=cmdSize, tailSize-= cmdSize, targetCmdOffset += realCmdSize)
@@ -129,7 +131,7 @@ Diana_MoveSequence(void * pDestination,
                         }
                     case 4:
                         realCmdSize = cmdSize;
-                        memcpy((char*)pDestination+targetCmdOffset, pBegin, cmdSize);
+                        DIANA_MEMCPY((char*)pDestination+targetCmdOffset, pBegin, cmdSize);
                         
                         {
                             unsigned long * pChangedData   = (unsigned long *)((char*)pDestination + targetCmdOffset+ pOp->iOffset);
@@ -146,7 +148,7 @@ Diana_MoveSequence(void * pDestination,
         if (iNeedToCopy) // normal copy
         {
             realCmdSize = cmdSize;
-            memcpy((char*)pDestination+targetCmdOffset, pBegin, cmdSize);
+            DIANA_MEMCPY((char*)pDestination+targetCmdOffset, pBegin, cmdSize);
         }
     }
 
@@ -155,7 +157,7 @@ Diana_MoveSequence(void * pDestination,
 }
                    
 static int PatchSequence32(void * pPlaceToHook, 
-                           size_t summSize,
+                           DIANA_SIZE_T summSize,
                            Diana_PatchHandlerFunction_type pPatchFnc,
                            void * pPatchContext,
                            Diana_Allocator * pAllocator,
@@ -164,9 +166,9 @@ static int PatchSequence32(void * pPlaceToHook,
     // alloc stub: summSize + 5
     void * pStub = 0;
     int status = DI_ERROR;
-    size_t codeSizeAfterMove = 0;
-    size_t stubSize = 0;
-    size_t jumpOffset = 0;
+    DIANA_SIZE_T codeSizeAfterMove = 0;
+    DIANA_SIZE_T stubSize = 0;
+    DIANA_SIZE_T jumpOffset = 0;
     unsigned long * pFunctionArg = 0;
     unsigned char * pOriginalFunction = 0;
     
@@ -195,7 +197,7 @@ static int PatchSequence32(void * pPlaceToHook,
     // set begin and end
     *(unsigned char*)pStub = 0x54;
     *((unsigned char*)pStub+1) = 0x68;
-    memcpy((unsigned char*)pStub+2, &pPatchContext, 4);
+    DIANA_MEMCPY((unsigned char*)pStub+2, &pPatchContext, 4);
     
     *((unsigned char*)pStub+6) = 0xE8;
     pFunctionArg = (unsigned long*)((unsigned char*)pStub+7);
@@ -238,16 +240,16 @@ err:
 }
 
 int Diana_PatchSomething32(void * pPlaceToHook,
-                           size_t size,
+                           DIANA_SIZE_T size,
                            Diana_PatchHandlerFunction_type pPatchFnc,
                            void * pPatchContext,
                            Diana_Allocator * pAllocator,
                            void ** ppOriginalFunction)
 {
     DianaParserResult result;
-    size_t cmdSize = 0;
-    size_t cmdOffset = 0;
-    size_t summSize = 0;
+    DIANA_SIZE_T cmdSize = 0;
+    DIANA_SIZE_T cmdOffset = 0;
+    DIANA_SIZE_T summSize = 0;
     int iRes = DI_ERROR;
 
     while(cmdOffset<size)
@@ -336,15 +338,13 @@ __declspec(naked) static void _stdcall Diana_FreeRetHook(DianaPatcher_RetHook32 
 static void InitRetStub(DianaPatcher_RetHook32 * pRet, 
                         void * pOriginalRet)
 {
-    memcpy(pRet->retStub, g_retStub, sizeof(g_retStub));
+    DIANA_MEMCPY(pRet->retStub, g_retStub, sizeof(g_retStub));
 
     *(void ** )(pRet->retStub + DI_RET_OFFSET_ORIGINAL_RETURN) = pOriginalRet;
     *(void ** )(pRet->retStub + DI_RET_OFFSET_CONTEXT) = pRet;
     *(void ** )(pRet->retStub + DI_RET_OFFSET_RET2) = pRet->retStub + DI_RET_RET2;
-	#pragma warning( suppress : 4152 ) // non standard extension, function/data ptr conversion in expression
     *(void ** )(pRet->retStub + DI_RET_OFFSET_FUNCTION) = pRet->pFunction;
     *(void ** )(pRet->retStub + DI_RET_OFFSET_HOOK) = pRet;
-	#pragma warning( suppress : 4152 ) // non standard extension, function/data ptr conversion in expression
     *(void ** )(pRet->retStub + DI_RET_OFFSET_FUNCTION2) = Diana_FreeRetHook;
 }
 
@@ -381,7 +381,7 @@ int Diana_SetupRet(Diana_Allocator * pAllocator,
     
     InitRetStub(pRet, DIANA_RET_PTR(pOriginalESP));
 
-    memcpy(pRet->pCopiedArgs, 
+    DIANA_MEMCPY(pRet->pCopiedArgs, 
            (unsigned int*)pOriginalESP,
            (paramsCount+1)*sizeof(unsigned int));
 
@@ -432,7 +432,7 @@ __declspec(naked) static void _stdcall Diana_Hook(DianaPatcher_HookInfoEx * pCon
 }
 
 int Diana_PatchSomethingEx(void * pPlaceToHook,
-                           size_t size,
+                           DIANA_SIZE_T size,
                            Diana_PatchHandlerFunction2_type pPatchFnc,
                            void * pPatchContext,
                            Diana_Allocator * pAllocator,
@@ -459,4 +459,5 @@ int Diana_PatchSomethingEx(void * pPlaceToHook,
     return res;
 }
 
+#endif
 #endif

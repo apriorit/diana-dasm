@@ -19,9 +19,10 @@
 
 #include "diana_proc_gen.h"
 #include "diana_gen.h"
-#include "string.h"
 #include "diana_core_gen_tags.h"
 #include "diana_processor_cmd_internal.h"
+
+#include "diana_disable_warnings.h"
 
 int Diana_Call_xor(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext)
@@ -296,8 +297,6 @@ int Diana_Call_do_nothing(struct _dianaContext * pDianaContext,
 static
 void DianaProcessor_OnGroup(DianaGroupInfo * p)
 {
-    #pragma warning( push )
-    #pragma warning( disable : 4152 ) // non standard extension, function/data ptr conversion in expression
     switch (p->m_commandId)
     {
     DI_PROC_REGISTER_COMMAND(aaa)
@@ -508,7 +507,6 @@ void DianaProcessor_OnGroup(DianaGroupInfo * p)
     default:
         break;
     }
-    #pragma warning( pop )
 }
 
 void DianaProcessor_LinkCommands()

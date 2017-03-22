@@ -43,8 +43,8 @@ int Diana_Call_aad(struct _dianaContext * pDianaContext,
     //AH := 0;
     ax.value = ( DI_UINT16 )GET_REG_AX;
 
-    ax.l = ax.h * ( DI_CHAR )src + ax.l;
-    ax.h = 0;
+    ax.impl.l = ax.impl.h * ( DI_CHAR )src + ax.impl.l;
+    ax.impl.h = 0;
 
     DI_UPDATE_FLAGS_PSZ(SET_REG_AX(ax.value));
     DI_PROC_END;
@@ -64,8 +64,8 @@ int Diana_Call_aam(struct _dianaContext * pDianaContext,
 
 	if( src == 0 )
 		return DI_DIVISION_BY_ZERO;
-    ax.h = ax.l / ( DI_CHAR )src;
-    ax.l = ax.l % ( DI_CHAR )src;
+    ax.impl.h = ax.impl.l / ( DI_CHAR )src;
+    ax.impl.l = ax.impl.l % ( DI_CHAR )src;
 
     DI_UPDATE_FLAGS_PSZ(SET_REG_AX(ax.value));
     DI_PROC_END;

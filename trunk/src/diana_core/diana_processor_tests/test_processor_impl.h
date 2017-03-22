@@ -6,7 +6,7 @@ extern "C"
 {
 #include "diana_streams.h"
 #include "diana_gen.h"
-#include "diana_processor_core.h"
+#include "diana_processor.h"
 #include "diana_allocators.h"
 }
 #include "test_common.h"

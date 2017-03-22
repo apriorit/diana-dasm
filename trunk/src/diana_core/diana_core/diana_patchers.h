@@ -69,7 +69,7 @@ typedef struct DianaPatcher_RetHook32_
 
 // OLD: only patches, do not saves input registers, cannot allocate call context, 
 int Diana_PatchSomething32(void * pPlaceToHook,
-                           size_t size,
+                           DIANA_SIZE_T size,
                            Diana_PatchHandlerFunction_type pPatchFnc,
                            void * pPatchContext,
                            Diana_Allocator * pAllocator,
@@ -86,7 +86,7 @@ int Diana_SetupRet(Diana_Allocator * pAllocator,
                    void ** ppCallContext); // OUT
 
 int Diana_PatchSomethingEx(void * pPlaceToHook,
-                           size_t size,
+                           DIANA_SIZE_T size,
                            Diana_PatchHandlerFunction2_type pPatchFnc, 
                            void * pPatchContext,         
                            Diana_Allocator * pAllocator, 

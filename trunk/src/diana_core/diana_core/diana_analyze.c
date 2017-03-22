@@ -1,5 +1,4 @@
 #include "diana_analyze.h"
-#include "stdlib.h"
 #include "diana_stack.h"
 
 typedef struct _DianaAnalyzeSession
@@ -43,17 +42,17 @@ int Diana_InstructionsOwner_Init(Diana_InstructionsOwner * pOwner,
     memset(pOwner, 0, sizeof(*pOwner));
     pOwner->m_minimalExternalAddress = minimalExternalAddress;
 
-    pOwner->m_pInstructionsVec = malloc(sizeof(Diana_Instruction) * (size_t)maxOffsetSize);
+    pOwner->m_pInstructionsVec = DIANA_MALLOC(sizeof(Diana_Instruction) * (DIANA_SIZE_T)maxOffsetSize);
     if (!pOwner->m_pInstructionsVec)
         return DI_OUT_OF_MEMORY;
 
-    pOwner->m_ppPresenceVec = (Diana_Instruction ** )malloc(sizeof(Diana_Instruction*) * (size_t)maxOffsetSize);
+    pOwner->m_ppPresenceVec = (Diana_Instruction ** )DIANA_MALLOC(sizeof(Diana_Instruction*) * (DIANA_SIZE_T)maxOffsetSize);
     if (!pOwner->m_ppPresenceVec)
     {
         Diana_InstructionsOwner_Free(pOwner);
         return DI_OUT_OF_MEMORY;
     }
-    memset(pOwner->m_ppPresenceVec, 0, (size_t)maxOffsetSize * sizeof(Diana_Instruction*));
+    memset(pOwner->m_ppPresenceVec, 0, (DIANA_SIZE_T)maxOffsetSize * sizeof(Diana_Instruction*));
     
     res = Diana_Stack_Init(&pOwner->m_xrefs, 1024, sizeof(Diana_XRef));
     if (res != DI_SUCCESS)
@@ -72,9 +71,9 @@ int Diana_InstructionsOwner_ExternalInstructionsDeleter(Diana_ListNode * pNode,
                                                         int * pbDone)
 {
     Diana_Instruction * pInstruction = (Diana_Instruction * )pNode;
-    free(pInstruction);
+    DIANA_FREE(pInstruction);
     &pContext;
-	*pbDone = 0;
+    *pbDone = 0;
     return DI_SUCCESS;
 }
 void Diana_InstructionsOwner_Free(Diana_InstructionsOwner * pOwner)
@@ -83,11 +82,11 @@ void Diana_InstructionsOwner_Free(Diana_InstructionsOwner * pOwner)
     Diana_InitList(&pOwner->m_externalInstructionsList);
     if (pOwner->m_pInstructionsVec)
     {
-        free(pOwner->m_pInstructionsVec);
+        DIANA_FREE(pOwner->m_pInstructionsVec);
     }
     if (pOwner->m_ppPresenceVec)
     {
-        free(pOwner->m_ppPresenceVec);
+        DIANA_FREE(pOwner->m_ppPresenceVec);
     }
     if (pOwner->m_stackInited)
     {
@@ -210,7 +209,7 @@ int SaveNewExternalRoute(DianaAnalyzeSession * pSession,
         // skip first region
         return DI_SUCCESS;
     }
-    pTargetInstruction = malloc(sizeof(Diana_Instruction));
+    pTargetInstruction = DIANA_MALLOC(sizeof(Diana_Instruction));
     DI_CHECK_ALLOC(pTargetInstruction);
     flags = DI_INSTRUCTION_EXTERNAL;
     if (bLinksToData)
@@ -274,8 +273,8 @@ void DispatchMode32(DianaAnalyzeSession * pSession,
                     int * pbFound,
                     OPERAND_SIZE * pSuspectedOp)
 {
-	&pInstruction;
-	&pSession;
+    &pInstruction;
+    &pSession;
     *pbFound = 0;
     switch(pOp->type)
     {
@@ -589,9 +588,9 @@ int XrefRouteMarker(Diana_ListNode * pNode,
                     void * pContext,
                     int * pbDone)
 {
-    Diana_XRef * pXRef = Diana_CastXREF(pNode, (int)(size_t)pContext);
+    Diana_XRef * pXRef = Diana_CastXREF(pNode, (int)(DIANA_SIZE_T)pContext);
     pXRef->m_flags |= DI_XREF_INVALID;
-	&pbDone;
+    &pbDone;
     return DI_SUCCESS;
 }
 
@@ -602,7 +601,7 @@ int RouteMarker(Diana_ListNode * pNode,
 {
     Diana_Instruction * pInstruction = (Diana_Instruction * )pNode;
     DianaAnalyzeSession * pSession  = pContext;
-	&pbDone;
+    &pbDone;
     pInstruction->m_flags |= DI_INSTRUCTION_INVALID;
 
     Diana_ListForEach(&pInstruction->m_referencesToThisInstruction, 
@@ -611,7 +610,6 @@ int RouteMarker(Diana_ListNode * pNode,
 
     Diana_ListForEach(&pInstruction->m_referencesFromThisInstruction, 
                       XrefRouteMarker, 
-                      #pragma warning( suppress : 4306 ) // conversion from ' type1 ' to ' type2 ' of greater size
                       (void*)1);
 
     --pSession->pOwner->m_actualSize;
@@ -641,8 +639,7 @@ int Diana_AnalyzeCodeImpl(DianaAnalyzeSession * pSession,
     // init cur route
     pSession->curRouteInfo.startOffset = offset;
     pSession->curRouteInfo.flags = 0;
-	#pragma warning( suppress : 4127 ) // conditional expression is constant
-    while(1)
+    for(;;)
     {
         if (offset >= pSession->maxOffset || bNeedReset)
         {

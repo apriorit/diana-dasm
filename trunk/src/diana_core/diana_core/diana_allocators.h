@@ -10,4 +10,10 @@ typedef struct _DianaMAllocator
 
 void Diana_InitMAllocator(DianaMAllocator * pThis);
 
+
+// Default Allocator functions:
+void * Diana_DefaultAllocator_Alloc(DIANA_SIZE_T size);
+void  Diana_DefaultAllocator_Free(void * pMemory);
+
+
 #endif

@@ -766,7 +766,10 @@ DIANA_INLINE_C commonNaNT float128ToCommonNaN(float128_t a, float_status_t *stat
 DIANA_INLINE_C float128_t commonNaNToFloat128(commonNaNT a)
 {
     float128_t z;
-    shift128Right(a.hi, a.lo, 16, &z.hi, &z.lo);
+    DI_UINT64 hi, lo;
+    shift128Right(a.hi, a.lo, 16, &hi, &lo);
+    z.hi = hi;
+    z.lo = lo;
     z.hi |= (((DI_UINT64) a.sign)<<63) | DI_CONST64(0x7FFF800000000000);
     return z;
 }

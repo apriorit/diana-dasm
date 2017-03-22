@@ -364,7 +364,7 @@ static void test_processor_pushf()
                                           0,
                                           reg_DS) == DI_SUCCESS );
 
-    TEST_ASSERT(proc.GetSelf()->m_flags.l.value == result);
+    TEST_ASSERT(proc.GetSelf()->m_flags.impl.l.value == result);
 
     // check rsp
     TEST_ASSERT(GET_REG_ESP == 0x1C);
@@ -531,11 +531,11 @@ void test_processor_test()
 
     SET_REG_AL(1);
 
-    pCallContext->m_flags.l.value = 0x216;
+    pCallContext->m_flags.impl.l.value = 0x216;
     int res = proc.ExecOnce();
     TEST_ASSERT(res == DI_SUCCESS);
     
-    TEST_ASSERT(pCallContext->m_flags.l.value == 0x202);
+    TEST_ASSERT(pCallContext->m_flags.impl.l.value == 0x202);
 }
 
 void test_processor()

@@ -1,7 +1,7 @@
 #ifndef DIANA_WIN32_CORE_H
 #define DIANA_WIN32_CORE_H
 
-#include "diana_processor_core.h"
+#include "diana_processor.h"
 #include "diana_win32_core_init.h"
 #include "windows.h"
 

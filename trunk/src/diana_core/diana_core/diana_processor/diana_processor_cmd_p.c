@@ -238,7 +238,7 @@ int Diana_Call_popf(struct _dianaContext * pDianaContext,
         DI_CHECK(diana_internal_pop(pCallContext,
                                     &dest));
 
-        pCallContext->m_flags.l.value = (DI_UINT32)dest;
+        pCallContext->m_flags.impl.l.value = (DI_UINT32)dest;
         DianaProcessor_SetResetDefaultFlags(pCallContext);
         return DI_SUCCESS;
 
@@ -246,7 +246,7 @@ int Diana_Call_popf(struct _dianaContext * pDianaContext,
         DI_CHECK(diana_internal_pop(pCallContext,
                                     &dest));
 
-        pCallContext->m_flags.l.l.value = (DI_UINT16)dest;
+        pCallContext->m_flags.impl.l.impl.l.value = (DI_UINT16)dest;
         DianaProcessor_SetResetDefaultFlags(pCallContext);
         return DI_SUCCESS;
 

@@ -1,20 +1,19 @@
 #include "diana_allocators.h"
-#include "stdlib.h"
 
-static void * MAllocator_Alloc(void * pThis, size_t size)
+static void * MAllocator_Alloc(void * pThis, DIANA_SIZE_T size)
 {
 	pThis;
-	return malloc(size);
+	return DIANA_MALLOC(size);
 }
 static void MAllocator_Dealloc(void * pThis, void * pBuffer)
 {
 	pThis;
-	free(pBuffer);
+	DIANA_FREE(pBuffer);
 }
-static int MAllocator_Patch(void * pThis, void * pDest, const void * pSource, size_t size)
+static int MAllocator_Patch(void * pThis, void * pDest, const void * pSource, DIANA_SIZE_T size)
 {
 	pThis;
-    memcpy(pDest, pSource, size);
+    DIANA_MEMCPY(pDest, pSource, size);
     return DI_SUCCESS;
 }
 void Diana_InitMAllocator(DianaMAllocator * pThis)

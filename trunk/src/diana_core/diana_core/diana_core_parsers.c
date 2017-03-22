@@ -230,10 +230,10 @@ int FindNextCmdKey(DianaParserContext * pContext,
     if (pState->pLine->m_type == DIANA_BASE_GEN_OBJECT_INDEX)
     {
         DianaIndexKeyLine * pLine = (DianaIndexKeyLine * )pState->pLine;
-        DianaIndexKey * pIndexKey = &pLine->key[(size_t)pKey->chOpcode];
+        DianaIndexKey * pIndexKey = &pLine->key[(DIANA_SIZE_T)pKey->chOpcode];
         DianaCmdKey cmdKey;
 
-        if ((size_t)pState->position > (size_t)pKey->chOpcode)
+        if ((DIANA_SIZE_T)pState->position > (DIANA_SIZE_T)pKey->chOpcode)
         {
             return 0;
         }

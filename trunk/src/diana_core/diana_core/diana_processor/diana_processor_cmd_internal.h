@@ -4,7 +4,7 @@
 #include "diana_core.h"
 #include "diana_processor_core_impl.h"
 
-extern char g_parityBuffer[256];
+extern char g_diana_parityBuffer[256];
 
 int IsParity(unsigned char value);
 

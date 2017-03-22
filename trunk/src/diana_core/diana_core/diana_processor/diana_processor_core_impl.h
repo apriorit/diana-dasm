@@ -86,37 +86,34 @@ typedef struct _DianaRegInfo
 //RFLAGS
 
 
-#pragma warning( push )
-#pragma warning( disable : 4201 ) // nonstandard extension used : nameless struct/union
-
 typedef union _DianaRegisterValue16
 {
-    struct 
+    struct _DianaRegisterValue16_impl
     {
         unsigned char l;
         unsigned char h;
-    };
+    }impl;
     DI_UINT16 value;
 } DianaRegisterValue16_type;
 
 typedef union _DianaRegisterValue32
 {
-    struct 
+    struct _DianaRegisterValue32_impl
     {
         DianaRegisterValue16_type l;
         DI_UINT16 h;
-    };
+    }impl;
     DI_UINT32 value;
 } DianaRegisterValue32_type;
 
 
 typedef union _DianaRegisterValue
 {
-    struct 
+    struct _DianaRegisterValue_impl
     {
         DianaRegisterValue32_type l;
         DI_UINT32 h;
-    };
+    }impl;
     OPERAND_SIZE value;
 } DianaRegisterValue_type;
 
@@ -124,36 +121,35 @@ typedef union _DianaRegisterValue
 // SIGNED
 typedef union _DianaRegisterValue16_signed
 {
-    struct 
+    struct _DianaRegisterValue16_signed_impl
     {
         DI_SIGNED_CHAR l;
         DI_SIGNED_CHAR h;
-    };
+    }impl;
     DI_INT16 value;
 } DianaRegisterValue16_signed_type;
 
 typedef union _DianaRegisterValue32_signed
 {
-    struct 
+    struct _DianaRegisterValue32_signed_impl
     {
         DianaRegisterValue16_signed_type l;
         DI_INT16 h;
-    };
+    }impl;
     DI_INT32 value;
 } DianaRegisterValue32_signed_type;
 
 
 typedef union _DianaRegisterValue_signed
 {
-    struct 
+    struct _DianaRegisterValue_signed_impl
     {
         DianaRegisterValue32_signed_type l;
         DI_INT32 h;
-    };
+    }impl;
     OPERAND_SIZE_SIGNED value;
 } DianaRegisterValue_signed_type;
 
-#pragma warning( pop )
 
 #define DI_PROC_STATE_TEMP_RIP_IS_VALID       0x1
 #define DI_PROC_STATE_RIP_CHANGED             0x2

@@ -2,8 +2,6 @@ extern "C"
 {
 #include "diana_streams.h"
 #include "diana_gen.h"
-#include "diana_c_runtime.inc"
-
 }
 #include "test_push.h"
 #include "test_mov.h"

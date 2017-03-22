@@ -1,8 +1,6 @@
 #include "diana_operands.h"
 #include "diana_tables_16.h"
 #include "diana_tables_32.h"
-#include "assert.h"
-
 
 int Diana_GetDI(DI_CHAR reg, DianaUnifiedRegister * pReg)
 {
@@ -665,10 +663,9 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
     if (iCurImm)
     {
         int i =0;
-		#pragma warning( suppress : 4204 ) // nonstandard extension used : non-constant aggregate initializer
-        DI_CHAR imms[MAX_IMM] = {pResult->pInfo->m_iImmediateOperandSizeInBytes,
-		#pragma warning( suppress : 4204 ) // nonstandard extension used : non-constant aggregate initializer
-                                 pResult->pInfo->m_iImmediateOperandSizeInBytes2};
+        DI_CHAR imms[MAX_IMM] = {0, 0};
+        imms[0] = pResult->pInfo->m_iImmediateOperandSizeInBytes;
+		imms[1] = pResult->pInfo->m_iImmediateOperandSizeInBytes2;
 
         for(;i<iCurImm;++i)
         {

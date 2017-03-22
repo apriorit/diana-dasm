@@ -2,12 +2,11 @@
 #include "diana_win32_executable_heap.h"
 #include "diana_patchers.h"
 #include "diana_win32_exceptions.h"
-#include "diana_processor_core.h"
+#include "diana_processor.h"
 #include "diana_streams.h"
 #include "diana_gen.h"
-#include "diana_processor_core.h"
 #include "diana_allocators.h"
-#include "diana_processor_cmd_internal.h"
+#include "diana_processor/diana_processor_cmd_internal.h"
 
 #define DEFAULT_STACKSIZE  (1024*1024)
 

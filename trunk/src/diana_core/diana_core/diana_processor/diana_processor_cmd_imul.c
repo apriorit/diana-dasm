@@ -48,8 +48,8 @@ int Diana_Call_imul16(struct _dianaContext * pDianaContext,
 	}
 
 
-    SET_REG_AX(result.l.value);
-    SET_REG_DX(result.h);
+    SET_REG_AX(result.impl.l.value);
+    SET_REG_DX(result.impl.h);
     return DI_SUCCESS;
 }
 
@@ -72,8 +72,8 @@ int Diana_Call_imul32(struct _dianaContext * pDianaContext,
 		SET_FLAG_OF;
 	}
 
-    SET_REG_EAX(result.l.value);
-    SET_REG_EDX(result.h);
+    SET_REG_EAX(result.impl.l.value);
+    SET_REG_EDX(result.impl.h);
     return DI_SUCCESS;
 }
 

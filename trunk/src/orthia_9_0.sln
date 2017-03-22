@@ -8,15 +8,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diana_core_tests", "diana_c
 		{DDEE4514-39A8-4303-B80C-74D83D71D91A} = {DDEE4514-39A8-4303-B80C-74D83D71D91A}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diana_processor", "diana_core\diana_processor\diana_processor.vcproj", "{D35CE6C4-6C8E-44BB-8CF7-63B520210233}"
-	ProjectSection(ProjectDependencies) = postProject
-		{DDEE4514-39A8-4303-B80C-74D83D71D91A} = {DDEE4514-39A8-4303-B80C-74D83D71D91A}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diana_processor_tests", "diana_core\diana_processor_tests\diana_processor_tests.vcproj", "{ECF4A43D-2158-46E8-9B04-525BFB6DFCF5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DDEE4514-39A8-4303-B80C-74D83D71D91A} = {DDEE4514-39A8-4303-B80C-74D83D71D91A}
-		{D35CE6C4-6C8E-44BB-8CF7-63B520210233} = {D35CE6C4-6C8E-44BB-8CF7-63B520210233}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "orthia", "orthia\orthia_dll\orthia.vcproj", "{29B18490-B415-433C-9AD7-ABA97EB3A1BF}"
@@ -62,14 +56,6 @@ Global
 		{7B85969C-8760-44C7-B11D-2A2FDC6FFCDE}.Release|Win32.Build.0 = Release|Win32
 		{7B85969C-8760-44C7-B11D-2A2FDC6FFCDE}.Release|x64.ActiveCfg = Release|x64
 		{7B85969C-8760-44C7-B11D-2A2FDC6FFCDE}.Release|x64.Build.0 = Release|x64
-		{D35CE6C4-6C8E-44BB-8CF7-63B520210233}.Debug|Win32.ActiveCfg = Debug|Win32
-		{D35CE6C4-6C8E-44BB-8CF7-63B520210233}.Debug|Win32.Build.0 = Debug|Win32
-		{D35CE6C4-6C8E-44BB-8CF7-63B520210233}.Debug|x64.ActiveCfg = Debug|x64
-		{D35CE6C4-6C8E-44BB-8CF7-63B520210233}.Debug|x64.Build.0 = Debug|x64
-		{D35CE6C4-6C8E-44BB-8CF7-63B520210233}.Release|Win32.ActiveCfg = Release|Win32
-		{D35CE6C4-6C8E-44BB-8CF7-63B520210233}.Release|Win32.Build.0 = Release|Win32
-		{D35CE6C4-6C8E-44BB-8CF7-63B520210233}.Release|x64.ActiveCfg = Release|x64
-		{D35CE6C4-6C8E-44BB-8CF7-63B520210233}.Release|x64.Build.0 = Release|x64
 		{ECF4A43D-2158-46E8-9B04-525BFB6DFCF5}.Debug|Win32.ActiveCfg = Debug|Win32
 		{ECF4A43D-2158-46E8-9B04-525BFB6DFCF5}.Debug|Win32.Build.0 = Debug|Win32
 		{ECF4A43D-2158-46E8-9B04-525BFB6DFCF5}.Debug|x64.ActiveCfg = Debug|x64

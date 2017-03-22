@@ -1,5 +1,4 @@
 #include "diana_pe_analyzer.h"
-#include "stdlib.h"
 
 typedef struct Diana_PeAnalyzerCommonParams
 {
@@ -21,13 +20,13 @@ int ScanPage(Diana_PeAnalyzerCommonParams_type * pParams,
              int pageSize)
 {
     char * p = pParams->pPage;
-    char * pEnd = p + pageSize - sizeof(size_t)+1;
-    if (pageSize < sizeof(size_t))
+    char * pEnd = p + pageSize - sizeof(DIANA_SIZE_T)+1;
+    if (pageSize < sizeof(DIANA_SIZE_T))
         return DI_SUCCESS;
 
     for(++p; p < pEnd; ++p)
     {
-        size_t * pAddress = (size_t *)p;
+        DIANA_SIZE_T * pAddress = (DIANA_SIZE_T *)p;
         OPERAND_SIZE relativeAddress = 0;
         DianaAnalyzeAddressResult_type result = diaJumpInvalid;
         if (pParams->pPeFile->pImpl->dianaMode == 4)
@@ -59,7 +58,7 @@ int Diana_AnalyzeData(Diana_PeAnalyzerCommonParams_type * pParams)
     DIANA_IMAGE_SECTION_HEADER * pCurrentCapturedSection = pParams->pPeFile->pImpl->pCapturedSections;
     DIANA_IMAGE_SECTION_HEADER * pCapturedSectionsEnd = pParams->pPeFile->pImpl->pCapturedSections + pParams->pPeFile->pImpl->capturedSectionCount;
     int readBytes = 0;
-    size_t pageLastPointer = 0;
+    DIANA_SIZE_T pageLastPointer = 0;
     for(;
         pCurrentCapturedSection != pCapturedSectionsEnd;
         ++pCurrentCapturedSection)
@@ -82,18 +81,18 @@ int Diana_AnalyzeData(Diana_PeAnalyzerCommonParams_type * pParams)
             }
             readBytes = 0;
             result = pParams->pObserver->m_pStream->parent.pReadFnc(pParams->pObserver->m_pStream, 
-                                                                    (char*)pParams->pPage+sizeof(size_t), 
+                                                                    (char*)pParams->pPage+sizeof(DIANA_SIZE_T), 
                                                                     (int)sizeToRead, 
                                                                     &readBytes);
             if (result || !readBytes)
                 break;
             allReadBytes += readBytes;
-            *(size_t*)pParams->pPage = pageLastPointer;
+            *(DIANA_SIZE_T*)pParams->pPage = pageLastPointer;
             DI_CHECK(ScanPage(pParams,
-                              readBytes + sizeof(size_t)));
-            if (readBytes >= sizeof(size_t))
+                              readBytes + sizeof(DIANA_SIZE_T)));
+            if (readBytes >= sizeof(DIANA_SIZE_T))
             {
-                pageLastPointer = *(size_t*)((char*)pParams->pPage + readBytes);
+                pageLastPointer = *(DIANA_SIZE_T*)((char*)pParams->pPage + readBytes);
             }
             if (allReadBytes >= pCurrentCapturedSection->Misc.VirtualSize)
                 break;
@@ -210,7 +209,7 @@ int Diana_PE_AnalyzePEImpl(Diana_PeFile * pPeFile,
     int stackInited = 0;
     Diana_PeAnalyzerCommonParams_type params;
 
-    void * pPage = malloc(pageSize + sizeof(OPERAND_SIZE));
+    void * pPage = DIANA_MALLOC(pageSize + sizeof(OPERAND_SIZE));
     DI_CHECK_ALLOC(pPage);
 
     DI_CHECK_GOTO(Diana_Stack_Init(&stack, 4096, sizeof(Diana_RouteInfo)));
@@ -229,7 +228,7 @@ cleanup:
     {
         Diana_Stack_Free(&stack);
     }
-    free(pPage);
+    DIANA_FREE(pPage);
     return status;
 }
 
@@ -257,7 +256,7 @@ int DianaMovableReadStreamOverMemory_MoveTo(void * pThis, OPERAND_SIZE offset)
     DianaMovableReadStreamOverMemory * pStream = pThis;
     if (offset >= pStream->memoryStream.bufferSize)
         return DI_END_OF_STREAM;
-    pStream->memoryStream.curSize = offset;
+    pStream->memoryStream.curSize = (DIANA_SIZE_T)offset;
     return DI_SUCCESS;
 }
 int DianaMovableReadStreamOverMemory_Read(void * pThis,
@@ -296,7 +295,9 @@ void DianaMovableReadStreamOverMemory_Init(DianaMovableReadStreamOverMemory * pT
                                 DianaMovableReadStreamOverMemory_Read,
                                 DianaMovableReadStreamOverMemory_MoveTo,
                                 DianaMovableReadStreamOverMemory_RandomRead);
-    Diana_InitMemoryStream(&pThis->memoryStream, pBuffer, bufferSize);
+    Diana_InitMemoryStream(&pThis->memoryStream, 
+						   pBuffer, 
+						   (DIANA_SIZE_T)bufferSize);
 }
 
 int DianaAnalyzeObserverOverMemory_AnalyzeJumpAddress(void * pThis, 
@@ -366,9 +367,14 @@ int Diana_PE_AnalyzePEInMemory(void * pPeFile,
     DI_CHECK(DianaPeFile_Init(&peFile, &analyzeObserver.stream.stream, fileSizeToPass, (OPERAND_SIZE)pPeFile));
     if (actualizeFileSize)
     {
-        analyzeObserver.stream.memoryStream.bufferSize = peFile.pImpl->sizeOfFile;
+		result = Diana_ConvertOpSizeToSizeT(&peFile.pImpl->sizeOfFile, &analyzeObserver.stream.memoryStream.bufferSize);
+		if (result)
+		{
+			goto cleanup;
+		}
     }
     result = Diana_PE_AnalyzePE(&peFile, &analyzeObserver.parent, pOwner);
+cleanup:
     DianaPeFile_Free(&peFile);
     return result;
 }
