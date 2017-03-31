@@ -27,7 +27,7 @@ void Diana_Instruction_Init(Diana_Instruction * pInstruction,
                             OPERAND_SIZE offset,
                             int flags)
 {
-    memset(pInstruction, 0, sizeof(*pInstruction));
+    DIANA_MEMSET(pInstruction, 0, sizeof(*pInstruction));
     
     pInstruction->m_offset = offset;
     pInstruction->m_flags = flags;
@@ -39,7 +39,7 @@ int Diana_InstructionsOwner_Init(Diana_InstructionsOwner * pOwner,
                                  OPERAND_SIZE minimalExternalAddress)
 {
     int res = 0;
-    memset(pOwner, 0, sizeof(*pOwner));
+    DIANA_MEMSET(pOwner, 0, sizeof(*pOwner));
     pOwner->m_minimalExternalAddress = minimalExternalAddress;
 
     pOwner->m_pInstructionsVec = DIANA_MALLOC(sizeof(Diana_Instruction) * (DIANA_SIZE_T)maxOffsetSize);
@@ -52,7 +52,7 @@ int Diana_InstructionsOwner_Init(Diana_InstructionsOwner * pOwner,
         Diana_InstructionsOwner_Free(pOwner);
         return DI_OUT_OF_MEMORY;
     }
-    memset(pOwner->m_ppPresenceVec, 0, (DIANA_SIZE_T)maxOffsetSize * sizeof(Diana_Instruction*));
+    DIANA_MEMSET(pOwner->m_ppPresenceVec, 0, (DIANA_SIZE_T)maxOffsetSize * sizeof(Diana_Instruction*));
     
     res = Diana_Stack_Init(&pOwner->m_xrefs, 1024, sizeof(Diana_XRef));
     if (res != DI_SUCCESS)
@@ -138,7 +138,7 @@ static int Diana_CreateXRef(Diana_InstructionsOwner * pOwner,
 {
     Diana_XRef * pXref = 0;
     Diana_XRef xref;
-    memset(&xref, 0, sizeof(xref));
+    DIANA_MEMSET(&xref, 0, sizeof(xref));
     xref.m_subrefs[0].m_pInstruction = pFromInstruction;
     xref.m_subrefs[1].m_pInstruction = pToInstruction;
     DI_CHECK(Diana_Stack_Push(&pOwner->m_xrefs, &xref));
@@ -236,7 +236,7 @@ int SaveNewRoute(DianaAnalyzeSession * pSession,
     if (newOffset >= pSession->maxOffset)
         return DI_SUCCESS;
 
-    memset(&newRouteInfo, 0, sizeof(newRouteInfo));
+    DIANA_MEMSET(&newRouteInfo, 0, sizeof(newRouteInfo));
     newRouteInfo.startOffset = newOffset;
     newRouteInfo.flags = newRouteFlags;
 
@@ -723,7 +723,7 @@ int Diana_AnalyzeCodeEx(Diana_InstructionsOwner * pOwner,
                         int flags)
 {
     DianaAnalyzeSession session;
-    memset(&session, 0, sizeof(session));
+    DIANA_MEMSET(&session, 0, sizeof(session));
 
     session.maxOffset = maxOffset;
     session.pOwner = pOwner;

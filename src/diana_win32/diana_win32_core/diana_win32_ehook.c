@@ -10,6 +10,9 @@
 
 #define DEFAULT_STACKSIZE  (1024*1024)
 
+#ifdef DIANA_CFG_I386 
+#ifdef DIANA_CFG_USE_INLINE_ASSEMBLER
+
 struct HookContext
 {
     int argSize; // must be first
@@ -176,3 +179,8 @@ int DianaWin32Processor_EhookSTD(void * pPlaceToHook,
                                  &pHookContext->pFunction);
     return res;
 }
+
+
+
+#endif
+#endif

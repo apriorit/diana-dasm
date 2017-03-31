@@ -50,8 +50,8 @@ int DianaProcessor_Init(DianaProcessor * pThis,
                         Diana_Allocator * pAllocator,
                         int mode)
 {
-    memset(pThis, 0, sizeof(DianaProcessor)); 
-    memset(pThis->m_registers, -1, sizeof(pThis->m_registers)); 
+    DIANA_MEMSET(pThis, 0, sizeof(DianaProcessor)); 
+    DIANA_MEMSET(pThis->m_registers, -1, sizeof(pThis->m_registers)); 
 
     DianaBase_Init(&pThis->m_base, &g_ProcessorId);
 

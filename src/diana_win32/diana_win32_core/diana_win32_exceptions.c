@@ -11,6 +11,9 @@ static int g_exceptionSupportEnabled = 0;
 static void * g_pNtContinue = 0;
 static void * g_pNtRaiseException = 0;
 
+#ifdef DIANA_CFG_I386 
+#ifdef DIANA_CFG_USE_INLINE_ASSEMBLER
+
 static void __stdcall hooked_KiUserExceptionDispatcher(void * pContext, void * pOriginalESP)
 {
     void * pProcessor = TlsGetValue(g_TlsProcessorIndex);
@@ -166,3 +169,7 @@ int DianaWin32Processor_InitProcessorExceptions(DianaWin32Processor * pThis)
     return DianaProcessor_RegisterFirePoint(&pThis->m_processor,
                                             &point);
 }
+
+
+#endif
+#endif

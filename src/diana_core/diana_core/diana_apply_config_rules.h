@@ -12,6 +12,7 @@
 #define DIANA_MEMCMP  memcmp
 #define DIANA_MEMCPY  memcpy
 #define DIAND_STRNCMP strncmp
+#define DIANA_MEMSET memset
 
 #ifndef DIANA_USE_MALLOC_FREE 
 #ifndef DIANA_DONT_USE_MALLOC_FREE 

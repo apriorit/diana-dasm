@@ -91,7 +91,7 @@ int Diana_RecognizeTreg(DI_CHAR reg, DianaUnifiedRegister * pReg)
 
 static void InitLinkedOp(DianaLinkedOperand * pLinkedOp)
 {
-    memset(pLinkedOp, 0, sizeof(*pLinkedOp));
+    DIANA_MEMSET(pLinkedOp, 0, sizeof(*pLinkedOp));
     pLinkedOp->iOffset = 0;
     pLinkedOp->type = diana_none;
 }

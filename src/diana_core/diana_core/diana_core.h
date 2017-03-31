@@ -364,8 +364,7 @@ void DianaMovableReadStream_Init(DianaMovableReadStream * pStream,
 
 typedef struct _dianaReadWriteRandomStream
 {
-    DianaReadStream parent;
-    DianaAnalyzeRandomRead_fnc pRandomRead;
+    DianaMovableReadStream parent;
     DianaAnalyzeRandomWrite_fnc pRandomWrite;
 }DianaReadWriteRandomStream;
 

@@ -1,5 +1,8 @@
 #include "diana_win32_core.h"
 
+#ifdef DIANA_CFG_I386 
+#ifdef DIANA_CFG_USE_INLINE_ASSEMBLER
+
 // DianaProcessor_InitAsLive32_Impl stack:
 //
     // gs
@@ -33,7 +36,7 @@ void  __stdcall DianaProcessor_LoadLiveContext32_Impl(DianaProcessor * pCallCont
     SET_REG_DS(pParams[paramNum++]);
     SET_REG_CS(pParams[paramNum++]);
 
-    pCallContext->m_flags.l.value = pParams[paramNum++];
+    pCallContext->m_flags.impl.l.value = pParams[paramNum++];
     
     SET_REG_RDI(pParams[paramNum++]);
     SET_REG_RSI(pParams[paramNum++]);
@@ -98,7 +101,7 @@ void __stdcall DianaProcessor_LoadContext32(DianaProcessor * pCallContext,
     SET_REG_DS(pContext->SegDs);
     SET_REG_CS(pContext->SegCs);
 
-    pCallContext->m_flags.l.value = pContext->EFlags;
+    pCallContext->m_flags.impl.l.value = pContext->EFlags;
     
     SET_REG_RDI(pContext->Edi);
     SET_REG_RSI(pContext->Esi);
@@ -122,7 +125,7 @@ void __stdcall DianaProcessor_SaveContext32(DianaProcessor * pCallContext,
     pContext->SegDs = (unsigned long)GET_REG_DS;
     pContext->SegCs = (unsigned long)GET_REG_CS;
 
-    pContext->EFlags = pCallContext->m_flags.l.value;
+    pContext->EFlags = pCallContext->m_flags.impl.l.value;
     
     pContext->Edi = (unsigned long)GET_REG_RDI;
     pContext->Esi = (unsigned long)GET_REG_RSI;
@@ -135,3 +138,8 @@ void __stdcall DianaProcessor_SaveContext32(DianaProcessor * pCallContext,
     pContext->Ebp = (unsigned long)GET_REG_RBP;
     pContext->Eip = (unsigned long)GET_REG_RIP;
 }
+
+
+
+#endif
+#endif

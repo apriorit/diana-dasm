@@ -279,7 +279,7 @@ int Di_PrepareSIDI_regs(DianaProcessor * pCallContext,
             return DI_ERROR;
         }
 
-        memset(pSrcIndex, 0, sizeof(*pSrcIndex));
+        DIANA_MEMSET(pSrcIndex, 0, sizeof(*pSrcIndex));
         pSrcIndex->seg_reg = reg_DS;
     }
     else
@@ -289,7 +289,7 @@ int Di_PrepareSIDI_regs(DianaProcessor * pCallContext,
             return DI_ERROR;
         }
     }
-    memset(pDestIndex, 0, sizeof(*pDestIndex));
+    DIANA_MEMSET(pDestIndex, 0, sizeof(*pDestIndex));
     pDestIndex->seg_reg = reg_ES;
 
     switch(pCallContext->m_context.iCurrentCmd_addressSize)

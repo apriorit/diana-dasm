@@ -758,7 +758,7 @@ void DianaTextOutputContext_Init(DianaTextOutputContext * pContext,
                                  DianaOpOutput_type pOpOut,
                                  int spacesCount)
 {
-    memset(pContext, 0, sizeof(*pContext));
+    DIANA_MEMSET(pContext, 0, sizeof(*pContext));
     pContext->pTextOutputFnc = pTextOut;
     pContext->pOpOutputFnc = pOpOut;
     pContext->spacesCount = spacesCount;

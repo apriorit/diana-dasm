@@ -32,7 +32,7 @@ struct State
     DWORD m_ECX;    
     State(DianaProcessor * pCallContext)
     {
-        m_EFlags = pCallContext->m_flags.l.value;
+        m_EFlags = pCallContext->m_flags.impl.l.value;
  
         m_EDI = (DWORD)GET_REG_EDI;
         m_ESI = (DWORD)GET_REG_ESI;
@@ -60,7 +60,7 @@ public:
     }
     inline CBuffer& operator <<(const char * pstr) 
     {
-        long len = strlen(pstr);
+        size_t len = strlen(pstr);
         buf.insert(buf.end(), pstr, pstr +len);
         return *this;
     }
@@ -68,7 +68,7 @@ public:
     {
         char * pTmp = &tmp.front();
         _ultoa((unsigned long )reg, pTmp, 16);
-        long len = strlen(pTmp);
+        size_t len = strlen(pTmp);
         buf.insert(buf.end(), pTmp, pTmp +len);
         return *this;
     }
@@ -102,7 +102,7 @@ inline void PrintContext(DianaProcessor * pCallContext)
     str<<GET_REG_ECX<<"-";
     str<<GET_REG_EAX<<"-";
     str<<GET_REG_EBP<<"-";
-    str<<pCallContext->m_flags.l.value<<"-";
+    str<<pCallContext->m_flags.impl.l.value<<"-";
     str<<GET_REG_ESP<<"-";
     str<<GET_REG_SS;
     str<<"]\n\n";
@@ -112,7 +112,7 @@ inline void PrintContext(DianaProcessor * pCallContext)
     DWORD written = 0;
     WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), 
                   str2.c_str(), 
-                  str2.size(), 
+                  (DWORD)str2.size(), 
                   &written, 
                   0);
 
