@@ -1,6 +1,9 @@
 #include "diana_win32_streams.h"
 #include "diana_win32_processor.h"
 
+#ifdef DIANA_CFG_I386 
+#ifdef DIANA_CFG_USE_INLINE_ASSEMBLER
+
 static int DianaWin32RandomRead(void * pThis, 
                                     OPERAND_SIZE selector,
                                     OPERAND_SIZE offset,
@@ -194,3 +197,8 @@ void DianaWin32RemoteStream_Init(DianaWin32RemoteStream * pStream,
     pStream->m_parent.pWriteFnc = DianaWin32RandomWrite_Remote;
     pStream->m_hProcess = hProcess;
 }
+
+
+
+#endif
+#endif

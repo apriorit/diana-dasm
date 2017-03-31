@@ -19,6 +19,9 @@
 #define STUB_SIZE 18
 
 
+#ifdef DIANA_CFG_I386 
+#ifdef DIANA_CFG_USE_INLINE_ASSEMBLER
+
 typedef struct _CallContextInfo
 {
     unsigned char m_stub[STUB_SIZE]; // MUST BE FIRST!
@@ -132,7 +135,7 @@ int Diana_Call_sysenter_ex(DianaWin32Processor * pThis)
     // This section is specified/returned if the
     // ContextFlags word contians the flag CONTEXT_CONTROL.
     pCallContextInfo->m_newContext.m_EBP = (DWORD)GET_REG_EBP;
-    pCallContextInfo->m_newContext.m_EFlags = (DWORD)pCallContext->m_flags.l.value;
+    pCallContextInfo->m_newContext.m_EFlags = (DWORD)pCallContext->m_flags.impl.l.value;
 
     {
     DWORD newRspValue = (DWORD)GET_REG_ESP;
@@ -175,3 +178,7 @@ int Diana_Call_sysenter(struct _dianaContext * pDianaContext,
 
     return Diana_Call_sysenter_ex(pWin32Processor);
 }
+
+
+#endif
+#endif

@@ -298,7 +298,7 @@ void DianaProcessor_SetResetDefaultFlags(DianaProcessor * pThis)
 
 void DianaProcessor_ResetFPU(DianaProcessor * pThis)
 {
-    memset(&pThis->m_fpu, 0, sizeof(pThis->m_fpu));
+    DIANA_MEMSET(&pThis->m_fpu, 0, sizeof(pThis->m_fpu));
     pThis->m_fpu.controlWord = 0x037F;
 }
 int DianaProcessor_InitProcessorImpl(DianaProcessor * pThis)
@@ -477,7 +477,7 @@ int DianaProcessor_InitProcessorImpl(DianaProcessor * pThis)
     REGISTER_SUB_REGISTER(reg_BH, reg_BX, 1)
 
     // zero all registers
-    memset(pThis->m_pRegistersVector, 0, pThis->m_registersVectorSize);
+    DIANA_MEMSET(pThis->m_pRegistersVector, 0, pThis->m_registersVectorSize);
     return 0;
 }
  

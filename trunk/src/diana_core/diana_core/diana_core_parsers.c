@@ -545,7 +545,7 @@ int Diana_ParseCmdEx(DianaParseParams * pParseParams)    // OUT
     pParseParams->pContext->prefixesCount = 0;
     
     Diana_ResetPrefixes(pParseParams->pContext);
-    memset(pParseParams->pResult, 0, sizeof(DianaParserResult));
+    DIANA_MEMSET(pParseParams->pResult, 0, sizeof(DianaParserResult));
 
     // check prefixes
     for(;;++iBytesCounter)

@@ -4,7 +4,7 @@ int Diana_Stack_Init(Diana_Stack * pStack,
                      int minBlockSize,
                      int dataSize)
 {
-    memset(pStack, 0, sizeof(*pStack));
+    DIANA_MEMSET(pStack, 0, sizeof(*pStack));
     Diana_InitList(&pStack->m_blockList);
     pStack->m_minBlockSize = minBlockSize;
     pStack->m_dataSize = dataSize;
@@ -61,7 +61,7 @@ int Diana_Stack_Push(Diana_Stack * pStack,
         if (!pBlock)
             return DI_OUT_OF_MEMORY;
 
-        memset(pBlock, 0, sizeof(*pBlock));
+        DIANA_MEMSET(pBlock, 0, sizeof(*pBlock));
 
         pDataPlace = (char*)pBlock + sizeof(Diana_StackBlock);
         DIANA_MEMCPY(pDataPlace, pData, pStack->m_dataSize);

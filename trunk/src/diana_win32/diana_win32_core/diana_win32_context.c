@@ -1,5 +1,8 @@
 #include "diana_win32_context.h"
 
+#ifdef DIANA_CFG_I386 
+#ifdef DIANA_CFG_USE_INLINE_ASSEMBLER
+
 void __declspec(naked) __stdcall
 Di_SetThreadContext(DI_WIN32_CONTEXT context)
 {
@@ -76,3 +79,7 @@ __declspec(naked) void  __stdcall Di_GetThreadContext(DI_WIN32_CONTEXT * pThis)
     __asm pop ebp
     __asm ret 4
 }
+
+
+#endif
+#endif

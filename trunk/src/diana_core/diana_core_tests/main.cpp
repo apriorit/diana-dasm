@@ -25,6 +25,7 @@ extern "C"
 #include "test_new.h"
 
 void test_masm1();
+
 int main()
 {
     Diana_Init();    

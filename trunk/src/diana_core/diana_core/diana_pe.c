@@ -121,14 +121,14 @@ int Diana_InitPeFileImpl(Diana_PeFile * pPeFile,
     Diana_PeFile_impl * pImpl= 0;
     DIANA_IMAGE_SECTION_HEADER * pSectionHeader = 0;
     
-    memset(pPeFile, 0, sizeof(*pPeFile));
+    DIANA_MEMSET(pPeFile, 0, sizeof(*pPeFile));
     // allocate impl header
     sizeOfImpl = (int)Diana_GetMaxSize(sizeof(Diana_PeFile64_impl), sizeof(Diana_PeFile32_impl)) + 
                  (int)Diana_GetMaxSize(sizeof(DIANA_IMAGE_OPTIONAL_HEADER64), sizeof(DIANA_IMAGE_OPTIONAL_HEADER32));
     pImpl = DIANA_MALLOC(sizeOfImpl);
     DI_CHECK_ALLOC(pImpl);
     pPeFile->pImpl = pImpl;
-    memset(pImpl, 0, sizeof(*pImpl));
+    DIANA_MEMSET(pImpl, 0, sizeof(*pImpl));
 
     // read dos header
     DI_CHECK(pStream->pMoveTo(pStream, 0));
@@ -150,7 +150,7 @@ int Diana_InitPeFileImpl(Diana_PeFile * pPeFile,
     
         pSectionHeader = DIANA_MALLOC(pImpl->ntHeaders.FileHeader.NumberOfSections * sizeof(DIANA_IMAGE_SECTION_HEADER));
         DI_CHECK_ALLOC(pSectionHeader);
-        memset(pSectionHeader, 0, pImpl->ntHeaders.FileHeader.NumberOfSections * sizeof(DIANA_IMAGE_SECTION_HEADER));
+        DIANA_MEMSET(pSectionHeader, 0, pImpl->ntHeaders.FileHeader.NumberOfSections * sizeof(DIANA_IMAGE_SECTION_HEADER));
         pImpl->pCapturedSections = pSectionHeader;
 
         DI_CHECK(DianaExactRead(&pStream->parent, pSectionHeader, pImpl->ntHeaders.FileHeader.NumberOfSections * sizeof(DIANA_IMAGE_SECTION_HEADER)));

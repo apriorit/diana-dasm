@@ -32,6 +32,7 @@ int main()
 {
     Diana_Init();
     DianaProcessor_GlobalInit();
+#ifdef DIANA_CFG_I386 
     DianaWin32Processor_GlobalInit();
 
     test_patchers();
@@ -46,5 +47,7 @@ int main()
         test_processor2();
         test_processor3();
     }
+#endif
+
     return 0;
 }

@@ -65,8 +65,8 @@ void DianaReadWriteRandomStream_Init(DianaReadWriteRandomStream * pStream,
                                      DianaAnalyzeRandomRead_fnc pRandomRead,
                                      DianaAnalyzeRandomWrite_fnc pRandomWrite)
 {
-    pStream->parent.pReadFnc = pReadFnc;
-    pStream->pRandomRead = pRandomRead;
+    pStream->parent.parent.pReadFnc = pReadFnc;
+    pStream->parent.pRandomRead = pRandomRead;
     pStream->pRandomWrite = pRandomWrite;
 }
 int Diana_ParseCmd(DianaContext * pContext, //IN
@@ -130,7 +130,7 @@ void Diana_FatalBreak()
 
 void Diana_InitContext(DianaContext * pThis, int Mode)
 {
-    memset(pThis, 0, sizeof(*pThis));
+    DIANA_MEMSET(pThis, 0, sizeof(*pThis));
 
     pThis->cacheIt = DI_CACHE_RESERVED;
     if (Mode == DIANA_MODE64)

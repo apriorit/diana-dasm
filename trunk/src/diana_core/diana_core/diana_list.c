@@ -2,7 +2,7 @@
 
 void Diana_InitList(Diana_List * pList)
 {
-    memset(pList, 0, sizeof(*pList));
+    DIANA_MEMSET(pList, 0, sizeof(*pList));
 }
 
 int Diana_ListForEach(Diana_List * pList,
