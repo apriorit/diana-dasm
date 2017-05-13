@@ -476,7 +476,7 @@ void test_x64_integrated_impl(const unsigned char * pData,
     // 1
     for(int i =0; ; ++i)
     {
-        iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent,  &result);
+        iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent.parent.parent,  &result);
         if (iRes == DI_END)
             break;
 
@@ -568,7 +568,7 @@ void test_fail_3()
     int i =0;
     for(; ; ++i)
     {
-        iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent,  &result);
+        iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent.parent.parent,  &result);
 		pGroupInfo;
         if (iRes == DI_END)
             break;

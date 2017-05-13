@@ -62,11 +62,15 @@ void DianaMovableReadStream_Init(DianaMovableReadStream * pStream,
 
 void DianaReadWriteRandomStream_Init(DianaReadWriteRandomStream * pStream,
                                      DianaRead_fnc pReadFnc, 
+                                     DianaAnalyzeMoveTo_fnc pMoveTo,
                                      DianaAnalyzeRandomRead_fnc pRandomRead,
                                      DianaAnalyzeRandomWrite_fnc pRandomWrite)
 {
-    pStream->parent.parent.pReadFnc = pReadFnc;
-    pStream->parent.pRandomRead = pRandomRead;
+    DianaMovableReadStream_Init(&pStream->parent, 
+                                pReadFnc, 
+                                pMoveTo,
+                                pRandomRead);
+
     pStream->pRandomWrite = pRandomWrite;
 }
 int Diana_ParseCmd(DianaContext * pContext, //IN

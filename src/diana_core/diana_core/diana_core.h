@@ -370,6 +370,7 @@ typedef struct _dianaReadWriteRandomStream
 
 void DianaReadWriteRandomStream_Init(DianaReadWriteRandomStream * pStream,
                                      DianaRead_fnc pReadFnc, 
+                                     DianaAnalyzeMoveTo_fnc pMoveTo,
                                      DianaAnalyzeRandomRead_fnc pRandomRead,
                                      DianaAnalyzeRandomWrite_fnc pRandomWrite);
 // Allocators
@@ -492,4 +493,6 @@ int Diana_OnError(int code);
 
 
 int Diana_ConvertOpSizeToSizeT(const OPERAND_SIZE * pOpSize, DIANA_SIZE_T * pSizeT);
+
+
 #endif
