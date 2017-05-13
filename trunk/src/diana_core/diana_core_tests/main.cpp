@@ -25,6 +25,7 @@ extern "C"
 #include "test_new.h"
 
 void test_masm1();
+void test_patchers();
 
 int main()
 {
@@ -51,5 +52,6 @@ int main()
     test_suxx();
     test_integrated();
     test_masm1();
+    test_patchers();
     return 0;
 }

@@ -31,7 +31,7 @@ void test_integrated()
     Diana_InitMemoryStream(&stream, buf, sizeof(buf));
 
     // 1
-    iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent,  &result);
+    iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent.parent.parent,  &result);
     cmdSize = stream.curSize - context.cacheSize;
 
     TEST_ASSERT_IF(!iRes)
@@ -54,7 +54,7 @@ void test_integrated()
    }
 
     // 2
-    iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent,  &result);
+    iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent.parent.parent,  &result);
     cmdSize = stream.curSize - context.cacheSize;
 
     TEST_ASSERT_IF(!iRes)
@@ -72,7 +72,7 @@ void test_integrated()
    }
 
    // 3
-   iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent,  &result);
+   iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent.parent.parent,  &result);
    cmdSize = stream.curSize - context.cacheSize;
 
    TEST_ASSERT_IF(!iRes)
@@ -87,7 +87,7 @@ void test_integrated()
         TEST_ASSERT(result.iPrefix == DI_PREFIX_REP);
    }
 
-   iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent,  &result);
+   iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent.parent.parent,  &result);
    TEST_ASSERT(iRes == DI_END);
 }
 
@@ -245,7 +245,7 @@ void test_x32_integrated_impl(const unsigned char * pData,
     // 1
     for(int i =0; ; ++i)
     {
-        iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent,  &result);
+        iRes = Diana_ParseCmd(&context, Diana_GetRootLine(), &stream.parent.parent.parent,  &result);
         if (iRes == DI_END)
             break;
 

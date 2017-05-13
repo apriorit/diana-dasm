@@ -13,7 +13,13 @@ void DianaHook_Allocator_Init(DianaHook_Allocator * pDianaHookAllocator,
     pDianaHookAllocator->alloc = alloc;
     pDianaHookAllocator->free = free;
 }
-
+void DianaHook_TargetMemoryProvider_Init(DianaHook_TargetMemoryProvider * pDianaHookProvider,
+                                         DianaReadWriteRandomStream * pReadWriteStream,
+                                         DianaHook_Allocator * pAllocator)
+{
+    pDianaHookProvider->pReadWriteStream = pReadWriteStream;
+    pDianaHookProvider->pAllocator = pAllocator;
+}
 int DianaHook_PatchStream(DianaHook_TargetMemoryProvider * pTargetMemoryProvider,
                           int processorMode,
                           OPERAND_SIZE addressToHook,

@@ -265,7 +265,10 @@ int DianaMovableReadStreamOverMemory_Read(void * pThis,
                                             int * readBytes)
 {
     DianaMovableReadStreamOverMemory * pStream = pThis;
-    return pStream->memoryStream.parent.pReadFnc(&pStream->memoryStream.parent, pBuffer, iBufferSize, readBytes);
+    return pStream->memoryStream.parent.parent.parent.pReadFnc(&pStream->memoryStream.parent.parent, 
+                                                 pBuffer, 
+                                                 iBufferSize, 
+                                                 readBytes);
 }
 
 int DianaMovableReadStreamOverMemory_RandomRead(void * pThis, 

@@ -5,7 +5,7 @@
 
 typedef struct _dianaMemoryStream
 {
-    DianaReadStream parent;
+    DianaReadWriteRandomStream parent;
     void * pBuffer;
     DIANA_SIZE_T bufferSize;
     DIANA_SIZE_T curSize;
@@ -13,8 +13,12 @@ typedef struct _dianaMemoryStream
 
 void Diana_InitMemoryStream(DianaMemoryStream * pStream,
                             void * pBuffer,
-                            DIANA_SIZE_T bufferSize
-                            );  // this
+                            DIANA_SIZE_T bufferSize);  // this
+
+void Diana_InitMemoryStreamEx(DianaMemoryStream * pStream,
+                              void * pBuffer,
+                              DIANA_SIZE_T bufferSize,
+                              int bWritable);  // this
 
 int Diana_ParseCmdOnBuffer(int iMode,
                            void * pBuffer,
@@ -35,6 +39,7 @@ int DianaMemoryStream_RandomRead(void * pThis,
                                    void * pBuffer, 
                                    int iBufferSize, 
                                    OPERAND_SIZE * readBytes);
+
 
 
 #endif

@@ -29,6 +29,10 @@ typedef struct _DianaHook_TargetMemoryProvider
     DianaHook_Allocator * pAllocator;
 }DianaHook_TargetMemoryProvider;
 
+void DianaHook_TargetMemoryProvider_Init(DianaHook_TargetMemoryProvider * pDianaHookProvider,
+                                         DianaReadWriteRandomStream * pReadWriteStream,
+                                         DianaHook_Allocator * pAllocator);
+
 typedef struct _DianaHook_CustomOptions
 {
     int dummy;

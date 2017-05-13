@@ -407,6 +407,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\test_patchers.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\test_push.cpp"
 				>
 			</File>
