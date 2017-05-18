@@ -12,7 +12,7 @@ typedef struct _DianaHook_InternalMessage
     DianaHook_CustomOptions * pCustomOptions;
     OPERAND_SIZE addressToHook;
     OPERAND_SIZE patchContext;
-    OPERAND_SIZE targetFunction;
+    OPERAND_SIZE hookFunction;
     OPERAND_SIZE originalFunctionPointer;
 
     DianaParserResult result;

@@ -35,12 +35,13 @@ void DianaHook_TargetMemoryProvider_Init(DianaHook_TargetMemoryProvider * pDiana
 
 typedef struct _DianaHook_CustomOptions
 {
-    int dummy;
+    OPERAND_SIZE originalFunctionPointer;
 }DianaHook_CustomOptions;
 
 int DianaHook_PatchStream(DianaHook_TargetMemoryProvider * pTargetMemoryProvider,
                           int processorMode,
                           OPERAND_SIZE addressToHook,
+                          OPERAND_SIZE hookFunction,
                           DianaHook_CustomOptions * pCustomOptions);
 
 #endif
