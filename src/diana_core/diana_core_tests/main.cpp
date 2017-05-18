@@ -2,6 +2,7 @@ extern "C"
 {
 #include "diana_streams.h"
 #include "diana_gen.h"
+#include "diana_processor/diana_processor_core.h"
 }
 #include "test_push.h"
 #include "test_mov.h"
@@ -30,6 +31,7 @@ void test_patchers();
 int main()
 {
     Diana_Init();    
+    DianaProcessor_GlobalInit();
     test_new();
     test_stack();
     test_analyze();

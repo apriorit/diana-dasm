@@ -68,8 +68,8 @@ int CopyCommand32(DianaHook_InternalMessage * pMessage,
 
 static
 int DianaHook_AddTailJump(DianaHook_InternalMessage * pMessage,
-                          DI_OPERAND_SIZE commandAddress,
-                          DI_OPERAND_SIZE newCommandAddress)
+                          DI_OPERAND_SIZE jmpCommandAddress,
+                          DI_OPERAND_SIZE jmpTargetAddress)
 {
     void * pCommandBuffer = 0;
     unsigned char * pCommandBufferOut = 0; 
@@ -77,7 +77,7 @@ int DianaHook_AddTailJump(DianaHook_InternalMessage * pMessage,
 
     pCommandBufferOut = (unsigned char * )pCommandBuffer;
     pCommandBufferOut[0] = 0xE9;
-    *(DI_UINT32*)(pCommandBufferOut+1) = (DI_UINT32)commandAddress - (DI_UINT32)newCommandAddress;
+    *(DI_UINT32*)(pCommandBufferOut+1) = (DI_UINT32)jmpTargetAddress - (DI_UINT32)jmpCommandAddress - 5;
     return DI_SUCCESS;
 }
 
@@ -156,11 +156,18 @@ int DianaHook_PatchSequence32(DianaHook_InternalMessage * pMessage,
 
     DI_OPERAND_SIZE addressOfOriginal = *pAllocatedAddress + (int)sizeof(g_stubData);
     unsigned char hook[5];
+    unsigned char stubData[sizeof(g_stubData)];
     OPERAND_SIZE writeData = 0;
+
+    DIANA_MEMCPY(stubData, g_stubData, sizeof(g_stubData));
+
+    *(DI_UINT32*)(stubData+9) = (DI_UINT32)pMessage->patchContext;
+    *(DI_UINT32*)(stubData+14) = (DI_UINT32)pMessage->hookFunction;
+
     DI_CHECK(pMessage->pReadWriteStream->pRandomWrite(pMessage->pReadWriteStream,
                                                       *pAllocatedAddress,
-                                                      g_stubData,
-                                                      (int)sizeof(g_stubData),
+                                                      stubData,
+                                                      (int)sizeof(stubData),
                                                       &writeData,
                                                       0));
 
@@ -172,7 +179,7 @@ int DianaHook_PatchSequence32(DianaHook_InternalMessage * pMessage,
                                                       0));
 
     hook[0] = 0xE9;
-    *(DI_UINT32*)(hook+1) = (DI_UINT32)*pAllocatedAddress - (DI_UINT32)pMessage->addressToHook;
+    *(DI_UINT32*)(hook+1) = (DI_UINT32)*pAllocatedAddress - (DI_UINT32)pMessage->addressToHook - 5;
 
     if (pMessage->originalFunctionPointer != (DI_OPERAND_SIZE)-1)
     {
@@ -217,7 +224,7 @@ int DianaHook_PatchStream32(DianaHook_InternalMessage * pMessage)
                                 &pMessage->addressToHook,
                                 DIANA_HOOK_FLASG_ALLOCATE_EXECUTABLE));
     allocationSucceeded = 1;
-    for(;srcSequenceSummSize <= DIANA_HOOK_TRAMPOLINE_SIZE_IN_BYTES;)
+    for(;srcSequenceSummSize < DIANA_HOOK_TRAMPOLINE_SIZE_IN_BYTES;)
     {
         DI_CHECK_GOTO(Diana_ParseCmd(&pMessage->context,
                               Diana_GetRootLine(),
@@ -235,8 +242,8 @@ int DianaHook_PatchStream32(DianaHook_InternalMessage * pMessage)
     }
 
     DI_CHECK_GOTO(DianaHook_AddTailJump(pMessage,
-                                        pMessage->addressToHook + srcSequenceSummSize,  
-                                        allocatedAddress + destSequenceSummSize));
+                                        allocatedAddress + destSequenceSummSize + sizeof(g_stubData),
+                                        pMessage->addressToHook + srcSequenceSummSize));
 
     DI_CHECK_GOTO(DianaHook_PatchSequence32(pMessage,
                                             &allocatedAddress));

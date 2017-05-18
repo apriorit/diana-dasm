@@ -23,6 +23,7 @@ void DianaHook_TargetMemoryProvider_Init(DianaHook_TargetMemoryProvider * pDiana
 int DianaHook_PatchStream(DianaHook_TargetMemoryProvider * pTargetMemoryProvider,
                           int processorMode,
                           OPERAND_SIZE addressToHook,
+                          OPERAND_SIZE hookFunction,
                           DianaHook_CustomOptions * pCustomOptions)
 {
     int result = 0;
@@ -37,6 +38,15 @@ int DianaHook_PatchStream(DianaHook_TargetMemoryProvider * pTargetMemoryProvider
     pMessage->processorMode = processorMode;
     pMessage->pCustomOptions = pCustomOptions;
     pMessage->addressToHook = addressToHook;
+    pMessage->hookFunction = hookFunction;
+    if (pCustomOptions)
+    {
+        pMessage->originalFunctionPointer = pCustomOptions->originalFunctionPointer;
+    }
+    else
+    {
+        pMessage->originalFunctionPointer = (DI_OPERAND_SIZE)-1;
+    }
     switch (processorMode)
     {
     case DIANA_MODE32:
