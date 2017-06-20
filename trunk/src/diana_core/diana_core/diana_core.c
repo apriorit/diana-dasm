@@ -105,10 +105,10 @@ int Diana_ParseCmd(DianaContext * pContext, //IN
 
     pResult->iFullCmdSize = iPreviousCacheSize + proxy.m_iReadSize - pContext->cacheSize;
 
-	if( pResult->iFullCmdSize > DI_MAX_INSTRUCTION_SIZE )
-		return DI_ERROR;
+    if( pResult->iFullCmdSize > DI_MAX_INSTRUCTION_SIZE )
+        return DI_ERROR;
 
-	return iRes;
+    return iRes;
 }
 
 DianaGroupInfo * Diana_GetGroupInfo(long lId)
@@ -174,7 +174,7 @@ void Diana_ClearCache(DianaContext * pThis)
 // debug
 static void Diana_Nope(struct _dianaContext * pContext) 
 {
-	pContext;
+    pContext;
 
     Diana_FatalBreak();
 }
@@ -269,47 +269,47 @@ static void ProcessCmdInfo(DianaBaseGenObject_type * pCurrentLine,
     {
         switch (opcode)
         {
-		case 0x82: // add/or/adc/sbb/and/sub/xor/cmp
-		case 0x9A: // callf
+        case 0x82: // add/or/adc/sbb/and/sub/xor/cmp
+        case 0x9A: // callf
 
-		case 0x06: // push es
-		case 0x07: // pop es
-		case 0x0E: // push cs
-		case 0x16: // push ss
-		case 0x17: // pop ss
-		case 0x1E: // push ds
-		case 0x1F: // pop ds
-		case 0x27: // daa
-		case 0x2F: // das
-		case 0x37: // aaa
-		case 0x3F: // aas
-		case 0x60: // pushad
-		case 0x61: // popad
-		case 0x62: // bound
-		case 0xC4: // les
-		case 0xC5: // lds
-		case 0xD4: // aam
-		case 0xD5: // aad
-		case 0xD6: // setalc
-		case 0xEA: // jmpf
-		case 0x40: // inc eax
-		case 0x41: // inc ecx
-		case 0x42: // inc edx
-		case 0x43: // inc ebx
-		case 0x44: // inc esp
-		case 0x45: // inc ebp
-		case 0x46: // inc esi
-		case 0x47: // inc edi
-		case 0x48: // dec eax
-		case 0x49: // dec ecx
-		case 0x4A: // dec edx
-		case 0x4B: // dec ebx
-		case 0x4C: // dec esp
-		case 0x4D: // dec ebp
-		case 0x4E: // dec esi
-		case 0x4F: // dec edi
-			pInfo->m_flags |= DI_FLAG_CMD_I386;
-			break;
+        case 0x06: // push es
+        case 0x07: // pop es
+        case 0x0E: // push cs
+        case 0x16: // push ss
+        case 0x17: // pop ss
+        case 0x1E: // push ds
+        case 0x1F: // pop ds
+        case 0x27: // daa
+        case 0x2F: // das
+        case 0x37: // aaa
+        case 0x3F: // aas
+        case 0x60: // pushad
+        case 0x61: // popad
+        case 0x62: // bound
+        case 0xC4: // les
+        case 0xC5: // lds
+        case 0xD4: // aam
+        case 0xD5: // aad
+        case 0xD6: // setalc
+        case 0xEA: // jmpf
+        case 0x40: // inc eax
+        case 0x41: // inc ecx
+        case 0x42: // inc edx
+        case 0x43: // inc ebx
+        case 0x44: // inc esp
+        case 0x45: // inc ebp
+        case 0x46: // inc esi
+        case 0x47: // inc edi
+        case 0x48: // dec eax
+        case 0x49: // dec ecx
+        case 0x4A: // dec edx
+        case 0x4B: // dec ebx
+        case 0x4C: // dec esp
+        case 0x4D: // dec ebp
+        case 0x4E: // dec esi
+        case 0x4F: // dec edi
+            pInfo->m_flags |= DI_FLAG_CMD_I386;
+            break;
         }
     }
 

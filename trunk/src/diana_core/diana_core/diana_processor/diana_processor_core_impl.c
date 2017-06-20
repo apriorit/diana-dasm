@@ -111,7 +111,7 @@ int DianaProcessor_ReadMemory(DianaProcessor * pThis,
                               int flags,
                               DianaUnifiedRegister segReg)
 {
-	flags;
+    flags;
     return pThis->m_pMemoryStream->pReadFnc(pThis->m_pMemoryStream,
                                             selector, 
                                             offset,
@@ -132,7 +132,7 @@ int DianaProcessor_WriteMemory(DianaProcessor * pThis,
                                int flags,
                                DianaUnifiedRegister segReg)
 {
-	flags;
+    flags;
     return pThis->m_pMemoryStream->pWriteFnc(pThis->m_pMemoryStream,
                                              selector,
                                              offset,
@@ -150,21 +150,21 @@ int Diana_ProcessorSetGetOperand_register(struct _dianaContext * pDianaContext,
                                           OPERAND_SIZE * pResult,
                                           int bSet)
 {
-	pDianaContext;
+    pDianaContext;
 
     if (bSet)
     {
         DianaProcessor_SetValue(pCallContext, 
                                 pLinkedOp->value.recognizedRegister,
                                 DianaProcessor_QueryReg(pCallContext,
-								                        pLinkedOp->value.recognizedRegister), 
+                                                        pLinkedOp->value.recognizedRegister), 
                                 *pResult);
     }
     else
     {
         *pResult = DianaProcessor_GetValue(pCallContext, 
                                            DianaProcessor_QueryReg(pCallContext,
-										                           pLinkedOp->value.recognizedRegister));
+                                                                   pLinkedOp->value.recognizedRegister));
     }
     return DI_SUCCESS;
 }
@@ -200,11 +200,11 @@ int DianaProcessor_CalcIndex(struct _dianaContext * pDianaContext,
     dispValue = (OPERAND_SIZE)pIndex->dispValue;
     index = (OPERAND_SIZE)pIndex->index;
 
-	// RIP-relative addressing
-	if( pDianaContext->iAMD64Mode && pIndex->reg == reg_RIP )
-	{
-		reg += pCallContext->m_result.iFullCmdSize;
-	}
+    // RIP-relative addressing
+    if( pDianaContext->iAMD64Mode && pIndex->reg == reg_RIP )
+    {
+        reg += pCallContext->m_result.iFullCmdSize;
+    }
 
     address = reg + indexedReg * index + dispValue;
 
@@ -346,8 +346,8 @@ int Diana_ProcessorSetGetOperand_imm(struct _dianaContext * pDianaContext,
                                      OPERAND_SIZE * pResult,
                                      int bSet)
 {
-	pDianaContext;
-	pCallContext;
+    pDianaContext;
+    pCallContext;
 
     if (bSet)
     {
@@ -446,7 +446,7 @@ int DianaProcessor_SetCOA_Add(struct _dianaContext * pDianaContext,
  //OF     Overflow Flag -- Set if result is too large a positive number
  //       or too small a negative number (excluding sign-bit) to fit in
  //       destination operand; cleared otherwise.
-	pDianaContext;
+    pDianaContext;
 
     if (flags & flag_OF)
     {
@@ -479,43 +479,43 @@ int DianaProcessor_SetCOA_Add(struct _dianaContext * pDianaContext,
 }
 
 int DianaProcessor_SetCOA_AddCF(struct _dianaContext * pDianaContext,
-								DianaProcessor * pCallContext,
-								const OPERAND_SIZE * pOldValue,
-								const OPERAND_SIZE * pNewValue,
-								const OPERAND_SIZE * pOperand,
-								int opSize,
-								int flags
-								)
+                                DianaProcessor * pCallContext,
+                                const OPERAND_SIZE * pOldValue,
+                                const OPERAND_SIZE * pNewValue,
+                                const OPERAND_SIZE * pOperand,
+                                int opSize,
+                                int flags
+                                )
 {
-	pDianaContext;
+    pDianaContext;
 
-	if (flags & flag_OF)
-	{
-		if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) ==
-			(*pOperand & DianaProcessor_GetSignMask(opSize)))
-		{
-			if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=
-				(*pNewValue & DianaProcessor_GetSignMask(opSize)))
-			{
-				SET_FLAG_OF;
-			}
-		}
-	}
-	if (flags & flag_AF)
-	{
-		if (((unsigned int)*pNewValue & 0xF) <= ((unsigned int)*pOldValue & 0xF))
-		{
-			SET_FLAG_AF;
-		}
-	}
-	if (flags & flag_CF)
-	{
-		if (DianaProcessor_CutValue( *pNewValue, opSize ) <= *pOldValue )
-		{
-			SET_FLAG_CF;
-		}
-	}
-	return DI_SUCCESS;
+    if (flags & flag_OF)
+    {
+        if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) ==
+            (*pOperand & DianaProcessor_GetSignMask(opSize)))
+        {
+            if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=
+                (*pNewValue & DianaProcessor_GetSignMask(opSize)))
+            {
+                SET_FLAG_OF;
+            }
+        }
+    }
+    if (flags & flag_AF)
+    {
+        if (((unsigned int)*pNewValue & 0xF) <= ((unsigned int)*pOldValue & 0xF))
+        {
+            SET_FLAG_AF;
+        }
+    }
+    if (flags & flag_CF)
+    {
+        if (DianaProcessor_CutValue( *pNewValue, opSize ) <= *pOldValue )
+        {
+            SET_FLAG_CF;
+        }
+    }
+    return DI_SUCCESS;
 }
 
 int DianaProcessor_SetCOA_Sub(struct _dianaContext * pDianaContext,
@@ -527,7 +527,7 @@ int DianaProcessor_SetCOA_Sub(struct _dianaContext * pDianaContext,
                               int flags
                              )
 {
-	pDianaContext;
+    pDianaContext;
 
     if (flags & flag_OF)
     {
@@ -561,45 +561,45 @@ int DianaProcessor_SetCOA_Sub(struct _dianaContext * pDianaContext,
 }
 
 int DianaProcessor_SetCOA_SubCF(struct _dianaContext * pDianaContext,
-								DianaProcessor * pCallContext,
-								const OPERAND_SIZE * pOldValue,
-								const OPERAND_SIZE * pNewValue,
-								const OPERAND_SIZE * pOperand,
-								int opSize,
-								int flags
-								)
+                                DianaProcessor * pCallContext,
+                                const OPERAND_SIZE * pOldValue,
+                                const OPERAND_SIZE * pNewValue,
+                                const OPERAND_SIZE * pOperand,
+                                int opSize,
+                                int flags
+                                )
 {
-	pDianaContext;
+    pDianaContext;
 
-	if (flags & flag_OF)
-	{
-		if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=
-			(*pOperand & DianaProcessor_GetSignMask(opSize)))
-		{
-			if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=
-				(*pNewValue & DianaProcessor_GetSignMask(opSize)))
-			{
-				SET_FLAG_OF;
-			}
-		}
-	}
-	if (flags & flag_AF)
-	{
-		if (((unsigned  int)*pNewValue & 0xF) >= ((unsigned int)*pOldValue & 0xF))
-		{
-			SET_FLAG_AF;
-		}
-	}
-	if (flags & flag_CF)
-	{
-		if (DianaProcessor_CutValue(*pNewValue, opSize) >= *pOldValue)
-		{
-			// was overflow
-			SET_FLAG_CF;
-		}
-	}
+    if (flags & flag_OF)
+    {
+        if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=
+            (*pOperand & DianaProcessor_GetSignMask(opSize)))
+        {
+            if ((*pOldValue & DianaProcessor_GetSignMask(opSize)) !=
+                (*pNewValue & DianaProcessor_GetSignMask(opSize)))
+            {
+                SET_FLAG_OF;
+            }
+        }
+    }
+    if (flags & flag_AF)
+    {
+        if (((unsigned  int)*pNewValue & 0xF) >= ((unsigned int)*pOldValue & 0xF))
+        {
+            SET_FLAG_AF;
+        }
+    }
+    if (flags & flag_CF)
+    {
+        if (DianaProcessor_CutValue(*pNewValue, opSize) >= *pOldValue)
+        {
+            // was overflow
+            SET_FLAG_CF;
+        }
+    }
 
-	return DI_SUCCESS;
+    return DI_SUCCESS;
 }
 
 int DianaProcessor_SignExtend(OPERAND_SIZE * pVariable, 

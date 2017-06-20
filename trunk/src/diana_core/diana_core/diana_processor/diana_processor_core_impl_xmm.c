@@ -103,7 +103,7 @@ int DianaProcessor_XMM_SetGetOperand(struct _dianaContext * pDianaContext,
         return DI_ERROR;
     }
 
-	pLinkedOp->usedSize = sizeOfOperand;
+    pLinkedOp->usedSize = sizeOfOperand;
     switch(pLinkedOp->type)
     {
     case diana_register:

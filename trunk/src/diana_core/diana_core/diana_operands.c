@@ -120,9 +120,9 @@ int DianaReadValueAsLong(DianaReadStream * readStream,
     case 2:
     case 4:
     case 8:
-		break;
-	default:
-		return DI_ERROR;
+        break;
+    default:
+        return DI_ERROR;
     };
 
     iRes = readStream->pReadFnc(readStream, buffer, iValueSize, &readBytes);
@@ -131,7 +131,7 @@ int DianaReadValueAsLong(DianaReadStream * readStream,
     if (readBytes != iValueSize)
         return DI_ERROR;
 
-	switch(iValueSize)
+    switch(iValueSize)
     {
     case 1:
         *pRes = *(unsigned char*)buffer;
@@ -318,7 +318,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         switch(pOperInfo->m_type)
         {
         case diana_orRegistry:
-			pLinkedOp->type = diana_register;
+            pLinkedOp->type = diana_register;
             if (DianaRecognizeCommonReg(opSizeUsed, 
                                         RegCode, 
                                         &pLinkedOp->value.recognizedRegister,
@@ -329,7 +329,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         case diana_orRegMem_exact:
             pLinkedOp->usedSize = pOperInfo->m_size;
             opSizeUsed = pOperInfo->m_size;
-			// no break!
+            // no break!
         case diana_orReg32mem16:
         case diana_orReg16_32_64_mem16:
         case diana_orMemoryMMX:
@@ -400,7 +400,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             };
             break;
 
-		case diana_orDX:
+        case diana_orDX:
             pLinkedOp->type = diana_register;
             pLinkedOp->value.recognizedRegister = reg_DX;
             break;
@@ -423,7 +423,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             };
             break;
 
-		case diana_orSreg:
+        case diana_orSreg:
             pLinkedOp->type = diana_register;
             if (RegCode == DI_CHAR_NULL)
             {
@@ -440,7 +440,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
                 return iRes;
             break;
 
-		case diana_orOffset:
+        case diana_orOffset:
             pLinkedOp->type = diana_index;
             pLinkedOp->value.rmIndex.dispSize = ( unsigned char )pContext->iMainMode_addressSize;
             pLinkedOp->value.rmIndex.index = 0;
@@ -453,28 +453,28 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
             pLinkedOp->usedAddressSize = pContext->iMainMode_addressSize;
             break;
 
-		case diana_orAnyCR:
+        case diana_orAnyCR:
             pLinkedOp->type = diana_register;
             iRes = Diana_RecognizeCreg(RegCode, &pLinkedOp->value.recognizedRegister);
             if (iRes)
                 return iRes;
             break;
 
-		case diana_orDR6or7:
+        case diana_orDR6or7:
             pLinkedOp->type = diana_register;
             iRes = Diana_RecognizeDreg(RegCode, &pLinkedOp->value.recognizedRegister);
             if (iRes)
                 return iRes;
             break;
 
-		case diana_orTR6or7:
+        case diana_orTR6or7:
             pLinkedOp->type = diana_register;
             iRes = Diana_RecognizeTreg(RegCode, &pLinkedOp->value.recognizedRegister);
             if (iRes)
                 return iRes;
             break;
 
-		case diana_orPtr:
+        case diana_orPtr:
             if (pResult->pInfo->m_operandCount!=1)
             {
                 return DI_ERROR;
@@ -536,7 +536,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
          case diana_orMemory_exact:
             pLinkedOp->usedSize = pOperInfo->m_size;
             opSizeUsed = pOperInfo->m_size;
-			// no break!
+            // no break!
                
         case diana_orMemory16x32:
         case diana_orMemory:
@@ -665,7 +665,7 @@ int Diana_LinkOperands(DianaContext * pContext, //IN
         int i =0;
         DI_CHAR imms[MAX_IMM] = {0, 0};
         imms[0] = pResult->pInfo->m_iImmediateOperandSizeInBytes;
-		imms[1] = pResult->pInfo->m_iImmediateOperandSizeInBytes2;
+        imms[1] = pResult->pInfo->m_iImmediateOperandSizeInBytes2;
 
         for(;i<iCurImm;++i)
         {

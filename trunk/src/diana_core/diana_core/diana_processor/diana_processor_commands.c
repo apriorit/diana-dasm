@@ -32,7 +32,7 @@ int Diana_Call_xor(struct _dianaContext * pDianaContext,
     //OF := 0
 
     DI_DEF_LOCALS(src, dest);
-	oldDestValue;
+    oldDestValue;
 
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
@@ -83,7 +83,7 @@ int Diana_Call_xchg(struct _dianaContext * pDianaContext,
     OPERAND_SIZE temp = 0;
     int temp_size = 0;
     DI_DEF_LOCALS(src, dest);
-	oldDestValue;
+    oldDestValue;
 
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
@@ -108,7 +108,7 @@ int Diana_Call_test(struct _dianaContext * pDianaContext,
     //CF := 0;
     //OF := 0;
     DI_DEF_LOCALS(src, dest);
-	oldDestValue;
+    oldDestValue;
 
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
@@ -120,9 +120,9 @@ int Diana_Call_test(struct _dianaContext * pDianaContext,
     DianaProcessor_UpdatePSZ(pCallContext, 
                              dest, 
                              pCallContext->m_result.linkedOperands->usedSize);
-	// UNDOCUMENTED ***************
-	CLEAR_FLAG_AF;
-	// ****************************
+    // UNDOCUMENTED ***************
+    CLEAR_FLAG_AF;
+    // ****************************
 
     DI_PROC_END
 }
@@ -133,7 +133,7 @@ int Diana_Call_inc(struct _dianaContext * pDianaContext,
 {
     //DEST := DEST + SRC;
     DI_DEF_LOCALS(src, dest);
-	src_size;
+    src_size;
         
     DI_MEM_GET_DEST(dest);
 
@@ -174,7 +174,7 @@ int Diana_Call_or(struct _dianaContext * pDianaContext,
     //OF := 0;
 
     DI_DEF_LOCALS(src, dest);
-	oldDestValue;
+    oldDestValue;
 
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
@@ -188,9 +188,9 @@ int Diana_Call_or(struct _dianaContext * pDianaContext,
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
 
-	// UNDOCUMENTED ***************
-	CLEAR_FLAG_AF;
-	// ****************************
+    // UNDOCUMENTED ***************
+    CLEAR_FLAG_AF;
+    // ****************************
 
     DI_PROC_END
 }
@@ -202,7 +202,7 @@ int Diana_Call_enter(struct _dianaContext * pDianaContext,
     OPERAND_SIZE rbp = 0, rsp = 0, tempRBP = 0;
 
     DI_DEF_LOCALS(op1, op2);
-	oldDestValue;
+    oldDestValue;
     DI_MEM_GET_DEST(op1);
     DI_MEM_GET_SRC(op2);
 

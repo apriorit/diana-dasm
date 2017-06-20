@@ -515,6 +515,10 @@
 					RelativePath=".\diana_patchers\diana_ultimate_patcher_64.c"
 					>
 				</File>
+				<File
+					RelativePath=".\diana_patchers\diana_ultimate_patcher_impl.c"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
