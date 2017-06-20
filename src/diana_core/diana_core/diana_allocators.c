@@ -2,17 +2,17 @@
 
 static void * MAllocator_Alloc(void * pThis, DIANA_SIZE_T size)
 {
-	pThis;
-	return DIANA_MALLOC(size);
+    pThis;
+    return DIANA_MALLOC(size);
 }
 static void MAllocator_Dealloc(void * pThis, void * pBuffer)
 {
-	pThis;
-	DIANA_FREE(pBuffer);
+    pThis;
+    DIANA_FREE(pBuffer);
 }
 static int MAllocator_Patch(void * pThis, void * pDest, const void * pSource, DIANA_SIZE_T size)
 {
-	pThis;
+    pThis;
     DIANA_MEMCPY(pDest, pSource, size);
     return DI_SUCCESS;
 }

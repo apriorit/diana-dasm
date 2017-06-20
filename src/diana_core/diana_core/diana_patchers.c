@@ -313,7 +313,7 @@ static void _stdcall Diana_FreeRetHookImpl(DianaPatcher_RetHook32 * pHook)
 
 __declspec(naked) static void _stdcall Diana_FreeRetHook(DianaPatcher_RetHook32 * pHook)
 {
-	pHook;
+    pHook;
 
     __asm
     {
@@ -404,8 +404,8 @@ typedef struct _dianaPatcher_HookInfoEx
 __declspec(naked) static void _stdcall Diana_Hook(DianaPatcher_HookInfoEx * pContext, 
                                                   void * pOriginalESP)
 {
-	pContext;
-	pOriginalESP;
+    pContext;
+    pOriginalESP;
 
     __asm
     {

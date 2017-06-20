@@ -8,7 +8,7 @@
 int Diana_Call_aaa(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext)
 {
-	pDianaContext;
+    pDianaContext;
 
     if (((GET_REG_AL & 0x0F) > 9) || GET_FLAG_AF) 
     {
@@ -36,7 +36,7 @@ int Diana_Call_aad(struct _dianaContext * pDianaContext,
 {
     DianaRegisterValue16_type ax;
     DI_DEF_LOCAL(src);
-	oldDestValue;
+    oldDestValue;
     DI_MEM_GET_DEST(src);
 
     //AL := AH * 10 + AL;
@@ -55,15 +55,15 @@ int Diana_Call_aam(struct _dianaContext * pDianaContext,
 {
     DianaRegisterValue16_type ax;
     DI_DEF_LOCAL(src);
-	oldDestValue;
+    oldDestValue;
     DI_MEM_GET_DEST(src);
 
     //AH := AL / 10;
     //AL := AL MOD 10;
     ax.value = ( DI_UINT16 )GET_REG_AX;
 
-	if( src == 0 )
-		return DI_DIVISION_BY_ZERO;
+    if( src == 0 )
+        return DI_DIVISION_BY_ZERO;
     ax.impl.h = ax.impl.l / ( DI_CHAR )src;
     ax.impl.l = ax.impl.l % ( DI_CHAR )src;
 
@@ -74,7 +74,7 @@ int Diana_Call_aam(struct _dianaContext * pDianaContext,
 int Diana_Call_aas(struct _dianaContext * pDianaContext,
                    DianaProcessor * pCallContext)
 {
-	pDianaContext;
+    pDianaContext;
 
    if ((GET_REG_AL & 0xF) > 9 || GET_FLAG_AF) 
    {
@@ -117,16 +117,16 @@ int Diana_Call_adc(struct _dianaContext * pDianaContext,
     dest += src + cfValue;
     DI_CHECK(Di_CheckZeroExtends(pCallContext, &dest, src_size, &dest_size));
 
-	// UNDOCUMENTED ***************
-	if( !cfValue )
-	{
-		DI_END_UPDATE_COA_FLAGS_ADD(dest, src);
-	}
-	else
-	{
-		DI_END_UPDATE_COA_FLAGS_ADDCF(dest, src);
-	}
-	// ****************************
+    // UNDOCUMENTED ***************
+    if( !cfValue )
+    {
+        DI_END_UPDATE_COA_FLAGS_ADD(dest, src);
+    }
+    else
+    {
+        DI_END_UPDATE_COA_FLAGS_ADDCF(dest, src);
+    }
+    // ****************************
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
     DI_PROC_END
@@ -162,7 +162,7 @@ int Diana_Call_and(struct _dianaContext * pDianaContext,
     //OF := 0;
 
     DI_DEF_LOCALS(src, dest);
-	oldDestValue;
+    oldDestValue;
 
     DI_MEM_GET_DEST(dest);
     DI_MEM_GET_SRC(src);
@@ -176,8 +176,8 @@ int Diana_Call_and(struct _dianaContext * pDianaContext,
     CLEAR_FLAG_OF;
 
     DI_UPDATE_FLAGS_PSZ(DI_MEM_SET_DEST(dest));
-	// UNDOCUMENTED ***************
-	CLEAR_FLAG_AF;
-	// ****************************
+    // UNDOCUMENTED ***************
+    CLEAR_FLAG_AF;
+    // ****************************
     DI_PROC_END
 }

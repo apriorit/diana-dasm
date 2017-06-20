@@ -22,7 +22,7 @@ static int GetRealSize(OPERAND_SIZE operand)
 int DianaTextOutput_Console(struct _DianaTextOutputContext * pContext, 
                                     const char * pText)
 {
-	&pContext;
+    &pContext;
     printf("%s", pText);
     return DI_SUCCESS;
 }
@@ -30,11 +30,11 @@ int DianaOpOutput_Console(struct _DianaTextOutputContext * pContext,
                                   OPERAND_SIZE operand, 
                                   int size)
 {
-	&pContext;
-	if (size == 0)
-	{
-	    size = GetRealSize(operand);
-	}
+    &pContext;
+    if (size == 0)
+    {
+        size = GetRealSize(operand);
+    }
     switch(size)
     {
        case 1: if ((operand&0xF0ULL) >= 0xA0ULL && (operand&0xF0ULL) <= 0xF0ULL)
@@ -76,9 +76,9 @@ int DianaTextOutput_String(struct _DianaTextOutputContext * pContextIn,
     int written = 0;
     
     if (pContext->curSize >= pContext->maxBufferSize)
-	    return DI_ERROR;
-	
-	tail = pContext->maxBufferSize - pContext->curSize;
+        return DI_ERROR;
+    
+    tail = pContext->maxBufferSize - pContext->curSize;
     written = snprintf(pBuffer, (size_t)tail, "%s", pText);
     pContext->curSize += written;
     return DI_SUCCESS;
@@ -101,13 +101,13 @@ int DianaOpOutput_String(struct _DianaTextOutputContext * pContextIn,
     int written = 0;
     
     if (pContext->curSize >= pContext->maxBufferSize)
-	    return DI_ERROR;
-	    
-	tail = pContext->maxBufferSize - pContext->curSize;
-	if (size == 0)
-	{
-	    size = GetRealSize(operand);
-	}
+        return DI_ERROR;
+        
+    tail = pContext->maxBufferSize - pContext->curSize;
+    if (size == 0)
+    {
+        size = GetRealSize(operand);
+    }
     switch(size)
     {
        case 1: written = snprintf(pBuffer, (size_t)tail, "%0hhX", (unsigned char)operand);

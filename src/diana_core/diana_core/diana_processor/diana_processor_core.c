@@ -99,18 +99,18 @@ int CallWithRep(DianaProcessorCommand_type pCommand,
 {
     DianaUnifiedRegister usedReg = 0;
 
-	switch( pCallContext->m_result.pInfo->m_pGroupInfo->m_commandId ) {
-	case diana_cmd_ins:
-	case diana_cmd_lods:
-	case diana_cmd_movs:
-	case diana_cmd_outs:
-	case diana_cmd_stos:
-	case diana_cmd_cmps:
-	case diana_cmd_scas:
-		break;
-	default:
-		return Call(pCommand, pCallContext);
-	}
+    switch( pCallContext->m_result.pInfo->m_pGroupInfo->m_commandId ) {
+    case diana_cmd_ins:
+    case diana_cmd_lods:
+    case diana_cmd_movs:
+    case diana_cmd_outs:
+    case diana_cmd_stos:
+    case diana_cmd_cmps:
+    case diana_cmd_scas:
+        break;
+    default:
+        return Call(pCommand, pCallContext);
+    }
 
     switch(pCallContext->m_context.iCurrentCmd_addressSize)
     {
@@ -211,16 +211,16 @@ int DianaProcessor_ExecOnce(DianaProcessor * pThis)
     case DI_PREFIX_REPN:
         res = CallWithRep(pCommand, pCallContext, 1);
         break;
-	case DI_PREFIX_LOCK:
-		if (DI_FLAG_CMD_PREFIX_LOCK == (pCallContext->m_result.pInfo->m_flags & DI_FLAG_CMD_PREFIX_LOCK)) {
-			if (pCallContext->m_result.iLinkedOpCount > 0) {
-				if (diana_index==pCallContext->m_result.linkedOperands[0].type || diana_memory==pCallContext->m_result.linkedOperands[0].type) {
-					res = Call(pCommand, pCallContext);
-					break;
-				}
-			}
-		}
-		return Diana_OnError(DI_INVALID_OPCODE);
+    case DI_PREFIX_LOCK:
+        if (DI_FLAG_CMD_PREFIX_LOCK == (pCallContext->m_result.pInfo->m_flags & DI_FLAG_CMD_PREFIX_LOCK)) {
+            if (pCallContext->m_result.iLinkedOpCount > 0) {
+                if (diana_index==pCallContext->m_result.linkedOperands[0].type || diana_memory==pCallContext->m_result.linkedOperands[0].type) {
+                    res = Call(pCommand, pCallContext);
+                    break;
+                }
+            }
+        }
+        return Diana_OnError(DI_INVALID_OPCODE);
     default:
         res = Call(pCommand, pCallContext);
     }

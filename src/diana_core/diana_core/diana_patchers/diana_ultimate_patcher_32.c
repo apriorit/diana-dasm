@@ -7,38 +7,19 @@ typedef struct _dianaHook_DianaCommandInfo32
 }DianaHook_DianaCommandInfo32;
 
 
-int DianaHook_AllocateMetainfo(DianaHook_InternalMessage * pMessage,
-                               DIANA_SIZE_T structSize,
-                               void ** pResult)
-{
-    if (structSize > DIANAHOOK_INTERNALMESSAGE_WORK_BUFFER_SIZE_META)
-    {
-        return DI_ERROR;
-    }
-    if (pMessage->workBufferMetaSize > (DIANAHOOK_INTERNALMESSAGE_WORK_BUFFER_SIZE_META - structSize))
-    {
-        return DI_ERROR;
-    }
-    *pResult = pMessage->workBufferMeta + pMessage->workBufferMetaSize;
-    pMessage->workBufferMetaSize += structSize;
-    return DI_SUCCESS;
-}
-int DianaHook_AllocateCmd(DianaHook_InternalMessage * pMessage,
-                          DIANA_SIZE_T cmdSize,
-                          void ** pResult)
-{
-    if (cmdSize > DIANAHOOK_INTERNALMESSAGE_WORK_BUFFER_SIZE_RAW)
-    {
-        return DI_ERROR;
-    }
-    if (pMessage->workBufferRawSize > (DIANAHOOK_INTERNALMESSAGE_WORK_BUFFER_SIZE_RAW - cmdSize))
-    {
-        return DI_ERROR;
-    }
-    *pResult = pMessage->workBufferRaw + pMessage->workBufferRawSize;
-    pMessage->workBufferRawSize += cmdSize;
-    return DI_SUCCESS;
-}
+static unsigned char g_stubData[] = {
+0x60,                         // pushad           
+0x9C,                         // pushfd           
+0x54,                         // push        esp  
+0x8D, 0x44, 0x24, 0x28,       // lea         eax,[esp+28h] 
+0x50,                         // push        eax  
+0x68, 0x66, 0x66, 0x66, 0x06, // push        6666666h 
+0xB8, 0x55, 0x55, 0x55, 0x05, // mov         eax,5555555h 
+0xFF, 0xD0,                   // call        eax  
+0x9D,                         // popfd            
+0x61                          // popad            
+};
+
 
 static 
 int CopyCommand32(DianaHook_InternalMessage * pMessage,
@@ -134,20 +115,6 @@ int DianaHook_AnalyzeCommand(DianaHook_InternalMessage * pMessage,
     *ppOutputData  = pOutputData;
     return DI_SUCCESS;
 }
-
-
-static unsigned char g_stubData[] = {
-0x60,                         // pushad           
-0x9C,                         // pushfd           
-0x54,                         // push        esp  
-0x8D, 0x44, 0x24, 0x28,       // lea         eax,[esp+28h] 
-0x50,                         // push        eax  
-0x68, 0x66, 0x66, 0x66, 0x06, // push        6666666h 
-0xB8, 0x55, 0x55, 0x55, 0x05, // mov         eax,5555555h 
-0xFF, 0xD0,                   // call        eax  
-0x9D,                         // popfd            
-0x61                          // popad            
-};
 
 static 
 int DianaHook_PatchSequence32(DianaHook_InternalMessage * pMessage,
@@ -249,7 +216,7 @@ int DianaHook_PatchStream32(DianaHook_InternalMessage * pMessage)
                                             &allocatedAddress));
 
 cleanup:
-    if (allocationSucceeded)
+    if (status && allocationSucceeded)
     {
         pMessage->pAllocator->free(pMessage->pAllocator, &allocatedAddress);
     }

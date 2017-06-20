@@ -299,8 +299,8 @@ void DianaMovableReadStreamOverMemory_Init(DianaMovableReadStreamOverMemory * pT
                                 DianaMovableReadStreamOverMemory_MoveTo,
                                 DianaMovableReadStreamOverMemory_RandomRead);
     Diana_InitMemoryStream(&pThis->memoryStream, 
-						   pBuffer, 
-						   (DIANA_SIZE_T)bufferSize);
+                           pBuffer, 
+                           (DIANA_SIZE_T)bufferSize);
 }
 
 int DianaAnalyzeObserverOverMemory_AnalyzeJumpAddress(void * pThis, 
@@ -370,11 +370,11 @@ int Diana_PE_AnalyzePEInMemory(void * pPeFile,
     DI_CHECK(DianaPeFile_Init(&peFile, &analyzeObserver.stream.stream, fileSizeToPass, (OPERAND_SIZE)pPeFile));
     if (actualizeFileSize)
     {
-		result = Diana_ConvertOpSizeToSizeT(&peFile.pImpl->sizeOfFile, &analyzeObserver.stream.memoryStream.bufferSize);
-		if (result)
-		{
-			goto cleanup;
-		}
+        result = Diana_ConvertOpSizeToSizeT(&peFile.pImpl->sizeOfFile, &analyzeObserver.stream.memoryStream.bufferSize);
+        if (result)
+        {
+            goto cleanup;
+        }
     }
     result = Diana_PE_AnalyzePE(&peFile, &analyzeObserver.parent, pOwner);
 cleanup:

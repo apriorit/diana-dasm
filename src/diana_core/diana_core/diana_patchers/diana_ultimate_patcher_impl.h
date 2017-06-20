@@ -27,5 +27,13 @@ typedef struct _DianaHook_InternalMessage
 }DianaHook_InternalMessage;
 
 
+int DianaHook_AllocateMetainfo(DianaHook_InternalMessage * pMessage,
+                               DIANA_SIZE_T structSize,
+                               void ** pResult);
+int DianaHook_AllocateCmd(DianaHook_InternalMessage * pMessage,
+                          DIANA_SIZE_T cmdSize,
+                          void ** pResult);
+
+OPERAND_SIZE DianaHook_Diff(OPERAND_SIZE op1, OPERAND_SIZE op2);
 
 #endif

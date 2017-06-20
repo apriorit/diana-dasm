@@ -171,7 +171,7 @@ int Di_CheckZeroExtends(DianaProcessor * pCallContext,
                         int src_size,
                         int * dest_size)
 {
-	dest_size;
+    dest_size;
 
     if (!pCallContext->m_context.iAMD64Mode)
     {
@@ -214,7 +214,7 @@ int Di_CheckZeroExtends2(DianaProcessor * pCallContext,
                          int src_size,
                          int * dest_size)
 {
-	dest_size;
+    dest_size;
 
     if (!pCallContext->m_context.iAMD64Mode)
         return DI_SUCCESS;
@@ -247,7 +247,7 @@ int Diana_Call_jcc(struct _dianaContext * pDianaContext,
 {
     OPERAND_SIZE newRIP = 0; 
 
-	pDianaContext;
+    pDianaContext;
 
     if (pCallContext->m_result.iLinkedOpCount != opCount)
     {
@@ -366,7 +366,7 @@ int Diana_Call_internal_ret(struct _dianaContext * pDianaContext,
     OPERAND_SIZE rsp = 0, dropBytes = 0;
     OPERAND_SIZE newRIP = 0;
     DI_DEF_LOCAL(src);
-	oldDestValue;
+    oldDestValue;
     
     if (pCallContext->m_result.iLinkedOpCount == 1)
     {

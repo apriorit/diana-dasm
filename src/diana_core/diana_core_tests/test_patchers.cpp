@@ -67,9 +67,75 @@ int DianaHook_Alloc_test(void * pThis,
 void DianaHook_Free_test(void * pThis, 
                                  const OPERAND_SIZE * pAddress)
 {
-    CTestMemoryProvider * pProvider = DIANA_CONTAINING_RECORD(pThis, CTestMemoryProvider, m_allocator);
+//    CTestMemoryProvider * pProvider = DIANA_CONTAINING_RECORD(pThis, CTestMemoryProvider, m_allocator);
+//    *pAddress = pProvider->Free(size);
 }
 
+
+static void test_patchers1_impl(unsigned char * pMemory, 
+                                size_t sizeOfMemory,
+                                OPERAND_SIZE addressToHook,
+                                OPERAND_SIZE hookFunction,
+                                int processorMode)
+{
+    CTestMemoryProvider testMemoryProvider(pMemory, 
+                                           sizeOfMemory);
+
+    TEST_ASSERT(0 == DianaHook_PatchStream(testMemoryProvider.GetTargetMemoryProvider(),
+                                           processorMode,
+                                           addressToHook,
+                                           hookFunction,
+                                           0));
+
+    // allocate ESP
+    OPERAND_SIZE espEnd = testMemoryProvider.m_heap.size();
+    OPERAND_SIZE espStart = ((espEnd&(~0xF))+8)+1024;
+    testMemoryProvider.m_heap.resize(espStart+8);
+
+    const OPERAND_SIZE eofRIP = 0x12345678;
+    *(OPERAND_SIZE *)(&testMemoryProvider.m_heap.front() + espStart) = eofRIP;
+
+    unsigned char * pBuffer = (unsigned char *)&testMemoryProvider.m_heap.front();
+    size_t bufferSize = testMemoryProvider.m_heap.size();
+
+    CTestProcessor processor(pBuffer, bufferSize, 0, processorMode);
+    DianaProcessor * pCallContext = processor.GetSelf();
+
+    SET_REG_RSP(espStart);
+    for(int i = 0; i < 100; ++i)
+    {
+        OPERAND_SIZE rip = GET_REG_RIP;
+
+        if (rip == eofRIP)
+            break;
+
+        OPERAND_SIZE esp = GET_REG_RSP;
+        int res = processor.ExecOnce();
+        esp = GET_REG_RSP;
+
+        TEST_ASSERT(!res);
+
+    }
+}
+
+static void test_patchers1_x64()
+{
+    unsigned char data[] = 
+    {
+        0x40, 0x57,                  // push        rdi  
+        0x48, 0x83, 0xEC, 0x40,      // sub         rsp,40h 
+        0x48, 0x83, 0xC4, 0x40,      // add         rsp,40h 
+        0x5F,                        // pop         rdi  
+        0xC3,                        // ret
+        // handler
+        0xC3                         // ret
+    };
+    test_patchers1_impl(data, 
+                        sizeof(data),
+                        0,
+                        0xC,
+                        DIANA_MODE64);
+}
 static void test_patchers1()
 {
     unsigned char data[] = 
@@ -84,47 +150,19 @@ static void test_patchers1()
         0x55,              // push        ebp  
         0x8B, 0xEC,        // mov         ebp,esp 
         0x5D,              // pop         ebp  
-        0xC2, 0x0C, 0x00   // ret   8
+        0xC2, 0x0C, 0x00   // ret   C
     };
-    CTestMemoryProvider testMemoryProvider(data, 
-                                           sizeof(data));
 
-    TEST_ASSERT(0 == DianaHook_PatchStream(testMemoryProvider.GetTargetMemoryProvider(),
-                                           DIANA_MODE32,
-                                           0,
-                                           5,
-                                           0));
 
-    // allocate ESP
-    OPERAND_SIZE espEnd = testMemoryProvider.m_heap.size();
-    OPERAND_SIZE espStart = ((espEnd&(~0xF))+8)+1024;
-    testMemoryProvider.m_heap.resize(espStart+8);
-
-    const OPERAND_SIZE eofRIP = 0x12345678;
-    *(OPERAND_SIZE *)(&testMemoryProvider.m_heap.front() + espStart) = eofRIP;
-
-    unsigned char * pBuffer = (unsigned char *)&testMemoryProvider.m_heap.front();
-    size_t bufferSize = testMemoryProvider.m_heap.size();
-
-    CTestProcessor processor(pBuffer, bufferSize);
-    DianaProcessor * pCallContext = processor.GetSelf();
-
-    SET_REG_RSP(espStart);
-    
-    for(int i = 0; i < 100; ++i)
-    {
-        OPERAND_SIZE rip = GET_REG_RIP;
-
-        if (rip == eofRIP)
-            break;
-
-        OPERAND_SIZE esp = GET_REG_RSP;
-        int res = processor.ExecOnce();
-        TEST_ASSERT(!res);
-    }
+    test_patchers1_impl(data, 
+                        sizeof(data),
+                        0,
+                        5,
+                        DIANA_MODE32);
 }
 void test_patchers()
 {
     DIANA_TEST(test_patchers1());
+    DIANA_TEST(test_patchers1_x64());
 }
 

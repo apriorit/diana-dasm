@@ -10,7 +10,7 @@ int DianaProcessor_GetMemValue(DianaProcessor * pThis,
     OPERAND_SIZE readed = 0;
     int status = 0;
 
-	flags;
+    flags;
 
     *pResult = 0;
     status = pThis->m_pMemoryStream->pReadFnc(pThis->m_pMemoryStream, 
@@ -40,7 +40,7 @@ int DianaProcessor_SetMemValue(DianaProcessor * pThis,
     OPERAND_SIZE wrote = 0;
     int status = 0;
 
-	flags;
+    flags;
 
     status = pThis->m_pMemoryStream->pWriteFnc(pThis->m_pMemoryStream, 
                                                selector,

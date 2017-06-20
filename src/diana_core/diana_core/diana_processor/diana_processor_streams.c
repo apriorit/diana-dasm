@@ -16,7 +16,7 @@ static int MemoryRandomStream_ReadWrite(void * pThis,
     OPERAND_SIZE segmentOffset = 0;
     OPERAND_SIZE offset = 0;
 
-	pProcessor;
+    pProcessor;
 
     segmentOffset = selector*pStream->segmentSize;
     offset = segmentOffset + offset_in;
