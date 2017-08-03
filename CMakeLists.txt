@@ -14,9 +14,6 @@ file(GLOB DianaProcessorCxx src/diana_core/diana_core/diana_processor/*.c src/di
 file(GLOB DianaProcessorHxx src/diana_core/diana_core/diana_processor/*.h src/diana_core/diana_core/diana_processor/softfloat/*.h)
 set(DianaProcessorSrc ${DianaProcessorCxx} ${DianaProcessorHxx})
 
-source_group("Source Files\\diana" FILES ${DianaCoreCxx} ${DianaProcessorCxx})
-source_group("Header Files\\diana" FILES ${DianaCoreHxx} ${DianaProcessorHxx})
-
 include_directories(src/diana_core/diana_core)
 
 add_library(diana STATIC ${DianaCoreSrc} ${DianaProcessorSrc})
