@@ -41,3 +41,9 @@ OPERAND_SIZE DianaHook_Diff(OPERAND_SIZE op1, OPERAND_SIZE op2)
     }
     return op2 - op1;
 }
+
+void DianaHook_ClearBuffers(DianaHook_InternalMessage * pMessage)
+{
+    pMessage->workBufferMetaSize = 0;
+    pMessage->workBufferRawSize = 0;
+}

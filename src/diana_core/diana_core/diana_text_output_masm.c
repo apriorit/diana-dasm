@@ -793,11 +793,12 @@ int DianaTextOutputContext_TextOut(DianaTextOutputContext * pContext,
     pContext->pResult = pResult;
     pContext->instructionRIP = instructionRIP;
 
-    if (cmdId >= sizeof(g_functions)/sizeof(g_functions[0]))
-        return DI_ERROR;
-
     if (pContext->pReset)
         pContext->pReset(pContext);
 
+    if (cmdId >= sizeof(g_functions)/sizeof(g_functions[0]))
+    {
+        return diana_cmd_output_generic(pContext);
+    }
     return (*g_functions[cmdId])(pContext);
 }

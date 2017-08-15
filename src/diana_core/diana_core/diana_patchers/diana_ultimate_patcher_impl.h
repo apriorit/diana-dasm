@@ -17,7 +17,8 @@ typedef struct _DianaHook_InternalMessage
 
     DianaParserResult result;
     DianaContext context;
-
+    int jumpsCounter;
+    
     // work buffer
     DIANA_SIZE_T workBufferMetaSize;
     char workBufferMeta[DIANAHOOK_INTERNALMESSAGE_WORK_BUFFER_SIZE_META];
@@ -33,6 +34,9 @@ int DianaHook_AllocateMetainfo(DianaHook_InternalMessage * pMessage,
 int DianaHook_AllocateCmd(DianaHook_InternalMessage * pMessage,
                           DIANA_SIZE_T cmdSize,
                           void ** pResult);
+
+void DianaHook_ClearBuffers(DianaHook_InternalMessage * pMessage);
+
 
 OPERAND_SIZE DianaHook_Diff(OPERAND_SIZE op1, OPERAND_SIZE op2);
 

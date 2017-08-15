@@ -67,8 +67,6 @@ int DianaHook_Alloc_test(void * pThis,
 void DianaHook_Free_test(void * pThis, 
                                  const OPERAND_SIZE * pAddress)
 {
-//    CTestMemoryProvider * pProvider = DIANA_CONTAINING_RECORD(pThis, CTestMemoryProvider, m_allocator);
-//    *pAddress = pProvider->Free(size);
 }
 
 
@@ -76,7 +74,8 @@ static void test_patchers1_impl(unsigned char * pMemory,
                                 size_t sizeOfMemory,
                                 OPERAND_SIZE addressToHook,
                                 OPERAND_SIZE hookFunction,
-                                int processorMode)
+                                int processorMode,
+                                DianaHook_CustomOptions * pCustomOptions = 0)
 {
     CTestMemoryProvider testMemoryProvider(pMemory, 
                                            sizeOfMemory);
@@ -85,7 +84,7 @@ static void test_patchers1_impl(unsigned char * pMemory,
                                            processorMode,
                                            addressToHook,
                                            hookFunction,
-                                           0));
+                                           pCustomOptions));
 
     // allocate ESP
     OPERAND_SIZE espEnd = testMemoryProvider.m_heap.size();
@@ -118,8 +117,37 @@ static void test_patchers1_impl(unsigned char * pMemory,
     }
 }
 
-static void test_patchers1_x64()
+static void test_patchers1_x64(bool useFarJump)
 {
+    DianaHook_CustomOptions options = {0,};
+    DianaHook_CustomOptions * pCustomOptions = 0;
+    unsigned char data[] = 
+    {
+        0x40, 0x57,                  // push        rdi  
+        0x48, 0x83, 0xEC, 0x40,      // sub         rsp,40h 
+        0x48, 0x83, 0xC4, 0x40,      // add         rsp,40h 
+        0x5F,                        // pop         rdi  
+        0x90,                        // nop
+        0x90,                        // nop
+        0xC3,                        // ret
+        // handler
+        0xC3                         // ret
+    };
+    if (useFarJump)
+    {
+        options.flags |= DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP;
+        pCustomOptions = &options;
+    }
+    test_patchers1_impl(data, 
+                        sizeof(data),
+                        0,
+                        0xE,
+                        DIANA_MODE64,
+                        pCustomOptions);
+}
+static void test_patchers1_x64_invalid()
+{
+    DianaHook_CustomOptions options = {0,};
     unsigned char data[] = 
     {
         0x40, 0x57,                  // push        rdi  
@@ -130,12 +158,19 @@ static void test_patchers1_x64()
         // handler
         0xC3                         // ret
     };
-    test_patchers1_impl(data, 
-                        sizeof(data),
-                        0,
-                        0xC,
-                        DIANA_MODE64);
+
+    options.flags |= DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP;
+
+    CTestMemoryProvider testMemoryProvider(&data, 
+                                           sizeof(data));
+
+    TEST_ASSERT(DI_END == DianaHook_PatchStream(testMemoryProvider.GetTargetMemoryProvider(),
+                                           DIANA_MODE64,
+                                           0,
+                                           0xC,
+                                           &options));
 }
+
 static void test_patchers1()
 {
     unsigned char data[] = 
@@ -160,9 +195,74 @@ static void test_patchers1()
                         5,
                         DIANA_MODE32);
 }
+
+
+static void test_patchers1_invalid()
+{
+    unsigned char data[] = 
+    {
+        // function to hook
+        0x55,              // push        ebp  
+        0x8B, 0xEC,        // mov         ebp,esp 
+        0xC3,              // ret       
+
+        // handler
+        0x55,              // push        ebp  
+        0x8B, 0xEC,        // mov         ebp,esp 
+        0x5D,              // pop         ebp  
+        0xC2, 0x0C, 0x00   // ret   C
+    };
+
+
+    CTestMemoryProvider testMemoryProvider(&data, 
+                                           sizeof(data));
+
+    TEST_ASSERT(DI_END == DianaHook_PatchStream(testMemoryProvider.GetTargetMemoryProvider(),
+                                           DIANA_MODE32,
+                                           0,
+                                           4,
+                                           0));
+
+}
+
+static void test_jumps_follow_mode()
+{
+    unsigned char data[] = 
+    {
+        // function to hook
+        0x90,                         // NOP
+        0xE9, 0x0, 0x0, 0x0, 0x0,     // JMP +5
+
+        0x55,              // push        ebp  
+        0x8B, 0xEC,        // mov         ebp,esp 
+        0x5D,              // pop         ebp  
+        0xC3,              // ret       
+
+        // handler
+        0x55,              // push        ebp  
+        0x8B, 0xEC,        // mov         ebp,esp 
+        0x5D,              // pop         ebp  
+        0xC2, 0x0C, 0x00   // ret   C
+    };
+
+
+    test_patchers1_impl(data, 
+                        sizeof(data),
+                        1,
+                        0xB,
+                        DIANA_MODE32);
+}
+
 void test_patchers()
 {
-    DIANA_TEST(test_patchers1());
-    DIANA_TEST(test_patchers1_x64());
+    // i386
+ //   DIANA_TEST(test_patchers1());
+    DIANA_TEST(test_jumps_follow_mode());
+    DIANA_TEST(test_patchers1_invalid());
+    // normal x64, near jmp
+    DIANA_TEST(test_patchers1_x64(false));
+    // normal x64, far jmp
+    DIANA_TEST(test_patchers1_x64(true));
+    DIANA_TEST(test_patchers1_x64_invalid());
 }
 

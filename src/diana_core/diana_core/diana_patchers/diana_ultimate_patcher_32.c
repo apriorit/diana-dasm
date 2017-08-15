@@ -66,7 +66,8 @@ static
 int DianaHook_AnalyzeCommand(DianaHook_InternalMessage * pMessage,
                             DI_OPERAND_SIZE commandAddress,
                             DI_OPERAND_SIZE newCommandAddress,
-                            DianaHook_DianaCommandInfo32 ** ppOutputData)
+                            DianaHook_DianaCommandInfo32 ** ppOutputData,
+                            int * pbIsRet)
 {
     void * pCommandBuffer = 0;
     const DianaParserResult * pResult = &pMessage->result;
@@ -74,6 +75,13 @@ int DianaHook_AnalyzeCommand(DianaHook_InternalMessage * pMessage,
     DianaHook_DianaCommandInfo32 * pOutputData = 0;
 
     *ppOutputData = 0;
+    *pbIsRet = 0;
+
+    if (pGroupInfo->m_pLinkedInfo && pGroupInfo->m_pLinkedInfo->flags & DIANA_GT_RET)
+    {
+        *pbIsRet = 1;
+    }
+
     DI_CHECK(DianaHook_AllocateMetainfo(pMessage,
                                         sizeof(DianaHook_DianaCommandInfo32), 
                                         (void**)&pOutputData));
@@ -107,7 +115,7 @@ int DianaHook_AnalyzeCommand(DianaHook_InternalMessage * pMessage,
                 
                 {
                     DI_UINT32 * pDataToChange = (DI_UINT32 *)((char*)pCommandBuffer + pOp->iOffset);
-                    *pDataToChange = *pDataToChange - ((DI_UINT32)newCommandAddress-1)+ (DI_UINT32)commandAddress;
+                    *pDataToChange = *pDataToChange - ((DI_UINT32)newCommandAddress)+ (DI_UINT32)commandAddress;
                 }
                 break;
         }
@@ -169,6 +177,7 @@ int DianaHook_PatchSequence32(DianaHook_InternalMessage * pMessage,
 
 
 #define DIANA_HOOK_TRAMPOLINE_SIZE_IN_BYTES      5
+#define DIANA_HOOK_MAX_JUMPS_COUNT              20
 
 int DianaHook_PatchStream32(DianaHook_InternalMessage * pMessage)
 {
@@ -178,6 +187,7 @@ int DianaHook_PatchStream32(DianaHook_InternalMessage * pMessage)
     int destSequenceSummSize = 0;
     OPERAND_SIZE allocatedAddress = 0;
     int allocationSucceeded = 0;
+    int prevWasRet = 0;
 
     Diana_InitContext(&pMessage->context, pMessage->processorMode);
 
@@ -193,16 +203,40 @@ int DianaHook_PatchStream32(DianaHook_InternalMessage * pMessage)
     allocationSucceeded = 1;
     for(;srcSequenceSummSize < DIANA_HOOK_TRAMPOLINE_SIZE_IN_BYTES;)
     {
+        if (prevWasRet)
+        {
+            DI_CHECK_GOTO(DI_END);
+        }
         DI_CHECK_GOTO(Diana_ParseCmd(&pMessage->context,
                               Diana_GetRootLine(),
                               &pMessage->pReadWriteStream->parent.parent,
                               &pMessage->result));
 
-
+        if (!srcSequenceSummSize)
+        {
+            // first command
+            if (pMessage->result.pInfo->m_pGroupInfo->m_commandId == diana_cmd_jmp)
+            {
+                if (pMessage->result.iLinkedOpCount == 1 &&
+                    pMessage->result.linkedOperands->usedSize == 4 &&
+                    !(pMessage->pCustomOptions && (pMessage->pCustomOptions->flags & DIANA_HOOK_CUSTOM_OPTION_DONT_FOLLOW_JUMPS)) && 
+                    pMessage->jumpsCounter < DIANA_HOOK_MAX_JUMPS_COUNT)
+                {
+                    OPERAND_SIZE addressToHook = pMessage->addressToHook + srcSequenceSummSize - pMessage->result.linkedOperands->value.rel.m_value + pMessage->result.iFullCmdSize;
+                    srcSequenceSummSize = 0;
+                    pMessage->addressToHook = addressToHook;
+                    ++pMessage->jumpsCounter;
+                    DianaHook_ClearBuffers(pMessage);
+                    continue;
+                }
+                DI_CHECK_GOTO(DI_ERROR_NOT_IMPLEMENTED);
+            }
+        }
         DI_CHECK_GOTO(DianaHook_AnalyzeCommand(pMessage,
                                                pMessage->addressToHook + srcSequenceSummSize,  
-                                               allocatedAddress + destSequenceSummSize,
-                                               &pCommandInfo));
+                                               allocatedAddress + destSequenceSummSize + sizeof(g_stubData),
+                                               &pCommandInfo,
+                                               &prevWasRet));
         
         srcSequenceSummSize += pMessage->result.iFullCmdSize;
         destSequenceSummSize += pCommandInfo->newCommandSize;
