@@ -40,6 +40,8 @@ public:
                                       &m_memAllocator.m_parent,
                                       iMode);
         TEST_ASSERT(res == DI_SUCCESS);
+
+        DianaProcessor_SetOptions(&m_proc, DIANA_PROCESSOR_OPTION_CHECK_ALIGNMENT_LEGACY_MODE, 0);
     }
 
     ~CTestProcessor()
@@ -47,6 +49,10 @@ public:
         DianaProcessor_Free(&m_proc);
     }
 
+    void SetOptions(int optionsToSet, int optionsToRemove)
+    {
+        DianaProcessor_SetOptions(&m_proc, optionsToSet, optionsToRemove);
+    }
     int ExecOnce()
     {
         return DianaProcessor_ExecOnce(&m_proc);

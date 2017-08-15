@@ -873,3 +873,9 @@ int Diana_FPU_CheckFPU(DianaProcessor * pCallContext, int bIgnoreExceptions)
     return DI_SUCCESS;
 }
 
+void DianaProcessor_SetOptions(DianaProcessor * pThis, int optionsToSet, int optionsToRemove)
+{
+    pThis->m_options |= optionsToSet;
+    pThis->m_options &=  ~optionsToRemove;
+}
+

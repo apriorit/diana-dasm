@@ -386,6 +386,52 @@ static void test_processor_pxor()
     TEST_ASSERT(xmm0.u64[1] == 0);
 }
 
+
+static void test_processor_movaps_no_gp()
+{
+    // movaps [eax],xmm0
+    unsigned char code[] = {0x0f, 0x29, 0x40, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE32);
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    proc.SetOptions(0, DIANA_PROCESSOR_OPTION_CHECK_ALIGNMENT_LEGACY_MODE);
+    DianaRegisterXMM_type xmm0 = {0};
+    xmm0.u64[0] = 0x0102030405060708ULL;
+    xmm0.u64[1] = 0x090a0b0c0d0e0f10ULL;
+    SET_REG_XMM0(xmm0);
+    SET_REG_RAX(4);
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_SUCCESS);
+}
+
+static void test_processor_movaps_gp_strict()
+{
+    // movaps [eax],xmm0
+    unsigned char code[] = {0x0f, 0x29, 0x40, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    CTestProcessor proc(code, sizeof(code), 0, DIANA_MODE32);
+    DianaProcessor * pCallContext = proc.GetSelf();
+
+    SET_REG_CR0(GET_REG_CR0 | 0x40000);
+    pCallContext->m_flags.value = pCallContext->m_flags.value | 0x40000;
+    SET_REG_CS(0x33);
+
+    proc.SetOptions(DIANA_PROCESSOR_OPTION_CHECK_ALIGNMENT_STRICT_MODE, 
+                    DIANA_PROCESSOR_OPTION_CHECK_ALIGNMENT_LEGACY_MODE);
+    DianaRegisterXMM_type xmm0 = {0};
+    xmm0.u64[0] = 0x0102030405060708ULL;
+    xmm0.u64[1] = 0x090a0b0c0d0e0f10ULL;
+    SET_REG_XMM0(xmm0);
+    SET_REG_RAX(4);
+    int res = proc.ExecOnce();
+    TEST_ASSERT(res == DI_GP);
+}
+
 void test_processor_m_xmm()
 {
     DIANA_TEST(test_processor_movups());
@@ -411,4 +457,8 @@ void test_processor_m_xmm()
     DIANA_TEST(test_processor_movddup_2());
 
     DIANA_TEST(test_processor_pxor());
+
+    // alignment tests
+    DIANA_TEST(test_processor_movaps_no_gp());
+    DIANA_TEST(test_processor_movaps_gp_strict());
 }

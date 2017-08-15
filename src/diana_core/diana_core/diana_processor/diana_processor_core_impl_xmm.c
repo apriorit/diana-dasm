@@ -58,10 +58,24 @@ int Diana_ProcessorSetGetOperand_XMM_index(struct _dianaContext * pDianaContext,
                                       &selector,
                                       &address));
 
+
     if (pCallContext->m_result.pInfo->m_flags & DI_FLAG_CMD_MUST_BE_ALIGNED &&
         0 != (address % 16))
     {
-        return DI_GP;
+        if (pCallContext->m_options & DIANA_PROCESSOR_OPTION_CHECK_ALIGNMENT_LEGACY_MODE)
+        {
+            return DI_GP;
+        }
+        if (pCallContext->m_options & DIANA_PROCESSOR_OPTION_CHECK_ALIGNMENT_STRICT_MODE)
+        {
+            OPERAND_SIZE cr0 = GET_REG_CR0;
+            OPERAND_SIZE csValue = GET_REG_CS;
+            DianaRegisterValue_type flags = pCallContext->m_flags;
+            if (((csValue & 3) == 3) && (0x40000 & (cr0 | flags.value)))
+            {
+                return DI_GP;
+            }
+        }
     }
 
     if (bSet)

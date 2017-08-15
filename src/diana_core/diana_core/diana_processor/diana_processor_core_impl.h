@@ -179,6 +179,24 @@ typedef struct _dianaFPU
 }DianaFPU;
 
 #define DIANA_PROCESSOR_MAX_FIRE_POINTS     10
+
+// ALIGNMENT:
+//  If alignment checking is enabled (CR0.AM = 1, RFLAGS.AC = 1, and CPL = 3), 
+//    an alignment-check exception (#AC) may or may not be generated (depending on processor implementation) 
+//    when the operand is not aligned on an 8-byte boundary.
+// http://www.tptp.cc/mirrors/siyobik.info/instruction/MOVDQU.html
+// ----
+// NOTE: historically, emulator always performed the alignment check without any analysis of registers and flags
+//       which is wrong. now it does not perform the check by default because of "may not be generated" statement
+//       if you want the legacy check to be enabled use:
+//            DianaProcessor_SetOptions + DIANA_PROCESSOR_OPTION_CHECK_ALIGNMENT_LEGACY_MODE
+//       if you want the new, correct check to be enabled use:
+//            DianaProcessor_SetOptions + DIANA_PROCESSOR_OPTION_CHECK_ALIGNMENT_STRICT_MODE 
+//----
+#define DIANA_PROCESSOR_OPTION_CHECK_ALIGNMENT_LEGACY_MODE       1
+#define DIANA_PROCESSOR_OPTION_CHECK_ALIGNMENT_STRICT_MODE       2
+
+
 typedef struct _dianaProcessor
 {
     DianaBase m_base;
@@ -204,6 +222,7 @@ typedef struct _dianaProcessor
     int m_firePointsCount;
 
     DianaFPU m_fpu;
+    int m_options;
 }DianaProcessor;
 
 #define UPDATE_PSZ(X, highMask) \
@@ -594,5 +613,6 @@ DI_UINT16 Diana_FPU_QueryStatusWord(DianaProcessor * pCallContext);
 int Diana_FPU_CheckFPU(DianaProcessor * pCallContext, int bIgnoreExceptions);
 DianaRegInfo * DianaProcessor_FPU_QueryReg(DianaProcessor * pThis, 
                                            DianaUnifiedRegister reg);
+void DianaProcessor_SetOptions(DianaProcessor * pThis, int optionsToSet, int optionsToRemove);
 
 #endif
