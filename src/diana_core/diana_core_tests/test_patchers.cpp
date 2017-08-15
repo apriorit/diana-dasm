@@ -256,7 +256,7 @@ static void test_jumps_follow_mode()
 void test_patchers()
 {
     // i386
- //   DIANA_TEST(test_patchers1());
+    DIANA_TEST(test_patchers1());
     DIANA_TEST(test_jumps_follow_mode());
     DIANA_TEST(test_patchers1_invalid());
     // normal x64, near jmp
