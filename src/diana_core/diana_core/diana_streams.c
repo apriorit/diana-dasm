@@ -39,7 +39,7 @@ int DianaMemoryStream_RandomReadMoveTo(void * pThis,
                                        OPERAND_SIZE offset)
 {
     DianaMemoryStream * pStream = (DianaMemoryStream * )pThis;
-    pStream->curSize = offset;
+    pStream->curSize = (size_t)offset;
     return DI_SUCCESS;
 }
 int DianaMemoryStream_RandomWrite_V(void * pThis, 
@@ -65,7 +65,7 @@ int DianaMemoryStream_RandomWrite_V(void * pThis,
     if (sizeToGive > iBufferSize)
         sizeToGive = iBufferSize;
 
-    DIANA_MEMCPY((char*)pStream->pBuffer+offset, pBuffer, sizeToGive);
+    DIANA_MEMCPY((char*)pStream->pBuffer+offset, pBuffer, (size_t)sizeToGive);
     *readBytes = sizeToGive;
     return 0;
 }
@@ -93,7 +93,7 @@ int DianaMemoryStream_RandomRead_V(void * pThis,
     if (sizeToGive > iBufferSize)
         sizeToGive = iBufferSize;
 
-    DIANA_MEMCPY(pBuffer,(char*)pStream->pBuffer+offset, sizeToGive);
+    DIANA_MEMCPY(pBuffer,(char*)pStream->pBuffer+offset, (size_t)sizeToGive);
     *readBytes = sizeToGive;
     return 0;
 }
