@@ -141,8 +141,8 @@ int DianaHook_AddTailJump(DianaHook_InternalMessage * pMessage,
     void * pCommandBuffer = 0;
     unsigned char * pCommandBufferOut = 0; 
 
-    if ((DianaHook_Diff(jmpCommandAddress, jmpTargetAddress) < 0xFFFFFFFFULL)
-        || (pMessage->pCustomOptions && (pMessage->pCustomOptions->flags & DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP)))
+    if ((DianaHook_Diff(jmpCommandAddress, jmpTargetAddress) <= 0xFFFFFFFFULL)
+        && (!(pMessage->pCustomOptions && (pMessage->pCustomOptions->flags & DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP))))
     {
         DI_CHECK(DianaHook_AllocateCmd(pMessage, 5, &pCommandBuffer));
         pCommandBufferOut = (unsigned char * )pCommandBuffer;
@@ -152,6 +152,7 @@ int DianaHook_AddTailJump(DianaHook_InternalMessage * pMessage,
     }
     // put far jmp
     DI_CHECK(DianaHook_AllocateCmd(pMessage, sizeof(g_farJump), &pCommandBuffer));
+    pCommandBufferOut = (unsigned char * )pCommandBuffer;
     DIANA_MEMCPY(pCommandBufferOut, g_farJump, sizeof(g_farJump));
     *(DI_UINT32*)(pCommandBufferOut+1) = (DI_UINT32)jmpTargetAddress;
     *(DI_UINT32*)(pCommandBufferOut+9) = (DI_UINT32)(jmpTargetAddress>>32);
