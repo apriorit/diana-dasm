@@ -36,6 +36,7 @@ void DianaHook_TargetMemoryProvider_Init(DianaHook_TargetMemoryProvider * pDiana
 
 #define DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP              1
 #define DIANA_HOOK_CUSTOM_OPTION_DONT_FOLLOW_JUMPS        2
+#define DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP_SHORT        4
 
 typedef struct _DianaHook_CustomOptions
 {
