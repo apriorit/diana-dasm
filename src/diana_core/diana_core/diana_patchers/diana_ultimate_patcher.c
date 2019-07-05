@@ -39,7 +39,7 @@ int DianaHook_PatchStream(DianaHook_TargetMemoryProvider * pTargetMemoryProvider
     pMessage->pCustomOptions = pCustomOptions;
     pMessage->addressToHook = addressToHook;
     pMessage->hookFunction = hookFunction;
-    if (pCustomOptions)
+    if (pCustomOptions && (pCustomOptions->flags & DIANA_HOOK_CUSTOM_OPTION_SAVE_ORIGINAL_FP))
     {
         pMessage->originalFunctionPointer = pCustomOptions->originalFunctionPointer;
     }

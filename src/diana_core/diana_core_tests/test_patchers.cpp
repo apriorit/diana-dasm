@@ -117,7 +117,7 @@ static void test_patchers1_impl(unsigned char * pMemory,
     }
 }
 
-static void test_patchers1_x64(bool useFarJump)
+static void test_patchers1_x64(int flags)
 {
     DianaHook_CustomOptions options = {0,};
     DianaHook_CustomOptions * pCustomOptions = 0;
@@ -133,9 +133,9 @@ static void test_patchers1_x64(bool useFarJump)
         // handler
         0xC3                         // ret
     };
-    if (useFarJump)
+    if (flags)
     {
-        options.flags |= DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP;
+        options.flags |= flags;
         pCustomOptions = &options;
     }
     test_patchers1_impl(data, 
@@ -145,6 +145,7 @@ static void test_patchers1_x64(bool useFarJump)
                         DIANA_MODE64,
                         pCustomOptions);
 }
+
 static void test_patchers1_x64_invalid()
 {
     DianaHook_CustomOptions options = {0,};
@@ -259,10 +260,12 @@ void test_patchers()
     DIANA_TEST(test_patchers1());
     DIANA_TEST(test_jumps_follow_mode());
     DIANA_TEST(test_patchers1_invalid());
-    // normal x64, near jmp
-    DIANA_TEST(test_patchers1_x64(false));
-    // normal x64, far jmp
-    DIANA_TEST(test_patchers1_x64(true));
+    // x64, far jmp
+    DIANA_TEST(test_patchers1_x64(DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP));
+    // near jmp
+    DIANA_TEST(test_patchers1_x64(DIANA_HOOK_CUSTOM_OPTION_PUT_NEAR_JMP));
+    // jmp to x<0xFFFFFFFF
+    DIANA_TEST(test_patchers1_x64(DIANA_HOOK_CUSTOM_OPTION_TEST_SINGLE_PUSH));
     DIANA_TEST(test_patchers1_x64_invalid());
 }
 

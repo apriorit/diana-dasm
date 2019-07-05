@@ -141,8 +141,7 @@ int DianaHook_AddTailJump(DianaHook_InternalMessage * pMessage,
     void * pCommandBuffer = 0;
     unsigned char * pCommandBufferOut = 0; 
 
-    if ((DianaHook_Diff(jmpCommandAddress, jmpTargetAddress) <= 0xFFFFFFFFULL)
-        && (!(pMessage->pCustomOptions && (pMessage->pCustomOptions->flags & DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP))))
+    if (DianaHook_Diff(jmpCommandAddress, jmpTargetAddress) <= 0xFFFFFFFFULL)
     {
         DI_CHECK(DianaHook_AllocateCmd(pMessage, 5, &pCommandBuffer));
         pCommandBufferOut = (unsigned char * )pCommandBuffer;
@@ -213,15 +212,13 @@ cleanup:
 #define DIANA_HOOK_TRAMPOLINE_SIZE_IN_BYTES_64_NEAR      5
 
 static 
-int DianaHook_PatchSequence64_Near(DianaHook_InternalMessage * pMessage,
-                                   const DI_OPERAND_SIZE * pAllocatedAddress)
+int InitStubData(DianaHook_InternalMessage * pMessage,
+                 const DI_OPERAND_SIZE * pAllocatedAddress,
+                 unsigned char * stubData,
+                 DI_OPERAND_SIZE * pResAddressOfOriginal)
 {
-
     DI_OPERAND_SIZE addressOfOriginal = *pAllocatedAddress + (int)sizeof(g_stubData);
-    unsigned char hook[5];
-    unsigned char stubData[sizeof(g_stubData)];
     OPERAND_SIZE writeData = 0;
-
     DIANA_MEMCPY(stubData, g_stubData, sizeof(g_stubData));
 
     *(DI_UINT64*)(stubData + 0x17) = (DI_UINT64)pMessage->patchContext;
@@ -230,7 +227,7 @@ int DianaHook_PatchSequence64_Near(DianaHook_InternalMessage * pMessage,
     DI_CHECK(pMessage->pReadWriteStream->pRandomWrite(pMessage->pReadWriteStream,
                                                       *pAllocatedAddress,
                                                       stubData,
-                                                      (int)sizeof(stubData),
+                                                      (int)sizeof(g_stubData),
                                                       &writeData,
                                                       0));
 
@@ -240,6 +237,20 @@ int DianaHook_PatchSequence64_Near(DianaHook_InternalMessage * pMessage,
                                                       (int)pMessage->workBufferRawSize,
                                                       &writeData,
                                                       0));
+    *pResAddressOfOriginal = addressOfOriginal;
+    return 0;
+}
+static 
+int DianaHook_PatchSequence64_Near(DianaHook_InternalMessage * pMessage,
+                                   const DI_OPERAND_SIZE * pAllocatedAddress)
+{
+
+    DI_OPERAND_SIZE addressOfOriginal = 0;
+    unsigned char hook[5];
+    unsigned char stubData[sizeof(g_stubData)];
+    OPERAND_SIZE writeData = 0;
+
+    DI_CHECK(InitStubData(pMessage, pAllocatedAddress, stubData, &addressOfOriginal));
 
     hook[0] = 0xE9;
     *(DI_UINT32*)(hook+1) = (DI_UINT32)((DI_UINT64)*pAllocatedAddress - (DI_UINT64)pMessage->addressToHook - 5);
@@ -284,30 +295,13 @@ int DianaHook_PatchSequence64_Far(DianaHook_InternalMessage * pMessage,
                                    const DI_OPERAND_SIZE * pAllocatedAddress)
 {
 
-    DI_OPERAND_SIZE addressOfOriginal = *pAllocatedAddress + (int)sizeof(g_stubData);
+    DI_OPERAND_SIZE addressOfOriginal = 0;
     unsigned char hook[sizeof(g_farJump)];
     unsigned char stubData[sizeof(g_stubData)];
     OPERAND_SIZE writeData = 0;
-
     DIANA_MEMCPY(hook, g_farJump, sizeof(g_farJump));
-    DIANA_MEMCPY(stubData, g_stubData, sizeof(g_stubData));
 
-    *(DI_UINT64*)(stubData + 0x17) = (DI_UINT64)pMessage->patchContext;
-    *(DI_UINT64*)(stubData + 0x21) = (DI_UINT64)pMessage->hookFunction;
-
-    DI_CHECK(pMessage->pReadWriteStream->pRandomWrite(pMessage->pReadWriteStream,
-                                                      *pAllocatedAddress,
-                                                      stubData,
-                                                      (int)sizeof(stubData),
-                                                      &writeData,
-                                                      0));
-
-    DI_CHECK(pMessage->pReadWriteStream->pRandomWrite(pMessage->pReadWriteStream,
-                                                      addressOfOriginal,
-                                                      pMessage->workBufferRaw, 
-                                                      (int)pMessage->workBufferRawSize,
-                                                      &writeData,
-                                                      0));
+    DI_CHECK(InitStubData(pMessage, pAllocatedAddress, stubData, &addressOfOriginal));
 
     *(DI_UINT32*)(hook+1) = (DI_UINT32)((DI_UINT64)*pAllocatedAddress);
     *(DI_UINT32*)(hook+9) = (DI_UINT32)(((DI_UINT64)*pAllocatedAddress)>>32);
@@ -346,6 +340,62 @@ cleanup:
     return status;
 }
 
+
+static unsigned char g_pushRet[] =
+{
+    0x68, 0x66, 0x66, 0x66, 0x66,                    // push    66666666h
+    0xC3                                             // ret
+};
+
+int DianaHook_PatchSequence64_PushRet(DianaHook_InternalMessage * pMessage,
+                                      const DI_OPERAND_SIZE * pAllocatedAddress)
+{
+
+    DI_OPERAND_SIZE addressOfOriginal = 0;
+    unsigned char hook[sizeof(g_pushRet)];
+    unsigned char stubData[sizeof(g_stubData)];
+    OPERAND_SIZE writeData = 0;
+    DIANA_MEMCPY(hook, g_pushRet, sizeof(g_pushRet));
+
+    DI_CHECK(InitStubData(pMessage, pAllocatedAddress, stubData, &addressOfOriginal));
+
+    *(DI_UINT32*)(hook+1) = (DI_UINT32)((DI_UINT64)*pAllocatedAddress);
+
+    if (pMessage->originalFunctionPointer != (DI_OPERAND_SIZE)-1)
+    {
+        DI_CHECK(pMessage->pReadWriteStream->pRandomWrite(pMessage->pReadWriteStream,
+                                                        pMessage->originalFunctionPointer,
+                                                        &addressOfOriginal,
+                                                        pMessage->processorMode,
+                                                        &writeData,
+                                                        0));
+    }
+
+    DI_CHECK(pMessage->pReadWriteStream->pRandomWrite(pMessage->pReadWriteStream,
+                                                      pMessage->addressToHook,
+                                                      hook, 
+                                                      (int)sizeof(hook),
+                                                      &writeData,
+                                                      0));
+    return DI_SUCCESS;
+}
+
+static int DianaHook_PatchWithSinglePushRet(DianaHook_InternalMessage * pMessage, 
+                                            OPERAND_SIZE allocatedAddress)
+{
+    int status = 0;
+    DI_CHECK_GOTO(DianaHook_CommonMove64(pMessage, 
+                                         allocatedAddress,
+                                         sizeof(g_pushRet),
+                                         1));
+
+    DI_CHECK_GOTO(DianaHook_PatchSequence64_PushRet(pMessage, 
+                                                &allocatedAddress));
+                                    
+cleanup:
+    return status;
+}
+
 int DianaHook_PatchStream64(DianaHook_InternalMessage * pMessage)
 {
     OPERAND_SIZE allocatedAddress = 0;
@@ -359,10 +409,36 @@ int DianaHook_PatchStream64(DianaHook_InternalMessage * pMessage)
                                 DIANA_HOOK_FLASG_ALLOCATE_EXECUTABLE));
     allocationSucceeded = 1;
 
-    if ((DianaHook_Diff(allocatedAddress, pMessage->addressToHook) > 0xFFFFFFFFULL)
-        || (pMessage->pCustomOptions && (pMessage->pCustomOptions->flags & DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP)))
+    
+    if (pMessage->pCustomOptions)
     {
-        status = DianaHook_PatchWithFarCall(pMessage, allocatedAddress);
+        if (pMessage->pCustomOptions->flags & DIANA_HOOK_CUSTOM_OPTION_PUT_FAR_JMP)
+        {
+            status = DianaHook_PatchWithFarCall(pMessage, allocatedAddress);
+            goto cleanup;
+        }
+        if (pMessage->pCustomOptions->flags & DIANA_HOOK_CUSTOM_OPTION_PUT_NEAR_JMP)
+        {
+            if (DianaHook_Diff(allocatedAddress, pMessage->addressToHook) < 0xFFFFFFFFULL)
+            {
+                status = DianaHook_PatchWithNearTrampoline(pMessage, allocatedAddress);
+                goto cleanup;
+            }
+        }
+    }
+
+    // autodetect
+    if (DianaHook_Diff(allocatedAddress, pMessage->addressToHook) > 0xFFFFFFFFULL ||
+        (pMessage->pCustomOptions->flags & DIANA_HOOK_CUSTOM_OPTION_TEST_SINGLE_PUSH))
+    {
+        if (allocatedAddress <= 0x7FFFFFFFULL)
+        {
+            status = DianaHook_PatchWithSinglePushRet(pMessage, allocatedAddress);
+        }
+        else
+        {
+            status = DianaHook_PatchWithFarCall(pMessage, allocatedAddress);
+        }
     }
     else
     {
